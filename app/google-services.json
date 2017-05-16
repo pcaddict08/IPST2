@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "206794497970",
+    "project_id": "firebase-ipst2"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:206794497970:android:547cc86c979cb2da",
+        "android_client_info": {
+          "package_name": "com.einzig.ipst2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "206794497970-gsct635nbm7hutofjv255hg433cn4ro6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.einzig.ipst2",
+            "certificate_hash": "b8feb24b4e5b161848d3c513ad9ec52ec9937a01"
+          }
+        },
+        {
+          "client_id": "206794497970-dn0qfeci46q97e83952drf5avj7l5sjn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBk8eelb4YDmSOZ74kDDGiUZ3CVKedEzHE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
