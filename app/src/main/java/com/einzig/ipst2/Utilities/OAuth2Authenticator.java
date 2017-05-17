@@ -45,7 +45,7 @@ public class OAuth2Authenticator {
 			super("Google OAuth2 Provider", 1.0,
 					"Provides the XOAUTH2 SASL Mechanism");
 			put("SaslClientFactory.XOAUTH2",
-					"com.einzig.ipst.OAuth2SaslClientFactory");
+					"com.einzig.ipst2.Utilities.OAuth2SaslClientFactory");
 		}
 	}
 
@@ -147,13 +147,13 @@ public class OAuth2Authenticator {
                                         email,
                                         oauthToken,
                                         true);
-    System.out.println("Successfully authenticated to IMAP.\n");
+    Utilities.print_debug("Successfully authenticated to IMAP.\n");
     SMTPTransport smtpTransport = connectToSmtp("smtp.gmail.com",
                                                 587,
                                                 email,
                                                 oauthToken,
                                                 true);
-    System.out.println("Successfully authenticated to SMTP.");
+    Utilities.print_debug("Successfully authenticated to SMTP.");
   }*/
 	public synchronized IMAPStore testImap(String user,
 			String oauthToken) {
