@@ -49,7 +49,6 @@ import com.einzig.ipst2.R;
 import com.einzig.ipst2.Utilities.EmailParseTask;
 import com.google.android.gms.auth.GooglePlayServicesAvailabilityException;
 import com.google.android.gms.auth.UserRecoverableAuthException;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.GoogleApiAvailability;
 
 import java.text.DateFormat;
