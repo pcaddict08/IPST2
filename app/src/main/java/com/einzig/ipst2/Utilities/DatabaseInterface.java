@@ -37,6 +37,7 @@ import com.einzig.ipst2.portal.PortalSubmission;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Vector;
@@ -186,6 +187,26 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         location = cursor.getString(4);
         intelLink = cursor.getString(5);
         return new PortalAccepted(name, submitted, pictureURL, responded, location, intelLink);
+    }
+
+    /**
+     * Create a Vector of accepted portals from a database query string.
+     * @param query Complete query to be executed on the database
+     * @return Vector of accepted portals from a database query string.
+     */
+    private Vector<PortalAccepted> createPortalListFromQuery(String query) {
+        Vector<PortalAccepted> portals = new Vector<>();
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor.getCount() < 1)    // return empty list
+            return portals;
+        cursor.moveToFirst();
+        do {
+            portals.add(createPortalAccepted(cursor));
+        } while (cursor.moveToNext());
+        cursor.close();
+        db.close();
+        return portals;
     }
 
     /**
@@ -340,19 +361,56 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      */
     public Vector<PortalAccepted> getAllAccepted() {
         Log.d(TAG, "Get all accepted portals");
-        Vector<PortalAccepted> portals = new Vector<>();
-        String query = "SELECT * FROM " + TABLE_ACCEPTED;
-        SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.rawQuery(query, null);
-        if (cursor.getCount() < 1)    // return empty list
-            return portals;
-        cursor.moveToFirst();
-        do {
-            portals.add(createPortalAccepted(cursor));
-        } while (cursor.moveToNext());
-        cursor.close();
-        db.close();
-        return portals;
+        String query = "SELECT * FROM " + TABLE_ACCEPTED + ";";
+        return createPortalListFromQuery(query);
+    }
+
+    /**
+     * Get a Vector of all accepted portals which went live after a certain date.
+     * @param fromDate Date to start searching from
+     * @return Vector of all accepted portals which went live after a certain date.
+     */
+    public Vector<PortalAccepted> getAllAcceptedByResponseDate(Date fromDate) {
+        return getAllAcceptedByResponseDate(fromDate, Calendar.getInstance().getTime());
+    }
+
+    /**
+     * Get a Vector of all accepted portals which went live in between a range of days.
+     * @param fromDate Date to start searching from
+     * @param toDate Date to stop searching at
+     * @return Vector of all accepted portals which went live in between a range of days.
+     */
+    public Vector<PortalAccepted> getAllAcceptedByResponseDate(Date fromDate, Date toDate) {
+        Log.d(TAG, "Get all accepted portals within date range");
+        return getAllAcceptedByDate(KEY_DATE_RESPONDED, fromDate, toDate);
+    }
+
+    /**
+     * Get a Vector of all accepted portals which were submitted after a certain date.
+     * @param fromDate Date to start searching from
+     * @return Vector of all accepted portals which were submitted after a certain date.
+     */
+    public Vector<PortalAccepted> getAllAcceptedBySubmissionDate(Date fromDate) {
+        return getAllAcceptedBySubmissionDate(fromDate, Calendar.getInstance().getTime());
+    }
+
+    /**
+     * Get a Vector of all accepted portals which were submitted in between a range of days.
+     * @param fromDate Date to start searching from
+     * @param toDate Date to stop searching at
+     * @return Vector of all accepted portals which were submitted in between a range of days.
+     */
+    public Vector<PortalAccepted> getAllAcceptedBySubmissionDate(Date fromDate, Date toDate) {
+        Log.d(TAG, "Get all accepted portals within date range");
+        return getAllAcceptedByDate(KEY_DATE_SUBMITTED, fromDate, toDate);
+    }
+
+    private Vector<PortalAccepted> getAllAcceptedByDate(String dateKey, Date fromDate, Date toDate) {
+        String dateRangeLogStr = mySQLDateFormat.format(fromDate) + " AND ";
+        dateRangeLogStr += mySQLDateFormat.format(toDate);
+        String query = "SELECT * FROM " + TABLE_ACCEPTED + " WHERE " + dateKey;
+        query += " BETWEEN " + dateRangeLogStr + ";";
+        return createPortalListFromQuery(query);
     }
 
     /**

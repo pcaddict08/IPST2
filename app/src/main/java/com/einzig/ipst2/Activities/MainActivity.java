@@ -49,13 +49,13 @@ import com.einzig.ipst2.R;
 import com.einzig.ipst2.Utilities.EmailParseTask;
 import com.google.android.gms.auth.GooglePlayServicesAvailabilityException;
 import com.google.android.gms.auth.UserRecoverableAuthException;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.GoogleApiAvailability;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -69,30 +69,27 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity {
     /** ??? */
     static public final String EXTRA_ACCOUNTNAME = "extra_accountname";
+    /** String key used for saving and retrieving the user's email address */
+    static public final String EMAIL_KEY = "email";
+    /** String key for sending date through Bundle */
+    static public final String MOST_RECENT_DATE_KEY = "recentDate";
+    /** Used for the default key when something is uninitialized */
+    static public final String NULL_KEY = "uninitialized";
+    /** String key for sending a portal through a bundle */
+    static public final String PORTAL_KEY = "portal";
+    /** String key for sending a portal list through Bundle */
+    static public final String PORTAL_LIST_KEY = "portalList";
+    /** The PortalSubmission being combined with a PortalResponded */
+    static public final String PORTAL_SUBMISSION_KEY = "portalSubmission";
+    /** The key for saving portal submission sort preference */
+    static public final String SORT_KEY = "sort";
     /** Used to get the result of LoginActivity */
     static private final int LOGIN_ACTIVITY_CODE = 0;
-    /** I don't know what this is for */
-    static private final String SCOPE = "oauth2:https://www.googleapis.com/auth/userinfo.profile";
     /** Tag used for logging for this class */
     static private final String TAG = "IPST:MainActivity";
 
     static final int REQUEST_CODE_EMAIL = 1;
     static final int REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR = 1002;
-
-    /** String key used for saving and retrieving the user's email address */
-    public final String EMAIL_KEY = getString(R.string.emailKey);
-    /** String key for sending date through Bundle */
-    public final String MOST_RECENT_DATE_KEY = getString(R.string.recentDateKey);
-    /** Used for the default key when something is uninitialized */
-    public final String NULL_KEY = getString(R.string.nullKey);
-    /** String key for sending a portal through a bundle */
-    public final String PORTAL_KEY = getString(R.string.portalKey);
-    /** String key for sending a portal list through Bundle */
-    public final String PORTAL_LIST_KEY = getString(R.string.portalListKey);
-    /** The PortalSubmission being combined with a PortalResponded */
-    public final String PORTAL_SUBMISSION_KEY = getString(R.string.portalSubmissionKey);
-    /** The key for saving portal submission sort preference */
-    public final String SORT_KEY = getString(R.string.sortKey);
 
     /** Last date that email was parsed */
     private Date mostRecentDate;
@@ -140,24 +137,6 @@ public class MainActivity extends AppCompatActivity {
                 alertDialog.show();
             }
         });
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.settings_mainactivity:
-                startActivity(new Intent(this, SettingsActivity.class));
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_mainactivity, menu);
-        return true;
     }
 
     /**
@@ -375,15 +354,34 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_mainactivity, menu);
+        return true;
+    }
+
     /**
      * Update the mostRecentDate preference after email has been parsed.
      */
     public void onEmailParse() {
+        mostRecentDate = Calendar.getInstance().getTime();
         String dateString = dateFormat.format(mostRecentDate.getTime());
         Log.d(TAG, MOST_RECENT_DATE_KEY + " -> " + dateString);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(MOST_RECENT_DATE_KEY, dateString);
         editor.apply();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.settings_mainactivity:
+                startActivity(new Intent(this, SettingsActivity.class));
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     // TODO (Ryan): Look into how this works
