@@ -55,6 +55,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
+/**
+ * Main activity class which launches the app.
+ * Contains all startup and initialization code.
+ *
+ * @author Steven Foskett
+ * @since 2017-05-15
+ */
 public class MainActivity extends AppCompatActivity {
     /** ??? */
     static public final String EXTRA_ACCOUNTNAME = "extra_accountname";
@@ -155,6 +162,11 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Get user account if the user has already logged in.
+     *
+     * @return Account user logged in on.
+     */
     private Account getAccount() {
         String email = preferences.getString(EMAIL_KEY, NULL_KEY);
         Log.i(TAG, "Getting account " + email);
@@ -167,10 +179,18 @@ public class MainActivity extends AppCompatActivity {
         return null;
     }
 
+    /**
+     * Get the last date that email was parsed.
+     *
+     * @return last date that email was parsed.
+     */
     public Date getMostRecentDate() {
         return mostRecentDate;
     }
 
+    /**
+     * Get saved user preferences.
+     */
     private void getPreferences() {
         preferences = getPreferences(MODE_PRIVATE);
         Log.i(TAG, EMAIL_KEY + " -> " + preferences.getString(EMAIL_KEY, NULL_KEY));
@@ -183,6 +203,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Search through accounts on the user's device now that we have permission to do so.
+     */
     public void gotPermission_accounts() {
         try {
             AccountManager tempAM = AccountManager.get(MainActivity.this);
@@ -262,6 +285,11 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Login if we have permission or get permission if we don't.
+     *
+     * @sa gotPermission_accounts
+     */
     public void loginHitMethod() {
         try {
             if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.GET_ACCOUNTS)
@@ -277,6 +305,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /*
+     * Callback method if an activity is started for result via startActivityForResult().
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Ryan's code
@@ -303,6 +334,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /*
+     * Called on startup by Android after the app starts and resources are available.
+     * Used for more advanced initializations.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -322,7 +357,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     *
+     * Update the mostRecentDate preference after email has been parsed.
      */
     public void onEmailParse() {
         String dateString = dateFormat.format(mostRecentDate.getTime());
@@ -333,6 +368,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // TODO (Ryan): Look into how this works
+    /*
+     * Provides the results of permission requests
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
@@ -347,6 +385,10 @@ public class MainActivity extends AppCompatActivity {
 
     // TODO (Ryan): Check master branch to see if this is used
     // TODO (Anyone): Move strings to strings resource
+    /*
+     * Handles the error when GMail's All Mail folder is missing and the custom folder set by the
+     * user is unset, or also missing.
+     */
     public void noAllMailFolder(final String customFolder, final ArrayList<String> folderList) {
         this.runOnUiThread(new Runnable() {
             public void run() {
@@ -407,6 +449,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Reset the mail folder preference to GMail's All Mail folder
+     */
     public void resetAllMail() {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString("mail_pref", "All Mail");
