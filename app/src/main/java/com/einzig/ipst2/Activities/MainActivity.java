@@ -277,9 +277,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate");
         setContentView(R.layout.activity_main);
-
-        SingletonClass.getInstance().setSharedPref(PreferenceManager.getDefaultSharedPreferences(this));
+        getPreferences();
 
         Button gmail_login_button = (Button) findViewById(R.id.gmail_login_button);
         if (gmail_login_button != null) {
@@ -316,6 +316,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // TODO (Ryan): Check master branch to see if this is used
     public void noAllMailFolder(final String customFolder, final ArrayList<String> folderList) {
         this.runOnUiThread(new Runnable() {
             public void run() {
