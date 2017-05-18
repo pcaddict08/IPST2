@@ -21,51 +21,67 @@
  * ********************************************************************************************** *
  * ********************************************************************************************** */
 
-package com.einzig.ipst2.Utilities;
+package com.einzig.ipst2.portal;
 
-import java.util.Map;
+import android.os.Parcel;
 
-import java.util.logging.Logger;
-
-import myjavax.security.auth.callback.CallbackHandler;
-import myjavax.security.sasl.SaslClient;
-import myjavax.security.sasl.SaslClientFactory;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 /**
- * A SaslClientFactory that returns instances of OAuth2SaslClient.
- *
- * <p>Only the "XOAUTH2" mechanism is supported. The {@code callbackHandler} is
- * passed to the OAuth2SaslClient. Other parameters are ignored.
+ * @author Ryan Porterfield
+ * @since 2015-07-24
  */
-public class OAuth2SaslClientFactory implements SaslClientFactory {
-  private static final Logger logger =
-      Logger.getLogger(OAuth2SaslClientFactory.class.getName());
+public abstract class PortalResponded extends PortalSubmission {
+    private static final long serialVersionUID = 2609937877038303238L;
+    /**
+     * The date that Niantic approved or denied the portal.
+     */
+    private Date dateResponded;
 
-  public static final String OAUTH_TOKEN_PROP =
-      "mail.imaps.sasl.mechanisms.oauth2.oauthToken";
-
-  public SaslClient createSaslClient(String[] mechanisms,
-                                     String authorizationId,
-                                     String protocol,
-                                     String serverName,
-                                     Map<String, ?> props,
-                                     CallbackHandler callbackHandler) {
-    boolean matchedMechanism = false;
-    for (int i = 0; i < mechanisms.length; ++i) {
-      if ("XOAUTH2".equalsIgnoreCase(mechanisms[i])) {
-        matchedMechanism = true;
-        break;
-      }
+    /**
+     * Create a new PortalResponded.
+     *
+     * @param name The name of the portal.
+     * @param dateSubmitted The date the portal was submitted.
+     * @param pictureURL The URL of the portal submission picture.
+     * @param dateResponded The date that Niantic approved or denied the portal.
+     */
+    public PortalResponded(String name, Date dateSubmitted, String pictureURL, Date dateResponded) {
+        super(name, dateSubmitted, pictureURL);
+        this.dateResponded = dateResponded;
     }
-    if (!matchedMechanism) {
-      logger.info("Failed to match any mechanisms");
-      return null;
-    }
-    return new OAuth2SaslClient((String) props.get(OAUTH_TOKEN_PROP),
-                                callbackHandler);
-  }
 
-  public String[] getMechanismNames(Map<String, ?> props) {
-    return new String[] {"XOAUTH2"};
-  }
+    /**
+     * Create a new PortalResponded from a Parcel.
+     * @param in Parcel that contains the PortalResponded.
+     */
+    protected PortalResponded(Parcel in) {
+        super(in);
+        dateResponded = (Date) in.readSerializable();
+    }
+
+    /**
+     * Get the date the portal submission was processed.
+     * @return The date the portal was approved or rejected.
+     */
+    public Date getDateResponded() {
+        return this.dateResponded;
+    }
+
+    public long getResponseTime() {
+        long diff = dateResponded.getTime() - getDateSubmitted().getTime();
+        return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+    }
+
+    /*
+     * Convert the portal to a Parcel.
+     * Uses the C paradigm of passing the Parcel as an argument and modifying it instead of
+     * returning a Parcel object.
+     */
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
+        dest.writeSerializable(dateResponded);
+    }
 }
