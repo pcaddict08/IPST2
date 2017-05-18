@@ -193,8 +193,8 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
         activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         dialog.dismiss();
         // TODO Add These functions
-        //activity.onEmailParse();
-        //new UpdateDatabaseTask(activity, acceptedPortals, pendingPortals, rejectedPortals).execute();
+        activity.onEmailParse();
+        new UpdateDatabaseTask(activity, acceptedPortals, pendingPortals, rejectedPortals).execute();
     }
 
     @Override
