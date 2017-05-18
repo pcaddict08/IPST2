@@ -55,6 +55,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -364,6 +365,7 @@ public class MainActivity extends AppCompatActivity {
      * Update the mostRecentDate preference after email has been parsed.
      */
     public void onEmailParse() {
+        mostRecentDate = Calendar.getInstance().getTime();
         String dateString = dateFormat.format(mostRecentDate.getTime());
         Log.d(TAG, MOST_RECENT_DATE_KEY + " -> " + dateString);
         SharedPreferences.Editor editor = preferences.edit();
