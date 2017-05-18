@@ -37,7 +37,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -51,6 +50,7 @@ import com.einzig.ipst2.Utilities.EmailParseTask;
 import com.google.android.gms.auth.GooglePlayServicesAvailabilityException;
 import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.GoogleApiAvailability;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -239,7 +239,7 @@ public class MainActivity extends AppCompatActivity {
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
                 alertDialogBuilder.setTitle("No Accounts");
                 alertDialogBuilder
-                        .setMessage("You have no google accounts on your device")//.  Would you like to log in manually?")
+                        .setMessage("You have no Google accounts on your device")//.  Would you like to log in manually?")
                         .setCancelable(true)
                         .setNeutralButton("Ok", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
@@ -260,7 +260,7 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
             alertDialogBuilder.setTitle("Error Retrieving Accounts");
             alertDialogBuilder
-                    .setMessage("There was an error retreiving your google accounts.")
+                    .setMessage("There was an error retrieving your Google accounts.")
                     .setCancelable(true)
                     .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
@@ -285,11 +285,11 @@ public class MainActivity extends AppCompatActivity {
                     // The Google Play services APK is old, disabled, or not present.
                     // Show a dialog created by Google Play services that allows
                     // the user to update the APK
+                    GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
                     int statusCode = ((GooglePlayServicesAvailabilityException) e)
                             .getConnectionStatusCode();
-                    // TODO (Anyone): Find a way to do this that isn't deprecated
-                    Dialog dialog = GooglePlayServicesUtil.getErrorDialog(statusCode,
-                            MainActivity.this,
+                    Dialog dialog = googleAPI.getErrorDialog(MainActivity.this,
+                            statusCode,
                             REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR);
                     dialog.show();
                 } else if (e instanceof UserRecoverableAuthException) {
@@ -307,7 +307,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Login if we have permission or get permission if we don't.
      *
-     * @sa gotPermission_accounts
+     * @see MainActivity#gotPermission_accounts()
      */
     public void loginHitMethod() {
         try {
