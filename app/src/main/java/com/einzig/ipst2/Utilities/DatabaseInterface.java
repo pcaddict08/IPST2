@@ -47,9 +47,10 @@ import java.util.Vector;
  */
 public class DatabaseInterface extends SQLiteOpenHelper {
     /** Database version */
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 0;
+    //TODO (Ryan): Replace hardcoded keys with string resources
     /** Database name */
-    private static final String DATABASE_NAME = "SubmissionDB4";
+    private static final String DATABASE_NAME = "IPSTSubmissionDB";
     /** Table key for portal name */
     private static final String KEY_NAME = "name";
     /** Table key for the date the portal was submitted */
