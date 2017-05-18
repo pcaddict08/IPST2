@@ -48,25 +48,15 @@ import android.widget.TextView;
 
 import com.einzig.ipst2.R;
 import com.einzig.ipst2.Utilities.EmailParseTask;
-import com.einzig.ipst2.Objects.PortalSubmission;
-import com.einzig.ipst2.Objects.SingletonClass;
-import com.einzig.ipst2.Utilities.OAuth2Authenticator;
-import com.einzig.ipst2.Utilities.Utilities;
 import com.google.android.gms.auth.GooglePlayServicesAvailabilityException;
 import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.sun.mail.imap.IMAPStore;
-import com.einzig.ipst2.R;
-import java.io.IOException;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.Locale;
 
 /**
@@ -170,7 +160,6 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    public void loginHitMethod() {
     /**
      * Display an error message dialog
      *
