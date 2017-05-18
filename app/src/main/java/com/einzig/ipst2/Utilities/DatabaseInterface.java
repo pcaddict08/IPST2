@@ -144,18 +144,38 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         db.close(); 
     }
 
+    /**
+     * Check if the database contains an accepted portal submission.
+     * @param portalPictureURL URL of the portal picture used to uniquely identify the portal.
+     * @return true if the database contains the portal, otherwise false.
+     */
     public boolean containsAccepted(String portalPictureURL) {
         return getAcceptedPortal(portalPictureURL) != null;
     }
 
+    /**
+     * Check if the database contains a pending portal submission.
+     * @param portalPictureURL URL of the portal picture used to uniquely identify the portal.
+     * @return true if the database contains the portal, otherwise false.
+     */
     public boolean containsPending(String portalPictureURL) {
         return getPendingPortal(portalPictureURL) != null;
     }
 
+    /**
+     * Check if the database contains a rejected portal submission.
+     * @param portalPictureURL URL of the portal picture used to uniquely identify the portal.
+     * @return true if the database contains the portal, otherwise false.
+     */
     public boolean containsRejected(String portalPictureURL) {
         return getRejectedPortal(portalPictureURL) != null;
     }
 
+    /**
+     * Create an instance of PortalAccepted from a database entry.
+     * @param cursor Cursor containing the database fields of the portal.
+     * @return a PortalAccepted representation of a portal in the database.
+     */
     private PortalAccepted createPortalAccepted(Cursor cursor) {
         String name, pictureURL, location, intelLink;
         Date submitted, responded;
@@ -168,6 +188,11 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         return new PortalAccepted(name, submitted, pictureURL, responded, location, intelLink);
     }
 
+    /**
+     * Create an instance of PortalSubmission from a database entry.
+     * @param cursor Cursor containing the database fields of the portal.
+     * @return a PortalSubmission representation of a portal in the database.
+     */
     private PortalSubmission createPortalPending(Cursor cursor) {
         String name, pictureURL;
         Date dateSubmitted;
@@ -177,6 +202,11 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         return new PortalSubmission(name, dateSubmitted, pictureURL);
     }
 
+    /**
+     * Create an instance of PortalRejected from a database entry.
+     * @param cursor Cursor containing the database fields of the portal.
+     * @return a PortalRejected representation of a portal in the database.
+     */
     private PortalRejected createPortalRejected(Cursor cursor) {
         String name, pictureURL, reason;
         Date submitted, responded;
@@ -228,6 +258,10 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         return mySQLDateFormat.format(date);
     }
 
+    /**
+     * Helper function to remove a portal from the database.
+     * @param portal Portal to be removed from the database.
+     */
     public void delete(PortalSubmission portal) {
         if (portal instanceof PortalAccepted)
             deleteAccepted((PortalAccepted) portal);
@@ -281,6 +315,11 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         db.close();
     }
 
+    /**
+     * Get an accepted portal submission from the database.
+     * @param portalPictureURL URL of the portal picture used to uniquely identify the portal.
+     * @return a PortalAccepted representation of an accepted portal in the database.
+     */
     public PortalAccepted getAcceptedPortal(String portalPictureURL) {
         PortalAccepted portal;
         SQLiteDatabase db = getReadableDatabase();
@@ -316,6 +355,10 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         return portals;
     }
 
+    /**
+     * Get all portals from the database.
+     * @return all portals from the database.
+     */
     public Vector<PortalSubmission> getAllPortals() {
         Vector<PortalSubmission> portals = getAllPending();
         portals.addAll(getAllAccepted());
@@ -365,6 +408,10 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         return portals;
     }
 
+    /**
+     * Get the total number of portals in the database.
+     * @return the total number of portals in the database.
+     */
     public long getDatabaseSize() {
         SQLiteDatabase db = getReadableDatabase();
         long count = DatabaseUtils.queryNumEntries(db, TABLE_ACCEPTED);
@@ -373,6 +420,11 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         return count;
     }
 
+    /**
+     * Get a pending portal submission from the database.
+     * @param portalPictureURL URL of the portal picture used to uniquely identify the portal.
+     * @return a PortalSubmission representation of a pending portal in the database.
+     */
     public PortalSubmission getPendingPortal(String portalPictureURL) {
         Log.d(TAG, "Getting pending portal");
         PortalSubmission portal;
@@ -388,6 +440,11 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         return portal;
     }
 
+    /**
+     * Get a rejected portal submission from the database.
+     * @param portalPictureURL URL of the portal picture used to uniquely identify the portal.
+     * @return a PortalRejected representation of a rejected portal in the database.
+     */
     public PortalRejected getRejectedPortal(String portalPictureURL) {
         PortalRejected portal;
         SQLiteDatabase db = getReadableDatabase();
@@ -445,6 +502,11 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         return parse;
     }
 
+    /**
+     * Update a database entry for an accepted portal.
+     * @param portal PortalAccepted containing the new information.
+     * @param oldPortal PortalAccepted containing the old information to be updated.
+     */
     public void updateAccepted(PortalAccepted portal, PortalAccepted oldPortal) {
         Log.d(TAG, "Update portal: " + oldPortal.getName());
         SQLiteDatabase db = this.getWritableDatabase();
@@ -465,6 +527,11 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         db.close();
     }
 
+    /**
+     * Update a database entry for a pending portal.
+     * @param portal PortalSubmission containing the new information.
+     * @param oldPortal PortalSubmission containing the old information to be updated.
+     */
     public void updatePending(PortalSubmission portal, PortalSubmission oldPortal) {
         Log.d(TAG, "Update portal: " + oldPortal.getName());
         SQLiteDatabase db = this.getWritableDatabase();
@@ -479,6 +546,11 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         db.close();
     }
 
+    /**
+     * Update a database entry for a rejected portal.
+     * @param portal PortalRejected containing the new information.
+     * @param oldPortal PortalRejected containing the old information to be updated.
+     */
     public void updateRejected(PortalRejected portal, PortalRejected oldPortal) {
         Log.d(TAG, "Update portal: " + oldPortal.getName());
         SQLiteDatabase db = this.getWritableDatabase();
