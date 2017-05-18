@@ -37,7 +37,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -48,25 +47,15 @@ import android.widget.TextView;
 
 import com.einzig.ipst2.R;
 import com.einzig.ipst2.Utilities.EmailParseTask;
-import com.einzig.ipst2.Objects.PortalSubmission;
-import com.einzig.ipst2.Objects.SingletonClass;
-import com.einzig.ipst2.Utilities.OAuth2Authenticator;
-import com.einzig.ipst2.Utilities.Utilities;
 import com.google.android.gms.auth.GooglePlayServicesAvailabilityException;
 import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.sun.mail.imap.IMAPStore;
-import com.einzig.ipst2.R;
-import java.io.IOException;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.Locale;
 
 /**
@@ -81,8 +70,6 @@ public class MainActivity extends AppCompatActivity {
     static public final String EXTRA_ACCOUNTNAME = "extra_accountname";
     /** Used to get the result of LoginActivity */
     static private final int LOGIN_ACTIVITY_CODE = 0;
-    /** I don't know what this is for */
-    static private final String SCOPE = "oauth2:https://www.googleapis.com/auth/userinfo.profile";
     /** Tag used for logging for this class */
     static private final String TAG = "IPST:MainActivity";
 
@@ -152,25 +139,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.settings_mainactivity:
-                startActivity(new Intent(this, SettingsActivity.class));
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_mainactivity, menu);
-        return true;
-    }
-
-    public void loginHitMethod() {
     /**
      * Display an error message dialog
      *
@@ -318,7 +286,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Login if we have permission or get permission if we don't.
      *
-     * @sa gotPermission_accounts
+     * @see MainActivity.gotPermission_accounts()
      */
     public void loginHitMethod() {
         try {
@@ -386,6 +354,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_mainactivity, menu);
+        return true;
+    }
+
     /**
      * Update the mostRecentDate preference after email has been parsed.
      */
@@ -395,6 +370,17 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(MOST_RECENT_DATE_KEY, dateString);
         editor.apply();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.settings_mainactivity:
+                startActivity(new Intent(this, SettingsActivity.class));
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     // TODO (Ryan): Look into how this works
