@@ -68,6 +68,20 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity {
     /** ??? */
     static public final String EXTRA_ACCOUNTNAME = "extra_accountname";
+    /** String key used for saving and retrieving the user's email address */
+    static public final String EMAIL_KEY = "email";
+    /** String key for sending date through Bundle */
+    static public final String MOST_RECENT_DATE_KEY = "recentDate";
+    /** Used for the default key when something is uninitialized */
+    static public final String NULL_KEY = "uninitialized";
+    /** String key for sending a portal through a bundle */
+    static public final String PORTAL_KEY = "portal";
+    /** String key for sending a portal list through Bundle */
+    static public final String PORTAL_LIST_KEY = "portalList";
+    /** The PortalSubmission being combined with a PortalResponded */
+    static public final String PORTAL_SUBMISSION_KEY = "portalSubmission";
+    /** The key for saving portal submission sort preference */
+    static public final String SORT_KEY = "sort";
     /** Used to get the result of LoginActivity */
     static private final int LOGIN_ACTIVITY_CODE = 0;
     /** Tag used for logging for this class */
@@ -75,21 +89,6 @@ public class MainActivity extends AppCompatActivity {
 
     static final int REQUEST_CODE_EMAIL = 1;
     static final int REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR = 1002;
-
-    /** String key used for saving and retrieving the user's email address */
-    public final String EMAIL_KEY = getString(R.string.emailKey);
-    /** String key for sending date through Bundle */
-    public final String MOST_RECENT_DATE_KEY = getString(R.string.recentDateKey);
-    /** Used for the default key when something is uninitialized */
-    public final String NULL_KEY = getString(R.string.nullKey);
-    /** String key for sending a portal through a bundle */
-    public final String PORTAL_KEY = getString(R.string.portalKey);
-    /** String key for sending a portal list through Bundle */
-    public final String PORTAL_LIST_KEY = getString(R.string.portalListKey);
-    /** The PortalSubmission being combined with a PortalResponded */
-    public final String PORTAL_SUBMISSION_KEY = getString(R.string.portalSubmissionKey);
-    /** The key for saving portal submission sort preference */
-    public final String SORT_KEY = getString(R.string.sortKey);
 
     /** Last date that email was parsed */
     private Date mostRecentDate;
