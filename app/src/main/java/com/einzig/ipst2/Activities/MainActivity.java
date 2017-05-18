@@ -250,7 +250,7 @@ public class MainActivity extends AppCompatActivity {
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
                 alertDialogBuilder.setTitle("No Accounts");
                 alertDialogBuilder
-                        .setMessage("You have no google accounts on your device")//.  Would you like to log in manually?")
+                        .setMessage("You have no Google accounts on your device")//.  Would you like to log in manually?")
                         .setCancelable(true)
                         .setNeutralButton("Ok", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
