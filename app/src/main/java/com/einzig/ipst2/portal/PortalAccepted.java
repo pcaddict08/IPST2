@@ -48,12 +48,13 @@ public class PortalAccepted extends PortalResponded {
         }
     };
 
+    /** URL that points to the portal on the Ingress Intel site. */
     private String intelLinkURL;
+    /** Real-world address of the portal */
     private String liveAddress;
 
     /**
      * Create a new PortalAccepted.
-     *
      * @param name The name of the portal.
      * @param dateSubmitted The date the portal was submitted.
      * @param pictureURL The URL of the portal submission picture.
@@ -66,20 +67,37 @@ public class PortalAccepted extends PortalResponded {
         this.liveAddress = liveAddress;
     }
 
+    /**
+     * Create a new PortalAccepted from a Parcel.
+     * @param in Parcel that contains the PortalAccepted.
+     */
     protected PortalAccepted(Parcel in) {
         super(in);
         intelLinkURL = in.readString();
         liveAddress = in.readString();
     }
 
+    /**
+     * Get the URL to the portal on the Ingress Intel site.
+     * @return URL to the portal on the Ingress Intel site.
+     */
     public String getIntelLinkURL() {
         return intelLinkURL;
     }
 
+    /**
+     * Get the real-world address of the portal.
+     * @return real-world address of the portal.
+     */
     public String getLiveAddress() {
         return liveAddress;
     }
 
+    /*
+     * Convert the portal to a Parcel.
+     * Uses the C paradigm of passing the Parcel as an argument and modifying it instead of
+     * returning a Parcel object.
+     */
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);

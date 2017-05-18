@@ -52,6 +52,10 @@ public abstract class PortalResponded extends PortalSubmission {
         this.dateResponded = dateResponded;
     }
 
+    /**
+     * Create a new PortalResponded from a Parcel.
+     * @param in Parcel that contains the PortalResponded.
+     */
     protected PortalResponded(Parcel in) {
         super(in);
         dateResponded = (Date) in.readSerializable();
@@ -70,6 +74,11 @@ public abstract class PortalResponded extends PortalSubmission {
         return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
     }
 
+    /*
+     * Convert the portal to a Parcel.
+     * Uses the C paradigm of passing the Parcel as an argument and modifying it instead of
+     * returning a Parcel object.
+     */
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);

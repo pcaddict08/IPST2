@@ -33,6 +33,8 @@ import java.util.Date;
  * @since 2015-07-24
  */
 public class PortalRejected extends PortalResponded {
+    private static final long serialVersionUID = 622210508012331815L;
+
     /**
      * Inflates a PortalSubmission from a Parcel
      */
@@ -47,11 +49,6 @@ public class PortalRejected extends PortalResponded {
             return new PortalRejected[size];
         }
     };
-
-    /**
-     *
-     */
-    private static final long serialVersionUID = 622210508012331815L;
 
     /**
      * The reason Niantic gave for the portal being rejected.
@@ -72,6 +69,10 @@ public class PortalRejected extends PortalResponded {
         this.rejectionReason = rejectionReason;
     }
 
+    /**
+     * Create a new PortalRejected from a Parcel.
+     * @param in Parcel that contains the PortalRejected.
+     */
     protected PortalRejected(Parcel in) {
         super(in);
         rejectionReason = in.readString();
@@ -85,6 +86,11 @@ public class PortalRejected extends PortalResponded {
         return this.rejectionReason;
     }
 
+    /*
+     * Convert the portal to a Parcel.
+     * Uses the C paradigm of passing the Parcel as an argument and modifying it instead of
+     * returning a Parcel object.
+     */
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);

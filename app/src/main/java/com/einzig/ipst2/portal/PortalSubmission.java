@@ -30,6 +30,8 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class PortalSubmission implements Parcelable, Serializable {
+    private static final long serialVersionUID = -223108874747293680L;
+
     /**
      * Inflates a PortalSubmission from a Parcel
      */
@@ -46,25 +48,17 @@ public class PortalSubmission implements Parcelable, Serializable {
     };
 
     /**
-     * Serializable version string
-     */
-    private static final long serialVersionUID = -223108874747293680L;
-
-    /**
      * The name of the portal.
-     *
      * @serial
      */
     private String name;
     /**
      * The date the portal was submitted.
-     *
      * @serial
      */
     private Date dateSubmitted;
     /**
      * The URL that links to the submission picture.
-     *
      * @serial
      */
     private String pictureURL;
@@ -82,12 +76,19 @@ public class PortalSubmission implements Parcelable, Serializable {
         this.pictureURL = pictureURL;
     }
 
+    /**
+     * Create a new PortalSubmission from a Parcel.
+     * @param in Parcel that contains the PortalSubmission.
+     */
     protected PortalSubmission(Parcel in) {
         name = in.readString();
         dateSubmitted = (Date) in.readSerializable();
         pictureURL = in.readString();
     }
 
+    /*
+     * No idea what this does
+     */
     @Override
     public int describeContents() {
         return 0;
@@ -95,7 +96,6 @@ public class PortalSubmission implements Parcelable, Serializable {
 
     /**
      * Check if two PortalSubmissions are the same.
-     *
      * @param submission The submission being compared.
      * @return @c true if the two portal submissions are the same, otherwise false.
      */
@@ -143,6 +143,11 @@ public class PortalSubmission implements Parcelable, Serializable {
         this.name = name;
     }
 
+    /*
+     * Convert the portal to a Parcel.
+     * Uses the C paradigm of passing the Parcel as an argument and modifying it instead of
+     * returning a Parcel object.
+     */
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
