@@ -41,14 +41,28 @@ import java.util.concurrent.CountDownLatch;
 class AuthToken implements AccountManagerCallback<Bundle> {
 	private static final String TAG = "IPST:AuthToken";
 
+    /**
+     * Latch used for multithreading safety so token isn't returned from getToken before it's been
+     * acquired.
+     */
     private CountDownLatch latch;
+    /** Token used to access email */
 	private String token;
 
+    /**
+     * Create an AuthToken container class to get an AuthToken for accessing GMail.
+     */
     public AuthToken() {
         latch = new CountDownLatch(1);
         Log.d(TAG, "Creating a new AuthToken");
     }
 
+    /**
+     * Get AuthToken for accessing GMail after it has been acquired asynchronously in run().
+     * Uses a CountdownLatch to ensure thread safety.
+     * @return AuthToken for accessing GMail.
+     * @sa run
+     */
     public String getToken() {
         Log.d(TAG, "Getting token");
         try {
@@ -59,6 +73,12 @@ class AuthToken implements AccountManagerCallback<Bundle> {
         return token;
     }
 
+    /*
+     * Get the AuthToken from the AccountManager.
+     * After the token has been acquired count down the latch so that the token can be returned from
+     * getToken().
+     * @sa getToken
+     */
     @Override
     public void run(AccountManagerFuture<Bundle> result) {
         Log.d(TAG, "Running AuthToken");
