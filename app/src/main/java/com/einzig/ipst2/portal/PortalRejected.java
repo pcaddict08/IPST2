@@ -53,7 +53,7 @@ public class PortalRejected extends PortalResponded {
     /**
      * The reason Niantic gave for the portal being rejected.
      */
-    private String rejectionReason;
+    private final String rejectionReason;
 
     /**
      * Create a new PortalRejected.
@@ -73,7 +73,7 @@ public class PortalRejected extends PortalResponded {
      * Create a new PortalRejected from a Parcel.
      * @param in Parcel that contains the PortalRejected.
      */
-    protected PortalRejected(Parcel in) {
+    private PortalRejected(Parcel in) {
         super(in);
         rejectionReason = in.readString();
     }

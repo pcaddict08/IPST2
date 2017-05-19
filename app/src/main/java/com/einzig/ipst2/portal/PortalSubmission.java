@@ -51,7 +51,7 @@ public class PortalSubmission implements Parcelable, Serializable {
      * The name of the portal.
      * @serial
      */
-    private String name;
+    private final String name;
     /**
      * The date the portal was submitted.
      * @serial
@@ -61,7 +61,7 @@ public class PortalSubmission implements Parcelable, Serializable {
      * The URL that links to the submission picture.
      * @serial
      */
-    private String pictureURL;
+    private final String pictureURL;
 
     /**
      * Create a new PortalSubmission.
@@ -80,7 +80,7 @@ public class PortalSubmission implements Parcelable, Serializable {
      * Create a new PortalSubmission from a Parcel.
      * @param in Parcel that contains the PortalSubmission.
      */
-    protected PortalSubmission(Parcel in) {
+    PortalSubmission(Parcel in) {
         name = in.readString();
         dateSubmitted = (Date) in.readSerializable();
         pictureURL = in.readString();
@@ -133,14 +133,6 @@ public class PortalSubmission implements Parcelable, Serializable {
      */
     public void setDateSubmitted(Date dateSubmitted) {
         this.dateSubmitted = dateSubmitted;
-    }
-
-    /**
-     * Change the name of the portal.
-     * @param name The new name of the portal.
-     */
-    public void setName(String name) {
-        this.name = name;
     }
 
     /*

@@ -49,9 +49,9 @@ public class PortalAccepted extends PortalResponded {
     };
 
     /** URL that points to the portal on the Ingress Intel site. */
-    private String intelLinkURL;
+    private final String intelLinkURL;
     /** Real-world address of the portal */
-    private String liveAddress;
+    private final String liveAddress;
 
     /**
      * Create a new PortalAccepted.
@@ -71,7 +71,7 @@ public class PortalAccepted extends PortalResponded {
      * Create a new PortalAccepted from a Parcel.
      * @param in Parcel that contains the PortalAccepted.
      */
-    protected PortalAccepted(Parcel in) {
+    private PortalAccepted(Parcel in) {
         super(in);
         intelLinkURL = in.readString();
         liveAddress = in.readString();

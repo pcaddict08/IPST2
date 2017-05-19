@@ -37,7 +37,7 @@ public abstract class PortalResponded extends PortalSubmission {
     /**
      * The date that Niantic approved or denied the portal.
      */
-    private Date dateResponded;
+    private final Date dateResponded;
 
     /**
      * Create a new PortalResponded.
@@ -47,7 +47,7 @@ public abstract class PortalResponded extends PortalSubmission {
      * @param pictureURL The URL of the portal submission picture.
      * @param dateResponded The date that Niantic approved or denied the portal.
      */
-    public PortalResponded(String name, Date dateSubmitted, String pictureURL, Date dateResponded) {
+    PortalResponded(String name, Date dateSubmitted, String pictureURL, Date dateResponded) {
         super(name, dateSubmitted, pictureURL);
         this.dateResponded = dateResponded;
     }
@@ -56,7 +56,7 @@ public abstract class PortalResponded extends PortalSubmission {
      * Create a new PortalResponded from a Parcel.
      * @param in Parcel that contains the PortalResponded.
      */
-    protected PortalResponded(Parcel in) {
+    PortalResponded(Parcel in) {
         super(in);
         dateResponded = (Date) in.readSerializable();
     }
