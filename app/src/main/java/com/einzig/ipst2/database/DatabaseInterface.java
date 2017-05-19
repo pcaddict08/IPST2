@@ -54,7 +54,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     /** The name of the table in containing pending portal submissions */
     static final String TABLE_PENDING = "pendingSubmissions";
     /** The name of the table in containing rejected portal submissions */
-    static final String TABLE_REJECTED = "RejectedSubmissions";
+    static final String TABLE_REJECTED = "rejectedSubmissions";
     /** Database version */
     static private final int DATABASE_VERSION = 0;
     /** Database name */
@@ -80,7 +80,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     /** Tag for logging */
     static private final String TAG = "IPST:Database";
     /** The date format that MySQL stores DATETIME objects in */
-    private SimpleDateFormat dateFormatter;
+    private final SimpleDateFormat dateFormatter;
 
     /**
      * Create a new DatabaseInterface to interact with the SQLite database for the application
@@ -375,7 +375,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         Vector<P> portals = null;
         try {
             Constructor<PortalBuilder<P>> ctor = c.getDeclaredConstructor(SimpleDateFormat.class, SQLiteDatabase.class);
-            PortalBuilder<P> b = ctor.newInstance(new Object[] {dateFormatter, db});
+            PortalBuilder<P> b = ctor.newInstance(dateFormatter, db);
             portals = b.getPortalsByDate(dateKey, fromDate, toDate);
         } catch (NoSuchMethodException e) {
             Log.e(TAG, "Couldn't get constructor\n" + e.toString());
@@ -567,7 +567,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      */
     public void updateAccepted(PortalAccepted portal, PortalAccepted oldPortal) {
         Log.d(TAG, "Update portal: " + oldPortal.getName());
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
         String dateSubmitted = dateFormatter.format(portal.getDateSubmitted());
         String dateResponded = dateFormatter.format(portal.getDateResponded());
@@ -592,7 +592,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      */
     public void updatePending(PortalSubmission portal, PortalSubmission oldPortal) {
         Log.d(TAG, "Update portal: " + oldPortal.getName());
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
 
         values.put(KEY_NAME, portal.getName());
@@ -611,7 +611,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      */
     public void updateRejected(PortalRejected portal, PortalRejected oldPortal) {
         Log.d(TAG, "Update portal: " + oldPortal.getName());
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
         String dateSubmitted = dateFormatter.format(portal.getDateSubmitted());
         String dateResponded = dateFormatter.format(portal.getDateResponded());
