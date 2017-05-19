@@ -1,31 +1,32 @@
-/* ********************************************************************************************** *
- * ********************************************************************************************** *
- *                                                                                                *
- * Copyright 2017 Steven Foskett, Jimmy Ho, Ryan Porterfield                                      *
- *                                                                                                *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software  *
- * and associated documentation files (the "Software"), to deal in the Software without           *
- * restriction, including without limitation the rights to use, copy, modify, merge, publish,     *
- * distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the  *
- * Software is furnished to do so, subject to the following conditions:                           *
- *                                                                                                *
- * The above copyright notice and this permission notice shall be included in all copies or       *
- * substantial portions of the Software.                                                          *
- *                                                                                                *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING  *
- * BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND     *
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,   *
- * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, *
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.        *
- *                                                                                                *
- * ********************************************************************************************** *
- * ********************************************************************************************** */
+/*
+ *  ********************************************************************************************** *
+ *  * ********************************************************************************************** *
+ *  *                                                                                                *
+ *  * Copyright 2017 Steven Foskett, Jimmy Ho, Ryan Porterfield                                      *
+ *  *                                                                                                *
+ *  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software  *
+ *  * and associated documentation files (the "Software"), to deal in the Software without           *
+ *  * restriction, including without limitation the rights to use, copy, modify, merge, publish,     *
+ *  * distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the  *
+ *  * Software is furnished to do so, subject to the following conditions:                           *
+ *  *                                                                                                *
+ *  * The above copyright notice and this permission notice shall be included in all copies or       *
+ *  * substantial portions of the Software.                                                          *
+ *  *                                                                                                *
+ *  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING  *
+ *  * BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND     *
+ *  * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,   *
+ *  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, *
+ *  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.        *
+ *  *                                                                                                *
+ *  * ********************************************************************************************** *
+ *  * **********************************************************************************************
+ */
 
-package com.einzig.ipst2.Utilities;
+package com.einzig.ipst2.database;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -35,6 +36,8 @@ import com.einzig.ipst2.portal.PortalAccepted;
 import com.einzig.ipst2.portal.PortalRejected;
 import com.einzig.ipst2.portal.PortalSubmission;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -47,9 +50,14 @@ import java.util.Vector;
  * @since 2017-05-18
  */
 public class DatabaseInterface extends SQLiteOpenHelper {
+    /** The name of the table in containing accepted portal submissions */
+    static final String TABLE_ACCEPTED = "acceptedSubmissions";
+    /** The name of the table in containing pending portal submissions */
+    static final String TABLE_PENDING = "pendingSubmissions";
+    /** The name of the table in containing rejected portal submissions */
+    static final String TABLE_REJECTED = "RejectedSubmissions";
     /** Database version */
     private static final int DATABASE_VERSION = 0;
-    //TODO (Ryan): Replace hardcoded keys with string resources
     /** Database name */
     private static final String DATABASE_NAME = "IPSTSubmissionDB";
     /** Table key for portal name */
@@ -70,21 +78,14 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     private static final String LEGACY_TABLE_SUBMISSIONS = "submissions";
     /** The name of the table in the second version of the database */
     private static final String LEGACY_TABLE_PORTAL_SUBMISSIONS = "portalSubmissions";
-    /** The name of the table in containing accepted portal submissions */
-    private static final String TABLE_ACCEPTED = "acceptedSubmissions";
-    /** The name of the table in containing pending portal submissions */
-    private static final String TABLE_PENDING = "pendingSubmissions";
-    /** The name of the table in containing rejected portal submissions */
-    private static final String TABLE_REJECTED = "RejectedSubmissions";
     /** Tag for logging */
     private static final String TAG = "IPST:Database";
-
     /** The date format that MySQL stores DATETIME objects in */
-    private SimpleDateFormat mySQLDateFormat;
+    private SimpleDateFormat dateFormatter;
 
     public DatabaseInterface(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        mySQLDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+        dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
     }
 
     /**
@@ -173,73 +174,6 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     }
 
     /**
-     * Create an instance of PortalAccepted from a database entry.
-     * @param cursor Cursor containing the database fields of the portal.
-     * @return a PortalAccepted representation of a portal in the database.
-     */
-    private PortalAccepted createPortalAccepted(Cursor cursor) {
-        String name, pictureURL, location, intelLink;
-        Date submitted, responded;
-        name = cursor.getString(0);
-        submitted = parseDate(cursor.getString(1));
-        pictureURL = cursor.getString(2);
-        responded = parseDate(cursor.getString(3));
-        location = cursor.getString(4);
-        intelLink = cursor.getString(5);
-        return new PortalAccepted(name, submitted, pictureURL, responded, location, intelLink);
-    }
-
-    /**
-     * Create a Vector of accepted portals from a database query string.
-     * @param query Complete query to be executed on the database
-     * @return Vector of accepted portals from a database query string.
-     */
-    private Vector<PortalAccepted> createPortalListFromQuery(String query) {
-        Vector<PortalAccepted> portals = new Vector<>();
-        SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.rawQuery(query, null);
-        if (cursor.getCount() < 1)    // return empty list
-            return portals;
-        cursor.moveToFirst();
-        do {
-            portals.add(createPortalAccepted(cursor));
-        } while (cursor.moveToNext());
-        cursor.close();
-        db.close();
-        return portals;
-    }
-
-    /**
-     * Create an instance of PortalSubmission from a database entry.
-     * @param cursor Cursor containing the database fields of the portal.
-     * @return a PortalSubmission representation of a portal in the database.
-     */
-    private PortalSubmission createPortalPending(Cursor cursor) {
-        String name, pictureURL;
-        Date dateSubmitted;
-        name = cursor.getString(0);
-        dateSubmitted = parseDate(cursor.getString(1));
-        pictureURL = cursor.getString(2);
-        return new PortalSubmission(name, dateSubmitted, pictureURL);
-    }
-
-    /**
-     * Create an instance of PortalRejected from a database entry.
-     * @param cursor Cursor containing the database fields of the portal.
-     * @return a PortalRejected representation of a portal in the database.
-     */
-    private PortalRejected createPortalRejected(Cursor cursor) {
-        String name, pictureURL, reason;
-        Date submitted, responded;
-        name = cursor.getString(0);
-        submitted = parseDate(cursor.getString(1));
-        pictureURL = cursor.getString(2);
-        responded = parseDate(cursor.getString(3));
-        reason = cursor.getString(4);
-        return new PortalRejected(name, submitted, pictureURL, responded, reason);
-    }
-
-    /**
      * Create a table in the database
      * @param tableName The name of the table.
      * @param optionalKeys Any keys in addition to the 3 default keys in the table.
@@ -276,7 +210,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      * @return A formatted string representation of the date.
      */
     private String dateToString(Date date) {
-        return mySQLDateFormat.format(date);
+        return dateFormatter.format(date);
     }
 
     /**
@@ -342,17 +276,11 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      * @return a PortalAccepted representation of an accepted portal in the database.
      */
     public PortalAccepted getAcceptedPortal(String portalPictureURL) {
-        PortalAccepted portal;
         SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.query(TABLE_ACCEPTED, null,
-                KEY_PICTURE_URL + " = ?", new String[]{portalPictureURL}, null, null, null, null);
-        if (cursor.getCount() < 1)    // Portal doesn't exist
-            return null;
-        cursor.moveToFirst();
-        portal = createPortalAccepted(cursor);
-        cursor.close();
+        PortalAcceptedBuilder b = new PortalAcceptedBuilder(dateFormatter, db);
+        PortalAccepted p = b.getPortal(KEY_PICTURE_URL + " = ?", new String[]{portalPictureURL});
         db.close();
-        return portal;
+        return p;
     }
 
     /**
@@ -361,8 +289,11 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      */
     public Vector<PortalAccepted> getAllAccepted() {
         Log.d(TAG, "Get all accepted portals");
-        String query = "SELECT * FROM " + TABLE_ACCEPTED + ";";
-        return createPortalListFromQuery(query);
+        SQLiteDatabase db = getReadableDatabase();
+        PortalAcceptedBuilder b = new PortalAcceptedBuilder(dateFormatter, db);
+        Vector<PortalAccepted> portals = b.getPortals(null, null);
+        db.close();
+        return portals;
     }
 
     /**
@@ -381,7 +312,6 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      * @return Vector of all accepted portals which went live in between a range of days.
      */
     public Vector<PortalAccepted> getAllAcceptedByResponseDate(Date fromDate, Date toDate) {
-        Log.d(TAG, "Get all accepted portals within date range");
         return getAllAcceptedByDate(KEY_DATE_RESPONDED, fromDate, toDate);
     }
 
@@ -401,16 +331,25 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      * @return Vector of all accepted portals which were submitted in between a range of days.
      */
     public Vector<PortalAccepted> getAllAcceptedBySubmissionDate(Date fromDate, Date toDate) {
-        Log.d(TAG, "Get all accepted portals within date range");
         return getAllAcceptedByDate(KEY_DATE_SUBMITTED, fromDate, toDate);
     }
 
+    /**
+     * Helper function getAllAcceptedBySubmissionDate and getAllAcceptedBy
+     * @param dateKey Database key used for searching. Can be either KEY_DATE_SUBMITTED or
+     *                KEY_DATE_RESPONDED
+     * @param fromDate Date to start searching from
+     * @param toDate Date to stop searching at
+     * @return Vector of accepted portals which were either submitted or approved from fromDate to
+     *         toDate.
+     */
     private Vector<PortalAccepted> getAllAcceptedByDate(String dateKey, Date fromDate, Date toDate) {
-        String dateRangeLogStr = mySQLDateFormat.format(fromDate) + " AND ";
-        dateRangeLogStr += mySQLDateFormat.format(toDate);
-        String query = "SELECT * FROM " + TABLE_ACCEPTED + " WHERE " + dateKey;
-        query += " BETWEEN " + dateRangeLogStr + ";";
-        return createPortalListFromQuery(query);
+        Log.d(TAG, "Getting all accepted portals within date range");
+        SQLiteDatabase db = getReadableDatabase();
+        PortalAcceptedBuilder b = new PortalAcceptedBuilder(dateFormatter, db);
+        Vector<PortalAccepted> portals = b.getPortalsByDate(dateKey, fromDate, toDate);
+        db.close();
+        return portals;
     }
 
     /**
@@ -425,50 +364,156 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     }
 
     /**
-     * Gets an ArrayList of all pending portal submissions.
-     * @return a list of all pending portal submissions.
+     * Just to prove I could. For the love of Cthulhu don't call this ever. Please.
+     *
+     * Theoretically this would replace getAllAcceptedByDate, getAllPendingByDate and
+     * getAllRejectedByDate. This follows the DRY (Don't Repeat Yourself) programming paradigm and
+     * makes testing and debugging easier. If you have to make a change to one of the methods this
+     * replaces, you have to be sure to change all of them. With this method you only have to change
+     * it here, once. However, it breaks the KISS (Keep It Simple Stupid) programming paradigm, and
+     * it's basically impossible for anyone else to figure out what the hell is going on here.
+     *
+     * For example, getAllAcceptedBySubmissionDate would instead call:
+     *      getAllPortalsByDate(PortalAcceptedBuilder.class, KEY_DATE_SUBMITTED, fromDate, toDate);
+     * getAllPendingByDate would call:
+     *      getAllPortalsByDate(PortalSubmissionBuilder.class, KEY_DATE_SUBMITTED, fromDate, toDate);
+     * and getAllRejectedByResponseDate would call:
+     *      getAllPortalsByDate(PortalRejectedBuilder.class, KEY_DATE_RESPONDED, fromDate, toDate);
+     *
+     * @param c Class of PortalBuilder to instantiate
+     * @param dateKey Database key used for searching. Can be either KEY_DATE_SUBMITTED or
+     *                KEY_DATE_RESPONDED
+     * @param fromDate Date to start searching from
+     * @param toDate Date to stop searching at
+     * @param <P> Subclass of PortalSubmission being returned
+     * @return Vector of portals (either accepted, pending, or rejected) which were either submitted
+     * or approved/rejected in between fromDate and toDate.
      */
-    public Vector<PortalSubmission> getAllPending() {
-        Log.d(TAG, "Get all pending portals");
-        Vector<PortalSubmission> submissions = new Vector<>();
-        String query = "SELECT  * FROM " + TABLE_PENDING;
+    private <P extends PortalSubmission> Vector<P> getAllPortalsByDate(Class<PortalBuilder<P>> c, String dateKey, Date fromDate, Date toDate) {
         SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.rawQuery(query, null);
-        if (cursor.getCount() < 1)    // return empty list
-            return submissions;
-        cursor.moveToFirst();
-        do {
-            submissions.add(createPortalPending(cursor));
-        } while (cursor.moveToNext());
-        cursor.close();
-        db.close();
-        return submissions;
-    }
-
-    /**
-     * Gets an ArrayList of all rejected portal submissions.
-     * @return a list of all rejected portal submissions.
-     */
-    public Vector<PortalRejected> getAllRejected() {
-        Log.d(TAG, "Get all rejected portals");
-        Vector<PortalRejected> portals = new Vector<>();
-        String query = "SELECT * FROM " + TABLE_REJECTED;
-        SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.rawQuery(query, null);
-        if (cursor.getCount() < 1)    // return empty list
-            return portals;
-        cursor.moveToFirst();
-        do {
-            portals.add(createPortalRejected(cursor));
-        } while (cursor.moveToNext());
-        cursor.close();
+        Vector<P> portals = null;
+        try {
+            Constructor<PortalBuilder<P>> ctor = c.getDeclaredConstructor(SimpleDateFormat.class, SQLiteDatabase.class);
+            PortalBuilder<P> b = ctor.newInstance(new Object[] {dateFormatter, db});
+            portals = b.getPortalsByDate(dateKey, fromDate, toDate);
+        } catch (NoSuchMethodException e) {
+            Log.e(TAG, "Couldn't get constructor\n" + e.toString());
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
+            Log.e(TAG, "Couldn't instantiate PortalBuilder\n" + e.toString());
+        }
         db.close();
         return portals;
     }
 
     /**
-     * Get the total number of portals in the database.
-     * @return the total number of portals in the database.
+     * Gets a Vector of all pending portal submissions
+     * @return Vector of all pending portal submissions
+     */
+    public Vector<PortalSubmission> getAllPending() {
+        Log.d(TAG, "Get all pending portals");
+        SQLiteDatabase db = getReadableDatabase();
+        PortalSubmissionBuilder b = new PortalSubmissionBuilder(dateFormatter, db);
+        Vector<PortalSubmission> portals = b.getPortals(null, null);
+        db.close();
+        return portals;
+    }
+
+    /**
+     * Get all pending portal submissions which were submitted between fromDate and toDate
+     * @param fromDate Date to start searching from
+     * @param toDate Date to stop searching at
+     * @return Vector of pending portals which were submitted between fromDate and toDate
+     */
+    public Vector<PortalSubmission> getAllPendingByDate(Date fromDate, Date toDate) {
+        Log.d(TAG, "Getting all pending portals in a date range");
+        SQLiteDatabase db = getReadableDatabase();
+        PortalSubmissionBuilder b = new PortalSubmissionBuilder(dateFormatter, db);
+        Vector<PortalSubmission> portals = b.getPortalsByDate(KEY_DATE_SUBMITTED, fromDate, toDate);
+        db.close();
+        return portals;
+    }
+
+    /**
+     * Get all pending portal submissions which were submitted since fromDate
+     * @param fromDate Date to start searching from
+     * @return Vector of all pending portals which were submitted after a fromDate
+     */
+    public Vector<PortalSubmission> getAllPendingByDate(Date fromDate) {
+        return getAllPendingByDate(fromDate, Calendar.getInstance().getTime());
+    }
+
+    /**
+     * Gets a Vector of all rejected portal submissions
+     * @return Vector of all rejected portal submissions
+     */
+    public Vector<PortalRejected> getAllRejected() {
+        Log.d(TAG, "Get all rejected portals");
+        SQLiteDatabase db = getReadableDatabase();
+        PortalRejectedBuilder b = new PortalRejectedBuilder(dateFormatter, db);
+        Vector<PortalRejected> portals = b.getPortals(null, null);
+        db.close();
+        return portals;
+    }
+
+    /**
+     * Get a Vector of all rejected portals which went live after a certain date
+     * @param fromDate Date to start searching from
+     * @return Vector of all rejected portals which went live after a certain date
+     */
+    public Vector<PortalRejected> getAllRejectedByResponseDate(Date fromDate) {
+        return getAllRejectedByResponseDate(fromDate, Calendar.getInstance().getTime());
+    }
+
+    /**
+     * Get a Vector of all rejected portals which went live in between a range of days
+     * @param fromDate Date to start searching from
+     * @param toDate Date to stop searching at
+     * @return Vector of all rejected portals which went live in between a range of days
+     */
+    public Vector<PortalRejected> getAllRejectedByResponseDate(Date fromDate, Date toDate) {
+        return getAllRejectedByDate(KEY_DATE_RESPONDED, fromDate, toDate);
+    }
+
+    /**
+     * Get a Vector of all rejected portals which were submitted after a certain date
+     * @param fromDate Date to start searching from
+     * @return Vector of all rejected portals which were submitted after a certain date
+     */
+    public Vector<PortalRejected> getAllRejectedBySubmissionDate(Date fromDate) {
+        return getAllRejectedBySubmissionDate(fromDate, Calendar.getInstance().getTime());
+    }
+
+    /**
+     * Get a Vector of all rejected portals which were submitted in between a range of days
+     * @param fromDate Date to start searching from
+     * @param toDate Date to stop searching at
+     * @return Vector of all rejected portals which were submitted in between a range of days
+     */
+    public Vector<PortalRejected> getAllRejectedBySubmissionDate(Date fromDate, Date toDate) {
+        return getAllRejectedByDate(KEY_DATE_SUBMITTED, fromDate, toDate);
+    }
+
+    /**
+     * Helper function getAllAcceptedBySubmissionDate and getAllAcceptedBy
+     * @param dateKey Database key used for searching. Can be either KEY_DATE_SUBMITTED or
+     *                KEY_DATE_RESPONDED
+     * @param fromDate Date to start searching from
+     * @param toDate Date to stop searching at
+     * @return Vector of rejected portals which were either submitted or approved from fromDate to
+     *         toDate.
+     */
+    private Vector<PortalRejected> getAllRejectedByDate(String dateKey, Date fromDate, Date toDate) {
+        Log.d(TAG, "Getting all rejected portals within date range");
+        SQLiteDatabase db = getReadableDatabase();
+        PortalRejectedBuilder b = new PortalRejectedBuilder(dateFormatter, db);
+        Vector<PortalRejected> portals = b.getPortalsByDate(dateKey, fromDate, toDate);
+        db.close();
+        return portals;
+    }
+
+    /**
+     * Get the total number of portals in the database
+     * @return the total number of portals in the database
      */
     public long getDatabaseSize() {
         SQLiteDatabase db = getReadableDatabase();
@@ -479,47 +524,36 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     }
 
     /**
-     * Get a pending portal submission from the database.
-     * @param portalPictureURL URL of the portal picture used to uniquely identify the portal.
-     * @return a PortalSubmission representation of a pending portal in the database.
+     * Get a pending portal submission from the database
+     * @param portalPictureURL URL of the portal picture used to uniquely identify the portal
+     * @return a PortalSubmission representation of a pending portal in the database
      */
     public PortalSubmission getPendingPortal(String portalPictureURL) {
         Log.d(TAG, "Getting pending portal");
-        PortalSubmission portal;
         SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.query(TABLE_PENDING, null,
-                KEY_PICTURE_URL + " = ?", new String[]{portalPictureURL}, null, null, null, null);
-        if (cursor.getCount() < 1)    // Portal doesn't exist
-            return null;
-        cursor.moveToFirst();
-        portal = createPortalPending(cursor);
-        cursor.close();
+        PortalSubmissionBuilder b = new PortalSubmissionBuilder(dateFormatter, db);
+        PortalSubmission p = b.getPortal(KEY_PICTURE_URL + " = ?", new String[]{portalPictureURL});
         db.close();
-        return portal;
+        return p;
     }
 
     /**
-     * Get a rejected portal submission from the database.
-     * @param portalPictureURL URL of the portal picture used to uniquely identify the portal.
-     * @return a PortalRejected representation of a rejected portal in the database.
+     * Get a rejected portal submission from the database
+     * @param portalPictureURL URL of the portal picture used to uniquely identify the portal
+     * @return a PortalRejected representation of a rejected portal in the database
      */
     public PortalRejected getRejectedPortal(String portalPictureURL) {
-        PortalRejected portal;
+        Log.d(TAG, "Getting rejected portal");
         SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.query(TABLE_ACCEPTED, null,
-                KEY_PICTURE_URL + " = ?", new String[]{portalPictureURL}, null, null, null, null);
-        if (cursor.getCount() < 1)    // Portal doesn't exist
-            return null;
-        cursor.moveToFirst();
-        portal = createPortalRejected(cursor);
-        cursor.close();
+        PortalRejectedBuilder b = new PortalRejectedBuilder(dateFormatter, db);
+        PortalRejected p = b.getPortal(KEY_PICTURE_URL + " = ?", new String[]{portalPictureURL});
         db.close();
-        return portal;
+        return p;
     }
 
     /**
-     * Create tables in the database.
-     * @param db A reference to the SQLiteDatabase object used by the app.
+     * Create tables in the database
+     * @param db A reference to the SQLiteDatabase object used by the app
      */
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -529,11 +563,11 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     }
 
     /**
-     * Delete the old tables from the database and create the new tables.
+     * Delete the old tables from the database and create the new tables
      *
-     * @param db A reference to the SQLiteDatabase object used by the app.
-     * @param oldVersion The current version of the database.
-     * @param newVersion The new version of the database.
+     * @param db A reference to the SQLiteDatabase object used by the app
+     * @param oldVersion The current version of the database
+     * @param newVersion The new version of the database
      */
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -546,14 +580,14 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     }
 
     /**
-     * Parse a String to a Date.
+     * Parse a String to a Date
      * @param dateString The date in ISO format yyyy-MM-dd HH:mm:ss
-     * @return a Date object representing the date that dateString contained.
+     * @return a Date object representing the date that dateString contained
      */
     private Date parseDate(String dateString) {
         Date parse;
         try {
-            parse = mySQLDateFormat.parse(dateString);
+            parse = dateFormatter.parse(dateString);
         } catch (ParseException e) {
             parse = new Date();
         }
@@ -561,9 +595,9 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     }
 
     /**
-     * Update a database entry for an accepted portal.
-     * @param portal PortalAccepted containing the new information.
-     * @param oldPortal PortalAccepted containing the old information to be updated.
+     * Update a database entry for an accepted portal
+     * @param portal PortalAccepted containing the new information
+     * @param oldPortal PortalAccepted containing the old information to be updated
      */
     public void updateAccepted(PortalAccepted portal, PortalAccepted oldPortal) {
         Log.d(TAG, "Update portal: " + oldPortal.getName());
@@ -586,9 +620,9 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     }
 
     /**
-     * Update a database entry for a pending portal.
-     * @param portal PortalSubmission containing the new information.
-     * @param oldPortal PortalSubmission containing the old information to be updated.
+     * Update a database entry for a pending portal
+     * @param portal PortalSubmission containing the new information
+     * @param oldPortal PortalSubmission containing the old information to be updated
      */
     public void updatePending(PortalSubmission portal, PortalSubmission oldPortal) {
         Log.d(TAG, "Update portal: " + oldPortal.getName());
@@ -596,7 +630,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
 
         values.put(KEY_NAME, portal.getName());
-        values.put(KEY_DATE_SUBMITTED, mySQLDateFormat.format(portal.getDateSubmitted()));
+        values.put(KEY_DATE_SUBMITTED, dateFormatter.format(portal.getDateSubmitted()));
         values.put(KEY_PICTURE_URL, portal.getPictureURL());
 
         db.update(TABLE_PENDING, values, KEY_PICTURE_URL + " = ?",
@@ -605,9 +639,9 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     }
 
     /**
-     * Update a database entry for a rejected portal.
-     * @param portal PortalRejected containing the new information.
-     * @param oldPortal PortalRejected containing the old information to be updated.
+     * Update a database entry for a rejected portal
+     * @param portal PortalRejected containing the new information
+     * @param oldPortal PortalRejected containing the old information to be updated
      */
     public void updateRejected(PortalRejected portal, PortalRejected oldPortal) {
         Log.d(TAG, "Update portal: " + oldPortal.getName());
