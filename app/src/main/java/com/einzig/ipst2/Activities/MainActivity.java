@@ -299,8 +299,6 @@ public class MainActivity extends AppCompatActivity {
                     == PackageManager.PERMISSION_GRANTED) {
                 gotPermission_accounts();
             } else {
-                /*  TODO (Steven): The user may have to close and reopen the app here
-                 *  since we're not doing anything after getting permission */
                 ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.GET_ACCOUNTS}, REQUEST_CODE_EMAIL);
             }
         } catch (Exception e) {

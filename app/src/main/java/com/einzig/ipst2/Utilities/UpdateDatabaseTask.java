@@ -126,6 +126,7 @@ public class UpdateDatabaseTask extends AsyncTask<Long, Long, Long> {
             e.printStackTrace();
         }
         Log.d(MainActivity.TAG, "Finished Updating Database");
+        Log.d(MainActivity.TAG, "Database size: " + db.getDatabaseSize());
     }
 
     private void publishProgress() {
