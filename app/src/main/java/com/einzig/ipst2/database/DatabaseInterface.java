@@ -73,10 +73,6 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     static private final String KEY_REJECTION_REASON = "rejectionReason";
     /** Table key for the URL to the submission picture */
     static private final String KEY_PICTURE_URL = "pictureURL";
-    /** The name of the table in the first version of the database */
-    static private final String LEGACY_TABLE_SUBMISSIONS = "submissions";
-    /** The name of the table in the second version of the database */
-    static private final String LEGACY_TABLE_PORTAL_SUBMISSIONS = "portalSubmissions";
     /** Tag for logging */
     static private final String TAG = "IPST:Database";
     /** The date format that MySQL stores DATETIME objects in */
@@ -552,12 +548,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      */
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Drop older books table if existed
-        db.execSQL("DROP TABLE IF EXISTS " + LEGACY_TABLE_SUBMISSIONS + ";");
-        db.execSQL("DROP TABLE IF EXISTS " + LEGACY_TABLE_PORTAL_SUBMISSIONS + ";");
-
-        // create fresh books table
-        this.onCreate(db);
+        // Don't need this yet
     }
 
     /**
