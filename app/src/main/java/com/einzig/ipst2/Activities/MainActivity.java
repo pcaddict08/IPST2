@@ -171,9 +171,12 @@ public class MainActivity extends AppCompatActivity {
         AccountManager manager = AccountManager.get(this);
         for(Account account: manager.getAccounts()) {
             Log.d(TAG, "Has account " + account.name);
-            if(account.name.equals(email) && account.type.equals("com.google"))
+            Log.d(TAG, "account name " + email);
+            Log.d(TAG, "account type " + account.type);
+            if(account.name.equalsIgnoreCase(email) && account.type.equalsIgnoreCase("com.google"))
                 return account;
         }
+        Log.d(TAG, "returning null account");
         return null;
     }
 
@@ -183,6 +186,8 @@ public class MainActivity extends AppCompatActivity {
      * @return last date that email was parsed.
      */
     public Date getMostRecentDate() {
+        if(mostRecentDate == null)
+            mostRecentDate = new Date(0);
         return mostRecentDate;
     }
 
@@ -315,9 +320,9 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(EMAIL_KEY, data.getStringExtra(EMAIL_KEY));
+        editor.putString(EMAIL_KEY, data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME));
         editor.apply();
-        Log.d(TAG, "Got account name " + data.getStringExtra(EMAIL_KEY));
+        Log.d(TAG, "Got account name " + data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME));
         parseEmail();
         // Steven's code
         Account me = getAccount();
@@ -342,7 +347,6 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate");
         setContentView(R.layout.activity_main);
         getPreferences();
-
         Button gmail_login_button = (Button) findViewById(R.id.gmail_login_button);
         if (gmail_login_button != null) {
             gmail_login_button.setOnClickListener(new View.OnClickListener() {
@@ -351,6 +355,11 @@ public class MainActivity extends AppCompatActivity {
                     loginHitMethod();
                 }
             });
+        }
+        if(!preferences.getString(EMAIL_KEY, NULL_KEY).equalsIgnoreCase(NULL_KEY)) {
+            findViewById(R.id.progress_view_mainactivity).setVisibility(View.VISIBLE);
+            findViewById(R.id.gmail_login_button).setVisibility(View.INVISIBLE);
+            parseEmail();
         }
     }
 
@@ -459,10 +468,6 @@ public class MainActivity extends AppCompatActivity {
         Account account = getAccount();
         if (account != null) {
             new EmailParseTask(this, account).execute();
-        } else {
-            // TODO (Anyone): Move both strings to strings resource
-            errorFoundMessage("Error: Account not found",
-                    "Account not found on device, if you would like to log in manually, do so using the 'Manual Log In' button.");
         }
     }
 
