@@ -31,6 +31,7 @@ import com.einzig.ipst2.portal.PortalSubmission;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.NoSuchElementException;
 import java.util.Vector;
 
 /**
@@ -64,7 +65,8 @@ abstract class PortalBuilder<P extends PortalSubmission> {
      * @return the first portal matching selection
      */
     P getPortal(final String selection, final String[] values) {
-        return getPortals(selection, values).firstElement();
+        Vector<P> portals = getPortals(selection, values);
+        return (portals.size() > 0) ? portals.firstElement() : null;
     }
 
     /**

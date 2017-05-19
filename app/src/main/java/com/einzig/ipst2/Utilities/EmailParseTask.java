@@ -181,6 +181,7 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
     // TODO move dialog.show() out of here so the dialog doesn't display when there are no messages
     @Override
     protected void onPreExecute() {
+        activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         dialog.show();
     }
 
