@@ -183,6 +183,7 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
         }
     }
 
+    // TODO move dialog.show() out of here so the dialog doesn't display when there are no messages
     @Override
     protected void onPreExecute() {
         dialog.show();
@@ -192,7 +193,6 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
     protected void onPostExecute(Integer result) {
         activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         dialog.dismiss();
-        // TODO Add These functions
         activity.onEmailParse();
         new UpdateDatabaseTask(activity, acceptedPortals, pendingPortals, rejectedPortals).execute();
     }
@@ -200,19 +200,14 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
     @Override
     protected void onProgressUpdate(Integer... progress) {
         dialog.setProgress(progress[0] + 1);
-        Log.d(TAG, "Parsing" + dialog.getProgress() + " / " + dialog.getMax());
+        Log.v(TAG, "Parsing" + dialog.getProgress() + " / " + dialog.getMax());
     }
 
-    private Message[] searchMailbox(Folder inbox) {
+    private Message[] searchMailbox(Folder inbox) throws MessagingException {
         SearchTerm searchTerm = new SubjectTerm("Ingress Portal");
         ReceivedDateTerm minDateTerm = new ReceivedDateTerm(ComparisonTerm.GT,
                 activity.getMostRecentDate());
         searchTerm = new AndTerm(searchTerm, minDateTerm);
-        try {
-            return inbox.search(searchTerm);
-        } catch (MessagingException e) {
-            Log.e(TAG, e.toString());
-            return null;
-        }
+        return inbox.search(searchTerm);
     }
 }
