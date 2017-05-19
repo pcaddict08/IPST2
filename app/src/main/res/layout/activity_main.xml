@@ -15,12 +15,26 @@
         android:visibility="visible" />
 
     <LinearLayout
+        android:id="@+id/mainui_mainactivity"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="invisible">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="View List" />
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/progress_view_mainactivity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:orientation="vertical"
-        android:visibility="invisible" >
+        android:visibility="invisible">
 
         <com.singh.daman.proprogressviews.DoubleArcProgress
             android:layout_width="140dip"

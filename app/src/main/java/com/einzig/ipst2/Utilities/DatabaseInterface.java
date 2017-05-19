@@ -48,7 +48,7 @@ import java.util.Vector;
  */
 public class DatabaseInterface extends SQLiteOpenHelper {
     /** Database version */
-    private static final int DATABASE_VERSION = 0;
+    private static final int DATABASE_VERSION = 1;
     //TODO (Ryan): Replace hardcoded keys with string resources
     /** Database name */
     private static final String DATABASE_NAME = "IPSTSubmissionDB";

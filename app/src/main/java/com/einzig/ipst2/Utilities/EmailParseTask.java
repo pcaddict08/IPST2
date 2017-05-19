@@ -169,7 +169,6 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
     private void initProgressDialog() {
         this.dialog = new ProgressDialog(this.activity);
         dialog.setIndeterminate(false);
-        //dialog.setMessage("Parsing email");
         dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         dialog.setTitle("Parsing email");
     }
@@ -194,7 +193,7 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
         dialog.dismiss();
         // TODO Add These functions
         activity.onEmailParse();
-        new UpdateDatabaseTask(activity, acceptedPortals, pendingPortals, rejectedPortals).execute();
+        new UpdateDatabaseTask(activity, acceptedPortals, pendingPortals, rejectedPortals, true).execute();
     }
 
     @Override
