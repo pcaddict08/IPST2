@@ -26,7 +26,6 @@ package com.einzig.ipst2.database;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.einzig.ipst2.portal.PortalAccepted;
 import com.einzig.ipst2.portal.PortalSubmission;
 
 import java.text.ParseException;
@@ -40,16 +39,16 @@ import java.util.Vector;
  */
 
 abstract class PortalBuilder<P extends PortalSubmission> {
-    /** The date format that MySQL stores DATETIME objects in */
+    /** Date format that MySQL uses to store DATETIME objects */
     private final SimpleDateFormat dateFormatter;
-    /**  */
+    /** Reference to a SQLite database to run queries on */
     private final SQLiteDatabase db;
     /**  */
     private final String table;
 
     /**
-     *
-     * @param db
+     * @param dateFormatter date format that MySQL uses to store DATETIME objects
+     * @param db reference to a SQLite database to run queries on
      */
     PortalBuilder(SimpleDateFormat dateFormatter, SQLiteDatabase db, String table) {
         this.dateFormatter = dateFormatter;
@@ -60,9 +59,9 @@ abstract class PortalBuilder<P extends PortalSubmission> {
     abstract P createPortal(Cursor cursor);
 
     /**
-     * @param selection
-     * @param values
-     * @return
+     * @param selection Selection parameters following a WHERE clause in the SELECT statement
+     * @param values Values to fill wildcards in selection
+     * @return the first portal matching selection
      */
     P getPortal(final String selection, final String[] values) {
         return getPortals(selection, values).firstElement();
@@ -70,8 +69,8 @@ abstract class PortalBuilder<P extends PortalSubmission> {
 
     /**
      * Create a Vector of portals from a database query.
-     * @param selection
-     * @param values
+     * @param selection Selection parameters following a WHERE clause in the SELECT statement
+     * @param values Values to fill wildcards in selection
      * @return Vector of accepted portals from a database query string.
      */
     Vector<P> getPortals(final String selection, final String[] values) {

@@ -38,9 +38,8 @@ import java.util.Date;
 
 final class PortalSubmissionBuilder extends PortalBuilder<PortalSubmission> {
     /**
-     *
-     * @param dateFormatter
-     * @param db
+     * @param dateFormatter date format that MySQL uses to store DATETIME objects
+     * @param db reference to a SQLite database to run queries on
      */
     PortalSubmissionBuilder(SimpleDateFormat dateFormatter, SQLiteDatabase db) {
         super(dateFormatter, db, DatabaseInterface.TABLE_PENDING);
