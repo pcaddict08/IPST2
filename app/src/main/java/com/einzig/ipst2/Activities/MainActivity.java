@@ -83,10 +83,10 @@ public class MainActivity extends AppCompatActivity {
     static public final String PORTAL_SUBMISSION_KEY = "portalSubmission";
     /** The key for saving portal submission sort preference */
     static public final String SORT_KEY = "sort";
+    /** Tag used for logging for this class */
+    static public final String TAG = "IPST";
     /** Used to get the result of LoginActivity */
     static private final int LOGIN_ACTIVITY_CODE = 0;
-    /** Tag used for logging for this class */
-    static private final String TAG = "IPST:MainActivity";
 
     static final int REQUEST_CODE_EMAIL = 1;
     static final int REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR = 1002;

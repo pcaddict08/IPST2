@@ -62,10 +62,6 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
      * The URL to get the OAuth token from
      */
     private static final String AUTH_URL = "oauth2:https://mail.google.com/";
-    /**
-     * Tag used for logging.
-     */
-    private static final String TAG = "IPST:EmailParseTask";
 
     private final List<PortalAccepted> acceptedPortals;
     private final List<PortalSubmission> pendingPortals;
@@ -134,7 +130,7 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
      */
     @Override
     protected Integer doInBackground(String... params) {
-        Log.d(TAG, "Parsing email");
+        Log.d(MainActivity.TAG, "Parsing email");
         String token = authenticate();
         Message messages[] = null;
         OAuth2Authenticator sender = new OAuth2Authenticator();
@@ -149,7 +145,7 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
             inbox.close(true);
             store.close();
         }  catch (MessagingException e) {
-            Log.e(TAG, e.toString());
+            Log.e(MainActivity.TAG, e.toString());
         }
         return messages == null ? 0 : messages.length;
     }
@@ -159,10 +155,10 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
         fp.add(FetchProfile.Item.ENVELOPE);
         fp.add(FetchProfile.Item.CONTENT_INFO);
         try {
-            Log.d(TAG, "Fetching messages");
+            Log.d(MainActivity.TAG, "Fetching messages");
             inbox.fetch(messages, fp);
         } catch (MessagingException e) {
-            Log.e(TAG, e.toString());
+            Log.e(MainActivity.TAG, e.toString());
         }
     }
 
@@ -199,7 +195,7 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
     @Override
     protected void onProgressUpdate(Integer... progress) {
         dialog.setProgress(progress[0] + 1);
-        Log.v(TAG, "Parsing" + dialog.getProgress() + " / " + dialog.getMax());
+        Log.v(MainActivity.TAG, "Parsing" + dialog.getProgress() + " / " + dialog.getMax());
     }
 
     private Message[] searchMailbox(Folder inbox) throws MessagingException {

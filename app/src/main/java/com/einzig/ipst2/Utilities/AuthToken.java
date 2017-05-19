@@ -31,6 +31,8 @@ import android.accounts.OperationCanceledException;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.einzig.ipst2.Activities.MainActivity;
+
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 
@@ -39,7 +41,6 @@ import java.util.concurrent.CountDownLatch;
  * @since 2017-05-17
  */
 class AuthToken implements AccountManagerCallback<Bundle> {
-	private static final String TAG = "IPST:AuthToken";
 
     /**
      * Latch used for multithreading safety so token isn't returned from getToken before it's been
@@ -54,7 +55,7 @@ class AuthToken implements AccountManagerCallback<Bundle> {
      */
     public AuthToken() {
         latch = new CountDownLatch(1);
-        Log.d(TAG, "Creating a new AuthToken");
+        Log.d(MainActivity.TAG, "Creating a new AuthToken");
     }
 
     /**
@@ -64,11 +65,11 @@ class AuthToken implements AccountManagerCallback<Bundle> {
      * @sa run
      */
     public String getToken() {
-        Log.d(TAG, "Getting token");
+        Log.d(MainActivity.TAG, "Getting token");
         try {
             latch.await();
         } catch (InterruptedException e) {
-            Log.e(TAG, "Interrupted while waiting for authentication");
+            Log.e(MainActivity.TAG, "Interrupted while waiting for authentication");
         }
         return token;
     }
@@ -81,18 +82,18 @@ class AuthToken implements AccountManagerCallback<Bundle> {
      */
     @Override
     public void run(AccountManagerFuture<Bundle> result) {
-        Log.d(TAG, "Running AuthToken");
+        Log.d(MainActivity.TAG, "Running AuthToken");
         try {
             Bundle bundle = result.getResult();
             token = bundle.getString(AccountManager.KEY_AUTHTOKEN);
-            Log.i(TAG, "authToken -> " + token);
+            Log.i(MainActivity.TAG, "authToken -> " + token);
             latch.countDown();
         } catch (AuthenticatorException e) {
-            Log.e(TAG, "Could not authenticate:\n" + e);
+            Log.e(MainActivity.TAG, "Could not authenticate:\n" + e);
         } catch (IOException e) {
-            Log.e(TAG, e.getMessage());
+            Log.e(MainActivity.TAG, e.getMessage());
         } catch (OperationCanceledException e) {
-            Log.e(TAG, "Operation cancelled:\n" + e);
+            Log.e(MainActivity.TAG, "Operation cancelled:\n" + e);
         }
     }
 }

@@ -30,6 +30,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.einzig.ipst2.Activities.MainActivity;
 import com.einzig.ipst2.portal.PortalAccepted;
 import com.einzig.ipst2.portal.PortalRejected;
 import com.einzig.ipst2.portal.PortalSubmission;
@@ -71,8 +72,6 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     static private final String KEY_REJECTION_REASON = "rejectionReason";
     /** Table key for the URL to the submission picture */
     static private final String KEY_PICTURE_URL = "pictureURL";
-    /** Tag for logging */
-    static private final String TAG = "IPST:Database";
     /** The date format that MySQL stores DATETIME objects in */
     private final SimpleDateFormat dateFormatter;
 
@@ -90,7 +89,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      * @param portal The portal getting stored in the database
      */
     public void addPortalAccepted(PortalAccepted portal) {
-        Log.d(TAG, "Add accepted portal: " + portal.getName());
+        Log.d(MainActivity.TAG, "Add accepted portal: " + portal.getName());
         String dateSubmitted = dateFormatter.format(portal.getDateSubmitted());
         String dateResponded = dateFormatter.format(portal.getDateResponded());
         SQLiteDatabase db = getWritableDatabase();
@@ -111,7 +110,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      * @param portal The portal getting stored in the database
      */
     public void addPortalRejected(PortalRejected portal) {
-        Log.d(TAG, "Add rejected portal: " + portal.getName());
+        Log.d(MainActivity.TAG, "Add rejected portal: " + portal.getName());
         String dateSubmitted = dateFormatter.format(portal.getDateSubmitted());
         String dateResponded = dateFormatter.format(portal.getDateResponded());
         SQLiteDatabase db = getWritableDatabase();
@@ -131,7 +130,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      * @param portal The portal getting stored in the database
      */
     public void addPortalSubmission(PortalSubmission portal){
-        Log.d(TAG, "Add portal submission: " + portal.getName());
+        Log.d(MainActivity.TAG, "Add portal submission: " + portal.getName());
         String dateSubmitted = dateFormatter.format(portal.getDateSubmitted());
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -217,7 +216,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      * @param portal The accepted submission being removed from the database
      */
     public void deleteAccepted(PortalAccepted portal) {
-        Log.d(TAG, "Remove accepted portal: " + portal.getName());
+        Log.d(MainActivity.TAG, "Remove accepted portal: " + portal.getName());
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_ACCEPTED, KEY_PICTURE_URL + " = ?", new String[]{portal.getPictureURL()});
         db.close();
@@ -228,7 +227,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      * @param portal The pending submission being removed from the database
      */
     public void deletePending(PortalSubmission portal) {
-        Log.d(TAG, "Remove portal submission: " + portal.getName());
+        Log.d(MainActivity.TAG, "Remove portal submission: " + portal.getName());
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_PENDING, KEY_PICTURE_URL + " = ?", new String[]{portal.getPictureURL()});
         db.close();
@@ -239,7 +238,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      * @param portal The rejected submission being removed from the database
      */
     public void deleteRejected(PortalRejected portal) {
-        Log.d(TAG, "Remove rejected portal: " + portal.getName());
+        Log.d(MainActivity.TAG, "Remove rejected portal: " + portal.getName());
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_REJECTED, KEY_PICTURE_URL + " = ?", new String[]{portal.getPictureURL()});
         db.close();
@@ -263,7 +262,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      * @return Vector of all accepted portal submissions
      */
     public Vector<PortalAccepted> getAllAccepted() {
-        Log.d(TAG, "Get all accepted portals");
+        Log.d(MainActivity.TAG, "Get all accepted portals");
         SQLiteDatabase db = getReadableDatabase();
         PortalAcceptedBuilder b = new PortalAcceptedBuilder(dateFormatter, db);
         Vector<PortalAccepted> portals = b.getPortals(null, null);
@@ -319,7 +318,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      *         toDate
      */
     private Vector<PortalAccepted> getAllAcceptedByDate(String dateKey, Date fromDate, Date toDate) {
-        Log.d(TAG, "Getting all accepted portals within date range");
+        Log.d(MainActivity.TAG, "Getting all accepted portals within date range");
         SQLiteDatabase db = getReadableDatabase();
         PortalAcceptedBuilder b = new PortalAcceptedBuilder(dateFormatter, db);
         Vector<PortalAccepted> portals = b.getPortalsByDate(dateKey, fromDate, toDate);
@@ -372,9 +371,9 @@ public class DatabaseInterface extends SQLiteOpenHelper {
             PortalBuilder<P> b = ctor.newInstance(dateFormatter, db);
             portals = b.getPortalsByDate(dateKey, fromDate, toDate);
         } catch (NoSuchMethodException e) {
-            Log.e(TAG, "Couldn't get constructor\n" + e.toString());
+            Log.e(MainActivity.TAG, "Couldn't get constructor\n" + e.toString());
         } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
-            Log.e(TAG, "Couldn't instantiate PortalBuilder\n" + e.toString());
+            Log.e(MainActivity.TAG, "Couldn't instantiate PortalBuilder\n" + e.toString());
         }
         db.close();
         return portals;
@@ -385,7 +384,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      * @return Vector of all pending portal submissions
      */
     public Vector<PortalSubmission> getAllPending() {
-        Log.d(TAG, "Get all pending portals");
+        Log.d(MainActivity.TAG, "Get all pending portals");
         SQLiteDatabase db = getReadableDatabase();
         PortalSubmissionBuilder b = new PortalSubmissionBuilder(dateFormatter, db);
         Vector<PortalSubmission> portals = b.getPortals(null, null);
@@ -400,7 +399,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      * @return Vector of pending portals which were submitted between fromDate and toDate
      */
     public Vector<PortalSubmission> getAllPendingByDate(Date fromDate, Date toDate) {
-        Log.d(TAG, "Getting all pending portals in a date range");
+        Log.d(MainActivity.TAG, "Getting all pending portals in a date range");
         SQLiteDatabase db = getReadableDatabase();
         PortalSubmissionBuilder b = new PortalSubmissionBuilder(dateFormatter, db);
         Vector<PortalSubmission> portals = b.getPortalsByDate(KEY_DATE_SUBMITTED, fromDate, toDate);
@@ -422,7 +421,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      * @return Vector of all rejected portal submissions
      */
     public Vector<PortalRejected> getAllRejected() {
-        Log.d(TAG, "Get all rejected portals");
+        Log.d(MainActivity.TAG, "Get all rejected portals");
         SQLiteDatabase db = getReadableDatabase();
         PortalRejectedBuilder b = new PortalRejectedBuilder(dateFormatter, db);
         Vector<PortalRejected> portals = b.getPortals(null, null);
@@ -478,7 +477,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      *         toDate.
      */
     private Vector<PortalRejected> getAllRejectedByDate(String dateKey, Date fromDate, Date toDate) {
-        Log.d(TAG, "Getting all rejected portals within date range");
+        Log.d(MainActivity.TAG, "Getting all rejected portals within date range");
         SQLiteDatabase db = getReadableDatabase();
         PortalRejectedBuilder b = new PortalRejectedBuilder(dateFormatter, db);
         Vector<PortalRejected> portals = b.getPortalsByDate(dateKey, fromDate, toDate);
@@ -504,7 +503,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      * @return a PortalSubmission representation of a pending portal in the database
      */
     public PortalSubmission getPendingPortal(String portalPictureURL) {
-        Log.d(TAG, "Getting pending portal");
+        Log.d(MainActivity.TAG, "Getting pending portal");
         SQLiteDatabase db = getReadableDatabase();
         PortalSubmissionBuilder b = new PortalSubmissionBuilder(dateFormatter, db);
         PortalSubmission p = b.getPortal(KEY_PICTURE_URL + " = ?", new String[]{portalPictureURL});
@@ -518,7 +517,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      * @return a PortalRejected representation of a rejected portal in the database
      */
     public PortalRejected getRejectedPortal(String portalPictureURL) {
-        Log.d(TAG, "Getting rejected portal");
+        Log.d(MainActivity.TAG, "Getting rejected portal");
         SQLiteDatabase db = getReadableDatabase();
         PortalRejectedBuilder b = new PortalRejectedBuilder(dateFormatter, db);
         PortalRejected p = b.getPortal(KEY_PICTURE_URL + " = ?", new String[]{portalPictureURL});
@@ -555,7 +554,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      * @param oldPortal PortalAccepted containing the old information to be updated
      */
     public void updateAccepted(PortalAccepted portal, PortalAccepted oldPortal) {
-        Log.d(TAG, "Update portal: " + oldPortal.getName());
+        Log.d(MainActivity.TAG, "Update portal: " + oldPortal.getName());
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
         String dateSubmitted = dateFormatter.format(portal.getDateSubmitted());
@@ -580,7 +579,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      * @param oldPortal PortalSubmission containing the old information to be updated
      */
     public void updatePending(PortalSubmission portal, PortalSubmission oldPortal) {
-        Log.d(TAG, "Update portal: " + oldPortal.getName());
+        Log.d(MainActivity.TAG, "Update portal: " + oldPortal.getName());
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
 
@@ -599,7 +598,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      * @param oldPortal PortalRejected containing the old information to be updated
      */
     public void updateRejected(PortalRejected portal, PortalRejected oldPortal) {
-        Log.d(TAG, "Update portal: " + oldPortal.getName());
+        Log.d(MainActivity.TAG, "Update portal: " + oldPortal.getName());
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
         String dateSubmitted = dateFormatter.format(portal.getDateSubmitted());

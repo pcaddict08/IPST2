@@ -29,6 +29,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
 
+import com.einzig.ipst2.Activities.MainActivity;
 import com.einzig.ipst2.R;
 import com.einzig.ipst2.database.DatabaseInterface;
 import com.einzig.ipst2.portal.PortalAccepted;
@@ -42,11 +43,6 @@ import java.util.List;
  * @since 2017-05-18
  */
 public class UpdateDatabaseTask extends AsyncTask<Long, Long, Long> {
-    /**
-     * The tag used when logging for the class
-     */
-    private static String TAG = "IPST:UpdateDatabase";
-
     /**
      * All accepted portals since the last time the database was updated.
      */
@@ -113,7 +109,7 @@ public class UpdateDatabaseTask extends AsyncTask<Long, Long, Long> {
 
     @Override
     protected void onProgressUpdate(Long... progress) {
-        Log.d(TAG, "Updating " + progress[0] + " / " + progress[1]);
+        Log.d(MainActivity.TAG, "Updating " + progress[0] + " / " + progress[1]);
     }
 
     @Override
@@ -129,7 +125,7 @@ public class UpdateDatabaseTask extends AsyncTask<Long, Long, Long> {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Log.d(TAG, "Finished Updating Database");
+        Log.d(MainActivity.TAG, "Finished Updating Database");
     }
 
     private void publishProgress() {
@@ -140,7 +136,7 @@ public class UpdateDatabaseTask extends AsyncTask<Long, Long, Long> {
      * Update the acceptedSubmissions table in the database from recently parsed emails.
      */
     private void updateAcceptedDatabase() {
-        Log.i(TAG, "Updating acceptedPortals database");
+        Log.i(MainActivity.TAG, "Updating acceptedPortals database");
         synchronized (acceptedPortals) {
             for (PortalAccepted accepted : acceptedPortals) {
                 if (db.containsPending(accepted.getPictureURL())) {
@@ -161,7 +157,7 @@ public class UpdateDatabaseTask extends AsyncTask<Long, Long, Long> {
      * Update the pendingSubmissions table in the database from recently parsed emails.
      */
     private void updatePendingDatabase() {
-        Log.i(TAG, "Updating pending database");
+        Log.i(MainActivity.TAG, "Updating pending database");
         synchronized (pendingPortals) {
             for (PortalSubmission pending : pendingPortals) {
                 if (!db.containsPending(pending.getPictureURL()))
@@ -176,7 +172,7 @@ public class UpdateDatabaseTask extends AsyncTask<Long, Long, Long> {
      * Update the rejectedSubmissions table in the database from recently parsed emails.
      */
     private void updateRejectedDatabase() {
-        Log.i(TAG, "Updating rejectedPortals database");
+        Log.i(MainActivity.TAG, "Updating rejectedPortals database");
         synchronized (rejectedPortals) {
             for (PortalRejected rejected : rejectedPortals) {
                 if (db.containsPending(rejected.getPictureURL())) {
