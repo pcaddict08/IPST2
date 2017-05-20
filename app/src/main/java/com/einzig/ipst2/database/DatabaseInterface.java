@@ -486,15 +486,47 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     }
 
     /**
+     * Get the number of approved portals
+     * @return number of approved portals
+     */
+    public long getAcceptedCount() {
+        return getTableSize(TABLE_ACCEPTED);
+    }
+
+    /**
+     * Get the number of pending portals
+     * @return number of pending portals
+     */
+    public long getPendingCount() {
+        return getTableSize(TABLE_PENDING);
+    }
+
+    /**
+     * Get the number of rejected portals
+     * @return number of rejected portals
+     */
+    public long getRejectedCount() {
+        return getTableSize(TABLE_REJECTED);
+    }
+
+    /**
+     * Get the number of entries in a table
+     * @param table Table to count rows on
+     * @return number of entries in a table
+     */
+    private long getTableSize(String table) {
+        SQLiteDatabase db = getReadableDatabase();
+        long count = DatabaseUtils.queryNumEntries(db, table);
+        db.close();
+        return count;
+    }
+
+    /**
      * Get the total number of portals in the database
      * @return the total number of portals in the database
      */
     public long getDatabaseSize() {
-        SQLiteDatabase db = getReadableDatabase();
-        long count = DatabaseUtils.queryNumEntries(db, TABLE_ACCEPTED);
-        count += DatabaseUtils.queryNumEntries(db, TABLE_PENDING);
-        count += DatabaseUtils.queryNumEntries(db, TABLE_REJECTED);
-        return count;
+        return getAcceptedCount() + getPendingCount() + getRejectedCount();
     }
 
     /**
