@@ -33,7 +33,7 @@ import android.accounts.OperationCanceledException;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.einzig.ipst2.Activities.MainActivity;
+import com.einzig.ipst2.activities.MainActivity;
 
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;

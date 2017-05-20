@@ -21,7 +21,7 @@
  * ********************************************************************************************** *
  * ********************************************************************************************** */
 
-package com.einzig.ipst2.Utilities;
+package com.einzig.ipst2.oauth;
 
 
 
@@ -36,7 +36,6 @@ import java.util.logging.Logger;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
-import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.Session;
 import javax.mail.URLName;

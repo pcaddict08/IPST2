@@ -33,8 +33,8 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.view.WindowManager;
 
-import com.einzig.ipst2.Activities.MainActivity;
-import com.einzig.ipst2.Utilities.OAuth2Authenticator;
+import com.einzig.ipst2.activities.MainActivity;
+import com.einzig.ipst2.oauth.OAuth2Authenticator;
 import com.einzig.ipst2.database.DatabaseInterface;
 import com.einzig.ipst2.portal.PortalAccepted;
 import com.einzig.ipst2.portal.PortalRejected;
