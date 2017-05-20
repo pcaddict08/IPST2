@@ -46,17 +46,14 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.einzig.ipst2.R;
-import com.einzig.ipst2.Utilities.EmailParseTask;
+import com.einzig.ipst2.parse.EmailParseTask;
 import com.google.android.gms.auth.GooglePlayServicesAvailabilityException;
 import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.common.GoogleApiAvailability;
 
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
 
 /**
@@ -87,14 +84,8 @@ public class MainActivity extends AppCompatActivity {
     static public final String TAG = "IPST";
     /** Used to get the result of LoginActivity */
     static private final int LOGIN_ACTIVITY_CODE = 0;
-
     static final int REQUEST_CODE_EMAIL = 1;
     static final int REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR = 1002;
-
-    /** Last date that email was parsed */
-    private Date mostRecentDate;
-    /** Format for parsing and printing dates */
-    private DateFormat dateFormat;
     /** Preferences for saving app settings */
     private SharedPreferences preferences;
 
@@ -102,8 +93,6 @@ public class MainActivity extends AppCompatActivity {
      * MainActivity constructor, initialize variables.
      */
     public MainActivity() {
-        dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US);
-        mostRecentDate = null;
         preferences = null;
     }
 
@@ -181,17 +170,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Get the last date that email was parsed.
-     *
-     * @return last date that email was parsed.
-     */
-    public Date getMostRecentDate() {
-        if(mostRecentDate == null)
-            mostRecentDate = new Date(0);
-        return mostRecentDate;
-    }
-
-    /**
      * Get saved user preferences.
      */
     private void getPreferences() {
@@ -199,61 +177,40 @@ public class MainActivity extends AppCompatActivity {
         Log.i(TAG, EMAIL_KEY + " -> " + preferences.getString(EMAIL_KEY, NULL_KEY));
         Log.i(TAG, MOST_RECENT_DATE_KEY + " -> " + preferences.getString(MOST_RECENT_DATE_KEY, NULL_KEY));
         Log.i(TAG, SORT_KEY + " -> " + preferences.getString(SORT_KEY, NULL_KEY));
-        try {
-            mostRecentDate = dateFormat.parse(preferences.getString(MOST_RECENT_DATE_KEY, ""));
-        } catch (ParseException e) {
-            Log.e(TAG, e.toString());
-        }
     }
 
     /**
      * Search through accounts on the user's device now that we have permission to do so.
      */
     public void gotPermission_accounts() {
-        try {
-            AccountManager tempAM = AccountManager.get(MainActivity.this);
-            int numGoogAcct = 0;
-            Account[] accountList = tempAM.getAccounts();
-            for (Account a : accountList) {
-                if (a.type.equals("com.google")) {
-                    numGoogAcct++;
-                }
+        AccountManager tempAM = AccountManager.get(MainActivity.this);
+        int numGoogAcct = 0;
+        Account[] accountList = tempAM.getAccounts();
+        for (Account a : accountList) {
+            if (a.type.equals("com.google")) {
+                numGoogAcct++;
             }
-            if (numGoogAcct == 0) {
-                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
-                alertDialogBuilder.setTitle("No Accounts");
-                alertDialogBuilder
-                        .setMessage("You have no Google accounts on your device")//.  Would you like to log in manually?")
-                        .setCancelable(true)
-                        .setNeutralButton("Ok", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                            }
-                        });
-                AlertDialog alertDialog = alertDialogBuilder.create();
-                alertDialog.show();
-            } else {
-                Log.d(TAG, "Found Some Accounts");
-                // TODO (anyone): Find a way to do this that isn't deprecated
-                Intent intent = AccountManager.newChooseAccountIntent(null, null,
-                        new String[]{"com.google"}, false, null, null, null, null);
-                startActivityForResult(intent, LOGIN_ACTIVITY_CODE);
-
-            }
-        } catch (Exception e) { // TODO (Anyone): Catch specific exceptions, not Exception
+        }
+        if (numGoogAcct == 0) {
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
-            alertDialogBuilder.setTitle("Error Retrieving Accounts");
+            alertDialogBuilder.setTitle("No Accounts");
             alertDialogBuilder
-                    .setMessage("There was an error retrieving your Google accounts.")
+                    .setMessage("You have no Google accounts on your device")//.  Would you like to log in manually?")
                     .setCancelable(true)
-                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    .setNeutralButton("Ok", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            //manualLogin("Log In Below");
+                            dialog.cancel();
                         }
                     });
             AlertDialog alertDialog = alertDialogBuilder.create();
             alertDialog.show();
-            Log.d(TAG, "CAUGHT NOT FOUND");
+        } else {
+            Log.d(TAG, "Found Some Accounts");
+            // TODO (anyone): Find a way to do this that isn't deprecated
+            Intent intent = AccountManager.newChooseAccountIntent(null, null,
+                    new String[]{"com.google"}, false, null, null, null, null);
+            startActivityForResult(intent, LOGIN_ACTIVITY_CODE);
+
         }
     }
 
@@ -366,18 +323,6 @@ public class MainActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_mainactivity, menu);
         return true;
-    }
-
-    /**
-     * Update the mostRecentDate preference after email has been parsed.
-     */
-    public void onEmailParse() {
-        mostRecentDate = Calendar.getInstance().getTime();
-        String dateString = dateFormat.format(mostRecentDate.getTime());
-        Log.d(TAG, MOST_RECENT_DATE_KEY + " -> " + dateString);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(MOST_RECENT_DATE_KEY, dateString);
-        editor.apply();
     }
 
     @Override

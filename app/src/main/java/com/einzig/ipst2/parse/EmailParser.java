@@ -1,35 +1,37 @@
-/* ********************************************************************************************** *
- * ********************************************************************************************** *
- *                                                                                                *
- * Copyright 2017 Steven Foskett, Jimmy Ho, Ryan Porterfield                                      *
- *                                                                                                *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software  *
- * and associated documentation files (the "Software"), to deal in the Software without           *
- * restriction, including without limitation the rights to use, copy, modify, merge, publish,     *
- * distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the  *
- * Software is furnished to do so, subject to the following conditions:                           *
- *                                                                                                *
- * The above copyright notice and this permission notice shall be included in all copies or       *
- * substantial portions of the Software.                                                          *
- *                                                                                                *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING  *
- * BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND     *
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,   *
- * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, *
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.        *
- *                                                                                                *
- * ********************************************************************************************** *
- * ********************************************************************************************** */
+/*
+ *  ********************************************************************************************** *
+ *  * ********************************************************************************************** *
+ *  *                                                                                                *
+ *  * Copyright 2017 Steven Foskett, Jimmy Ho, Ryan Porterfield                                      *
+ *  *                                                                                                *
+ *  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software  *
+ *  * and associated documentation files (the "Software"), to deal in the Software without           *
+ *  * restriction, including without limitation the rights to use, copy, modify, merge, publish,     *
+ *  * distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the  *
+ *  * Software is furnished to do so, subject to the following conditions:                           *
+ *  *                                                                                                *
+ *  * The above copyright notice and this permission notice shall be included in all copies or       *
+ *  * substantial portions of the Software.                                                          *
+ *  *                                                                                                *
+ *  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING  *
+ *  * BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND     *
+ *  * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,   *
+ *  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, *
+ *  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.        *
+ *  *                                                                                                *
+ *  * ********************************************************************************************** *
+ *  * **********************************************************************************************
+ */
 
-package com.einzig.ipst2.Utilities;
+package com.einzig.ipst2.parse;
 
+import com.einzig.ipst2.database.DatabaseInterface;
 import com.einzig.ipst2.portal.PortalAccepted;
 import com.einzig.ipst2.portal.PortalRejected;
 import com.einzig.ipst2.portal.PortalSubmission;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,22 +47,13 @@ import javax.mail.Part;
  * @author Ryan Porterfield
  * @since 2017-05-17
  */
-public class EmailParser {
-    private final List<PortalAccepted> acceptedPortals;
-    private final List<PortalSubmission> pendingPortals;
-    private final List<PortalRejected> rejectedPortals;
-
+class EmailParser {
+    final private DatabaseInterface db;
     /**
      * Create a new EmailParser
      */
-    public EmailParser(List<PortalAccepted> acceptedPortals,
-                       List<PortalSubmission> pendingPortals,
-                       List<PortalRejected> rejectedPortals) {
-        this.acceptedPortals = acceptedPortals;
-        this.pendingPortals = pendingPortals;
-        this.rejectedPortals = rejectedPortals;
-        // From refactor of IPST I did
-        //statParser = new StatParser(statBundle);
+    EmailParser(DatabaseInterface db) {
+        this.db = db;
     }
 
     /**
@@ -71,7 +64,7 @@ public class EmailParser {
      * @param pictureURL The URL to the portal picture.
      * @param message The body of the email as a String for parsing.
      */
-    private synchronized void addAccepted(String name, Date dateResponded, String pictureURL,
+    private PortalAccepted buildAccepted(String name, Date dateResponded, String pictureURL,
                                           String message) {
         Date dateSubmitted = dateResponded;
         PortalSubmission submission = findPortal(pictureURL);
@@ -79,11 +72,7 @@ public class EmailParser {
             dateSubmitted = submission.getDateSubmitted();
         String address = parseLiveAddress(message);
         String intelLink = parseIntelLink(message);
-        PortalAccepted portal;
-        portal = new PortalAccepted(name, dateSubmitted, pictureURL, dateResponded, address, intelLink);
-        acceptedPortals.add(portal);
-        removeFromPending(portal);
-        //statParser.addAccepted(portal);
+        return new PortalAccepted(name, dateSubmitted, pictureURL, dateResponded, address, intelLink);
     }
 
     /**
@@ -94,17 +83,13 @@ public class EmailParser {
      * @param pictureURL The URL to the portal picture.
      * @param message The body of the email as a String for parsing.
      */
-    private synchronized void addRejected(String name, Date dateResponded, String pictureURL, String message) {
+    private PortalRejected buildRejected(String name, Date dateResponded, String pictureURL, String message) {
         Date dateSubmitted = dateResponded;
         PortalSubmission submission = findPortal(pictureURL);
         if (submission != null)
             dateSubmitted = submission.getDateSubmitted();
         String rejectionReason = parseRejectionReason(message);
-        PortalRejected portal;
-        portal = new PortalRejected(name, dateSubmitted, pictureURL, dateResponded, rejectionReason);
-        rejectedPortals.add(portal);
-        removeFromPending(portal);
-        //statParser.addRejected(portal);
+        return new PortalRejected(name, dateSubmitted, pictureURL, dateResponded, rejectionReason);
     }
 
 
@@ -115,18 +100,12 @@ public class EmailParser {
      * @param dateSubmitted The date the portal was submitted.
      * @param pictureURL The URL to the portal picture.
      */
-    private synchronized void addSubmitted(String name, Date dateSubmitted, String pictureURL) {
-        PortalSubmission portal = new PortalSubmission(name, dateSubmitted, pictureURL);
-        pendingPortals.add(portal);
-        //statParser.addPending(portal);
+    private PortalSubmission buildSubmission(String name, Date dateSubmitted, String pictureURL) {
+        return new PortalSubmission(name, dateSubmitted, pictureURL);
     }
 
     private PortalSubmission findPortal(String pictureURL) {
-        for (PortalSubmission portal : pendingPortals) {
-            if (portal.getPictureURL().equals(pictureURL))
-                    return portal;
-        }
-        return null;
+        return db.getPendingPortal(pictureURL);
     }
 
     /**
@@ -134,8 +113,8 @@ public class EmailParser {
      *
      * @param p The body of the message.
      * @return A String representation of the message body.
-     * @throws MessagingException
-     * @throws IOException
+     * @throws MessagingException Thrown by email library
+     * @throws IOException Thrown by email library
      */
     private String getText(Part p) throws MessagingException, IOException {
         if (p.isMimeType("text/*")) {
@@ -209,7 +188,7 @@ public class EmailParser {
      *
      * @param message A Message being parsed.
      */
-    public void parseEmail(Message message) {
+    PortalSubmission parse(Message message) {
         String messageString, pictureURL, portalName, subject;
         Date receivedDate;
 
@@ -218,7 +197,7 @@ public class EmailParser {
             receivedDate = message.getReceivedDate();
             messageString = getText(message);
         } catch (IOException | MessagingException e) {
-            return;
+            return null;
         }
 
         if(subject.endsWith("."))
@@ -226,20 +205,21 @@ public class EmailParser {
         subject = subject.replaceAll("  " ," ");
 
         if (!isEmailRelevant(message, subject))
-            return;
+            return null;
 
         pictureURL = parsePictureURL(messageString);
         portalName = subject.substring(subject.indexOf(":") + 2);
         portalName = portalName.trim();
 
         if(subject.toLowerCase().contains("submitted")) {
-            addSubmitted(portalName, receivedDate, pictureURL);
+            return buildSubmission(portalName, receivedDate, pictureURL);
         } else if(subject.toLowerCase().contains("portal live") ||
                 subject.toLowerCase().contains(" *success!*")) {
-            addAccepted(portalName, receivedDate, pictureURL, messageString);
+            return buildAccepted(portalName, receivedDate, pictureURL, messageString);
         } else if(subject.toLowerCase().contains("rejected") || subject.toLowerCase().contains("duplicate")) {
-            addRejected(portalName, receivedDate, pictureURL, messageString);
+            return buildRejected(portalName, receivedDate, pictureURL, messageString);
         }
+        return null;
     }
 
     /**
@@ -314,13 +294,5 @@ public class EmailParser {
                 rejectionReason = rejectionReason + " or too close to another portal";
         }
         return rejectionReason;
-    }
-
-    private synchronized void removeFromPending(PortalSubmission portal) {
-        PortalSubmission toRemove = findPortal(portal.getPictureURL());
-        if (toRemove != null) {
-            pendingPortals.remove(toRemove);
-            //statParser.getStatBundle().getAllStats().unregisterPending();
-        }
     }
 }
