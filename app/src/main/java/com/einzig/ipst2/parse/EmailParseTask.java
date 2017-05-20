@@ -227,7 +227,7 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
         dialog.setIndeterminate(false);
         dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         dialog.setTitle("Parsing email");
-        dialog.setCancelable(false);
+        dialog.setCanceledOnTouchOutside(false);
     }
 
     private void parseAllMessages(Message[] msgs) {
