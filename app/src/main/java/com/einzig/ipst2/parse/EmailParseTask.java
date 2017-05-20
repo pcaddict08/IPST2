@@ -170,10 +170,11 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
     @Override
     protected Integer doInBackground(String... params) {
         Log.d(MainActivity.TAG, "Parsing email");
+        Log.d(MainActivity.TAG, "Account name: " + account.name);
         String token = authenticate();
         Message messages[] = null;
         OAuth2Authenticator sender = new OAuth2Authenticator();
-        IMAPStore store = sender.testImap(account.name, token);
+        IMAPStore store = sender.getIMAPStore(account.name, token);
         Log.d(MainActivity.TAG, "store is null? " + (store == null));
         try {
             Folder inbox = store.getFolder("[Gmail]/All Mail");
@@ -242,7 +243,6 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
      * @param msgs
      */
     private void parseAllMessages(Message[] msgs) {
-        dialog.show();
         Date parseDate = Calendar.getInstance().getTime();
         for (int i = 0; i < msgs.length; i++) {
             PortalSubmission p = parser.parse(msgs[i]);
@@ -258,7 +258,6 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
             }
         }
         onEmailParse(parseDate);
-        dialog.dismiss();
     }
 
     /**
@@ -275,10 +274,12 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
     @Override
     protected void onPreExecute() {
         activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        dialog.show();
     }
 
     @Override
     protected void onPostExecute(Integer result) {
+        dialog.dismiss();
         activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         Log.d(MainActivity.TAG, "Accepted portals: " + db.getAcceptedCount());
         Log.d(MainActivity.TAG, "Pending portals: " + db.getPendingCount());
@@ -299,7 +300,7 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
      */
     private Message[] searchMailbox(Folder inbox) throws MessagingException {
         SearchTerm searchTerm = new SubjectTerm("Ingress Portal");
-        String dateStr = preferences.getString(MainActivity.MOST_RECENT_DATE_KEY, "");
+        String dateStr = preferences.getString(MainActivity.MOST_RECENT_DATE_KEY, MainActivity.NULL_KEY);
         ReceivedDateTerm minDateTerm = new ReceivedDateTerm(ComparisonTerm.GT,
                 getLastParseDate(dateStr));
         searchTerm = new AndTerm(searchTerm, minDateTerm);

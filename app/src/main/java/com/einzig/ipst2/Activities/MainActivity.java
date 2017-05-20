@@ -272,6 +272,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         SharedPreferences.Editor editor = preferences.edit();
+        // TODO
         editor.putString(EMAIL_KEY, data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME));
         editor.apply();
         Log.d(TAG, "Got account name " + data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME));
