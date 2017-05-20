@@ -104,7 +104,7 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
     }
 
     /**
-     * Is this necessary?
+     *
      */
     private void addMailcaps() {
         MailcapCommandMap mc = (MailcapCommandMap) CommandMap.getDefaultCommandMap();
@@ -125,44 +125,37 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
     }
 
     /**
-     * Update the acceptedSubmissions table in the database from recently parsed emails.
+     *
      */
-    private void addPortalAccepted(PortalAccepted accepted) {
-        if (db.containsPending(accepted.getPictureURL())) {
-            PortalSubmission pending = db.getPendingPortal(accepted.getPictureURL());
-            accepted.setDateSubmitted(pending.getDateSubmitted());
+    private void addPortalAccepted(PortalAccepted portal) {
+        Log.d(MainActivity.TAG, "Adding approved portal: " + portal.getName());
+        PortalSubmission pending = db.getPendingPortal(portal.getPictureURL());
+        if (pending != null)
             db.deletePending(pending);
-        }
-        if (!db.containsAccepted(accepted.getPictureURL())) {
-            db.addPortalAccepted(accepted);
-        }
+        db.addPortalAccepted(portal);
     }
 
     /**
-     * Update the pendingSubmissions table in the database from recently parsed emails.
+     *
      */
-    private void addPortalSubmission(PortalSubmission pending) {
-        if (!db.containsPending(pending.getPictureURL()))
-            db.addPortalSubmission(pending);
+    private void addPortalSubmission(PortalSubmission portal) {
+        Log.d(MainActivity.TAG, "Adding submitted portal: " + portal.getName());
+        db.addPortalSubmission(portal);
     }
 
     /**
-     * Update the rejectedSubmissions table in the database from recently parsed emails.
+     *
      */
-    private void addPortalRejected(PortalRejected rejected) {
-        if (db.containsPending(rejected.getPictureURL())) {
-            PortalSubmission pending = db.getPendingPortal(rejected.getPictureURL());
-            rejected.setDateSubmitted(pending.getDateSubmitted());
+    private void addPortalRejected(PortalRejected portal) {
+        Log.d(MainActivity.TAG, "Adding rejected portal: " + portal.getName());
+        PortalSubmission pending = db.getPendingPortal(portal.getPictureURL());
+        if (pending != null)
             db.deletePending(pending);
-        }
-        if (!db.containsRejected(rejected.getPictureURL())) {
-            db.addPortalRejected(rejected);
-        }
+        db.addPortalRejected(portal);
     }
 
     /**
      * Authenticate with GMail.
-     *
      * @return the OAuth token as a string.
      */
     private String authenticate() {
@@ -196,6 +189,11 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
         return messages == null ? 0 : messages.length;
     }
 
+    /**
+     *
+     * @param inbox
+     * @param messages
+     */
     private void fetchMessages(Folder inbox, Message[] messages) {
         FetchProfile fp = new FetchProfile();
         fp.add(FetchProfile.Item.ENVELOPE);
@@ -208,6 +206,11 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
         }
     }
 
+    /**
+     *
+     * @param dateStr
+     * @return
+     */
     private Date getLastParseDate(String dateStr) {
         Date d;
         try {
@@ -222,6 +225,9 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
         return d;
     }
 
+    /**
+     *
+     */
     private void initProgressDialog() {
         this.dialog = new ProgressDialog(this.activity);
         dialog.setIndeterminate(false);
@@ -230,7 +236,12 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
         dialog.setCanceledOnTouchOutside(false);
     }
 
+    /**
+     *
+     * @param msgs
+     */
     private void parseAllMessages(Message[] msgs) {
+        dialog.show();
         Date parseDate = Calendar.getInstance().getTime();
         for (int i = 0; i < msgs.length; i++) {
             PortalSubmission p = parser.parse(msgs[i]);
@@ -246,6 +257,7 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
             }
         }
         onEmailParse(parseDate);
+        dialog.dismiss();
     }
 
     /**
@@ -259,17 +271,14 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
         editor.apply();
     }
 
-    // TODO move dialog.show() out of here so the dialog doesn't display when there are no messages
     @Override
     protected void onPreExecute() {
         activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        dialog.show();
     }
 
     @Override
     protected void onPostExecute(Integer result) {
         activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        dialog.dismiss();
     }
 
     @Override
@@ -278,6 +287,12 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
         Log.v(MainActivity.TAG, "Parsing" + dialog.getProgress() + " / " + dialog.getMax());
     }
 
+    /**
+     *
+     * @param inbox
+     * @return
+     * @throws MessagingException
+     */
     private Message[] searchMailbox(Folder inbox) throws MessagingException {
         SearchTerm searchTerm = new SubjectTerm("Ingress Portal");
         String dateStr = preferences.getString(MainActivity.MOST_RECENT_DATE_KEY, "");
