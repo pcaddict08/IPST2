@@ -1,4 +1,4 @@
-package com.einzig.ipst2.Activities;
+package com.einzig.ipst2.activities;
 
 import android.content.res.Configuration;
 import android.os.Bundle;

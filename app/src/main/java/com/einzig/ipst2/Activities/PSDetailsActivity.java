@@ -21,9 +21,8 @@
  * ********************************************************************************************** *
  * ********************************************************************************************** */
 
-package com.einzig.ipst2.Activities;
+package com.einzig.ipst2.activities;
 
-import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;

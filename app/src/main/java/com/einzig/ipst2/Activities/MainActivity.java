@@ -21,7 +21,7 @@
  * ********************************************************************************************** *
  * ********************************************************************************************** */
 
-package com.einzig.ipst2.Activities;
+package com.einzig.ipst2.activities;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -51,10 +51,7 @@ import com.google.android.gms.auth.GooglePlayServicesAvailabilityException;
 import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.common.GoogleApiAvailability;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Locale;
 
 /**
  * Main activity class which launches the app.

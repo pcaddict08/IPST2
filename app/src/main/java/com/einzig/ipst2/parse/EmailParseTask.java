@@ -213,6 +213,7 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
         try {
             d = dateFormat.parse(dateStr);
         } catch (ParseException e) {Calendar c = Calendar.getInstance();
+            // Remember the first day of Ingress? Pepperidge Farm remembers.
             c.set(Calendar.MONTH, Calendar.NOVEMBER);
             c.set(Calendar.DAY_OF_MONTH, 15);
             c.set(Calendar.YEAR, 2012);

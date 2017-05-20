@@ -21,7 +21,7 @@
  * ********************************************************************************************** *
  * ********************************************************************************************** */
 
-package com.einzig.ipst2.Activities;
+package com.einzig.ipst2.activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
