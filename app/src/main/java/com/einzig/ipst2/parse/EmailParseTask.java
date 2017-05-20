@@ -174,6 +174,7 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
         Message messages[] = null;
         OAuth2Authenticator sender = new OAuth2Authenticator();
         IMAPStore store = sender.testImap(account.name, token);
+        Log.d(MainActivity.TAG, "store is null? " + (store == null));
         try {
             Folder inbox = store.getFolder("[Gmail]/All Mail");
             inbox.open(Folder.READ_ONLY);
