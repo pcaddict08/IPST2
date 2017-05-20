@@ -279,6 +279,9 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
     @Override
     protected void onPostExecute(Integer result) {
         activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        Log.d(MainActivity.TAG, "Accepted portals: " + db.getAcceptedCount());
+        Log.d(MainActivity.TAG, "Pending portals: " + db.getPendingCount());
+        Log.d(MainActivity.TAG, "Rejected portals: " + db.getRejectedCount());
     }
 
     @Override
