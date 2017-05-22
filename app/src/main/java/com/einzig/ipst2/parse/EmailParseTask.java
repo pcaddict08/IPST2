@@ -31,8 +31,10 @@ import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.View;
 import android.view.WindowManager;
 
+import com.einzig.ipst2.R;
 import com.einzig.ipst2.activities.MainActivity;
 import com.einzig.ipst2.oauth.OAuth2Authenticator;
 import com.einzig.ipst2.database.DatabaseInterface;
@@ -284,6 +286,8 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
         Log.d(MainActivity.TAG, "Accepted portals: " + db.getAcceptedCount());
         Log.d(MainActivity.TAG, "Pending portals: " + db.getPendingCount());
         Log.d(MainActivity.TAG, "Rejected portals: " + db.getRejectedCount());
+        activity.findViewById(R.id.progress_view_mainactivity).setVisibility(View.INVISIBLE);
+        activity.findViewById(R.id.mainui_mainactivity).setVisibility(View.VISIBLE);
     }
 
     @Override
