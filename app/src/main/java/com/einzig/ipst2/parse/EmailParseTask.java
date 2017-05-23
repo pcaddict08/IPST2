@@ -175,7 +175,6 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
         Message messages[] = null;
         OAuth2Authenticator sender = new OAuth2Authenticator();
         IMAPStore store = sender.getIMAPStore(account.name, token);
-        Log.d(MainActivity.TAG, "store is null? " + (store == null));
         try {
             Folder inbox = store.getFolder("[Gmail]/All Mail");
             inbox.open(Folder.READ_ONLY);
@@ -279,8 +278,8 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
 
     @Override
     protected void onPostExecute(Integer result) {
-        dialog.dismiss();
         activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        dialog.dismiss();
         Log.d(MainActivity.TAG, "Accepted portals: " + db.getAcceptedCount());
         Log.d(MainActivity.TAG, "Pending portals: " + db.getPendingCount());
         Log.d(MainActivity.TAG, "Rejected portals: " + db.getRejectedCount());

@@ -155,18 +155,15 @@ class EmailParser {
      * @return true if the email is from Niantic, otherwise false.
      */
     private boolean isEmailFromNiantic(Message message) {
-        Address[] addresses;
         try {
-            addresses = message.getFrom();
-            if (addresses == null)
-                return false;
+            Address[] addresses = message.getFrom();
             for (Address address : addresses) {
                 String from = address.toString();
                 if (from.contains("super-ops@google.com") ||
                         from.contains("ingress-support@google.com"))
                     return true;
             }
-        } catch (MessagingException e) {
+        } catch (MessagingException | NullPointerException e) {
             return false;
         }
         return false;
@@ -183,9 +180,8 @@ class EmailParser {
                 !subject.toLowerCase().contains("photo");
     }
 
-    /**
+    /** TODO: Speed up parsing
      * Parse a portal submission or portal review email from Niantic.
-     *
      * @param message A Message being parsed.
      */
     PortalSubmission parse(Message message) {
@@ -210,7 +206,7 @@ class EmailParser {
         pictureURL = parsePictureURL(messageString);
         portalName = subject.substring(subject.indexOf(":") + 2);
         portalName = portalName.trim();
-
+        // TODO: Fix bug with not parsing subject "review complete"
         if(subject.toLowerCase().contains("submitted")) {
             return buildSubmission(portalName, receivedDate, pictureURL);
         } else if(subject.toLowerCase().contains("portal live") ||
