@@ -286,6 +286,10 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
         Log.d(MainActivity.TAG, "Accepted portals: " + db.getAcceptedCount());
         Log.d(MainActivity.TAG, "Pending portals: " + db.getPendingCount());
         Log.d(MainActivity.TAG, "Rejected portals: " + db.getRejectedCount());
+        long acceptedCount = db.getAcceptedCount();
+        long pendingCount = db.getPendingCount();
+        long rejectedCount = db.getRejectedCount();
+        long totalCount = acceptedCount + pendingCount + rejectedCount;
         activity.findViewById(R.id.progress_view_mainactivity).setVisibility(View.INVISIBLE);
         activity.findViewById(R.id.mainui_mainactivity).setVisibility(View.VISIBLE);
     }
@@ -293,7 +297,7 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
     @Override
     protected void onProgressUpdate(Integer... progress) {
         dialog.setProgress(progress[0] + 1);
-        Log.v(MainActivity.TAG, "Parsing" + dialog.getProgress() + " / " + dialog.getMax());
+        Log.v(MainActivity.TAG, "Parsing " + dialog.getProgress() + " / " + dialog.getMax());
     }
 
     /**

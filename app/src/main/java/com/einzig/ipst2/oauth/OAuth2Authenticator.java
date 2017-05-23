@@ -89,7 +89,7 @@ public class OAuth2Authenticator {
 	public synchronized IMAPStore getIMAPStore(String user, String oauthToken) {
 		try {
 			initialize();
-			return connectToImap("imap.gmail.com", 993, user, oauthToken, true);
+			return connectToImap("imap.gmail.com", 993, user, oauthToken, false);
 		} catch (Exception e) {
 			Log.d(MainActivity.TAG, e.toString());
 		}
