@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="Gmail Login"
+        android:text="@string/gmailloginbutton"
         android:visibility="visible" />
 
     <LinearLayout
@@ -22,10 +22,140 @@
         android:orientation="vertical"
         android:visibility="invisible">
 
-        <Button
+        <RadioGroup
+            android:id="@+id/tabs_mainactivity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="View List" />
+            android:gravity="center_vertical|center_horizontal"
+            android:orientation="horizontal"
+            android:paddingTop="10dip">
+
+            <RadioButton
+                android:id="@+id/todaytab_mainactivity"
+                style="@style/RadioButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/cell_shape_radio"
+                android:checked="true"
+                android:onClick="onRadioButtonClicked"
+                android:padding="10dip"
+                android:text="@string/today"
+                android:textColor="@color/colorPrimary" />
+
+            <RadioButton
+                android:id="@+id/weektab_mainactivity"
+                style="@style/RadioButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onRadioButtonClicked"
+                android:padding="10dip"
+                android:text="@string/week"
+                android:textColor="@color/colorPrimary" />
+
+            <RadioButton
+                android:id="@+id/monthtab_mainactivity"
+                style="@style/RadioButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onRadioButtonClicked"
+                android:padding="10dip"
+                android:text="@string/month"
+                android:textColor="@color/colorPrimary" />
+
+            <RadioButton
+                android:id="@+id/alltab_mainactivity"
+                style="@style/RadioButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onRadioButtonClicked"
+                android:padding="10dip"
+                android:text="@string/all"
+                android:textColor="@color/colorPrimary" />
+        </RadioGroup>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dip"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/pendinggraph_mainactivity"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dip"
+                    android:layout_margin="10dip"
+                    android:background="@color/colorPrimary"
+                    android:orientation="horizontal" />
+
+                <ImageButton
+                    android:id="@+id/pendingbutton_mainactivity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/pendingbuttondescrip"
+                    android:src="@drawable/icon_pending" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/acceptedgraph_mainactivity"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dip"
+                    android:layout_margin="10dip"
+                    android:background="@color/colorPrimary"
+                    android:orientation="horizontal" />
+
+                <ImageButton
+                    android:id="@+id/acceptedbutton_mainactivity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/acceptedbuttondescrip"
+                    android:src="@drawable/icon_accepted" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/rejectedgraph_mainactivity"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dip"
+                    android:layout_margin="10dip"
+                    android:background="@color/colorPrimary"
+                    android:orientation="horizontal" />
+
+                <ImageButton
+                    android:id="@+id/rejectedbutton_mainactivity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/rejectedbuttondescrip"
+                    android:src="@drawable/icon_rejected" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/viewlist_mainactivity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dip"
+            android:layout_marginRight="20dip"
+            android:text="@string/viewlistall" />
     </LinearLayout>
 
     <LinearLayout
@@ -47,7 +177,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Loading..."
+            android:text="@string/stockloadingtext"
             android:textColor="@color/colorPrimaryDark" />
     </LinearLayout>
 

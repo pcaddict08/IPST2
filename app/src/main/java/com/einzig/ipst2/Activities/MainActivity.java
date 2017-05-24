@@ -30,6 +30,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -43,6 +46,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.einzig.ipst2.R;
@@ -60,30 +65,52 @@ import java.util.ArrayList;
  * @author Steven Foskett
  * @since 2017-05-15
  */
-public class MainActivity extends AppCompatActivity {
-    /** ??? */
+public class MainActivity extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener {
+    /**
+     * ???
+     */
     static public final String EXTRA_ACCOUNTNAME = "extra_accountname";
-    /** String key used for saving and retrieving the user's email address */
+    /**
+     * String key used for saving and retrieving the user's email address
+     */
     static public final String EMAIL_KEY = "email";
-    /** String key for sending date through Bundle */
+    /**
+     * String key for sending date through Bundle
+     */
     static public final String MOST_RECENT_DATE_KEY = "recentDate";
-    /** Used for the default key when something is uninitialized */
+    /**
+     * Used for the default key when something is uninitialized
+     */
     static public final String NULL_KEY = "uninitialized";
-    /** String key for sending a portal through a bundle */
+    /**
+     * String key for sending a portal through a bundle
+     */
     static public final String PORTAL_KEY = "portal";
-    /** String key for sending a portal list through Bundle */
+    /**
+     * String key for sending a portal list through Bundle
+     */
     static public final String PORTAL_LIST_KEY = "portalList";
-    /** The PortalSubmission being combined with a PortalResponded */
+    /**
+     * The PortalSubmission being combined with a PortalResponded
+     */
     static public final String PORTAL_SUBMISSION_KEY = "portalSubmission";
-    /** The key for saving portal submission sort preference */
+    /**
+     * The key for saving portal submission sort preference
+     */
     static public final String SORT_KEY = "sort";
-    /** Tag used for logging for this class */
+    /**
+     * Tag used for logging for this class
+     */
     static public final String TAG = "IPST";
-    /** Used to get the result of LoginActivity */
+    /**
+     * Used to get the result of LoginActivity
+     */
     static private final int LOGIN_ACTIVITY_CODE = 0;
     static final int REQUEST_CODE_EMAIL = 1;
     static final int REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR = 1002;
-    /** Preferences for saving app settings */
+    /**
+     * Preferences for saving app settings
+     */
     private SharedPreferences preferences;
 
     /**
@@ -128,8 +155,8 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Display an error message dialog
      *
-     * @param title         Title for error dialog
-     * @param messageText   Message for error dialog
+     * @param title       Title for error dialog
+     * @param messageText Message for error dialog
      */
     private void errorFoundMessage(final String title, final String messageText) {
         Log.d(TAG, "Displaying error message");
@@ -155,11 +182,11 @@ public class MainActivity extends AppCompatActivity {
         String email = preferences.getString(EMAIL_KEY, NULL_KEY);
         Log.i(TAG, "Getting account " + email);
         AccountManager manager = AccountManager.get(this);
-        for(Account account: manager.getAccounts()) {
+        for (Account account : manager.getAccounts()) {
             Log.d(TAG, "Has account " + account.name);
             Log.d(TAG, "account name " + email);
             Log.d(TAG, "account type " + account.type);
-            if(account.name.equalsIgnoreCase(email) && account.type.equalsIgnoreCase("com.google"))
+            if (account.name.equalsIgnoreCase(email) && account.type.equalsIgnoreCase("com.google"))
                 return account;
         }
         Log.d(TAG, "returning null account");
@@ -261,6 +288,81 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /*
+    *  Method for building/showing the ui once emails are parsed.
+    */
+    public void buildUIAfterParsing(long acceptedcount, long pendingcount, long rejectedcount) {
+        long totalCount = acceptedcount + pendingcount + rejectedcount;
+        //Do stuff with these numbers.  Set bars with heights based on percentages. set button listeners here
+        findViewById(R.id.progress_view_mainactivity).setVisibility(View.INVISIBLE);
+        findViewById(R.id.mainui_mainactivity).setVisibility(View.VISIBLE);
+        RadioButton todayButton = (RadioButton) findViewById(R.id.todaytab_mainactivity);
+        if (todayButton != null)
+            todayButton.setOnCheckedChangeListener(this);
+        RadioButton weekButton = (RadioButton) findViewById(R.id.weektab_mainactivity);
+        if (weekButton != null)
+            weekButton.setOnCheckedChangeListener(this);
+        RadioButton monthButton = (RadioButton) findViewById(R.id.monthtab_mainactivity);
+        if (monthButton != null)
+            monthButton.setOnCheckedChangeListener(this);
+        RadioButton allButton = (RadioButton) findViewById(R.id.alltab_mainactivity);
+        if (allButton != null)
+            allButton.setOnCheckedChangeListener(this);
+    }
+
+    /*
+    *  Method for when radiobuttons are clicked
+    */
+    public void onRadioButtonClicked(View view) {
+        boolean checked = ((RadioButton) view).isChecked();
+        RadioButton tempButton = (RadioButton) view;
+        tempButton.setTypeface(null, Typeface.BOLD);
+        // Check which radio button was clicked
+        switch (view.getId()) {
+            case R.id.todaytab_mainactivity:
+                if (checked) {
+                    //TODO set text of labels what the today things are.
+
+                    Button buttonTextSet = (Button) findViewById(R.id.viewlist_mainactivity);
+                    buttonTextSet.setText(R.string.viewlisttoday);
+                }
+                break;
+            case R.id.weektab_mainactivity:
+                if (checked) {
+
+                    Button buttonTextSet = (Button) findViewById(R.id.viewlist_mainactivity);
+                    buttonTextSet.setText(R.string.viewlistweek);
+                }
+                break;
+            case R.id.monthtab_mainactivity:
+                if (checked) {
+
+                    Button buttonTextSet = (Button) findViewById(R.id.viewlist_mainactivity);
+                    buttonTextSet.setText(R.string.viewlistmonth);
+                }
+                break;
+            case R.id.alltab_mainactivity:
+                if (checked) {
+
+
+                    Button buttonTextSet = (Button) findViewById(R.id.viewlist_mainactivity);
+                    buttonTextSet.setText(R.string.viewlistall);
+                }
+                break;
+        }
+    }
+
+    /*
+    *  This method fixes formatting when radio boxes are changed
+    * */
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        buttonView.setTypeface(isChecked ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
+        buttonView.setBackground(isChecked ? getResources().getDrawable(R.drawable.cell_shape_radio)
+                                            : getResources().getDrawable(R.drawable.cell_shape_radio_clear));
+    }
+
+
+    /*
      * Callback method if an activity is started for result via startActivityForResult().
      */
     @Override
@@ -286,7 +388,7 @@ public class MainActivity extends AppCompatActivity {
             findViewById(R.id.gmail_login_button).setVisibility(View.INVISIBLE);
         } else {
             errorFoundMessage("Account Not Found",
-                              "The account you selected wasn't found on this device.");
+                    "The account you selected wasn't found on this device.");
         }
     }
 
@@ -309,7 +411,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
-        if(!preferences.getString(EMAIL_KEY, NULL_KEY).equalsIgnoreCase(NULL_KEY)) {
+        if (!preferences.getString(EMAIL_KEY, NULL_KEY).equalsIgnoreCase(NULL_KEY)) {
             findViewById(R.id.progress_view_mainactivity).setVisibility(View.VISIBLE);
             findViewById(R.id.gmail_login_button).setVisibility(View.INVISIBLE);
             parseEmail();
