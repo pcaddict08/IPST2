@@ -14,6 +14,7 @@
     <string name="viewlisttoday">View List - Today</string>
     <string name="viewlistweek">View List - Week</string>
     <string name="viewlistmonth">View List - Month</string>
+    <string name="notavailable">N/A</string>
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->

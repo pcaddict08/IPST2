@@ -40,13 +40,16 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
@@ -57,6 +60,7 @@ import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.common.GoogleApiAvailability;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * Main activity class which launches the app.
@@ -295,6 +299,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         //Do stuff with these numbers.  Set bars with heights based on percentages. set button listeners here
         findViewById(R.id.progress_view_mainactivity).setVisibility(View.INVISIBLE);
         findViewById(R.id.mainui_mainactivity).setVisibility(View.VISIBLE);
+        formatUI(acceptedcount, rejectedcount, pendingcount);
         RadioButton todayButton = (RadioButton) findViewById(R.id.todaytab_mainactivity);
         if (todayButton != null)
             todayButton.setOnCheckedChangeListener(this);
@@ -307,6 +312,30 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         RadioButton allButton = (RadioButton) findViewById(R.id.alltab_mainactivity);
         if (allButton != null)
             allButton.setOnCheckedChangeListener(this);
+    }
+
+    /*
+    * Method to format UI when changing radio buttons
+     */
+    public void formatUI(long accepted, long rejected, long pending)
+    {
+        ((TextView) findViewById(R.id.pendingtext_mainactivity)).setText(String.format(Locale.getDefault(), "%d", pending));
+        ((TextView) findViewById(R.id.acceptedtext_mainactivity)).setText(String.format(Locale.getDefault(), "%d", accepted));
+        ((TextView) findViewById(R.id.rejectedtext_mainactivity)).setText(String.format(Locale.getDefault(), "%d", rejected));
+
+        setLayoutParamsGraphBars((int) ((pending * 100) / (accepted + rejected + pending)), (LinearLayout) findViewById(R.id.pendinggraph_mainactivity));
+        setLayoutParamsGraphBars((int) ((rejected * 100) / (accepted + rejected + pending)), (LinearLayout) findViewById(R.id.rejectedgraph_mainactivity));
+        setLayoutParamsGraphBars((int) ((accepted * 100) / (accepted + rejected + pending)), (LinearLayout) findViewById(R.id.acceptedgraph_mainactivity));
+    }
+
+    /*
+    * Method to set layout params for graph bars
+     */
+    public void setLayoutParamsGraphBars(int height, LinearLayout layout)
+    {
+        ViewGroup.LayoutParams params = layout.getLayoutParams();
+        params.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, height, getResources().getDisplayMetrics());
+        layout.setLayoutParams(params);
     }
 
     /*

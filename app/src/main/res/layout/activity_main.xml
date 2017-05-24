@@ -93,13 +93,22 @@
                     android:background="@color/colorPrimary"
                     android:orientation="horizontal" />
 
+                <TextView
+                    android:id="@+id/pendingtext_mainactivity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="@string/notavailable"
+                    android:textAppearance="?android:textAppearanceMedium" />
+
                 <ImageButton
                     android:id="@+id/pendingbutton_mainactivity"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
                     android:contentDescription="@string/pendingbuttondescrip"
-                    android:src="@drawable/icon_pending" />
+                    android:src="@drawable/icon_pending"
+                    android:visibility="visible" />
 
             </LinearLayout>
 
@@ -116,13 +125,22 @@
                     android:background="@color/colorPrimary"
                     android:orientation="horizontal" />
 
+                <TextView
+                    android:id="@+id/acceptedtext_mainactivity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="@string/notavailable"
+                    android:textAppearance="?android:textAppearanceMedium" />
+
                 <ImageButton
                     android:id="@+id/acceptedbutton_mainactivity"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
                     android:contentDescription="@string/acceptedbuttondescrip"
-                    android:src="@drawable/icon_accepted" />
+                    android:src="@drawable/icon_accepted"
+                    android:visibility="visible" />
             </LinearLayout>
 
             <LinearLayout
@@ -138,13 +156,22 @@
                     android:background="@color/colorPrimary"
                     android:orientation="horizontal" />
 
+                <TextView
+                    android:id="@+id/rejectedtext_mainactivity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="@string/notavailable"
+                    android:textAppearance="?android:textAppearanceMedium" />
+
                 <ImageButton
                     android:id="@+id/rejectedbutton_mainactivity"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
                     android:contentDescription="@string/rejectedbuttondescrip"
-                    android:src="@drawable/icon_rejected" />
+                    android:src="@drawable/icon_rejected"
+                    android:visibility="visible" />
             </LinearLayout>
 
         </LinearLayout>
