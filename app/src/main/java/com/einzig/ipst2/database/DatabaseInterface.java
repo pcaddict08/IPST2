@@ -43,7 +43,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Vector;
 
-/**
+/** TODO (Ryan): Get # of portals after date sorted by SORT_KEY
  * @author Ryan Porterfield
  * @since 2017-05-18
  */
