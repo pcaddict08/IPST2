@@ -1,27 +1,25 @@
-/*
- *  ********************************************************************************************** *
- *  * ********************************************************************************************** *
- *  *                                                                                                *
- *  * Copyright 2017 Steven Foskett, Jimmy Ho, Ryan Porterfield                                      *
- *  *                                                                                                *
- *  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software  *
- *  * and associated documentation files (the "Software"), to deal in the Software without           *
- *  * restriction, including without limitation the rights to use, copy, modify, merge, publish,     *
- *  * distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the  *
- *  * Software is furnished to do so, subject to the following conditions:                           *
- *  *                                                                                                *
- *  * The above copyright notice and this permission notice shall be included in all copies or       *
- *  * substantial portions of the Software.                                                          *
- *  *                                                                                                *
- *  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING  *
- *  * BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND     *
- *  * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,   *
- *  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, *
- *  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.        *
- *  *                                                                                                *
- *  * ********************************************************************************************** *
- *  * **********************************************************************************************
- */
+/* ********************************************************************************************** *
+ * ********************************************************************************************** *
+ *                                                                                                *
+ * Copyright 2017 Steven Foskett, Jimmy Ho, Ryan Porterfield                                      *
+ *                                                                                                *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software  *
+ * and associated documentation files (the "Software"), to deal in the Software without           *
+ * restriction, including without limitation the rights to use, copy, modify, merge, publish,     *
+ * distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the  *
+ * Software is furnished to do so, subject to the following conditions:                           *
+ *                                                                                                *
+ * The above copyright notice and this permission notice shall be included in all copies or       *
+ * substantial portions of the Software.                                                          *
+ *                                                                                                *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING  *
+ * BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND     *
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,   *
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, *
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.        *
+ *                                                                                                *
+ * ********************************************************************************************** *
+ * ********************************************************************************************** */
 
 package com.einzig.ipst2.parse;
 
@@ -56,6 +54,7 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.search.AndTerm;
 import javax.mail.search.ComparisonTerm;
+import javax.mail.search.FromStringTerm;
 import javax.mail.search.NotTerm;
 import javax.mail.search.OrTerm;
 import javax.mail.search.ReceivedDateTerm;
@@ -75,7 +74,7 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
     final private Account account;
     /** Format for parsing and printing dates */
     final private DateFormat dateFormat;
-    /**  */
+    /**/
     final private DatabaseInterface db;
     /** Does the actual parsing of emails */
     final private EmailParser parser;
@@ -86,6 +85,8 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
      * Display parsing progress
      */
     private ProgressDialog dialog;
+    /** Array of portal submission and response emails */
+    private Message messages[];
 
     /**
      * Initialize a new EmailParseActivity to asynchronously getPortal new portal submission emails.
@@ -100,13 +101,14 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
         this.db = new DatabaseInterface(activity);
         this.parser = new EmailParser(db);
         this.preferences = activity.getPreferences(MainActivity.MODE_PRIVATE);
+        this.messages = null;
         addMailcaps();
         initProgressDialog();
         System.getProperties().setProperty("mail.store.protocol", "imaps");
     }
 
     /**
-     *
+     * Add mailcaps for the mail library.
      */
     private void addMailcaps() {
         MailcapCommandMap mc = (MailcapCommandMap) CommandMap.getDefaultCommandMap();
@@ -117,6 +119,10 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
         mc.addMailcap("message/rfc822;; x-java-content- handler=com.sun.mail.handlers.message_rfc822");
     }
 
+    /**
+     * Add a portal to the database
+     * @param p Instance of PortalSubmission or subclass to add to the database
+     */
     private void addPortal(PortalSubmission p) {
         if (p instanceof PortalAccepted)
             addPortalAccepted((PortalAccepted) p);
@@ -127,7 +133,8 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
     }
 
     /**
-     *
+     * Add a portal to the database
+     * @param portal Instance of PortalAccepted to add to the database
      */
     private void addPortalAccepted(PortalAccepted portal) {
         Log.d(MainActivity.TAG, "Adding approved portal: " + portal.getName());
@@ -138,7 +145,8 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
     }
 
     /**
-     *
+     * Add a portal to the database
+     * @param portal Instance of PortalSubmission (but not a subclass) to add to the database
      */
     private void addPortalSubmission(PortalSubmission portal) {
         Log.d(MainActivity.TAG, "Adding submitted portal: " + portal.getName());
@@ -146,7 +154,8 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
     }
 
     /**
-     *
+     * Add a portal to the database
+     * @param portal Instance of PortalRejected to add to the database
      */
     private void addPortalRejected(PortalRejected portal) {
         Log.d(MainActivity.TAG, "Adding rejected portal: " + portal.getName());
@@ -167,52 +176,72 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
     }
 
     /*
-     *
+     * Override of doInBackground from AsyncTask
      */
     @Override
     protected Integer doInBackground(String... params) {
         Log.d(MainActivity.TAG, "Parsing email");
         Log.d(MainActivity.TAG, "Account name: " + account.name);
-        String token = authenticate();
-        Message messages[] = null;
-        OAuth2Authenticator sender = new OAuth2Authenticator();
-        IMAPStore store = sender.getIMAPStore(account.name, token);
-        try {
-            Folder inbox = store.getFolder("[Gmail]/All Mail");
-            inbox.open(Folder.READ_ONLY);
-            messages = searchMailbox(inbox);
-            fetchMessages(inbox, messages);
-            dialog.setMax(messages.length);
-            parseAllMessages(messages);
-            inbox.close(true);
-            store.close();
-        }  catch (MessagingException e) {
-            Log.e(MainActivity.TAG, e.toString());
+        Date parseDate = Calendar.getInstance().getTime();
+        for (int i = 0; i < messages.length; i++) {
+            PortalSubmission p = parser.getPortal(messages[i]);
+            addPortal(p);
+            publishProgress(i, messages.length);
+            if (isCancelled()) {
+                try {
+                    parseDate = messages[i].getReceivedDate();
+                } catch (MessagingException e) {
+                    Log.e(MainActivity.TAG, e.toString());
+                }
+                break;
+            }
         }
+        onEmailParse(parseDate);
         return messages == null ? 0 : messages.length;
     }
 
     /**
-     *
-     * @param inbox
-     * @param messages
+     * Fetch envelope and content info of messages
+     * @param folder Folder messages are contained in
+     * @param messages Array of messages that matched the search
+     * @see FetchProfile
      */
-    private void fetchMessages(Folder inbox, Message[] messages) {
+    private void fetchMessages(Folder folder, Message[] messages) {
         FetchProfile fp = new FetchProfile();
         fp.add(FetchProfile.Item.ENVELOPE);
         fp.add(FetchProfile.Item.CONTENT_INFO);
+        Log.d(MainActivity.TAG, "Fetching messages");
         try {
-            Log.d(MainActivity.TAG, "Fetching messages");
-            inbox.fetch(messages, fp);
+            folder.fetch(messages, fp);
         } catch (MessagingException e) {
             Log.e(MainActivity.TAG, e.toString());
         }
     }
 
     /**
-     *
-     * @param dateStr
-     * @return
+     * Populate messages
+     * @see EmailParseTask#messages
+     */
+    private void getMessages() {
+        String token = authenticate();
+        IMAPStore store = new OAuth2Authenticator().getIMAPStore(account.name, token);
+        try {
+            // TODO Don't hardcode this
+            Folder folder = store.getFolder("[Gmail]/All Mail");
+            folder.open(Folder.READ_ONLY);
+            messages = searchMailbox(folder);
+            fetchMessages(folder, messages);
+            folder.close(true);
+            store.close();
+        }  catch (MessagingException e) {
+            Log.e(MainActivity.TAG, e.toString());
+        }
+    }
+
+    /**
+     * Get the last date email was parsed
+     * @param dateStr String representation of the last parse date
+     * @return Date the email was parsed if previously parsed, otherwise the date Ingress launched
      */
     private Date getLastParseDate(String dateStr) {
         Date d;
@@ -229,7 +258,7 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
     }
 
     /**
-     *
+     * Initialize the progress dialog
      */
     private void initProgressDialog() {
         this.dialog = new ProgressDialog(this.activity);
@@ -240,29 +269,8 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
     }
 
     /**
-     *
-     * @param msgs
-     */
-    private void parseAllMessages(Message[] msgs) {
-        Date parseDate = Calendar.getInstance().getTime();
-        for (int i = 0; i < msgs.length; i++) {
-            PortalSubmission p = parser.getPortal(msgs[i]);
-            addPortal(p);
-            publishProgress(i, msgs.length);
-            if (isCancelled()) {
-                try {
-                    parseDate = msgs[i].getReceivedDate();
-                } catch (MessagingException e) {
-                    Log.e(MainActivity.TAG, e.toString());
-                }
-                break;
-            }
-        }
-        onEmailParse(parseDate);
-    }
-
-    /**
      * Update the mostRecentDate preference after email has been parsed.
+     * @param parseDate Last time email was parsed
      */
     private void onEmailParse(Date parseDate) {
         String dateString = dateFormat.format(parseDate.getTime());
@@ -272,12 +280,20 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
         editor.apply();
     }
 
+    /*
+     * Populate messages array and display progress dialog
+     */
     @Override
     protected void onPreExecute() {
         activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        getMessages();
+        dialog.setMax(messages.length);
         dialog.show();
     }
 
+    /*
+     * Dismiss progress dialog and print some debug info
+     */
     @Override
     protected void onPostExecute(Integer result) {
         activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -287,6 +303,9 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
         Log.d(MainActivity.TAG, "Rejected portals: " + db.getRejectedCount());
     }
 
+    /*
+     * Update progress dialog
+     */
     @Override
     protected void onProgressUpdate(Integer... progress) {
         dialog.setProgress(progress[0] + 1);
@@ -294,24 +313,37 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
     }
 
     /**
-     *
-     * @param inbox
-     * @return
-     * @throws MessagingException
+     * Get SearchTerm to find relevant emails
+     * @param lastParseDate Date of previous parse for ReceivedDateTerm
+     * @return Search term that will find all portal submission emails
      */
-    private Message[] searchMailbox(Folder inbox) throws MessagingException {
+    private SearchTerm getSearchTerm(Date lastParseDate) {
         SearchTerm portalTerm = new SubjectTerm("ingress portal");
         SearchTerm reviewTerm = new SubjectTerm("portal review");
         SearchTerm subjectTerm = new OrTerm(portalTerm, reviewTerm);
-        Date lastParseDate = getLastParseDate(
-                preferences.getString(MainActivity.MOST_RECENT_DATE_KEY, MainActivity.NULL_KEY));
         ReceivedDateTerm minDateTerm = new ReceivedDateTerm(ComparisonTerm.GT, lastParseDate);
         SearchTerm invalidTerm = new NotTerm(new SubjectTerm("invalid"));
         SearchTerm editTerm = new NotTerm(new SubjectTerm("edit"));
         SearchTerm editsTerm = new NotTerm(new SubjectTerm("edits"));
         SearchTerm photoTerm = new NotTerm(new SubjectTerm("photo"));
-        portalTerm = new AndTerm(new SearchTerm[]
+        SearchTerm superOpsTerm = new FromStringTerm("super-ops@google.com");
+        SearchTerm iSupportTerm1 = new FromStringTerm("ingress-support@google.com");
+        SearchTerm iSupportTerm2 = new FromStringTerm("ingress-support@nianticlabs.com");
+        SearchTerm fromTerm = new OrTerm(new SearchTerm[]
+                {superOpsTerm, iSupportTerm1, iSupportTerm2});
+        return new AndTerm(new SearchTerm[]
                 {subjectTerm, minDateTerm, invalidTerm, editTerm, editsTerm, photoTerm});
-        return inbox.search(portalTerm);
+    }
+
+    /**
+     * Search a mail folder for portal submission and response emails
+     * @param folder Mail folder containing portal submission emails
+     * @return All emails matching the search terms
+     * @throws MessagingException if the library encounters an error
+     */
+    private Message[] searchMailbox(Folder folder) throws MessagingException {
+        Date lastParseDate = getLastParseDate(
+                preferences.getString(MainActivity.MOST_RECENT_DATE_KEY, MainActivity.NULL_KEY));
+        return folder.search(getSearchTerm(lastParseDate));
     }
 }
