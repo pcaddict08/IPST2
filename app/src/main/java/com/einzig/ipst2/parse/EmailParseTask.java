@@ -332,7 +332,7 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
         SearchTerm fromTerm = new OrTerm(new SearchTerm[]
                 {superOpsTerm, iSupportTerm1, iSupportTerm2});
         return new AndTerm(new SearchTerm[]
-                {subjectTerm, minDateTerm, invalidTerm, editTerm, editsTerm, photoTerm});
+                {subjectTerm, minDateTerm, invalidTerm, editTerm, editsTerm, photoTerm, fromTerm});
     }
 
     /**

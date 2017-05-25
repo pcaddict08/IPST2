@@ -136,8 +136,8 @@ class EmailParser {
         } catch (MessagingException e) {
             return null;
         }
-        if (!isEmailFromNiantic(message))
-            return null;
+        /*if (!isEmailFromNiantic(message))
+            return null;*/
         messageString = getText(message);
         return parse(subject, messageString, receivedDate);
     }
