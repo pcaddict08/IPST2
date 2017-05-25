@@ -3,4 +3,7 @@
     <color name="colorPrimary">#012928</color>
     <color name="colorPrimaryDark">#012928</color>
     <color name="colorAccent">#ffde00</color>
+    <color name="rejected">#ff3c3c</color>
+    <color name="accepted">#1fdd2d</color>
+    <color name="pending">#394143</color>
 </resources>

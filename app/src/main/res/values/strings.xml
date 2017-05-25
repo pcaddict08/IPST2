@@ -1,7 +1,20 @@
 <resources>
     <string name="app_name">IPST2</string>
     <string name="title_activity_settings">Settings</string>
-
+    <string name="gmailloginbutton">Gmail Login</string>
+    <string name="pendingbuttondescrip">Pending</string>
+    <string name="acceptedbuttondescrip">Accepted</string>
+    <string name="rejectedbuttondescrip">Rejected</string>
+    <string name="today">Today</string>
+    <string name="week">Week</string>
+    <string name="month">Month</string>
+    <string name="all">All</string>
+    <string name="stockloadingtext">Loading…</string>
+    <string name="viewlistall">View List - All</string>
+    <string name="viewlisttoday">View List - Today</string>
+    <string name="viewlistweek">View List - Week</string>
+    <string name="viewlistmonth">View List - Month</string>
+    <string name="notavailable">N/A</string>
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->
