@@ -18,6 +18,8 @@
         android:id="@+id/mainui_mainactivity"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
         android:gravity="center"
         android:orientation="vertical"
         android:visibility="invisible">
@@ -35,8 +37,6 @@
                 style="@style/RadioButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/cell_shape_radio"
-                android:checked="true"
                 android:onClick="onRadioButtonClicked"
                 android:padding="10dip"
                 android:text="@string/today"
@@ -69,10 +69,21 @@
                 android:layout_height="wrap_content"
                 android:onClick="onRadioButtonClicked"
                 android:padding="10dip"
+                android:checked="true"
+                android:background="@drawable/cell_shape_radio"
                 android:text="@string/all"
                 android:textColor="@color/colorPrimary" />
         </RadioGroup>
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="10dip"
+            android:id="@+id/percentaccepted_mainactivity"
+            android:text="@string/notavailable"
+            android:textAppearance="?android:textAppearanceLarge"
+            />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -83,15 +94,10 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="5dip"
+
                 android:orientation="vertical">
 
-                <LinearLayout
-                    android:id="@+id/pendinggraph_mainactivity"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dip"
-                    android:layout_margin="10dip"
-                    android:background="@color/colorPrimary"
-                    android:orientation="horizontal" />
 
                 <TextView
                     android:id="@+id/pendingtext_mainactivity"
@@ -103,27 +109,28 @@
 
                 <ImageButton
                     android:id="@+id/pendingbutton_mainactivity"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="75dip"
+                    android:layout_height="75dip"
                     android:background="@android:color/transparent"
                     android:contentDescription="@string/pendingbuttondescrip"
+                    android:scaleType="center"
                     android:src="@drawable/icon_pending"
                     android:visibility="visible" />
+
+                <LinearLayout
+                    android:id="@+id/pendinggraph_mainactivity"
+                    android:layout_width="75dip"
+                    android:layout_height="1dip"
+                    android:background="@color/pending"
+                    android:orientation="horizontal" />
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="5dip"
                 android:orientation="vertical">
-
-                <LinearLayout
-                    android:id="@+id/acceptedgraph_mainactivity"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dip"
-                    android:layout_margin="10dip"
-                    android:background="@color/colorPrimary"
-                    android:orientation="horizontal" />
 
                 <TextView
                     android:id="@+id/acceptedtext_mainactivity"
@@ -135,26 +142,29 @@
 
                 <ImageButton
                     android:id="@+id/acceptedbutton_mainactivity"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="75dip"
+                    android:layout_height="75dip"
                     android:background="@android:color/transparent"
                     android:contentDescription="@string/acceptedbuttondescrip"
+                    android:scaleType="center"
                     android:src="@drawable/icon_accepted"
                     android:visibility="visible" />
+
+                <LinearLayout
+                    android:id="@+id/acceptedgraph_mainactivity"
+                    android:layout_width="75dip"
+                    android:layout_height="1dip"
+                    android:background="@color/accepted"
+                    android:orientation="horizontal" />
+
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_margin="5dip"
 
-                <LinearLayout
-                    android:id="@+id/rejectedgraph_mainactivity"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dip"
-                    android:layout_margin="10dip"
-                    android:background="@color/colorPrimary"
-                    android:orientation="horizontal" />
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/rejectedtext_mainactivity"
@@ -166,12 +176,21 @@
 
                 <ImageButton
                     android:id="@+id/rejectedbutton_mainactivity"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="75dip"
+                    android:layout_height="75dip"
                     android:background="@android:color/transparent"
                     android:contentDescription="@string/rejectedbuttondescrip"
+                    android:scaleType="center"
                     android:src="@drawable/icon_rejected"
                     android:visibility="visible" />
+
+                <LinearLayout
+                    android:id="@+id/rejectedgraph_mainactivity"
+                    android:layout_width="75dip"
+                    android:layout_height="1dip"
+                    android:background="@color/rejected"
+                    android:orientation="horizontal" />
+
             </LinearLayout>
 
         </LinearLayout>
@@ -182,7 +201,10 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dip"
             android:layout_marginRight="20dip"
-            android:text="@string/viewlistall" />
+            android:background="@drawable/button_bg"
+            android:textAppearance="?android:textAppearanceLarge"
+            android:text="@string/viewlistall"
+            android:textColor="@color/colorPrimary" />
     </LinearLayout>
 
     <LinearLayout

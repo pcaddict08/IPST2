@@ -51,6 +51,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.einzig.ipst2.R;
@@ -326,6 +327,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         setLayoutParamsGraphBars((int) ((pending * 100) / (accepted + rejected + pending)), (LinearLayout) findViewById(R.id.pendinggraph_mainactivity));
         setLayoutParamsGraphBars((int) ((rejected * 100) / (accepted + rejected + pending)), (LinearLayout) findViewById(R.id.rejectedgraph_mainactivity));
         setLayoutParamsGraphBars((int) ((accepted * 100) / (accepted + rejected + pending)), (LinearLayout) findViewById(R.id.acceptedgraph_mainactivity));
+        ((TextView) findViewById(R.id.percentaccepted_mainactivity)).setText(String.format(Locale.getDefault(),"%d%%", (int) ((accepted * 100) / (accepted + rejected + pending))));
     }
 
     /*
