@@ -42,7 +42,7 @@ import java.util.concurrent.CountDownLatch;
  * @author Ryan Porterfield
  * @since 2017-05-17
  */
-class AuthToken implements AccountManagerCallback<Bundle> {
+public class AuthToken implements AccountManagerCallback<Bundle> {
 
     /**
      * Latch used for multithreading safety so token isn't returned from getToken before it's been

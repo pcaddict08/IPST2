@@ -32,8 +32,8 @@ import android.util.Log;
 import android.view.WindowManager;
 
 import com.einzig.ipst2.activities.MainActivity;
-import com.einzig.ipst2.oauth.OAuth2Authenticator;
 import com.einzig.ipst2.database.DatabaseInterface;
+import com.einzig.ipst2.oauth.OAuth2Authenticator;
 import com.einzig.ipst2.portal.PortalAccepted;
 import com.einzig.ipst2.portal.PortalRejected;
 import com.einzig.ipst2.portal.PortalSubmission;
@@ -74,19 +74,16 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
     final private Account account;
     /** Format for parsing and printing dates */
     final private DateFormat dateFormat;
-    /**/
+    /** Database for adding portals */
     final private DatabaseInterface db;
     /** Does the actual parsing of emails */
     final private EmailParser parser;
+    /** App preferences */
     final private SharedPreferences preferences;
     /** The calling activity. Used to update UI elements */
     final private MainActivity activity;
-    /**
-     * Display parsing progress
-     */
+    /** Display parsing progress */
     private ProgressDialog dialog;
-    /** Array of portal submission and response emails */
-    private Message messages[];
 
     /**
      * Initialize a new EmailParseActivity to asynchronously getPortal new portal submission emails.
@@ -101,7 +98,6 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
         this.db = new DatabaseInterface(activity);
         this.parser = new EmailParser(db);
         this.preferences = activity.getPreferences(MainActivity.MODE_PRIVATE);
-        this.messages = null;
         addMailcaps();
         initProgressDialog();
         System.getProperties().setProperty("mail.store.protocol", "imaps");
@@ -176,27 +172,28 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
     }
 
     /*
-     * Override of doInBackground from AsyncTask
+     *
      */
     @Override
     protected Integer doInBackground(String... params) {
         Log.d(MainActivity.TAG, "Parsing email");
         Log.d(MainActivity.TAG, "Account name: " + account.name);
-        Date parseDate = Calendar.getInstance().getTime();
-        for (int i = 0; i < messages.length; i++) {
-            PortalSubmission p = parser.getPortal(messages[i]);
-            addPortal(p);
-            publishProgress(i, messages.length);
-            if (isCancelled()) {
-                try {
-                    parseDate = messages[i].getReceivedDate();
-                } catch (MessagingException e) {
-                    Log.e(MainActivity.TAG, e.toString());
-                }
-                break;
-            }
+        String token = authenticate();
+        Message messages[] = null;
+        OAuth2Authenticator sender = new OAuth2Authenticator();
+        IMAPStore store = sender.getIMAPStore(account.name, token);
+        try {
+            Folder inbox = store.getFolder("[Gmail]/All Mail");
+            inbox.open(Folder.READ_ONLY);
+            messages = searchMailbox(inbox);
+            fetchMessages(inbox, messages);
+            dialog.setMax(messages.length);
+            parseAllMessages(messages);
+            inbox.close(true);
+            store.close();
+        }  catch (MessagingException e) {
+            Log.e(MainActivity.TAG, e.toString());
         }
-        onEmailParse(parseDate);
         return messages == null ? 0 : messages.length;
     }
 
@@ -214,26 +211,6 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
         try {
             folder.fetch(messages, fp);
         } catch (MessagingException e) {
-            Log.e(MainActivity.TAG, e.toString());
-        }
-    }
-
-    /**
-     * Populate messages
-     * @see EmailParseTask#messages
-     */
-    private void getMessages() {
-        String token = authenticate();
-        IMAPStore store = new OAuth2Authenticator().getIMAPStore(account.name, token);
-        try {
-            // TODO Don't hardcode this
-            Folder folder = store.getFolder("[Gmail]/All Mail");
-            folder.open(Folder.READ_ONLY);
-            messages = searchMailbox(folder);
-            fetchMessages(folder, messages);
-            folder.close(true);
-            store.close();
-        }  catch (MessagingException e) {
             Log.e(MainActivity.TAG, e.toString());
         }
     }
@@ -258,11 +235,33 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
     }
 
     /**
+     * Get SearchTerm to find relevant emails
+     * @param lastParseDate Date of previous parse for ReceivedDateTerm
+     * @return Search term that will find all portal submission emails
+     */
+    private SearchTerm getSearchTerm(Date lastParseDate) {
+        SearchTerm portalTerm = new SubjectTerm("ingress portal");
+        SearchTerm reviewTerm = new SubjectTerm("portal review");
+        SearchTerm subjectTerm = new OrTerm(portalTerm, reviewTerm);
+        ReceivedDateTerm minDateTerm = new ReceivedDateTerm(ComparisonTerm.GT, lastParseDate);
+        SearchTerm invalidTerm = new NotTerm(new SubjectTerm("invalid"));
+        SearchTerm editTerm = new NotTerm(new SubjectTerm("edit"));
+        SearchTerm editsTerm = new NotTerm(new SubjectTerm("edits"));
+        SearchTerm photoTerm = new NotTerm(new SubjectTerm("photo"));
+        SearchTerm superOpsTerm = new FromStringTerm("super-ops@google.com");
+        SearchTerm iSupportTerm1 = new FromStringTerm("ingress-support@google.com");
+        SearchTerm iSupportTerm2 = new FromStringTerm("ingress-support@nianticlabs.com");
+        SearchTerm fromTerm = new OrTerm(new SearchTerm[]
+                {superOpsTerm, iSupportTerm1, iSupportTerm2});
+        return new AndTerm(new SearchTerm[]
+                {subjectTerm, minDateTerm, invalidTerm, editTerm, editsTerm, photoTerm, fromTerm});
+    }
+
+    /**
      * Initialize the progress dialog
      */
     private void initProgressDialog() {
         this.dialog = new ProgressDialog(this.activity);
-        dialog.setIndeterminate(false);
         dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         dialog.setTitle("Parsing email");
         dialog.setCanceledOnTouchOutside(false);
@@ -286,8 +285,6 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
     @Override
     protected void onPreExecute() {
         activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        getMessages();
-        dialog.setMax(messages.length);
         dialog.show();
     }
 
@@ -312,27 +309,22 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
         Log.v(MainActivity.TAG, "Parsing: " + dialog.getProgress() + " / " + dialog.getMax());
     }
 
-    /**
-     * Get SearchTerm to find relevant emails
-     * @param lastParseDate Date of previous parse for ReceivedDateTerm
-     * @return Search term that will find all portal submission emails
-     */
-    private SearchTerm getSearchTerm(Date lastParseDate) {
-        SearchTerm portalTerm = new SubjectTerm("ingress portal");
-        SearchTerm reviewTerm = new SubjectTerm("portal review");
-        SearchTerm subjectTerm = new OrTerm(portalTerm, reviewTerm);
-        ReceivedDateTerm minDateTerm = new ReceivedDateTerm(ComparisonTerm.GT, lastParseDate);
-        SearchTerm invalidTerm = new NotTerm(new SubjectTerm("invalid"));
-        SearchTerm editTerm = new NotTerm(new SubjectTerm("edit"));
-        SearchTerm editsTerm = new NotTerm(new SubjectTerm("edits"));
-        SearchTerm photoTerm = new NotTerm(new SubjectTerm("photo"));
-        SearchTerm superOpsTerm = new FromStringTerm("super-ops@google.com");
-        SearchTerm iSupportTerm1 = new FromStringTerm("ingress-support@google.com");
-        SearchTerm iSupportTerm2 = new FromStringTerm("ingress-support@nianticlabs.com");
-        SearchTerm fromTerm = new OrTerm(new SearchTerm[]
-                {superOpsTerm, iSupportTerm1, iSupportTerm2});
-        return new AndTerm(new SearchTerm[]
-                {subjectTerm, minDateTerm, invalidTerm, editTerm, editsTerm, photoTerm, fromTerm});
+    private void parseAllMessages(Message[] messages) {
+        Date parseDate = Calendar.getInstance().getTime();
+        for (int i = 0; i < messages.length; i++) {
+            PortalSubmission p = parser.getPortal(messages[i]);
+            addPortal(p);
+            publishProgress(i, messages.length);
+            if (isCancelled()) {
+                try {
+                    parseDate = messages[i].getReceivedDate();
+                } catch (MessagingException e) {
+                    Log.e(MainActivity.TAG, e.toString());
+                }
+                break;
+            }
+        }
+        onEmailParse(parseDate);
     }
 
     /**
