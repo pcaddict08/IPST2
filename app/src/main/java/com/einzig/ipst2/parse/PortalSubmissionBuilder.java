@@ -25,77 +25,25 @@
 
 package com.einzig.ipst2.parse;
 
-import android.accounts.AccountManager;
-import android.accounts.AccountManagerCallback;
-import android.accounts.AccountManagerFuture;
-import android.accounts.AuthenticatorException;
-import android.accounts.OperationCanceledException;
-import android.os.Bundle;
-import android.util.Log;
+import com.einzig.ipst2.database.DatabaseInterface;
+import com.einzig.ipst2.portal.PortalSubmission;
 
-import com.einzig.ipst2.activities.MainActivity;
-
-import java.io.IOException;
-import java.util.concurrent.CountDownLatch;
+import java.util.Date;
 
 /**
  * @author Ryan Porterfield
- * @since 2017-05-17
+ * @since 2017-05-24
  */
-public class AuthToken implements AccountManagerCallback<Bundle> {
 
-    /**
-     * Latch used for multithreading safety so token isn't returned from getToken before it's been
-     * acquired.
-     */
-    private CountDownLatch latch;
-    /** Token used to access email */
-	private String token;
-
-    /**
-     * Create an AuthToken container class to get an AuthToken for accessing GMail.
-     */
-    public AuthToken() {
-        latch = new CountDownLatch(1);
-        Log.d(MainActivity.TAG, "Creating a new AuthToken");
+final class PortalSubmissionBuilder extends PortalBuilder<PortalSubmission> {
+    PortalSubmissionBuilder(DatabaseInterface db) {
+        super(db);
     }
 
-    /**
-     * Get AuthToken for accessing GMail after it has been acquired asynchronously in run().
-     * Uses a CountdownLatch to ensure thread safety.
-     * @return AuthToken for accessing GMail.
-     * @sa run
-     */
-    public String getToken() {
-        Log.d(MainActivity.TAG, "Getting token");
-        try {
-            latch.await();
-        } catch (InterruptedException e) {
-            Log.e(MainActivity.TAG, "Interrupted while waiting for authentication");
-        }
-        return token;
-    }
-
-    /*
-     * Get the AuthToken from the AccountManager.
-     * After the token has been acquired count down the latch so that the token can be returned from
-     * getToken().
-     * @sa getToken
-     */
     @Override
-    public void run(AccountManagerFuture<Bundle> result) {
-        Log.d(MainActivity.TAG, "Running AuthToken");
-        try {
-            Bundle bundle = result.getResult();
-            token = bundle.getString(AccountManager.KEY_AUTHTOKEN);
-            Log.i(MainActivity.TAG, "authToken -> " + token);
-            latch.countDown();
-        } catch (AuthenticatorException e) {
-            Log.e(MainActivity.TAG, "Could not authenticate:\n" + e);
-        } catch (IOException e) {
-            Log.e(MainActivity.TAG, e.getMessage());
-        } catch (OperationCanceledException e) {
-            Log.e(MainActivity.TAG, "Operation cancelled:\n" + e);
-        }
+    PortalSubmission build(String name, Date dateResponded, String message) {
+        String pictureURL = parsePictureURL(message);
+        return new PortalSubmission(name, dateResponded, pictureURL);
     }
+
 }

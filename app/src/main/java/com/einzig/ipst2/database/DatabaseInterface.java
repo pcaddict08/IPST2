@@ -43,7 +43,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Vector;
 
-/**
+/** TODO (Ryan): Get # of portals after date sorted by SORT_KEY
  * @author Ryan Porterfield
  * @since 2017-05-18
  */
@@ -92,7 +92,6 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         Log.d(MainActivity.TAG, "Add accepted portal: " + portal.getName());
         String dateSubmitted = dateFormatter.format(portal.getDateSubmitted());
         String dateResponded = dateFormatter.format(portal.getDateResponded());
-        SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
         // Values put!
         values.put(KEY_NAME, portal.getName());
@@ -101,8 +100,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         values.put(KEY_DATE_RESPONDED, dateResponded);
         values.put(KEY_LIVE_ADDRESS, portal.getLiveAddress());
         values.put(KEY_INTEL_LINK_URL, portal.getIntelLinkURL());
-        db.insert(TABLE_ACCEPTED, null, values);
-        db.close();
+        addPortal(TABLE_ACCEPTED, values);
     }
 
     /**
@@ -113,7 +111,6 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         Log.d(MainActivity.TAG, "Add rejected portal: " + portal.getName());
         String dateSubmitted = dateFormatter.format(portal.getDateSubmitted());
         String dateResponded = dateFormatter.format(portal.getDateResponded());
-        SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
         // Values put!
         values.put(KEY_NAME, portal.getName());
@@ -121,25 +118,35 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         values.put(KEY_PICTURE_URL, portal.getPictureURL());
         values.put(KEY_DATE_RESPONDED, dateResponded);
         values.put(KEY_REJECTION_REASON, portal.getRejectionReason());
-        db.insert(TABLE_REJECTED, null, values);
-        db.close();
+        addPortal(TABLE_REJECTED, values);
     }
 
     /**
      * Insert a PortalSubmission into the database
      * @param portal The portal getting stored in the database
      */
-    public void addPortalSubmission(PortalSubmission portal){
+    public void addPortalSubmission(PortalSubmission portal) {
         Log.d(MainActivity.TAG, "Add portal submission: " + portal.getName());
         String dateSubmitted = dateFormatter.format(portal.getDateSubmitted());
-        SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
         // Values put!
         values.put(KEY_NAME, portal.getName());
         values.put(KEY_DATE_SUBMITTED, dateSubmitted);
         values.put(KEY_PICTURE_URL, portal.getPictureURL());
-        db.insert(TABLE_PENDING, null, values);
-        db.close(); 
+        addPortal(TABLE_PENDING, values);
+    }
+
+    /**
+     * Add some values to a table in the database.
+     * @param table Table key in the database
+     * @param values Values to be inserted
+     */
+    private void addPortal(String table, ContentValues values) {
+        SQLiteDatabase db = getWritableDatabase();
+        long result = db.insert(table, null, values);
+        if (result == -1)
+            Log.e(MainActivity.TAG, values.get(KEY_PICTURE_URL) + " NOT UNIQUE");
+        db.close();
     }
 
     /**

@@ -25,77 +25,71 @@
 
 package com.einzig.ipst2.parse;
 
-import android.accounts.AccountManager;
-import android.accounts.AccountManagerCallback;
-import android.accounts.AccountManagerFuture;
-import android.accounts.AuthenticatorException;
-import android.accounts.OperationCanceledException;
-import android.os.Bundle;
-import android.util.Log;
+import com.einzig.ipst2.database.DatabaseInterface;
+import com.einzig.ipst2.portal.PortalAccepted;
+import com.einzig.ipst2.portal.PortalSubmission;
 
-import com.einzig.ipst2.activities.MainActivity;
-
-import java.io.IOException;
-import java.util.concurrent.CountDownLatch;
+import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Ryan Porterfield
- * @since 2017-05-17
+ * @since 2017-05-24
  */
-public class AuthToken implements AccountManagerCallback<Bundle> {
 
-    /**
-     * Latch used for multithreading safety so token isn't returned from getToken before it's been
-     * acquired.
-     */
-    private CountDownLatch latch;
-    /** Token used to access email */
-	private String token;
+final class PortalAcceptedBuilder extends PortalBuilder<PortalAccepted> {
 
-    /**
-     * Create an AuthToken container class to get an AuthToken for accessing GMail.
-     */
-    public AuthToken() {
-        latch = new CountDownLatch(1);
-        Log.d(MainActivity.TAG, "Creating a new AuthToken");
+    PortalAcceptedBuilder(DatabaseInterface db) {
+        super(db);
     }
 
-    /**
-     * Get AuthToken for accessing GMail after it has been acquired asynchronously in run().
-     * Uses a CountdownLatch to ensure thread safety.
-     * @return AuthToken for accessing GMail.
-     * @sa run
-     */
-    public String getToken() {
-        Log.d(MainActivity.TAG, "Getting token");
-        try {
-            latch.await();
-        } catch (InterruptedException e) {
-            Log.e(MainActivity.TAG, "Interrupted while waiting for authentication");
-        }
-        return token;
-    }
-
-    /*
-     * Get the AuthToken from the AccountManager.
-     * After the token has been acquired count down the latch so that the token can be returned from
-     * getToken().
-     * @sa getToken
-     */
     @Override
-    public void run(AccountManagerFuture<Bundle> result) {
-        Log.d(MainActivity.TAG, "Running AuthToken");
-        try {
-            Bundle bundle = result.getResult();
-            token = bundle.getString(AccountManager.KEY_AUTHTOKEN);
-            Log.i(MainActivity.TAG, "authToken -> " + token);
-            latch.countDown();
-        } catch (AuthenticatorException e) {
-            Log.e(MainActivity.TAG, "Could not authenticate:\n" + e);
-        } catch (IOException e) {
-            Log.e(MainActivity.TAG, e.getMessage());
-        } catch (OperationCanceledException e) {
-            Log.e(MainActivity.TAG, "Operation cancelled:\n" + e);
+    PortalAccepted build(String name, Date dateResponded, String message) {
+        String pictureURL = parsePictureURL(message);
+        Date dateSubmitted = dateResponded;
+        PortalSubmission submission = findPortal(pictureURL);
+        if (submission != null)
+            dateSubmitted = submission.getDateSubmitted();
+        String address = parseLiveAddress(message);
+        String intelLink = parseIntelLink(message);
+        return new PortalAccepted(name, dateSubmitted, pictureURL, dateResponded, address, intelLink);
+    }
+
+    /**
+     * Parse the intel link for an accepted portal from the email.
+     *
+     * @param messageString The body of the email as a String for parsing.
+     * @return Ingress Intel map link for the portal.
+     */
+    private String parseIntelLink(String messageString) {
+        String intelLinkURL;
+        Pattern p = Pattern.compile("href=\"(.*?)\"");
+        Matcher m = p.matcher(messageString);
+        if (m.find()) {
+            intelLinkURL = m.group(1);
         }
+        else
+            intelLinkURL = "N/A";
+        return intelLinkURL;
+    }
+
+    /**
+     * Parse the address of an accepted portal from the email.
+     *
+     * @param messageString The body of the email as a String for parsing.
+     * @return address of the portal.
+     */
+    private String parseLiveAddress(String messageString) {
+        String liveAddress;
+        Pattern titleFinder = Pattern.compile("<a[^>]*>(.*?)</a>",
+                Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
+        Matcher regexMatcher = titleFinder.matcher(messageString);
+        if (regexMatcher.find()) {
+            liveAddress = regexMatcher.group(1);
+        }
+        else
+            liveAddress = "N/A";
+        return liveAddress;
     }
 }
