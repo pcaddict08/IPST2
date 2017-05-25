@@ -56,6 +56,8 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.search.AndTerm;
 import javax.mail.search.ComparisonTerm;
+import javax.mail.search.NotTerm;
+import javax.mail.search.OrTerm;
 import javax.mail.search.ReceivedDateTerm;
 import javax.mail.search.SearchTerm;
 import javax.mail.search.SubjectTerm;
@@ -86,10 +88,10 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
     private ProgressDialog dialog;
 
     /**
-     * Initialize a new EmailParseActivity to asynchronously parse new portal submission emails.
+     * Initialize a new EmailParseActivity to asynchronously getPortal new portal submission emails.
      *
      * @param activity The calling activity.
-     * @param account The email account to parse from.
+     * @param account The email account to getPortal from.
      */
     public EmailParseTask(MainActivity activity, Account account) {
         this.account = account;
@@ -244,7 +246,7 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
     private void parseAllMessages(Message[] msgs) {
         Date parseDate = Calendar.getInstance().getTime();
         for (int i = 0; i < msgs.length; i++) {
-            PortalSubmission p = parser.parse(msgs[i]);
+            PortalSubmission p = parser.getPortal(msgs[i]);
             addPortal(p);
             publishProgress(i, msgs.length);
             if (isCancelled()) {
@@ -288,7 +290,7 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
     @Override
     protected void onProgressUpdate(Integer... progress) {
         dialog.setProgress(progress[0] + 1);
-        Log.v(MainActivity.TAG, "Parsing" + dialog.getProgress() + " / " + dialog.getMax());
+        Log.v(MainActivity.TAG, "Parsing: " + dialog.getProgress() + " / " + dialog.getMax());
     }
 
     /**
@@ -298,11 +300,18 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
      * @throws MessagingException
      */
     private Message[] searchMailbox(Folder inbox) throws MessagingException {
-        SearchTerm searchTerm = new SubjectTerm("Ingress Portal");
-        String dateStr = preferences.getString(MainActivity.MOST_RECENT_DATE_KEY, MainActivity.NULL_KEY);
-        ReceivedDateTerm minDateTerm = new ReceivedDateTerm(ComparisonTerm.GT,
-                getLastParseDate(dateStr));
-        searchTerm = new AndTerm(searchTerm, minDateTerm);
-        return inbox.search(searchTerm);
+        SearchTerm portalTerm = new SubjectTerm("ingress portal");
+        SearchTerm reviewTerm = new SubjectTerm("portal review");
+        SearchTerm subjectTerm = new OrTerm(portalTerm, reviewTerm);
+        Date lastParseDate = getLastParseDate(
+                preferences.getString(MainActivity.MOST_RECENT_DATE_KEY, MainActivity.NULL_KEY));
+        ReceivedDateTerm minDateTerm = new ReceivedDateTerm(ComparisonTerm.GT, lastParseDate);
+        SearchTerm invalidTerm = new NotTerm(new SubjectTerm("invalid"));
+        SearchTerm editTerm = new NotTerm(new SubjectTerm("edit"));
+        SearchTerm editsTerm = new NotTerm(new SubjectTerm("edits"));
+        SearchTerm photoTerm = new NotTerm(new SubjectTerm("photo"));
+        portalTerm = new AndTerm(new SearchTerm[]
+                {subjectTerm, minDateTerm, invalidTerm, editTerm, editsTerm, photoTerm});
+        return inbox.search(portalTerm);
     }
 }

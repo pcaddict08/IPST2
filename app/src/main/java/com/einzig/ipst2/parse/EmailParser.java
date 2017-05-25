@@ -25,6 +25,9 @@
 
 package com.einzig.ipst2.parse;
 
+import android.util.Log;
+
+import com.einzig.ipst2.activities.MainActivity;
 import com.einzig.ipst2.database.DatabaseInterface;
 import com.einzig.ipst2.portal.PortalSubmission;
 
@@ -66,29 +69,32 @@ class EmailParser {
      *
      * @param p The body of the message.
      * @return A String representation of the message body.
-     * @throws MessagingException Thrown by email library
-     * @throws IOException Thrown by email library
      */
-    private String getText(Part p) throws MessagingException, IOException {
-        if (p.isMimeType("text/*")) {
-            return (String) p.getContent();
-        } else { // TODO: Bug test this change
-            Multipart mp = (Multipart) p.getContent();
-            String text = null;
+    private String getText(Part p) {
+        try {
+            if (p.isMimeType("text/*")) {
+                return (String) p.getContent();
+            } else {
+                Multipart mp = (Multipart) p.getContent();
+                String text = null;
 
-            for (int i = 0; i < mp.getCount(); i++) {
-                Part bp = mp.getBodyPart(i);
-                // prefer html text over plain text
-                if (bp.isMimeType("text/html")) {
-                    text = getText(bp);
-                    if (text != null)
-                        return text;
-                } else {
-                    text = getText(bp);
+                for (int i = 0; i < mp.getCount(); i++) {
+                    Part bp = mp.getBodyPart(i);
+                    // prefer html text over plain text
+                    if (bp.isMimeType("text/html")) {
+                        text = getText(bp);
+                        if (text != null)
+                            return text;
+                    } else {
+                        text = getText(bp);
+                    }
                 }
+                return text;
             }
-            return text;
+        } catch (MessagingException | IOException e) {
+            Log.e(MainActivity.TAG, e.toString());
         }
+        return null;
     }
 
     /**
@@ -101,10 +107,10 @@ class EmailParser {
         try {
             Address[] addresses = message.getFrom();
             for (Address address : addresses) {
-                String from = address.toString();
-                if (from.equalsIgnoreCase("super-ops@google.com") ||
-                        from.equalsIgnoreCase("ingress-support@google.com") ||
-                        from.equalsIgnoreCase("ingress-support@nianticlabs.com"))
+                String from = address.toString().toLowerCase();
+                if (from.endsWith("<super-ops@google.com>") ||
+                        from.endsWith("<ingress-support@google.com>") ||
+                        from.endsWith("<ingress-support@nianticlabs.com>"))
                     return true;
             }
         } catch (MessagingException | NullPointerException e) {
@@ -114,58 +120,53 @@ class EmailParser {
     }
 
     /**
-     * Returns true if the email is relevant to IPST and needs to be parsed.
-     *
-     * @param message The email being parsed.
-     * @return true if the email is a submission or review and needs to be parsed, otherwise false.
-     */
-    private boolean isEmailRelevant(Message message, String subject) {
-        return isEmailFromNiantic(message) && !subject.toLowerCase().contains("edit") &&
-                !subject.toLowerCase().contains("photo");
-    }
-
-    /** TODO: Speed up parsing
-     * Parse a portal submission or portal review email from Niantic.
+     * Get a portal object from an email
      * @param message A Message being parsed.
+     * @return
      */
-    PortalSubmission parse(Message message) {
+    PortalSubmission getPortal(Message message) {
         String messageString, subject;
         Date receivedDate;
         try {
             subject = message.getSubject();
             receivedDate = message.getReceivedDate();
-            messageString = getText(message);
-        } catch (IOException | MessagingException e) {
+        } catch (MessagingException e) {
             return null;
         }
-
-        subject = trimSubject(subject);
-
-        if (!isEmailRelevant(message, subject))
+        if (!isEmailFromNiantic(message))
             return null;
+        messageString = getText(message);
         return parse(subject, messageString, receivedDate);
     }
 
+    /** TODO: Speed up parsing
+     *
+     * @param subject
+     * @param message
+     * @param receivedDate
+     * @return
+     */
     private PortalSubmission parse(String subject, String message, Date receivedDate) {
+        Log.d(MainActivity.TAG, "Parsing: " + subject);
         String portalName = getPortalName(subject).trim();
-        // TODO: Fix bug with not parsing subject "review complete"
-        if (subject.toLowerCase().contains("submitted")) {
+        subject = subject.toLowerCase();
+        if (subject.contains("submitted"))
             return submissionBuilder.build(portalName, receivedDate, message);
-        } else if (subject.toLowerCase().contains("portal live") ||
-                subject.toLowerCase().contains(" *success!*")) {
+        else if (subject.contains("portal live") ||
+                subject.contains(" *success!*"))
             return acceptedBuilder.build(portalName, receivedDate, message);
-        } else if (subject.toLowerCase().contains("rejected") || subject.toLowerCase().contains("duplicate")) {
+        else if (subject.contains("rejected") || subject.contains("duplicate"))
             return rejectedBuilder.build(portalName, receivedDate, message);
-        } else if (subject.toLowerCase().contains("portal review complete")) {
-
-        }
-        return null;
+        else
+            return parseNewFormat(portalName, message, receivedDate, subject);
     }
 
-    private String trimSubject(String subject) {
-        if(subject.endsWith("."))
-            subject = subject.substring(0, subject.length() - 1);
-        subject = subject.replaceAll("  " ," ");
-        return subject;
+    private PortalSubmission parseNewFormat(String portalName, String message, Date receivedDate, String subject) {
+        if (message.contains("not to accept") || message.contains("duplicate"))
+            return rejectedBuilder.build(portalName, receivedDate, message);
+        else if (message.contains("accepted"))
+            return acceptedBuilder.build(portalName, receivedDate, message);
+        Log.e(MainActivity.TAG, "Couldn't getPortal message:\n" + subject);
+        return null;
     }
 }
