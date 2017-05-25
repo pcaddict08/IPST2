@@ -113,6 +113,7 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
         mc.addMailcap("text/plain;; x-java-content-handler=com.sun.mail.handlers.text_plain");
         mc.addMailcap("multipart/*;; x-java-content-handler=com.sun.mail.handlers.multipart_mixed");
         mc.addMailcap("message/rfc822;; x-java-content- handler=com.sun.mail.handlers.message_rfc822");
+        CommandMap.setDefaultCommandMap(mc);
     }
 
     /**
@@ -178,18 +179,18 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
     protected Integer doInBackground(String... params) {
         Log.d(MainActivity.TAG, "Parsing email");
         Log.d(MainActivity.TAG, "Account name: " + account.name);
-        String token = authenticate();
         Message messages[] = null;
+        String token = authenticate();
         OAuth2Authenticator sender = new OAuth2Authenticator();
         IMAPStore store = sender.getIMAPStore(account.name, token);
         try {
-            Folder inbox = store.getFolder("[Gmail]/All Mail");
-            inbox.open(Folder.READ_ONLY);
-            messages = searchMailbox(inbox);
-            fetchMessages(inbox, messages);
+            Folder folder = getFolder(store);
+            folder.open(Folder.READ_ONLY);
+            messages = searchMailbox(folder);
+            fetchMessages(folder, messages);
             dialog.setMax(messages.length);
             parseAllMessages(messages);
-            inbox.close(true);
+            folder.close(true);
             store.close();
         }  catch (MessagingException e) {
             Log.e(MainActivity.TAG, e.toString());
@@ -213,6 +214,17 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
         } catch (MessagingException e) {
             Log.e(MainActivity.TAG, e.toString());
         }
+    }
+
+    private Folder getFolder(IMAPStore store) throws MessagingException {
+        Folder[] folders = store.getDefaultFolder().list();
+        Folder folder = new FolderGetter(activity, folders, preferences).getFolder();
+        Log.d(MainActivity.TAG, MainActivity.FOLDER_KEY + " -> " + folder.getFullName());
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(MainActivity.FOLDER_KEY, folder.getFullName());
+        editor.apply();
+        // TODO check if this is redundant
+        return store.getFolder(folder.getFullName());
     }
 
     /**

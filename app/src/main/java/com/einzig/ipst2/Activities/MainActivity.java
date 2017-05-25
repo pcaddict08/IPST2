@@ -63,15 +63,17 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
     /** ??? */
     static public final String EXTRA_ACCOUNTNAME = "extra_accountname";
-    /** String key used for saving and retrieving the user's email address */
+    /** Preferences key used for saving and retrieving the user's email address */
     static public final String EMAIL_KEY = "email";
-    /** String key for sending date through Bundle */
+    /** Preferences key for email folder containing portal emails */
+    static final public String FOLDER_KEY = "mailFolder";
+    /** Preferences key for sending date through Bundle */
     static public final String MOST_RECENT_DATE_KEY = "recentDate";
     /** Used for the default key when something is uninitialized */
     static public final String NULL_KEY = "uninitialized";
-    /** String key for sending a portal through a bundle */
+    /** Preferences key for sending a portal through a bundle */
     static public final String PORTAL_KEY = "portal";
-    /** String key for sending a portal list through Bundle */
+    /** Preferences key for sending a portal list through Bundle */
     static public final String PORTAL_LIST_KEY = "portalList";
     /** The PortalSubmission being combined with a PortalResponded */
     static public final String PORTAL_SUBMISSION_KEY = "portalSubmission";
@@ -91,38 +93,6 @@ public class MainActivity extends AppCompatActivity {
      */
     public MainActivity() {
         preferences = null;
-    }
-
-    /**
-     * Set a mail folder to look for Ingress emails
-     *
-     * @param folderList List of folders that can be selected.
-     */
-    public void addCustomFolder(final ArrayList<String> folderList) {
-        this.runOnUiThread(new Runnable() {
-            public void run() {
-                String[] stockArr = new String[folderList.size()];
-                stockArr = folderList.toArray(stockArr);
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setTitle("Set Custom Folder To Parse")
-                        .setItems(stockArr, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                SharedPreferences.Editor editor = preferences.edit();
-                                Log.d(TAG, "FOLDER: " + folderList.get(which));
-                                editor.putString("mail_pref", folderList.get(which));
-                                editor.apply();
-                                Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                                i.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                                startActivity(i);
-                                finish();
-                                overridePendingTransition(0, 0);
-                            }
-                        });
-                AlertDialog alertDialog = builder.create();
-                alertDialog.show();
-            }
-        });
     }
 
     /**
@@ -212,6 +182,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
+     * TODO (Steven): Delete if we don't need this. If we do need it, remove this TODO
      * This method is a hook for background threads and async tasks that need to provide the
      * user a response UI when an exception occurs.
      */
@@ -272,7 +243,6 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         SharedPreferences.Editor editor = preferences.edit();
-        // TODO
         editor.putString(EMAIL_KEY, data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME));
         editor.apply();
         Log.d(TAG, "Got account name " + data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME));
@@ -334,7 +304,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // TODO (Ryan): Look into how this works
     /*
      * Provides the results of permission requests
      */
@@ -350,57 +319,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // TODO (Ryan): Check master branch to see if this is used
-    // TODO (Anyone): Move strings to strings resource
-    /*
-     * Handles the error when GMail's All Mail folder is missing and the custom folder set by the
-     * user is unset, or also missing.
-     */
-    public void noAllMailFolder(final String customFolder, final ArrayList<String> folderList) {
-        this.runOnUiThread(new Runnable() {
-            public void run() {
-                findViewById(R.id.progress_view_mainactivity).setVisibility(View.INVISIBLE);
-                findViewById(R.id.gmail_login_button).setVisibility(View.VISIBLE);
-                ((TextView) findViewById(R.id.loading_text_mainactivity)).setText("Loading...");
-
-                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-                if (customFolder.equalsIgnoreCase("")) {
-                    new AlertDialog.Builder(MainActivity.this)
-                            .setTitle("Error: All Mail Folder Missing")
-                            .setMessage("IPST couldn't find the 'All Mail' folder.  Either it's been deleted, or your Gmail is not in English."
-                                    + " Currently the 'All Mail' folder is how IPST parses for portal submissions.  \n\n")
-                            .setPositiveButton("Set Custom Folder", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    addCustomFolder(folderList);
-                                }
-                            }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            // Do nothing.
-                        }
-                    }).show();
-                } else {
-                    new AlertDialog.Builder(MainActivity.this)
-                            .setTitle("Error: Custom Mail Folder '" + customFolder + "' Missing")
-                            .setMessage("IPST couldn't find the '" + customFolder + "' folder.  Either it's been deleted, or is missing for some other reason. \n\n"
-                                    + "Would you like to set a new folder to parse, or reset to 'All Mail'?")
-                            .setPositiveButton("Set Custom Folder", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    addCustomFolder(folderList);
-                                }
-                            })
-                            .setNeutralButton("All Mail", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    resetAllMail();
-                                }
-                            })
-                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                }
-                            }).show();
-                }
-            }
-        });
-    }
 
     /**
      * Parse emails from Niantic
@@ -410,20 +328,6 @@ public class MainActivity extends AppCompatActivity {
         if (account != null) {
             new EmailParseTask(this, account).execute();
         }
-    }
-
-    /**
-     * Reset the mail folder preference to GMail's All Mail folder
-     */
-    public void resetAllMail() {
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("mail_pref", "All Mail");
-        editor.apply();
-        Intent i = new Intent(getApplicationContext(), MainActivity.class);
-        i.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-        startActivity(i);
-        finish();
-        overridePendingTransition(0, 0);
     }
 
 }
