@@ -1,27 +1,25 @@
-/*
- *  ********************************************************************************************** *
- *  * ********************************************************************************************** *
- *  *                                                                                                *
- *  * Copyright 2017 Steven Foskett, Jimmy Ho, Ryan Porterfield                                      *
- *  *                                                                                                *
- *  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software  *
- *  * and associated documentation files (the "Software"), to deal in the Software without           *
- *  * restriction, including without limitation the rights to use, copy, modify, merge, publish,     *
- *  * distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the  *
- *  * Software is furnished to do so, subject to the following conditions:                           *
- *  *                                                                                                *
- *  * The above copyright notice and this permission notice shall be included in all copies or       *
- *  * substantial portions of the Software.                                                          *
- *  *                                                                                                *
- *  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING  *
- *  * BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND     *
- *  * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,   *
- *  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, *
- *  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.        *
- *  *                                                                                                *
- *  * ********************************************************************************************** *
- *  * **********************************************************************************************
- */
+/* ********************************************************************************************** *
+ * ********************************************************************************************** *
+ *                                                                                                *
+ * Copyright 2017 Steven Foskett, Jimmy Ho, Ryan Porterfield                                      *
+ *                                                                                                *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software  *
+ * and associated documentation files (the "Software"), to deal in the Software without           *
+ * restriction, including without limitation the rights to use, copy, modify, merge, publish,     *
+ * distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the  *
+ * Software is furnished to do so, subject to the following conditions:                           *
+ *                                                                                                *
+ * The above copyright notice and this permission notice shall be included in all copies or       *
+ * substantial portions of the Software.                                                          *
+ *                                                                                                *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING  *
+ * BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND     *
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,   *
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, *
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.        *
+ *                                                                                                *
+ * ********************************************************************************************** *
+ * ********************************************************************************************** */
 
 package com.einzig.ipst2.parse;
 
@@ -53,6 +51,8 @@ class EmailParser {
 
     /**
      * Create a new EmailParser
+     * @param db Database reference for PortalBuilder
+     * @see PortalBuilder
      */
     EmailParser(DatabaseInterface db) {
         acceptedBuilder = new PortalAcceptedBuilder(db);
@@ -60,15 +60,19 @@ class EmailParser {
         submissionBuilder = new PortalSubmissionBuilder(db);
     }
 
+    /**
+     * Get portal name from email subject
+     * @param subject Email subject line
+     * @return portal name from email subjec
+     */
     private String getPortalName(String subject) {
         return subject.substring(subject.indexOf(":") + 2);
     }
 
     /**
-     * Does a thing maybe.
-     *
+     * Get body of the email
      * @param p The body of the message.
-     * @return A String representation of the message body.
+     * @return A String representation of the email body.
      */
     private String getText(Part p) {
         try {
@@ -98,8 +102,7 @@ class EmailParser {
     }
 
     /**
-     * Returns true if the email is from Niantic.
-     *
+     * Check if the email is from Niantic.
      * @param message The email being parsed.
      * @return true if the email is from Niantic, otherwise false.
      */
@@ -122,7 +125,7 @@ class EmailParser {
     /**
      * Get a portal object from an email
      * @param message A Message being parsed.
-     * @return
+     * @return PortalSubmission or subclass if the email can be parsed, otherwise null
      */
     PortalSubmission getPortal(Message message) {
         String messageString, subject;
@@ -140,11 +143,11 @@ class EmailParser {
     }
 
     /** TODO: Speed up parsing
-     *
-     * @param subject
-     * @param message
-     * @param receivedDate
-     * @return
+     * Parse a portal submission email
+     * @param subject Email subject line
+     * @param message Email body
+     * @param receivedDate Date the email was delivered
+     * @return PortalSubmission or subclass if the email can be parsed, otherwise null
      */
     private PortalSubmission parse(String subject, String message, Date receivedDate) {
         Log.d(MainActivity.TAG, "Parsing: " + subject);
@@ -158,15 +161,21 @@ class EmailParser {
         else if (subject.contains("rejected") || subject.contains("duplicate"))
             return rejectedBuilder.build(portalName, receivedDate, message);
         else
-            return parseNewFormat(portalName, message, receivedDate, subject);
+            return parseNewFormat(portalName, message, receivedDate);
     }
 
-    private PortalSubmission parseNewFormat(String portalName, String message, Date receivedDate, String subject) {
+    /**
+     * Parse the new portal submission email format
+     * @param portalName Name of the portal
+     * @param message Email body
+     * @param receivedDate Date the email was delivered
+     * @return PortalSubmission or subclass if the email can be parsed, otherwise null
+     */
+    private PortalSubmission parseNewFormat(String portalName, String message, Date receivedDate) {
         if (message.contains("not to accept") || message.contains("duplicate"))
             return rejectedBuilder.build(portalName, receivedDate, message);
         else if (message.contains("accepted"))
             return acceptedBuilder.build(portalName, receivedDate, message);
-        Log.e(MainActivity.TAG, "Couldn't getPortal message:\n" + subject);
         return null;
     }
 }
