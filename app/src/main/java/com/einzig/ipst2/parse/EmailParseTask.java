@@ -223,8 +223,7 @@ public class EmailParseTask extends AsyncTask<String, Integer, Integer> {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(MainActivity.FOLDER_KEY, folder.getFullName());
         editor.apply();
-        // TODO check if this is redundant
-        return store.getFolder(folder.getFullName());
+        return folder;
     }
 
     /**
