@@ -63,7 +63,6 @@ class FolderGetter {
     private List<Folder> flattenFolders(Folder[] folders) {
         List<Folder> folderList = new ArrayList<>();
         for (Folder folder : folders) {
-            //if (!(folder.getName().contains("[") && folder.getName().contains("]")))
             folderList.add(folder);
             try {
                 Folder[] subfolders = folder.list();
