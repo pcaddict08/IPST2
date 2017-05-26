@@ -172,10 +172,12 @@ class EmailParser {
      * @return PortalSubmission or subclass if the email can be parsed, otherwise null
      */
     private PortalSubmission parseNewFormat(String portalName, String message, Date receivedDate) {
-        if (message.contains("not to accept") || message.contains("duplicate"))
-            return rejectedBuilder.build(portalName, receivedDate, message);
-        else if (message.contains("accepted"))
-            return acceptedBuilder.build(portalName, receivedDate, message);
+        if (message != null) {
+            if (message.contains("not to accept") || message.contains("duplicate"))
+                return rejectedBuilder.build(portalName, receivedDate, message);
+            else if (message.contains("accepted"))
+                return acceptedBuilder.build(portalName, receivedDate, message);
+        }
         return null;
     }
 }

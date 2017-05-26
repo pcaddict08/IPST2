@@ -67,62 +67,59 @@
                 style="@style/RadioButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="@drawable/cell_shape_radio"
+                android:checked="true"
                 android:onClick="onRadioButtonClicked"
                 android:padding="10dip"
-                android:checked="true"
-                android:background="@drawable/cell_shape_radio"
                 android:text="@string/all"
                 android:textColor="@color/colorPrimary" />
         </RadioGroup>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_marginTop="10dip"
-            android:id="@+id/percentaccepted_mainactivity"
-            android:text="@string/notavailable"
-            android:textAppearance="?android:textAppearanceLarge"
-            />
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dip"
-            android:gravity="center_horizontal"
-            android:orientation="horizontal">
+            android:gravity="center_horizontal|bottom"
+            android:orientation="horizontal"
+            android:padding="15dip">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dip"
-
                 android:orientation="vertical">
 
+
+                <ImageButton
+                    android:id="@+id/pendingbutton_mainactivity"
+                    android:layout_width="75dip"
+                    android:layout_height="75dip"
+                    android:background="@color/pending"
+                    android:contentDescription="@string/pendingbuttondescrip"
+                    android:scaleType="centerInside"
+                    android:visibility="visible"
+                    app:srcCompat="@drawable/ic_pending" />
+
+                <TextView
+                    android:id="@+id/pendinggraph_mainactivity"
+                    android:layout_width="75dip"
+                    android:layout_height="25dip"
+                    android:background="@color/pending"
+                    android:gravity="bottom|center_horizontal"
+                    android:paddingBottom="10dip"
+                    android:text="@string/notavailable"
+                    android:textAppearance="?android:textAppearanceLarge"
+                    android:textColor="@android:color/white" />
 
                 <TextView
                     android:id="@+id/pendingtext_mainactivity"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="10dip"
                     android:text="@string/notavailable"
                     android:textAppearance="?android:textAppearanceMedium" />
 
-                <ImageButton
-                    android:id="@+id/pendingbutton_mainactivity"
-                    android:layout_width="75dip"
-                    android:layout_height="75dip"
-                    android:background="@android:color/transparent"
-                    android:contentDescription="@string/pendingbuttondescrip"
-                    android:scaleType="center"
-                    android:src="@drawable/icon_pending"
-                    android:visibility="visible" />
-
-                <LinearLayout
-                    android:id="@+id/pendinggraph_mainactivity"
-                    android:layout_width="75dip"
-                    android:layout_height="1dip"
-                    android:background="@color/pending"
-                    android:orientation="horizontal" />
 
             </LinearLayout>
 
@@ -131,31 +128,39 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="5dip"
                 android:orientation="vertical">
+
+
+                <ImageButton
+                    android:id="@+id/acceptedbutton_mainactivity"
+                    android:layout_width="75dip"
+                    android:layout_height="75dip"
+                    android:background="@color/accepted"
+                    android:contentDescription="@string/acceptedbuttondescrip"
+                    android:scaleType="centerInside"
+                    android:visibility="visible"
+                    app:srcCompat="@drawable/ic_check" />
+
+                <TextView
+                    android:id="@+id/percentaccepted_mainactivity"
+                    android:layout_width="75dip"
+                    android:layout_height="25dip"
+                    android:layout_gravity="top"
+                    android:background="@color/accepted"
+                    android:gravity="bottom|center_horizontal"
+                    android:paddingBottom="10dip"
+                    android:text="@string/notavailable"
+                    android:textAppearance="?android:textAppearanceLarge"
+                    android:textColor="@android:color/white" />
 
                 <TextView
                     android:id="@+id/acceptedtext_mainactivity"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
+
+                    android:layout_marginTop="10dip"
                     android:text="@string/notavailable"
                     android:textAppearance="?android:textAppearanceMedium" />
-
-                <ImageButton
-                    android:id="@+id/acceptedbutton_mainactivity"
-                    android:layout_width="75dip"
-                    android:layout_height="75dip"
-                    android:background="@android:color/transparent"
-                    android:contentDescription="@string/acceptedbuttondescrip"
-                    android:scaleType="center"
-                    android:src="@drawable/icon_accepted"
-                    android:visibility="visible" />
-
-                <LinearLayout
-                    android:id="@+id/acceptedgraph_mainactivity"
-                    android:layout_width="75dip"
-                    android:layout_height="1dip"
-                    android:background="@color/accepted"
-                    android:orientation="horizontal" />
 
             </LinearLayout>
 
@@ -166,31 +171,37 @@
 
                 android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/rejectedtext_mainactivity"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:text="@string/notavailable"
-                    android:textAppearance="?android:textAppearanceMedium" />
 
                 <ImageButton
                     android:id="@+id/rejectedbutton_mainactivity"
                     android:layout_width="75dip"
                     android:layout_height="75dip"
-                    android:background="@android:color/transparent"
+                    android:background="@color/rejected"
                     android:contentDescription="@string/rejectedbuttondescrip"
-                    android:scaleType="center"
-                    android:src="@drawable/icon_rejected"
-                    android:visibility="visible" />
+                    android:scaleType="centerInside"
+                    android:visibility="visible"
+                    app:srcCompat="@drawable/ic_rejected" />
 
-                <LinearLayout
+                <TextView
                     android:id="@+id/rejectedgraph_mainactivity"
                     android:layout_width="75dip"
-                    android:layout_height="1dip"
+                    android:layout_height="25dip"
+                    android:layout_gravity="top"
                     android:background="@color/rejected"
-                    android:orientation="horizontal" />
+                    android:gravity="bottom|center_horizontal"
+                    android:paddingBottom="10dip"
+                    android:text="@string/notavailable"
+                    android:textAppearance="?android:textAppearanceLarge"
+                    android:textColor="@android:color/white" />
 
+                <TextView
+                    android:id="@+id/rejectedtext_mainactivity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="10dip"
+                    android:text="@string/notavailable"
+                    android:textAppearance="?android:textAppearanceMedium" />
             </LinearLayout>
 
         </LinearLayout>
@@ -202,9 +213,9 @@
             android:layout_marginLeft="20dip"
             android:layout_marginRight="20dip"
             android:background="@drawable/button_bg"
-            android:textAppearance="?android:textAppearanceLarge"
             android:text="@string/viewlistall"
-            android:textColor="@color/colorPrimary" />
+            android:textAppearance="?android:textAppearanceLarge"
+            android:textColor="@android:color/white" />
     </LinearLayout>
 
     <LinearLayout
