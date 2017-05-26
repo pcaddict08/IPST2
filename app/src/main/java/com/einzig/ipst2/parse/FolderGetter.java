@@ -48,6 +48,7 @@ import javax.mail.MessagingException;
 
 class FolderGetter {
     static final private String DEFAULT_FOLDER = "[Gmail]/All Mail";
+    static final private String TEST_FOLDER = "";
     final private Activity activity;
     final private List<Folder> folders;
     final private SharedPreferences preferences;
@@ -94,6 +95,7 @@ class FolderGetter {
     private Folder getDefaultFolder() {
         for (Folder folder : folders) {
             if (folder.getFullName().equals(DEFAULT_FOLDER)) {
+            //if (folder.getFullName().equals(TEST_FOLDER)) {
                 return folder;
             }
         }

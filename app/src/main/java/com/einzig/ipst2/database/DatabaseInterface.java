@@ -252,6 +252,90 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     }
 
     /**
+     * Get a Vector of all accepted portals which went live after a certain date
+     * @param fromDate Date to start searching from
+     * @return Vector of all accepted portals which went live after a certain date
+     */
+    public Vector<PortalAccepted> getAcceptedByResponseDate(Date fromDate) {
+        return getAcceptedByResponseDate(fromDate, Calendar.getInstance().getTime());
+    }
+
+    /**
+     * Get a Vector of all accepted portals which went live in between a range of days
+     * @param fromDate Date to start searching from
+     * @param toDate Date to stop searching at
+     * @return Vector of all accepted portals which went live in between a range of days
+     */
+    public Vector<PortalAccepted> getAcceptedByResponseDate(Date fromDate, Date toDate) {
+        return getAllAcceptedByDate(KEY_DATE_RESPONDED, fromDate, toDate);
+    }
+
+    /**
+     * Get a Vector of all accepted portals which were submitted after a certain date
+     * @param fromDate Date to start searching from
+     * @return Vector of all accepted portals which were submitted after a certain date
+     */
+    public Vector<PortalAccepted> getAcceptedBySubmissionDate(Date fromDate) {
+        return getAcceptedBySubmissionDate(fromDate, Calendar.getInstance().getTime());
+    }
+
+    /**
+     * Get a Vector of all accepted portals which were submitted in between a range of days
+     * @param fromDate Date to start searching from
+     * @param toDate Date to stop searching at
+     * @return Vector of all accepted portals which were submitted in between a range of days
+     */
+    public Vector<PortalAccepted> getAcceptedBySubmissionDate(Date fromDate, Date toDate) {
+        return getAllAcceptedByDate(KEY_DATE_SUBMITTED, fromDate, toDate);
+    }
+
+    /**
+     * Get the number of approved portals
+     * @return number of approved portals
+     */
+    public long getAcceptedCount() {
+        return getEntryCount(TABLE_ACCEPTED, null, null);
+    }
+
+    /**
+     * Get the number of portals accepted since fromDate
+     * @param fromDate Date to start searching from
+     * @return number of portals accepted since fromDate
+     */
+    public long getAcceptedCountByResponseDate(Date fromDate) {
+        return getCountByDate(TABLE_ACCEPTED, KEY_DATE_RESPONDED, fromDate);
+    }
+
+    /**
+     * Get the number of portals accepted between fromDate and toDate
+     * @param fromDate Date to start searching from
+     * @param toDate Date to stop searching at
+     * @return number of portals accepted between fromDate and toDate
+     */
+    public long getAcceptedCountByResponseDate(Date fromDate, Date toDate) {
+        return getCountByDate(TABLE_ACCEPTED, KEY_DATE_RESPONDED, fromDate, toDate);
+    }
+
+    /**
+     * Get the number of accepted portals submitted since fromDate
+     * @param fromDate Date to start searching from
+     * @return number of accepted portals submitted since fromDate
+     */
+    public long getAcceptedCountBySubmissionDate(Date fromDate) {
+        return getCountByDate(TABLE_ACCEPTED, KEY_DATE_SUBMITTED, fromDate);
+    }
+
+    /**
+     * Get the number of accepted portals submitted between fromDate and toDate
+     * @param fromDate Date to start searching from
+     * @param toDate Date to stop searching at
+     * @return number of accepted portals submitted between fromDate and toDate
+     */
+    public long getAcceptedCountBySubmissionDate(Date fromDate, Date toDate) {
+        return getCountByDate(TABLE_ACCEPTED, KEY_DATE_SUBMITTED, fromDate, toDate);
+    }
+
+    /**
      * Get an accepted portal submission from the database
      * @param portalPictureURL URL of the portal picture used to uniquely identify the portal
      * @return a PortalAccepted representation of an accepted portal in the database
@@ -278,45 +362,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     }
 
     /**
-     * Get a Vector of all accepted portals which went live after a certain date
-     * @param fromDate Date to start searching from
-     * @return Vector of all accepted portals which went live after a certain date
-     */
-    public Vector<PortalAccepted> getAllAcceptedByResponseDate(Date fromDate) {
-        return getAllAcceptedByResponseDate(fromDate, Calendar.getInstance().getTime());
-    }
-
-    /**
-     * Get a Vector of all accepted portals which went live in between a range of days
-     * @param fromDate Date to start searching from
-     * @param toDate Date to stop searching at
-     * @return Vector of all accepted portals which went live in between a range of days
-     */
-    public Vector<PortalAccepted> getAllAcceptedByResponseDate(Date fromDate, Date toDate) {
-        return getAllAcceptedByDate(KEY_DATE_RESPONDED, fromDate, toDate);
-    }
-
-    /**
-     * Get a Vector of all accepted portals which were submitted after a certain date
-     * @param fromDate Date to start searching from
-     * @return Vector of all accepted portals which were submitted after a certain date
-     */
-    public Vector<PortalAccepted> getAllAcceptedBySubmissionDate(Date fromDate) {
-        return getAllAcceptedBySubmissionDate(fromDate, Calendar.getInstance().getTime());
-    }
-
-    /**
-     * Get a Vector of all accepted portals which were submitted in between a range of days
-     * @param fromDate Date to start searching from
-     * @param toDate Date to stop searching at
-     * @return Vector of all accepted portals which were submitted in between a range of days
-     */
-    public Vector<PortalAccepted> getAllAcceptedBySubmissionDate(Date fromDate, Date toDate) {
-        return getAllAcceptedByDate(KEY_DATE_SUBMITTED, fromDate, toDate);
-    }
-
-    /**
-     * Helper function getAllAcceptedBySubmissionDate and getAllAcceptedBy
+     * Helper function getAcceptedBySubmissionDate and getAllAcceptedBy
      * @param dateKey Database key used for searching. Can be either KEY_DATE_SUBMITTED or
      *                KEY_DATE_RESPONDED
      * @param fromDate Date to start searching from
@@ -347,18 +393,18 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     /**
      * Just to prove I could. For the love of Cthulhu don't call this ever. Please.
      *
-     * Theoretically this would replace getAllAcceptedByDate, getAllPendingByDate and
-     * getAllRejectedByDate. This follows the DRY (Don't Repeat Yourself) programming paradigm and
+     * Theoretically this would replace getAllAcceptedByDate, getPendingByDate and
+     * getRejectedByDate. This follows the DRY (Don't Repeat Yourself) programming paradigm and
      * makes testing and debugging easier. If you have to make a change to one of the methods this
      * replaces, you have to be sure to change all of them. With this method you only have to change
      * it here, once. However, it breaks the KISS (Keep It Simple Stupid) programming paradigm, and
      * it's basically impossible for anyone else to figure out what the hell is going on here.
      *
-     * For example, getAllAcceptedBySubmissionDate would instead call:
+     * For example, getAcceptedBySubmissionDate would instead call:
      *      getAllPortalsByDate(PortalAcceptedBuilder.class, KEY_DATE_SUBMITTED, fromDate, toDate);
-     * getAllPendingByDate would call:
+     * getPendingByDate would call:
      *      getAllPortalsByDate(PortalSubmissionBuilder.class, KEY_DATE_SUBMITTED, fromDate, toDate);
-     * and getAllRejectedByResponseDate would call:
+     * and getRejectedByResponseDate would call:
      *      getAllPortalsByDate(PortalRejectedBuilder.class, KEY_DATE_RESPONDED, fromDate, toDate);
      *
      * @param c Class of PortalBuilder to instantiate
@@ -400,30 +446,6 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     }
 
     /**
-     * Get all pending portal submissions which were submitted between fromDate and toDate
-     * @param fromDate Date to start searching from
-     * @param toDate Date to stop searching at
-     * @return Vector of pending portals which were submitted between fromDate and toDate
-     */
-    public Vector<PortalSubmission> getAllPendingByDate(Date fromDate, Date toDate) {
-        Log.d(MainActivity.TAG, "Getting all pending portals in a date range");
-        SQLiteDatabase db = getReadableDatabase();
-        PortalSubmissionBuilder b = new PortalSubmissionBuilder(dateFormatter, db);
-        Vector<PortalSubmission> portals = b.getPortalsByDate(KEY_DATE_SUBMITTED, fromDate, toDate);
-        db.close();
-        return portals;
-    }
-
-    /**
-     * Get all pending portal submissions which were submitted since fromDate
-     * @param fromDate Date to start searching from
-     * @return Vector of all pending portals which were submitted after a fromDate
-     */
-    public Vector<PortalSubmission> getAllPendingByDate(Date fromDate) {
-        return getAllPendingByDate(fromDate, Calendar.getInstance().getTime());
-    }
-
-    /**
      * Gets a Vector of all rejected portal submissions
      * @return Vector of all rejected portal submissions
      */
@@ -437,83 +459,30 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     }
 
     /**
-     * Get a Vector of all rejected portals which went live after a certain date
+     * Get the number of portals in a table since fromDate
+     * @param table Table in the database
+     * @param dateKey Either KEY_DATE_SUBMITTED or KEY_DATE_RESPONDED
      * @param fromDate Date to start searching from
-     * @return Vector of all rejected portals which went live after a certain date
+     * @return number of portals in a table since date
      */
-    public Vector<PortalRejected> getAllRejectedByResponseDate(Date fromDate) {
-        return getAllRejectedByResponseDate(fromDate, Calendar.getInstance().getTime());
+    private long getCountByDate(String table, String dateKey, Date fromDate) {
+        return getCountByDate(table, dateKey, fromDate, Calendar.getInstance().getTime());
     }
 
     /**
-     * Get a Vector of all rejected portals which went live in between a range of days
-     * @param fromDate Date to start searching from
-     * @param toDate Date to stop searching at
-     * @return Vector of all rejected portals which went live in between a range of days
-     */
-    public Vector<PortalRejected> getAllRejectedByResponseDate(Date fromDate, Date toDate) {
-        return getAllRejectedByDate(KEY_DATE_RESPONDED, fromDate, toDate);
-    }
-
-    /**
-     * Get a Vector of all rejected portals which were submitted after a certain date
-     * @param fromDate Date to start searching from
-     * @return Vector of all rejected portals which were submitted after a certain date
-     */
-    public Vector<PortalRejected> getAllRejectedBySubmissionDate(Date fromDate) {
-        return getAllRejectedBySubmissionDate(fromDate, Calendar.getInstance().getTime());
-    }
-
-    /**
-     * Get a Vector of all rejected portals which were submitted in between a range of days
+     * Get the number of portals in a table between fromDate and toDate
+     * @param table Table in the database
+     * @param dateKey Either KEY_DATE_SUBMITTED or KEY_DATE_RESPONDED
      * @param fromDate Date to start searching from
      * @param toDate Date to stop searching at
-     * @return Vector of all rejected portals which were submitted in between a range of days
+     * @return number of portals in a table between fromDate and toDate
      */
-    public Vector<PortalRejected> getAllRejectedBySubmissionDate(Date fromDate, Date toDate) {
-        return getAllRejectedByDate(KEY_DATE_SUBMITTED, fromDate, toDate);
-    }
+    private long getCountByDate(String table, String dateKey, Date fromDate, Date toDate) {
+        String fromDateStr = dateFormatter.format(fromDate);
+        String toDateStr = dateFormatter.format(toDate);
+        return getEntryCount(table, "? BETWEEN ? AND ?",
+                new String[] {dateKey, fromDateStr, toDateStr});
 
-    /**
-     * Helper function getAllAcceptedBySubmissionDate and getAllAcceptedBy
-     * @param dateKey Database key used for searching. Can be either KEY_DATE_SUBMITTED or
-     *                KEY_DATE_RESPONDED
-     * @param fromDate Date to start searching from
-     * @param toDate Date to stop searching at
-     * @return Vector of rejected portals which were either submitted or approved from fromDate to
-     *         toDate.
-     */
-    private Vector<PortalRejected> getAllRejectedByDate(String dateKey, Date fromDate, Date toDate) {
-        Log.d(MainActivity.TAG, "Getting all rejected portals within date range");
-        SQLiteDatabase db = getReadableDatabase();
-        PortalRejectedBuilder b = new PortalRejectedBuilder(dateFormatter, db);
-        Vector<PortalRejected> portals = b.getPortalsByDate(dateKey, fromDate, toDate);
-        db.close();
-        return portals;
-    }
-
-    /**
-     * Get the number of approved portals
-     * @return number of approved portals
-     */
-    public long getAcceptedCount() {
-        return getTableSize(TABLE_ACCEPTED);
-    }
-
-    /**
-     * Get the number of pending portals
-     * @return number of pending portals
-     */
-    public long getPendingCount() {
-        return getTableSize(TABLE_PENDING);
-    }
-
-    /**
-     * Get the number of rejected portals
-     * @return number of rejected portals
-     */
-    public long getRejectedCount() {
-        return getTableSize(TABLE_REJECTED);
     }
 
     /**
@@ -521,9 +490,9 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      * @param table Table to count rows on
      * @return number of entries in a table
      */
-    private long getTableSize(String table) {
+    private long getEntryCount(String table, String selection, String[] selectionArgs) {
         SQLiteDatabase db = getReadableDatabase();
-        long count = DatabaseUtils.queryNumEntries(db, table);
+        long count = DatabaseUtils.queryNumEntries(db, table, selection, selectionArgs);
         db.close();
         return count;
     }
@@ -534,6 +503,57 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      */
     public long getDatabaseSize() {
         return getAcceptedCount() + getPendingCount() + getRejectedCount();
+    }
+
+    /**
+     * Get all pending portal submissions which were submitted between fromDate and toDate
+     * @param fromDate Date to start searching from
+     * @param toDate Date to stop searching at
+     * @return Vector of pending portals which were submitted between fromDate and toDate
+     */
+    public Vector<PortalSubmission> getPendingByDate(Date fromDate, Date toDate) {
+        Log.d(MainActivity.TAG, "Getting all pending portals in a date range");
+        SQLiteDatabase db = getReadableDatabase();
+        PortalSubmissionBuilder b = new PortalSubmissionBuilder(dateFormatter, db);
+        Vector<PortalSubmission> portals = b.getPortalsByDate(KEY_DATE_SUBMITTED, fromDate, toDate);
+        db.close();
+        return portals;
+    }
+
+    /**
+     * Get all pending portal submissions which were submitted since fromDate
+     * @param fromDate Date to start searching from
+     * @return Vector of all pending portals which were submitted after a fromDate
+     */
+    public Vector<PortalSubmission> getPendingByDate(Date fromDate) {
+        return getPendingByDate(fromDate, Calendar.getInstance().getTime());
+    }
+
+    /**
+     * Get the number of pending portals
+     * @return number of pending portals
+     */
+    public long getPendingCount() {
+        return getEntryCount(TABLE_PENDING, null, null);
+    }
+
+    /**
+     * Get the number of portals that were submitted since fromDate
+     * @param fromDate Date to start searching from
+     * @return number of portals that were submitted since fromDate
+     */
+    public long getPendingCountByDate(Date fromDate) {
+        return getCountByDate(TABLE_PENDING, KEY_DATE_SUBMITTED, fromDate);
+    }
+
+    /**
+     * Get the number of portals that were submitted between fromDate and toDate
+     * @param fromDate Date to start searching from
+     * @param toDate Date to stop searching at
+     * @return number of portals that were submitted between fromDate and toDate
+     */
+    public long getPendingCountByDate(Date fromDate, Date toDate) {
+        return getCountByDate(TABLE_PENDING, KEY_DATE_SUBMITTED, fromDate, toDate);
     }
 
     /**
@@ -548,6 +568,108 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         PortalSubmission p = b.getPortal(KEY_PICTURE_URL + " = ?", new String[]{portalPictureURL});
         db.close();
         return p;
+    }
+
+    /**
+     * Helper function getAcceptedBySubmissionDate and getAllAcceptedBy
+     * @param dateKey Database key used for searching. Can be either KEY_DATE_SUBMITTED or
+     *                KEY_DATE_RESPONDED
+     * @param fromDate Date to start searching from
+     * @param toDate Date to stop searching at
+     * @return Vector of rejected portals which were either submitted or approved from fromDate to
+     *         toDate.
+     */
+    private Vector<PortalRejected> getRejectedByDate(String dateKey, Date fromDate, Date toDate) {
+        Log.d(MainActivity.TAG, "Getting all rejected portals within date range");
+        SQLiteDatabase db = getReadableDatabase();
+        PortalRejectedBuilder b = new PortalRejectedBuilder(dateFormatter, db);
+        Vector<PortalRejected> portals = b.getPortalsByDate(dateKey, fromDate, toDate);
+        db.close();
+        return portals;
+    }
+
+    /**
+     * Get a Vector of all rejected portals which went live after a certain date
+     * @param fromDate Date to start searching from
+     * @return Vector of all rejected portals which went live after a certain date
+     */
+    public Vector<PortalRejected> getRejectedByResponseDate(Date fromDate) {
+        return getRejectedByResponseDate(fromDate, Calendar.getInstance().getTime());
+    }
+
+    /**
+     * Get a Vector of all rejected portals which went live in between a range of days
+     * @param fromDate Date to start searching from
+     * @param toDate Date to stop searching at
+     * @return Vector of all rejected portals which went live in between a range of days
+     */
+    public Vector<PortalRejected> getRejectedByResponseDate(Date fromDate, Date toDate) {
+        return getRejectedByDate(KEY_DATE_RESPONDED, fromDate, toDate);
+    }
+
+    /**
+     * Get a Vector of all rejected portals which were submitted after a certain date
+     * @param fromDate Date to start searching from
+     * @return Vector of all rejected portals which were submitted after a certain date
+     */
+    public Vector<PortalRejected> getRejectedBySubmissionDate(Date fromDate) {
+        return getRejectedBySubmissionDate(fromDate, Calendar.getInstance().getTime());
+    }
+
+    /**
+     * Get a Vector of all rejected portals which were submitted in between a range of days
+     * @param fromDate Date to start searching from
+     * @param toDate Date to stop searching at
+     * @return Vector of all rejected portals which were submitted in between a range of days
+     */
+    public Vector<PortalRejected> getRejectedBySubmissionDate(Date fromDate, Date toDate) {
+        return getRejectedByDate(KEY_DATE_SUBMITTED, fromDate, toDate);
+    }
+
+    /**
+     * Get the number of rejected portals
+     * @return number of rejected portals
+     */
+    public long getRejectedCount() {
+        return getEntryCount(TABLE_REJECTED, null, null);
+    }
+
+    /**
+     * Get the number of portals that were rejected since fromDate
+     * @param fromDate Date to start searching from
+     * @return number of portals that were rejected since fromDate
+     */
+    public long getRejectedCountByResponseDate(Date fromDate) {
+        return getCountByDate(TABLE_REJECTED, KEY_DATE_RESPONDED, fromDate);
+    }
+
+    /**
+     * Get the number of portals that were rejected between fromDate and toDate
+     * @param fromDate Date to start searching from
+     * @param toDate Date to stop searching at
+     * @return number of portals that were rejected between fromDate and toDate
+     */
+    public long getRejectedCountByResponseDate(Date fromDate, Date toDate) {
+        return getCountByDate(TABLE_REJECTED, KEY_DATE_RESPONDED, fromDate, toDate);
+    }
+
+    /**
+     * Get the number of rejected portals that were submitted since fromDate
+     * @param fromDate Date to start searching from
+     * @return number of rejected portals that were submitted since fromDate
+     */
+    public long getRejectedCountBySubmissionDate(Date fromDate) {
+        return getCountByDate(TABLE_REJECTED, KEY_DATE_SUBMITTED, fromDate);
+    }
+
+    /**
+     * Get the number of rejected portals that were submitted between fromDate and toDate
+     * @param fromDate Date to start searching from
+     * @param toDate Date to stop searching at
+     * @return number of rejected portals that were submitted between fromDate and toDate
+     */
+    public long getRejectedCountBySubmissionDate(Date fromDate, Date toDate) {
+        return getCountByDate(TABLE_REJECTED, KEY_DATE_SUBMITTED, fromDate, toDate);
     }
 
     /**
