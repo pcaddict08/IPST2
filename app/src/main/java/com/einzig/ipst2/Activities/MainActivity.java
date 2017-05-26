@@ -54,14 +54,18 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.einzig.ipst2.DialogHelper;
 import com.einzig.ipst2.R;
+import com.einzig.ipst2.database.DatabaseInterface;
 import com.einzig.ipst2.parse.EmailParseTask;
+import com.einzig.ipst2.portal.PortalSubmission;
 import com.google.android.gms.auth.GooglePlayServicesAvailabilityException;
 import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.common.GoogleApiAvailability;
 
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Vector;
 
 /**
  * Main activity class which launches the app.
@@ -118,11 +122,18 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
      */
     private SharedPreferences preferences;
 
+    /*
+    * Database Handle for getting portals and such
+    * */
+    private DatabaseInterface db;
+
     /**
      * MainActivity constructor, initialize variables.
      */
     public MainActivity() {
         preferences = null;
+        this.db = new DatabaseInterface(this);
+
     }
 
     /**
@@ -315,24 +326,25 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
             allButton.setOnCheckedChangeListener(this);
 
         Button viewButton = (Button) findViewById(R.id.viewlist_mainactivity);
-        if(viewButton != null)
+        if (viewButton != null)
             viewButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(((Button)view).getText().toString().equalsIgnoreCase("View List - All"))
-                    {
+                    if (((Button) view).getText().toString().equalsIgnoreCase("View List - All")) {
                         Log.d(MainActivity.TAG, "Going to All List");
-                    }
-                    else if(((Button)view).getText().toString().equalsIgnoreCase("View List - Month"))
-                    {
+                        Vector<PortalSubmission> mainList = MainActivity.this.db.getAllPortals();
+                        if (mainList.size() != 0) {
+                            Intent intent = new Intent(MainActivity.this, PSListActivity.class);
+                            intent.putExtra("psList", mainList);
+                            startActivity(intent);
+                        } else {
+                            DialogHelper.showSimpleDialog(R.string.noportalwarning, R.string.noportalmessage, MainActivity.this);
+                        }
+                    } else if (((Button) view).getText().toString().equalsIgnoreCase("View List - Month")) {
                         Log.d(MainActivity.TAG, "Going to Month List");
-                    }
-                    else if(((Button)view).getText().toString().equalsIgnoreCase("View List - Week"))
-                    {
+                    } else if (((Button) view).getText().toString().equalsIgnoreCase("View List - Week")) {
                         Log.d(MainActivity.TAG, "Going to Week List");
-                    }
-                    else if(((Button)view).getText().toString().equalsIgnoreCase("View List - Today"))
-                    {
+                    } else if (((Button) view).getText().toString().equalsIgnoreCase("View List - Today")) {
                         Log.d(MainActivity.TAG, "Going to Today List");
                     }
                 }
@@ -342,24 +354,22 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     /*
     * Method to format UI when changing radio buttons
      */
-    public void formatUI(long accepted, long rejected, long pending)
-    {
+    public void formatUI(long accepted, long rejected, long pending) {
         ((TextView) findViewById(R.id.pendingtext_mainactivity)).setText(String.format(Locale.getDefault(), "%d", pending));
         ((TextView) findViewById(R.id.acceptedtext_mainactivity)).setText(String.format(Locale.getDefault(), "%d", accepted));
         ((TextView) findViewById(R.id.rejectedtext_mainactivity)).setText(String.format(Locale.getDefault(), "%d", rejected));
         setLayoutParamsGraphBars((int) ((pending * 100) / (accepted + rejected + pending)), (TextView) findViewById(R.id.pendinggraph_mainactivity));
         setLayoutParamsGraphBars((int) ((rejected * 100) / (accepted + rejected + pending)), (TextView) findViewById(R.id.rejectedgraph_mainactivity));
         setLayoutParamsGraphBars((int) ((accepted * 100) / (accepted + rejected + pending)), (TextView) findViewById(R.id.percentaccepted_mainactivity));
-        ((TextView) findViewById(R.id.percentaccepted_mainactivity)).setText(String.format(Locale.getDefault(),"%d%%", (int) ((accepted * 100) / (accepted + rejected + pending))));
-        ((TextView) findViewById(R.id.rejectedgraph_mainactivity)).setText(String.format(Locale.getDefault(),"%d%%", (int) ((rejected * 100) / (accepted + rejected + pending))));
-        ((TextView) findViewById(R.id.pendinggraph_mainactivity)).setText(String.format(Locale.getDefault(),"%d%%", (int) ((pending * 100) / (accepted + rejected + pending))));
+        ((TextView) findViewById(R.id.percentaccepted_mainactivity)).setText(String.format(Locale.getDefault(), "%d%%", (int) ((accepted * 100) / (accepted + rejected + pending))));
+        ((TextView) findViewById(R.id.rejectedgraph_mainactivity)).setText(String.format(Locale.getDefault(), "%d%%", (int) ((rejected * 100) / (accepted + rejected + pending))));
+        ((TextView) findViewById(R.id.pendinggraph_mainactivity)).setText(String.format(Locale.getDefault(), "%d%%", (int) ((pending * 100) / (accepted + rejected + pending))));
     }
 
     /*
     * Method to set layout params for graph bars
      */
-    public void setLayoutParamsGraphBars(int height, TextView layout)
-    {
+    public void setLayoutParamsGraphBars(int height, TextView layout) {
         ViewGroup.LayoutParams params = layout.getLayoutParams();
         params.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, height + 35, getResources().getDisplayMetrics());
 
@@ -415,8 +425,10 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         buttonView.setTypeface(isChecked ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
+        buttonView.setTextColor(isChecked ? getResources().getColor(R.color.white)
+                : getResources().getColor(R.color.colorPrimaryDark));
         buttonView.setBackground(isChecked ? getResources().getDrawable(R.drawable.cell_shape_radio)
-                                            : getResources().getDrawable(R.drawable.cell_shape_radio_clear));
+                : getResources().getDrawable(R.drawable.cell_shape_radio_clear));
     }
 
 

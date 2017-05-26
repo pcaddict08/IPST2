@@ -25,8 +25,9 @@
         <activity
             android:name=".activities.SettingsActivity"
             android:label="@string/title_activity_settings" />
-        <activity android:name=".activities.PSListActivity" />
-        <activity android:name=".activities.PSDetailsActivity"></activity>
+        <activity android:name=".activities.PSListActivity"
+            android:label="@string/pslisttitle_activity"/>
+        <activity android:name=".activities.PSDetailsActivity"/>
     </application>
 
 </manifest>

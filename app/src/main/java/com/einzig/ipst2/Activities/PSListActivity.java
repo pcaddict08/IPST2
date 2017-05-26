@@ -23,16 +23,46 @@
 
 package com.einzig.ipst2.activities;
 
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.MenuItem;
+import android.widget.ListView;
 
 import com.einzig.ipst2.R;
+import com.einzig.ipst2.adapters.ListItemAdapter_PS;
+import com.einzig.ipst2.portal.PortalSubmission;
+
+import java.util.ArrayList;
+import java.util.Vector;
 
 public class PSListActivity extends AppCompatActivity {
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            this.finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pslist);
+        ActionBar ab = getSupportActionBar();
+        if (ab != null)
+            ab.setDisplayHomeAsUpEnabled(true);
+
+        ArrayList<PortalSubmission> psList = getIntent().getExtras().getParcelableArrayList("psList");
+        if (psList != null) {
+            Log.d(MainActivity.TAG, "PS LIST SIZE: " + psList.size());
+            ListView listView = (ListView) findViewById(R.id.listview_pslistactivity);
+            if(listView != null)
+                listView.setAdapter(new ListItemAdapter_PS(psList, PSListActivity.this));
+        }
     }
 }

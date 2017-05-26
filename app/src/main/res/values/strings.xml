@@ -15,6 +15,11 @@
     <string name="viewlistweek">View List - Week</string>
     <string name="viewlistmonth">View List - Month</string>
     <string name="notavailable">N/A</string>
+    <string name="noportalwarning">"No Portal Submissions"</string>
+    <string name="noportalmessage">No Portal Submissions were found in the local database.  Try refreshing.</string>
+    <string name="pslisttitle_activity">Portal Submissions</string>
+
+
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->

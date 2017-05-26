@@ -72,7 +72,7 @@
                 android:onClick="onRadioButtonClicked"
                 android:padding="10dip"
                 android:text="@string/all"
-                android:textColor="@color/colorPrimary" />
+                android:textColor="@color/white" />
         </RadioGroup>
 
         <LinearLayout

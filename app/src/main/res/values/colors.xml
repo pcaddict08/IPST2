@@ -6,4 +6,5 @@
     <color name="rejected">#eb463f</color>
     <color name="accepted">#29811c</color>
     <color name="pending">#394143</color>
+    <color name="white">#ffffff</color>
 </resources>
