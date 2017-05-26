@@ -313,6 +313,30 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         RadioButton allButton = (RadioButton) findViewById(R.id.alltab_mainactivity);
         if (allButton != null)
             allButton.setOnCheckedChangeListener(this);
+
+        Button viewButton = (Button) findViewById(R.id.viewlist_mainactivity);
+        if(viewButton != null)
+            viewButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(((Button)view).getText().toString().equalsIgnoreCase("View List - All"))
+                    {
+                        Log.d(MainActivity.TAG, "Going to All List");
+                    }
+                    else if(((Button)view).getText().toString().equalsIgnoreCase("View List - Month"))
+                    {
+                        Log.d(MainActivity.TAG, "Going to Month List");
+                    }
+                    else if(((Button)view).getText().toString().equalsIgnoreCase("View List - Week"))
+                    {
+                        Log.d(MainActivity.TAG, "Going to Week List");
+                    }
+                    else if(((Button)view).getText().toString().equalsIgnoreCase("View List - Today"))
+                    {
+                        Log.d(MainActivity.TAG, "Going to Today List");
+                    }
+                }
+            });
     }
 
     /*
@@ -323,20 +347,23 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         ((TextView) findViewById(R.id.pendingtext_mainactivity)).setText(String.format(Locale.getDefault(), "%d", pending));
         ((TextView) findViewById(R.id.acceptedtext_mainactivity)).setText(String.format(Locale.getDefault(), "%d", accepted));
         ((TextView) findViewById(R.id.rejectedtext_mainactivity)).setText(String.format(Locale.getDefault(), "%d", rejected));
-
-        setLayoutParamsGraphBars((int) ((pending * 100) / (accepted + rejected + pending)), (LinearLayout) findViewById(R.id.pendinggraph_mainactivity));
-        setLayoutParamsGraphBars((int) ((rejected * 100) / (accepted + rejected + pending)), (LinearLayout) findViewById(R.id.rejectedgraph_mainactivity));
-        setLayoutParamsGraphBars((int) ((accepted * 100) / (accepted + rejected + pending)), (LinearLayout) findViewById(R.id.acceptedgraph_mainactivity));
+        setLayoutParamsGraphBars((int) ((pending * 100) / (accepted + rejected + pending)), (TextView) findViewById(R.id.pendinggraph_mainactivity));
+        setLayoutParamsGraphBars((int) ((rejected * 100) / (accepted + rejected + pending)), (TextView) findViewById(R.id.rejectedgraph_mainactivity));
+        setLayoutParamsGraphBars((int) ((accepted * 100) / (accepted + rejected + pending)), (TextView) findViewById(R.id.percentaccepted_mainactivity));
         ((TextView) findViewById(R.id.percentaccepted_mainactivity)).setText(String.format(Locale.getDefault(),"%d%%", (int) ((accepted * 100) / (accepted + rejected + pending))));
+        ((TextView) findViewById(R.id.rejectedgraph_mainactivity)).setText(String.format(Locale.getDefault(),"%d%%", (int) ((rejected * 100) / (accepted + rejected + pending))));
+        ((TextView) findViewById(R.id.pendinggraph_mainactivity)).setText(String.format(Locale.getDefault(),"%d%%", (int) ((pending * 100) / (accepted + rejected + pending))));
     }
 
     /*
     * Method to set layout params for graph bars
      */
-    public void setLayoutParamsGraphBars(int height, LinearLayout layout)
+    public void setLayoutParamsGraphBars(int height, TextView layout)
     {
         ViewGroup.LayoutParams params = layout.getLayoutParams();
-        params.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, height, getResources().getDisplayMetrics());
+        params.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, height + 35, getResources().getDisplayMetrics());
+
+        Log.d(MainActivity.TAG, "HEIGHT: " + params.height);
         layout.setLayoutParams(params);
     }
 
