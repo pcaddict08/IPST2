@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="@string/gmailloginbutton"
+        android:text="@string/gmaillogin"
         android:visibility="visible" />
 
     <LinearLayout
@@ -81,7 +81,7 @@
             android:gravity="center"
             android:layout_marginTop="10dip"
             android:id="@+id/percentaccepted_mainactivity"
-            android:text="@string/notavailable"
+            android:text="@string/na"
             android:textAppearance="?android:textAppearanceLarge"
             />
         <LinearLayout
@@ -104,7 +104,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:text="@string/notavailable"
+                    android:text="@string/na"
                     android:textAppearance="?android:textAppearanceMedium" />
 
                 <ImageButton
@@ -112,7 +112,7 @@
                     android:layout_width="75dip"
                     android:layout_height="75dip"
                     android:background="@android:color/transparent"
-                    android:contentDescription="@string/pendingbuttondescrip"
+                    android:contentDescription="@string/pending"
                     android:scaleType="center"
                     android:src="@drawable/icon_pending"
                     android:visibility="visible" />
@@ -137,7 +137,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:text="@string/notavailable"
+                    android:text="@string/na"
                     android:textAppearance="?android:textAppearanceMedium" />
 
                 <ImageButton
@@ -145,7 +145,7 @@
                     android:layout_width="75dip"
                     android:layout_height="75dip"
                     android:background="@android:color/transparent"
-                    android:contentDescription="@string/acceptedbuttondescrip"
+                    android:contentDescription="@string/accepted"
                     android:scaleType="center"
                     android:src="@drawable/icon_accepted"
                     android:visibility="visible" />
@@ -171,7 +171,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:text="@string/notavailable"
+                    android:text="@string/na"
                     android:textAppearance="?android:textAppearanceMedium" />
 
                 <ImageButton
@@ -179,7 +179,7 @@
                     android:layout_width="75dip"
                     android:layout_height="75dip"
                     android:background="@android:color/transparent"
-                    android:contentDescription="@string/rejectedbuttondescrip"
+                    android:contentDescription="@string/rejected"
                     android:scaleType="center"
                     android:src="@drawable/icon_rejected"
                     android:visibility="visible" />
@@ -226,7 +226,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="@string/stockloadingtext"
+            android:text="@string/loading"
             android:textColor="@color/colorPrimaryDark" />
     </LinearLayout>
 

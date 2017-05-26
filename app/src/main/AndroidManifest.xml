@@ -24,7 +24,7 @@
         </activity>
         <activity
             android:name=".activities.SettingsActivity"
-            android:label="@string/title_activity_settings" />
+            android:label="@string/title_settingsactivity" />
         <activity android:name=".activities.PSListActivity" />
         <activity android:name=".activities.PSDetailsActivity"></activity>
     </application>

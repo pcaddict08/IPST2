@@ -1,25 +1,27 @@
-/* ********************************************************************************************** *
- * ********************************************************************************************** *
- *                                                                                                *
- * Copyright 2017 Steven Foskett, Jimmy Ho, Ryan Porterfield                                      *
- *                                                                                                *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software  *
- * and associated documentation files (the "Software"), to deal in the Software without           *
- * restriction, including without limitation the rights to use, copy, modify, merge, publish,     *
- * distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the  *
- * Software is furnished to do so, subject to the following conditions:                           *
- *                                                                                                *
- * The above copyright notice and this permission notice shall be included in all copies or       *
- * substantial portions of the Software.                                                          *
- *                                                                                                *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING  *
- * BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND     *
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,   *
- * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, *
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.        *
- *                                                                                                *
- * ********************************************************************************************** *
- * ********************************************************************************************** */
+/******************************************************************************
+ *                                                                            *
+ * Copyright 2017 Steven Foskett, Jimmy Ho, Ryan Porterfield                  *
+ * Permission is hereby granted, free of charge, to any person obtaining a    *
+ * copy of this software and associated documentation files (the "Software"), *
+ * to deal in the Software without restriction, including without limitation  *
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,   *
+ * and/or sell copies of the Software, and to permit persons to whom the      *
+ * Software is furnished to do so, subject to the following conditions:       *
+ *                                                                            *
+ * The above copyright notice and this permission notice shall be included in *
+ * all copies or substantial portions of the Software.                        *
+ *                                                                            *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR *
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,   *
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE*
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER     *
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING    *
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER        *
+ * DEALINGS IN THE SOFTWARE.                                                  *
+ *                                                                            *
+ ******************************************************************************/
+
+
 
 package com.einzig.ipst2.parse;
 
@@ -141,13 +143,13 @@ class FolderGetter {
     }
 
     /**
-     * Handles the error when GMail's All Mail folder is missing and the custom folder set by the
-     * user is unset, or also missing.
-     * @param customFolder
-     * @return
+     * Called when DEFAULT_FOLDER doesn't exist.
+     * @param folderPref The folder that was previously being used for emails
+     * @return a new folder to parse.
+     * @see FolderGetter#DEFAULT_FOLDER
      */
-    private Folder noAllMailFolder(final String customFolder) {
-        activity.runOnUiThread(new AllMailError(customFolder));
+    private Folder noAllMailFolder(final String folderPref) {
+        activity.runOnUiThread(new AllMailError(folderPref));
         return folder;
     }
 
@@ -158,36 +160,49 @@ class FolderGetter {
         folder = getDefaultFolder();
     }
 
-    /** TODO (Anyone): Move strings to strings resource
-     *
+    /**
+     * Helper class to display an AlertDialog on the UI.
+     * Used when the folder we were checking for emails doesn't exist.
      */
     private class AllMailError implements Runnable {
-        final private String title;
-        final private String message;
-        final private String positive;
-        final private String neutral;
+        /** Dialog title */
+        private String title;
+        /** Dialog message */
+        private String message;
+        /** Positive button text */
+        private String positive;
+        /** Neutral button text */
+        private String neutral;
 
-        AllMailError(String customFolder) {
-            title = "Error: " + customFolder + " Folder Missing";
-            positive = "Set Custom Folder";
-            if (customFolder.equalsIgnoreCase(DEFAULT_FOLDER)) {
-                message = "IPST couldn't find the 'All Mail' folder. Either it's been deleted,"
-                        + " or your GMail is not in English. Currently the 'All Mail' folder"
-                        + " is how IPST parses for portal submissions.\n\n";
-                neutral = "";
+        /**
+         * Create a new runnable to handle a missing mail folder error
+         * @param previousFolder Previous folder we checked for mail which doesn't exist.
+         */
+        AllMailError(String previousFolder) {
+            title = activity.getResources().getString(R.string.error) + previousFolder;
+            title += activity.getResources().getString(R.string.foldermissing);
+            positive = activity.getResources().getString(R.string.setcustomfolder);
+            message = activity.getResources().getString(R.string.cantfindfolder);
+            message = String.format(message, previousFolder);
+            neutral = "";
+            if (previousFolder.equalsIgnoreCase(DEFAULT_FOLDER)) {
+                 message += activity.getResources().getString(R.string.allmailmissing);
             } else {
-                message = "IPST couldn't find the '" + customFolder + "' folder."
-                        + " Either it's been deleted, or is missing for some other reason.\n\n"
-                        + "Would you like to set a new folder to parse, or reset to 'All Mail'?";
-                neutral = "All Mail";
+                message += activity.getResources().getString(R.string.custommissing);
+                neutral = activity.getResources().getString(R.string.allmail);
             }
         }
 
+        /*
+         * Override for Runnable.
+         * Set some display settings then build and display the AlertDialog.
+         */
         @Override
         public void run() {
             activity.findViewById(R.id.progress_view_mainactivity).setVisibility(View.INVISIBLE);
             activity.findViewById(R.id.gmail_login_button).setVisibility(View.VISIBLE);
-            ((TextView) activity.findViewById(R.id.loading_text_mainactivity)).setText("Loading...");
+            ((TextView) activity.findViewById(R.id.loading_text_mainactivity))
+                    .setText(R.string.loading);
             activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
             AlertDialog.Builder builder = new AlertDialog.Builder(activity);

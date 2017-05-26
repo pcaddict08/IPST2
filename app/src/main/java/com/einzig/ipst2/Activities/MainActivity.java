@@ -1,25 +1,25 @@
-/* ********************************************************************************************** *
- * ********************************************************************************************** *
- *                                                                                                *
- * Copyright 2017 Steven Foskett, Jimmy Ho, Ryan Porterfield                                      *
- *                                                                                                *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software  *
- * and associated documentation files (the "Software"), to deal in the Software without           *
- * restriction, including without limitation the rights to use, copy, modify, merge, publish,     *
- * distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the  *
- * Software is furnished to do so, subject to the following conditions:                           *
- *                                                                                                *
- * The above copyright notice and this permission notice shall be included in all copies or       *
- * substantial portions of the Software.                                                          *
- *                                                                                                *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING  *
- * BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND     *
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,   *
- * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, *
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.        *
- *                                                                                                *
- * ********************************************************************************************** *
- * ********************************************************************************************** */
+/******************************************************************************
+ *                                                                            *
+ * Copyright 2017 Steven Foskett, Jimmy Ho, Ryan Porterfield                  *
+ * Permission is hereby granted, free of charge, to any person obtaining a    *
+ * copy of this software and associated documentation files (the "Software"), *
+ * to deal in the Software without restriction, including without limitation  *
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,   *
+ * and/or sell copies of the Software, and to permit persons to whom the      *
+ * Software is furnished to do so, subject to the following conditions:       *
+ *                                                                            *
+ * The above copyright notice and this permission notice shall be included in *
+ * all copies or substantial portions of the Software.                        *
+ *                                                                            *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR *
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,   *
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE*
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER     *
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING    *
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER        *
+ * DEALINGS IN THE SOFTWARE.                                                  *
+ *                                                                            *
+ ******************************************************************************/
 
 package com.einzig.ipst2.activities;
 
@@ -109,14 +109,14 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
      * @param title       Title for error dialog
      * @param messageText Message for error dialog
      */
-    private void errorFoundMessage(final String title, final String messageText) {
+    private void errorFoundMessage(final int title, final int messageText) {
         Log.d(TAG, "Displaying error message");
         this.runOnUiThread(new Runnable() {
             public void run() {
                 new android.app.AlertDialog.Builder(MainActivity.this).setTitle(title)
                         .setMessage(messageText)
                         // TODO (Anyone): Move "Ok" string to strings resource
-                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                             }
                         }).show();
@@ -167,20 +167,17 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
             }
         }
         if (numGoogAcct == 0) {
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
-            alertDialogBuilder.setTitle("No Accounts");
-            alertDialogBuilder
-                    .setMessage("You have no Google accounts on your device")//.  Would you like to log in manually?")
-                    .setCancelable(true)
-                    .setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle(R.string.noaccountstitle);
+            builder.setMessage(R.string.noaccountsmessage);//.  Would you like to log in manually?")
+            builder.setCancelable(true);
+            builder.setNeutralButton(R.string.ok, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             dialog.cancel();
                         }
                     });
-            AlertDialog alertDialog = alertDialogBuilder.create();
-            alertDialog.show();
+            builder.show();
         } else {
-            Log.d(TAG, "Found Some Accounts");
             // TODO (anyone): Find a way to do this that isn't deprecated
             Intent intent = AccountManager.newChooseAccountIntent(null, null,
                     new String[]{"com.google"}, false, null, null, null, null);
@@ -364,8 +361,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
             findViewById(R.id.progress_view_mainactivity).setVisibility(View.VISIBLE);
             findViewById(R.id.gmail_login_button).setVisibility(View.INVISIBLE);
         } else {
-            errorFoundMessage("Account Not Found",
-                    "The account you selected wasn't found on this device.");
+            errorFoundMessage(R.string.accountnotfoundtitle, R.string.accountnotfoundmessage);
         }
     }
 
