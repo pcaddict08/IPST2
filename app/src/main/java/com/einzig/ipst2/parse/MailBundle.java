@@ -23,50 +23,41 @@
 
 package com.einzig.ipst2.parse;
 
-import android.accounts.AccountManager;
-import android.accounts.AccountManagerCallback;
-import android.accounts.AccountManagerFuture;
-import android.accounts.AuthenticatorException;
-import android.accounts.OperationCanceledException;
-import android.os.Bundle;
 import android.util.Log;
 
 import com.einzig.ipst2.activities.MainActivity;
+import com.sun.mail.imap.IMAPStore;
 
-import java.io.IOException;
-import java.util.concurrent.CountDownLatch;
+import javax.mail.Folder;
+import javax.mail.Message;
+import javax.mail.MessagingException;
 
 /**
  * @author Ryan Porterfield
- * @since 2017-05-17
+ * @since 2017-05-28
  */
-public class AuthToken implements AccountManagerCallback<Bundle> {
 
-    /**
-     * Create an AuthToken container class to get an AuthToken for accessing GMail.
-     */
-    public AuthToken() {
-        Log.d(MainActivity.TAG, "Creating a new AuthToken");
+public class MailBundle {
+    private final Folder folder;
+    private final Message[] messages;
+    private final IMAPStore store;
+
+    public MailBundle(Folder folder, Message[] messages, IMAPStore store) {
+        this.folder = folder;
+        this.messages = messages;
+        this.store = store;
     }
 
-    /*
-     * Get the AuthToken from the AccountManager.
-     * After the token has been acquired count down the latch so that the token can be returned from
-     * getToken().
-     * @sa getToken
-     */
-    @Override
-    public void run(AccountManagerFuture<Bundle> result) {
-        Log.d(MainActivity.TAG, "Running AuthToken");
+    void cleanup() {
         try {
-            Bundle bundle = result.getResult();
-            Log.i(MainActivity.TAG, "authToken -> " + bundle.getString(AccountManager.KEY_AUTHTOKEN));
-        } catch (AuthenticatorException e) {
-            Log.e(MainActivity.TAG, "Could not authenticate:\n" + e);
-        } catch (IOException e) {
+            folder.close(true);
+            store.close();
+        } catch (MessagingException e) {
             Log.e(MainActivity.TAG, e.toString());
-        } catch (OperationCanceledException e) {
-            Log.e(MainActivity.TAG, "Operation cancelled:\n" + e);
         }
+    }
+
+    Message[] getMessages() {
+        return messages;
     }
 }

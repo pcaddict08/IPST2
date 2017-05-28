@@ -25,6 +25,9 @@ package com.einzig.ipst2.activities;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.accounts.AccountManagerFuture;
+import android.accounts.AuthenticatorException;
+import android.accounts.OperationCanceledException;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -52,12 +55,19 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.einzig.ipst2.R;
+import com.einzig.ipst2.database.DatabaseInterface;
+import com.einzig.ipst2.parse.AuthToken;
+import com.einzig.ipst2.parse.AuthenticatorTask;
 import com.einzig.ipst2.parse.EmailParseTask;
+import com.einzig.ipst2.parse.GetMailTask;
+import com.einzig.ipst2.parse.MailBundle;
 import com.google.android.gms.auth.GooglePlayServicesAvailabilityException;
 import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.common.GoogleApiAvailability;
 
+import java.io.IOException;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Main activity class which launches the app.
@@ -239,12 +249,16 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     /*
     *  Method for building/showing the ui once emails are parsed.
     */
-    public void buildUIAfterParsing(long acceptedcount, long pendingcount, long rejectedcount) {
-        long totalCount = acceptedcount + pendingcount + rejectedcount;
+    public void buildUIAfterParsing() {
+        DatabaseInterface db = new DatabaseInterface(this);
+        long acceptedCount = db.getAcceptedCount();
+        long pendingCount = db.getPendingCount();
+        long rejectedCount = db.getRejectedCount();
+        long totalCount = acceptedCount + pendingCount + rejectedCount;
         //Do stuff with these numbers.  Set bars with heights based on percentages. set button listeners here
         findViewById(R.id.progress_view_mainactivity).setVisibility(View.INVISIBLE);
         findViewById(R.id.mainui_mainactivity).setVisibility(View.VISIBLE);
-        formatUI(acceptedcount, rejectedcount, pendingcount);
+        formatUI(acceptedCount, rejectedCount, pendingCount);
         RadioButton todayButton = (RadioButton) findViewById(R.id.todaytab_mainactivity);
         if (todayButton != null)
             todayButton.setOnCheckedChangeListener(this);
@@ -431,7 +445,13 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     private void parseEmail() {
         Account account = getAccount();
         if (account != null) {
-            new EmailParseTask(this, account).execute();
+            try {
+                String token = new AuthenticatorTask(this, account).execute().get();
+                MailBundle bundle = new GetMailTask(this, account, token).execute().get();
+                new EmailParseTask(this, bundle).execute();
+            } catch (InterruptedException | ExecutionException e) {
+                Log.e(TAG, e.toString());
+            }
         }
     }
 

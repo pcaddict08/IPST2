@@ -23,50 +23,56 @@
 
 package com.einzig.ipst2.parse;
 
+import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.accounts.AccountManagerCallback;
 import android.accounts.AccountManagerFuture;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
+import android.app.Activity;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 
 import com.einzig.ipst2.activities.MainActivity;
+import com.google.android.gms.auth.api.Auth;
 
 import java.io.IOException;
-import java.util.concurrent.CountDownLatch;
 
 /**
  * @author Ryan Porterfield
- * @since 2017-05-17
+ * @since 2017-05-28
  */
-public class AuthToken implements AccountManagerCallback<Bundle> {
 
-    /**
-     * Create an AuthToken container class to get an AuthToken for accessing GMail.
-     */
-    public AuthToken() {
-        Log.d(MainActivity.TAG, "Creating a new AuthToken");
+public class AuthenticatorTask extends AsyncTask<Void, Void, String> {
+    /** The URL to get the OAuth token from */
+    static final private String AUTH_URL = "oauth2:https://mail.google.com/";
+    private final Account account;
+    private final Activity activity;
+
+    public AuthenticatorTask(Activity activity, Account account) {
+        this.account = account;
+        this.activity = activity;
     }
 
-    /*
-     * Get the AuthToken from the AccountManager.
-     * After the token has been acquired count down the latch so that the token can be returned from
-     * getToken().
-     * @sa getToken
+    /**
+     * Authenticate with GMail.
+     * @return the OAuth token as a string.
      */
-    @Override
-    public void run(AccountManagerFuture<Bundle> result) {
-        Log.d(MainActivity.TAG, "Running AuthToken");
+    private String authenticate() {
+        String token = null;
+        AccountManagerFuture<Bundle> future = AccountManager.get(activity).getAuthToken(account,
+                AUTH_URL, null, activity, new AuthToken(), null);
         try {
-            Bundle bundle = result.getResult();
-            Log.i(MainActivity.TAG, "authToken -> " + bundle.getString(AccountManager.KEY_AUTHTOKEN));
-        } catch (AuthenticatorException e) {
-            Log.e(MainActivity.TAG, "Could not authenticate:\n" + e);
-        } catch (IOException e) {
+            token = future.getResult().getString(AccountManager.KEY_AUTHTOKEN);
+            Log.i(MainActivity.TAG, future.getResult().toString());
+        } catch (IOException | AuthenticatorException | OperationCanceledException e) {
             Log.e(MainActivity.TAG, e.toString());
-        } catch (OperationCanceledException e) {
-            Log.e(MainActivity.TAG, "Operation cancelled:\n" + e);
         }
+        return token;
+    }
+
+    @Override
+    protected String doInBackground(Void... voids) {
+        return authenticate();
     }
 }
