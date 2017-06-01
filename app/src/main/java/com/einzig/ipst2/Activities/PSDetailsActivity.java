@@ -28,10 +28,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.einzig.ipst2.R;
 import com.einzig.ipst2.portal.PortalSubmission;
+import com.squareup.picasso.Picasso;
 
 public class PSDetailsActivity extends AppCompatActivity {
 
@@ -60,10 +62,10 @@ public class PSDetailsActivity extends AppCompatActivity {
             ((TextView)findViewById(R.id.name_psdetailsactivity)).setText(portalSubmission.getName());
             ((TextView)findViewById(R.id.submitted_psdetailsactivity)).setText(portalSubmission.getSubmittedDateString());
             ((TextView)findViewById(R.id.daysinqueue_psdetailsactivity)).setText(String.valueOf(portalSubmission.getDaysInQueue()));
+            Picasso.with(this)
+                    .load(portalSubmission.getPictureURL())
+                    .error(R.drawable.ic_warning_white)
+                    .into(((ImageView)findViewById(R.id.psimage_psdetailsactivity)));
         }
-        //name_psdetailsactivity
-        //psimage_psdetailsactivity
-        //submitted_psdetailsactivity
-
     }
 }
