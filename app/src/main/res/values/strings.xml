@@ -23,7 +23,7 @@
     <string name="namena_psdetailsactivity">Name: </string>
     <string name="detailsimagedesc_psdetailsactivity">Portal Submission Image</string>
     <string name="daysinqueue_psdetailsactivity">Days in Queue</string>
-
+    <string name="closebutton_imagedetails">Close</string>
 
     <!-- Strings related to Settings -->
 

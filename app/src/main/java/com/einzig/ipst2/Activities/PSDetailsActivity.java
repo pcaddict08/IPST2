@@ -23,12 +23,25 @@
 
 package com.einzig.ipst2.activities;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.einzig.ipst2.R;
@@ -59,13 +72,41 @@ public class PSDetailsActivity extends AppCompatActivity {
         portalSubmission = getIntent().getExtras().getParcelable("ps");
         if (portalSubmission != null) {
             Log.d(MainActivity.TAG, "PS Type: " + portalSubmission.getClass().getName());
-            ((TextView)findViewById(R.id.name_psdetailsactivity)).setText(portalSubmission.getName());
-            ((TextView)findViewById(R.id.submitted_psdetailsactivity)).setText(portalSubmission.getSubmittedDateString());
-            ((TextView)findViewById(R.id.daysinqueue_psdetailsactivity)).setText(String.valueOf(portalSubmission.getDaysInQueue()));
+            ((TextView) findViewById(R.id.name_psdetailsactivity)).setText(portalSubmission.getName());
+            ((TextView) findViewById(R.id.submitted_psdetailsactivity)).setText(portalSubmission.getSubmittedDateString());
+            ((TextView) findViewById(R.id.daysinqueue_psdetailsactivity)).setText(String.valueOf(portalSubmission.getDaysInQueue()));
             Picasso.with(this)
                     .load(portalSubmission.getPictureURL())
                     .error(R.drawable.ic_warning_white)
-                    .into(((ImageView)findViewById(R.id.psimage_psdetailsactivity)));
+                    .into(((ImageView) findViewById(R.id.psimage_psdetailsactivity)));
+            final DisplayMetrics displayMetrics = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+            findViewById(R.id.psimage_psdetailsactivity).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    try {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(PSDetailsActivity.this);
+                        RelativeLayout itemLayout = (RelativeLayout) LayoutInflater.from(PSDetailsActivity.this)
+                                .inflate(R.layout.image_details, null);
+                        builder.setView(itemLayout);
+                        final AlertDialog d = builder.show();
+                        Picasso.with(PSDetailsActivity.this)
+                                .load(portalSubmission.getPictureURL())
+                                .error(R.drawable.ic_warning_white)
+                                .resize(displayMetrics.widthPixels, displayMetrics.heightPixels)
+                                .centerInside()
+                                .into((ImageView)itemLayout.findViewById(R.id.bigimage_imagedetails));
+                        itemLayout.findViewById(R.id.close_imagedetails).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                d.dismiss();
+                            }
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
         }
     }
 }
