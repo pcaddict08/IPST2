@@ -23,7 +23,6 @@
 
 package com.einzig.ipst2.parse;
 
-import android.accounts.Account;
 import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
