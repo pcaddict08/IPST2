@@ -35,6 +35,8 @@ import com.einzig.ipst2.adapters.ListItemAdapter_PS;
 import com.einzig.ipst2.portal.PortalSubmission;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Vector;
 
 public class PSListActivity extends AppCompatActivity {
@@ -61,8 +63,10 @@ public class PSListActivity extends AppCompatActivity {
         if (psList != null) {
             Log.d(MainActivity.TAG, "PS LIST SIZE: " + psList.size());
             ListView listView = (ListView) findViewById(R.id.listview_pslistactivity);
-            if(listView != null)
+            if (listView != null) {
+                Collections.sort(psList, new PortalSubmission.SortPortalSubmissions_date());
                 listView.setAdapter(new ListItemAdapter_PS(psList, PSListActivity.this));
+            }
         }
     }
 }

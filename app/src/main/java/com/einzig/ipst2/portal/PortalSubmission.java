@@ -27,6 +27,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.io.Serializable;
+import java.util.Comparator;
 import java.util.Date;
 
 public class PortalSubmission implements Parcelable, Serializable {
@@ -145,5 +146,16 @@ public class PortalSubmission implements Parcelable, Serializable {
         dest.writeString(name);
         dest.writeSerializable(dateSubmitted);
         dest.writeString(pictureURL);
+    }
+
+
+    /*
+    * Simple Sort class to sort ps by date
+    * */
+    public static class SortPortalSubmissions_date implements Comparator<PortalSubmission> {
+        @Override
+        public int compare(PortalSubmission o1, PortalSubmission o2) {
+            return o1.getDateSubmitted().compareTo(o2.getDateSubmitted());
+        }
     }
 }

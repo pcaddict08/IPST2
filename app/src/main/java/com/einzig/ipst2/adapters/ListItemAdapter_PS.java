@@ -50,13 +50,18 @@ import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.einzig.ipst2.R;
 import com.einzig.ipst2.activities.MainActivity;
+import com.einzig.ipst2.portal.PortalAccepted;
 import com.einzig.ipst2.portal.PortalSubmission;
+
+import org.joda.time.DateTime;
+import org.joda.time.Days;
 
 // Custom list item class for menu items
 public class ListItemAdapter_PS extends BaseAdapter implements Filterable {
@@ -89,15 +94,24 @@ public class ListItemAdapter_PS extends BaseAdapter implements Filterable {
     public View getView(int position, View convertView, ViewGroup parent) {
         final PortalSubmission item = this.shownItems.get(position);
 
-        RelativeLayout itemLayout = (RelativeLayout) LayoutInflater.from(context).inflate(R.layout.row_pslist, parent, false);
+        LinearLayout itemLayout = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.row_pslist, parent, false);
         ImageView iconView = (ImageView) itemLayout.findViewById(R.id.status_icon);
         if (iconView != null) {
-
+            if(item instanceof PortalAccepted) {
+                iconView.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_check));
+                iconView.setBackgroundColor(context.getResources().getColor(R.color.accepted));
+            }
         }
 
-        TextView uniqueNameLabel = (TextView) itemLayout.findViewById(R.id.nameLabel);
-        if (uniqueNameLabel != null)
-            uniqueNameLabel.setText(item.getName());
+        TextView pstimelabel = (TextView) itemLayout.findViewById(R.id.psdate_rowpslist);
+        if(pstimelabel != null) {
+            SimpleDateFormat formatCellDate = new SimpleDateFormat("dd-mm-yyyy", Locale.getDefault());
+            int daysBetween = Days.daysBetween(new DateTime(item.getDateSubmitted()).toLocalDate(), new DateTime().toLocalDate()).getDays();
+            pstimelabel.setText(formatCellDate.format(item.getDateSubmitted()) + " - " + daysBetween + " day(s) ago");
+        }
+        TextView psnamelabel = (TextView) itemLayout.findViewById(R.id.psname_rowpslist);
+        if (psnamelabel != null)
+            psnamelabel.setText(item.getName());
 
 
         return itemLayout;
