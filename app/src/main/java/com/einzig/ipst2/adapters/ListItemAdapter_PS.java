@@ -58,6 +58,7 @@ import android.widget.TextView;
 import com.einzig.ipst2.R;
 import com.einzig.ipst2.activities.MainActivity;
 import com.einzig.ipst2.portal.PortalAccepted;
+import com.einzig.ipst2.portal.PortalRejected;
 import com.einzig.ipst2.portal.PortalSubmission;
 
 import org.joda.time.DateTime;
@@ -101,13 +102,20 @@ public class ListItemAdapter_PS extends BaseAdapter implements Filterable {
                 iconView.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_check));
                 iconView.setBackgroundColor(context.getResources().getColor(R.color.accepted));
             }
+            else if(item instanceof PortalRejected)
+            {
+                iconView.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_rejected));
+                iconView.setBackgroundColor(context.getResources().getColor(R.color.rejected));
+            }
+            else
+            {
+                iconView.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_pending));
+            }
         }
 
         TextView pstimelabel = (TextView) itemLayout.findViewById(R.id.psdate_rowpslist);
         if(pstimelabel != null) {
-            SimpleDateFormat formatCellDate = new SimpleDateFormat("dd-mm-yyyy", Locale.getDefault());
-            int daysBetween = Days.daysBetween(new DateTime(item.getDateSubmitted()).toLocalDate(), new DateTime().toLocalDate()).getDays();
-            pstimelabel.setText(formatCellDate.format(item.getDateSubmitted()) + " - " + daysBetween + " day(s) ago");
+            pstimelabel.setText(item.getSubmittedDateString() + " - " + item.getDaysInQueue() + " day(s) ago");
         }
         TextView psnamelabel = (TextView) itemLayout.findViewById(R.id.psname_rowpslist);
         if (psnamelabel != null)

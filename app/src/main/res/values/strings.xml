@@ -18,6 +18,11 @@
     <string name="noportalwarning">"No Portal Submissions"</string>
     <string name="noportalmessage">No Portal Submissions were found in the local database.  Try refreshing.</string>
     <string name="pslisttitle_activity">Portal Submissions</string>
+    <string name="saveportalimage_psdetailsactivity">Save Portal Image</string>
+    <string name="submittedna_psdetailsactivity">Submitted: </string>
+    <string name="namena_psdetailsactivity">Name: </string>
+    <string name="detailsimagedesc_psdetailsactivity">Portal Submission Image</string>
+    <string name="daysinqueue_psdetailsactivity">Days in Queue</string>
 
 
     <!-- Strings related to Settings -->

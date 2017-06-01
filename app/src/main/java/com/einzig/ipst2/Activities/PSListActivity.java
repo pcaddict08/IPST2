@@ -23,11 +23,15 @@
 
 package com.einzig.ipst2.activities;
 
+import android.content.Intent;
+import android.os.Parcelable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.einzig.ipst2.R;
@@ -59,13 +63,26 @@ public class PSListActivity extends AppCompatActivity {
         if (ab != null)
             ab.setDisplayHomeAsUpEnabled(true);
 
-        ArrayList<PortalSubmission> psList = getIntent().getExtras().getParcelableArrayList("psList");
+        final ArrayList<PortalSubmission> psList = getIntent().getExtras().getParcelableArrayList("psList");
         if (psList != null) {
             Log.d(MainActivity.TAG, "PS LIST SIZE: " + psList.size());
             ListView listView = (ListView) findViewById(R.id.listview_pslistactivity);
             if (listView != null) {
                 Collections.sort(psList, new PortalSubmission.SortPortalSubmissions_date());
                 listView.setAdapter(new ListItemAdapter_PS(psList, PSListActivity.this));
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        Log.d(MainActivity.TAG, "Item Selected at index: " + i);
+                        try {
+                            Intent intent = new Intent(PSListActivity.this, PSDetailsActivity.class);
+                            intent.putExtra("ps", (Parcelable) psList.get(i));
+                            startActivity(intent);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
             }
         }
     }

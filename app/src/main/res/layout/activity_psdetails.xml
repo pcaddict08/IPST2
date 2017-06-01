@@ -15,36 +15,60 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/name_psdetailsactivity"
+            android:id="@+id/namelabel_psdetailsactivity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dip"
-            android:text="Name: N/A"
+            android:text="@string/namena_psdetailsactivity"
             android:textAppearance="?android:textAppearanceLarge" />
 
+        <TextView
+            android:id="@+id/name_psdetailsactivity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dip"
+            android:text="@string/notavailable"
+            android:textAppearance="?android:textAppearanceMedium" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dip"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
-
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            tools:ignore="UseCompoundDrawables">
 
             <ImageView
+                android:id="@+id/psimage_psdetailsactivity"
                 android:layout_width="150dip"
                 android:layout_height="150dip"
                 android:layout_margin="10dip"
                 android:background="@color/colorPrimary"
+                android:contentDescription="@string/detailsimagedesc_psdetailsactivity"
                 app:srcCompat="@drawable/ic_landscape_white_24dp" />
 
-            <TextView
-                android:id="@+id/submitted_psdetailsactivity"
+            <LinearLayout
                 android:layout_width="match_parent"
+                android:layout_gravity="center"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:text="Submitted: \nN/A"
-                android:textAppearance="?android:textAppearanceLarge" />
+                android:layout_marginEnd="10dip"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/submittedlabel_psdetailsactivity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/submittedna_psdetailsactivity"
+                    android:textAppearance="?android:textAppearanceLarge" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:id="@+id/submitted_psdetailsactivity"
+                    android:text="@string/notavailable"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
 
 
         </LinearLayout>
@@ -63,7 +87,7 @@
             android:layout_marginLeft="10dip"
             android:layout_marginRight="10dip"
             android:layout_marginTop="10dip"
-            android:text="Days in Queue"
+            android:text="@string/daysinqueue_psdetailsactivity"
             android:textAppearance="?android:textAppearanceMedium" />
 
         <TextView
@@ -73,7 +97,7 @@
             android:layout_marginBottom="10dip"
             android:layout_marginLeft="10dip"
             android:layout_marginRight="10dip"
-            android:text="N/A"
+            android:text="@string/notavailable"
             android:textAppearance="?android:textAppearanceLarge"
             android:textStyle="bold" />
     </LinearLayout>
@@ -87,10 +111,10 @@
     </LinearLayout>
 
     <Button
+        android:id="@+id/saveportalimage_psdetailsactivity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dip"
-        android:text="Save Portal Image"
-        android:id="@+id/saveportalimage_psdetailsactivity"
-        android:background="@drawable/cell_shape"/>
+        android:background="@drawable/cell_shape"
+        android:text="@string/saveportalimage_psdetailsactivity" />
 </LinearLayout>

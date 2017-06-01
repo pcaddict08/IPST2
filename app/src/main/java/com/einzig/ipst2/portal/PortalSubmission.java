@@ -26,9 +26,14 @@ package com.einzig.ipst2.portal;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import org.joda.time.DateTime;
+import org.joda.time.Days;
+
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Locale;
 
 public class PortalSubmission implements Parcelable, Serializable {
     private static final long serialVersionUID = -223108874747293680L;
@@ -47,6 +52,11 @@ public class PortalSubmission implements Parcelable, Serializable {
             return new PortalSubmission[size];
         }
     };
+
+    /*
+    * Date format for returning string dates
+    * */
+    private SimpleDateFormat sdf_stringdates = new SimpleDateFormat("mm-dd-yyyy", Locale.getDefault());
 
     /**
      * The name of the portal.
@@ -134,6 +144,22 @@ public class PortalSubmission implements Parcelable, Serializable {
      */
     public void setDateSubmitted(Date dateSubmitted) {
         this.dateSubmitted = dateSubmitted;
+    }
+
+    /*
+    *  Return a formatted submitted date
+    * */
+    public String getSubmittedDateString()
+    {
+       return sdf_stringdates.format(this.dateSubmitted);
+    }
+
+    /*
+    * Return days the portal has been in queue
+    * */
+    public int getDaysInQueue()
+    {
+        return Days.daysBetween(new DateTime(dateSubmitted).toLocalDate(), new DateTime().toLocalDate()).getDays();
     }
 
     /*
