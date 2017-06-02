@@ -24,7 +24,10 @@
     <string name="detailsimagedesc_psdetailsactivity">Portal Submission Image</string>
     <string name="daysinqueue_psdetailsactivity">Days in Queue</string>
     <string name="closebutton_imagedetails">Close</string>
-
+    <string name="dateresponded_psdetailsactivity">Date Responded</string>
+    <string name="rejectionreason_psdetailsactivity">Rejection Reason</string>
+    <string name="liveaddress_psdetailsactivity">Live Address</string>
+    <string name="viewonintel_psdetailsactivity">View On Intel Map</string>
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->

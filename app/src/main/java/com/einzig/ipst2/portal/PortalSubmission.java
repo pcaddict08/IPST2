@@ -56,7 +56,7 @@ public class PortalSubmission implements Parcelable, Serializable {
     /*
     * Date format for returning string dates
     * */
-    private SimpleDateFormat sdf_stringdates = new SimpleDateFormat("mm-dd-yyyy", Locale.getDefault());
+    protected SimpleDateFormat sdf_stringdates = new SimpleDateFormat("MM-dd-yyyy", Locale.getDefault());
 
     /**
      * The name of the portal.
@@ -67,7 +67,7 @@ public class PortalSubmission implements Parcelable, Serializable {
      * The date the portal was submitted.
      * @serial
      */
-    private Date dateSubmitted;
+    Date dateSubmitted;
     /**
      * The URL that links to the submission picture.
      * @serial
@@ -155,9 +155,9 @@ public class PortalSubmission implements Parcelable, Serializable {
     }
 
     /*
-    * Return days the portal has been in queue
+    * Return days since Niantic has responded
     * */
-    public int getDaysInQueue()
+    public int getDaysSinceResponse()
     {
         return Days.daysBetween(new DateTime(dateSubmitted).toLocalDate(), new DateTime().toLocalDate()).getDays();
     }

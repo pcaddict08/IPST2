@@ -115,7 +115,7 @@ public class ListItemAdapter_PS extends BaseAdapter implements Filterable {
 
         TextView pstimelabel = (TextView) itemLayout.findViewById(R.id.psdate_rowpslist);
         if(pstimelabel != null) {
-            pstimelabel.setText(item.getSubmittedDateString() + " - " + item.getDaysInQueue() + " day(s) ago");
+            pstimelabel.setText(item.getSubmittedDateString() + " - " + item.getDaysSinceResponse() + " day(s) ago");
         }
         TextView psnamelabel = (TextView) itemLayout.findViewById(R.id.psname_rowpslist);
         if (psnamelabel != null)

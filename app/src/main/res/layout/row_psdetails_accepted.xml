@@ -25,8 +25,9 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:orientation="vertical"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -40,34 +41,7 @@
             android:layout_marginLeft="10dip"
             android:layout_marginRight="10dip"
             android:layout_marginTop="10dip"
-            android:text="Date Accepted"
-            android:textAppearance="?android:textAppearanceMedium" />
-
-        <TextView
-            android:id="@+id/dateaccepted_acceptedrow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dip"
-            android:layout_marginLeft="10dip"
-            android:layout_marginRight="10dip"
-            android:text="N/A"
-            android:textAppearance="?android:textAppearanceLarge"
-            android:textStyle="bold" />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dip"
-        android:background="@drawable/cell_shape"
-        android:orientation="vertical">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dip"
-            android:layout_marginRight="10dip"
-            android:layout_marginTop="10dip"
-            android:text="Live Address"
+            android:text="@string/liveaddress_psdetailsactivity"
             android:textAppearance="?android:textAppearanceMedium" />
 
         <TextView
@@ -77,16 +51,17 @@
             android:layout_marginBottom="10dip"
             android:layout_marginLeft="10dip"
             android:layout_marginRight="10dip"
-            android:text="N/A"
+            android:text="@string/notavailable"
             android:textAppearance="?android:textAppearanceLarge"
             android:textStyle="bold" />
     </LinearLayout>
+
     <Button
+        android:id="@+id/viewonintelmapbutton_acceptedrow"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dip"
-        android:text="View On Intel Map"
-        android:id="@+id/viewonintelmapbutton_acceptedrow"
-        android:background="@drawable/cell_shape"/>
+        android:background="@drawable/cell_shape"
+        android:text="@string/viewonintel_psdetailsactivity" />
 
 </LinearLayout>
