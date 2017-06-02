@@ -22,6 +22,7 @@
  * ********************************************************************************************** */
 
 package com.einzig.ipst2.activities;
+
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -46,6 +47,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.einzig.ipst2.R;
+import com.einzig.ipst2.portal.PortalAccepted;
+import com.einzig.ipst2.portal.PortalRejected;
 import com.einzig.ipst2.portal.PortalSubmission;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -77,6 +80,13 @@ public class PSDetailsActivity extends AppCompatActivity {
             ((TextView) findViewById(R.id.name_psdetailsactivity)).setText(portalSubmission.getName());
             ((TextView) findViewById(R.id.submitted_psdetailsactivity)).setText(portalSubmission.getSubmittedDateString());
             ((TextView) findViewById(R.id.daysinqueue_psdetailsactivity)).setText(String.valueOf(portalSubmission.getDaysInQueue()));
+            if (portalSubmission instanceof PortalRejected) {
+                findViewById(R.id.psstatusimage_psdetailsactivity).setBackgroundColor(getResources().getColor(R.color.rejected));
+                ((ImageView) findViewById(R.id.psstatusimage_psdetailsactivity)).setImageDrawable(getResources().getDrawable(R.drawable.ic_rejected));
+            } else if (portalSubmission instanceof PortalAccepted) {
+                findViewById(R.id.psstatusimage_psdetailsactivity).setBackgroundColor(getResources().getColor(R.color.accepted));
+                ((ImageView) findViewById(R.id.psstatusimage_psdetailsactivity)).setImageDrawable(getResources().getDrawable(R.drawable.ic_check));
+            }
             findViewById(R.id.saveportalimage_psdetailsactivity).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -108,7 +118,7 @@ public class PSDetailsActivity extends AppCompatActivity {
                                 .error(R.drawable.ic_warning_white)
                                 .resize(displayMetrics.widthPixels, displayMetrics.heightPixels)
                                 .centerInside()
-                                .into((ImageView)itemLayout.findViewById(R.id.bigimage_imagedetails));
+                                .into((ImageView) itemLayout.findViewById(R.id.bigimage_imagedetails));
                         itemLayout.findViewById(R.id.close_imagedetails).setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -135,15 +145,15 @@ public class PSDetailsActivity extends AppCompatActivity {
         }
     }
 
-    public void imageDownload(final Context context, final String url){
-        Target target = new Target(){
+    public void imageDownload(final Context context, final String url) {
+        Target target = new Target() {
             @Override
             public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
                         try {
-                            MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, portalSubmission.getName() , "Saved from IPST2");
+                            MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, portalSubmission.getName(), "Saved from IPST2");
                             PSDetailsActivity.this.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -162,6 +172,7 @@ public class PSDetailsActivity extends AppCompatActivity {
                     }
                 }).start();
             }
+
             @Override
             public void onBitmapFailed(Drawable errorDrawable) {
                 PSDetailsActivity.this.runOnUiThread(new Runnable() {
@@ -171,6 +182,7 @@ public class PSDetailsActivity extends AppCompatActivity {
                     }
                 });
             }
+
             @Override
             public void onPrepareLoad(Drawable placeHolderDrawable) {
             }
