@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -10,136 +11,141 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dip"
-        android:background="@drawable/cell_shape"
         android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/namelabel_psdetailsactivity"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dip"
-            android:text="@string/namena_psdetailsactivity"
-            android:textAppearance="?android:textAppearanceLarge" />
-
-        <TextView
-            android:id="@+id/name_psdetailsactivity"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dip"
-            android:text="@string/notavailable"
-            android:textAppearance="?android:textAppearanceMedium" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dip"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="1"
-            android:orientation="horizontal"
-            tools:ignore="UseCompoundDrawables">
+            android:layout_height="wrap_content"
+            android:layout_margin="5dip"
+            android:background="@drawable/cell_shape"
+            android:orientation="vertical">
 
-            <RelativeLayout
+            <TextView
+                android:id="@+id/namelabel_psdetailsactivity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dip"
+                android:text="@string/namena_psdetailsactivity"
+                android:textAppearance="?android:textAppearanceLarge" />
+
+            <TextView
+                android:id="@+id/name_psdetailsactivity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="end">
-
-                <ImageView
-                    android:id="@+id/psimage_psdetailsactivity"
-                    android:layout_width="150dip"
-                    android:layout_height="150dip"
-                    android:layout_margin="10dip"
-                    android:background="@color/colorPrimary"
-                    android:contentDescription="@string/detailsimagedesc_psdetailsactivity"
-                    app:srcCompat="@drawable/ic_landscape_white_24dp" />
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="15dip"
-                    android:background="@color/white"
-                    android:padding="2dip">
-
-                    <ImageView
-                        android:id="@+id/psstatusimage_psdetailsactivity"
-                        android:layout_width="30dip"
-                        android:layout_height="30dip"
-                        android:layout_gravity="end"
-                        android:background="@color/pending"
-                        android:contentDescription="@string/pendingbuttondescrip"
-                        android:padding="5dip"
-                        app:srcCompat="@drawable/ic_pending" />
-                </LinearLayout>
-
-            </RelativeLayout>
+                android:layout_marginStart="10dip"
+                android:text="@string/notavailable"
+                android:textAppearance="?android:textAppearanceMedium" />
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginEnd="10dip"
-                android:orientation="vertical">
+                android:layout_height="0dip"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                tools:ignore="UseCompoundDrawables">
 
-                <TextView
-                    android:id="@+id/submittedlabel_psdetailsactivity"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:text="@string/submittedna_psdetailsactivity"
-                    android:textAppearance="?android:textAppearanceLarge" />
-
-                <TextView
-                    android:id="@+id/submitted_psdetailsactivity"
+                <RelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/notavailable"
-                    android:textAppearance="?android:textAppearanceMedium" />
-            </LinearLayout>
+                    android:gravity="end">
 
+                    <ImageView
+                        android:id="@+id/psimage_psdetailsactivity"
+                        android:layout_width="150dip"
+                        android:layout_height="150dip"
+                        android:layout_margin="10dip"
+                        android:background="@color/colorPrimary"
+                        android:contentDescription="@string/detailsimagedesc_psdetailsactivity"
+                        app:srcCompat="@drawable/ic_landscape_white_24dp" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="15dip"
+                        android:background="@color/white"
+                        android:padding="2dip">
+
+                        <ImageView
+                            android:id="@+id/psstatusimage_psdetailsactivity"
+                            android:layout_width="30dip"
+                            android:layout_height="30dip"
+                            android:layout_gravity="end"
+                            android:background="@color/pending"
+                            android:contentDescription="@string/pendingbuttondescrip"
+                            android:padding="5dip"
+                            app:srcCompat="@drawable/ic_pending" />
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="10dip"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/submittedlabel_psdetailsactivity"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="@string/submittedna_psdetailsactivity"
+                        android:textAppearance="?android:textAppearanceLarge" />
+
+                    <TextView
+                        android:id="@+id/submitted_psdetailsactivity"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/notavailable"
+                        android:textAppearance="?android:textAppearanceMedium" />
+                </LinearLayout>
+
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dip"
+            android:background="@drawable/cell_shape"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dip"
+                android:layout_marginRight="10dip"
+                android:layout_marginTop="10dip"
+                android:text="@string/daysinqueue_psdetailsactivity"
+                android:textAppearance="?android:textAppearanceLarge" />
+
+            <TextView
+                android:id="@+id/daysinqueue_psdetailsactivity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dip"
+                android:layout_marginLeft="10dip"
+                android:layout_marginRight="10dip"
+                android:text="@string/notavailable"
+                android:textAppearance="?android:textAppearanceMedium" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/extralayout_psdetailsactivity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
         </LinearLayout>
-    </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dip"
-        android:background="@drawable/cell_shape"
-        android:orientation="vertical">
-
-        <TextView
-            android:layout_width="wrap_content"
+        <Button
+            android:id="@+id/saveportalimage_psdetailsactivity"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dip"
-            android:layout_marginRight="10dip"
-            android:layout_marginTop="10dip"
-            android:text="@string/daysinqueue_psdetailsactivity"
-            android:textAppearance="?android:textAppearanceMedium" />
-
-        <TextView
-            android:id="@+id/daysinqueue_psdetailsactivity"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dip"
-            android:layout_marginLeft="10dip"
-            android:layout_marginRight="10dip"
-            android:text="@string/notavailable"
-            android:textAppearance="?android:textAppearanceLarge"
-            android:textStyle="bold" />
+            android:layout_margin="5dip"
+            android:background="@drawable/cell_shape"
+            android:text="@string/saveportalimage_psdetailsactivity" />
     </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/extralayout_psdetailsactivity"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/saveportalimage_psdetailsactivity"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dip"
-        android:background="@drawable/cell_shape"
-        android:text="@string/saveportalimage_psdetailsactivity" />
-</LinearLayout>
+</ScrollView>

@@ -37,7 +37,7 @@
         android:layout_marginRight="10dip"
         android:layout_marginTop="10dip"
         android:text="@string/rejectionreason_psdetailsactivity"
-        android:textAppearance="?android:textAppearanceMedium" />
+        android:textAppearance="?android:textAppearanceLarge" />
 
     <TextView
         android:id="@+id/rejectionreason_rejectedrow"
@@ -47,7 +47,7 @@
         android:layout_marginLeft="10dip"
         android:layout_marginRight="10dip"
         android:text="@string/notavailable"
-        android:textAppearance="?android:textAppearanceLarge"
-        android:textStyle="bold" />
+        android:textAppearance="?android:textAppearanceMedium"
+        />
 
 </LinearLayout>
