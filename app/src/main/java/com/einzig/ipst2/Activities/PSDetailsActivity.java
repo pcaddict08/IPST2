@@ -22,11 +22,15 @@
  * ********************************************************************************************** */
 
 package com.einzig.ipst2.activities;
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -46,12 +50,10 @@ import com.einzig.ipst2.portal.PortalSubmission;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
 public class PSDetailsActivity extends AppCompatActivity {
     PortalSubmission portalSubmission;
+    static final int WRITE_EXTERNAL_STORAGE = 2;
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -78,7 +80,12 @@ public class PSDetailsActivity extends AppCompatActivity {
             findViewById(R.id.saveportalimage_psdetailsactivity).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    imageDownload(PSDetailsActivity.this, portalSubmission.getPictureURL());
+                    if (ContextCompat.checkSelfPermission(PSDetailsActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                            == PackageManager.PERMISSION_GRANTED) {
+                        imageDownload(PSDetailsActivity.this, portalSubmission.getPictureURL());
+                    } else {
+                        ActivityCompat.requestPermissions(PSDetailsActivity.this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_STORAGE);
+                    }
                 }
             });
             Picasso.with(this)
@@ -113,6 +120,18 @@ public class PSDetailsActivity extends AppCompatActivity {
                     }
                 }
             });
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        if (requestCode == WRITE_EXTERNAL_STORAGE && grantResults.length > 0) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                imageDownload(PSDetailsActivity.this, portalSubmission.getPictureURL());
+            }
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
 
