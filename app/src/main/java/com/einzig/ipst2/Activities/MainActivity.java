@@ -123,9 +123,8 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         Log.d(TAG, "Displaying error message");
         this.runOnUiThread(new Runnable() {
             public void run() {
-                new android.app.AlertDialog.Builder(MainActivity.this).setTitle(title)
+                new AlertDialog.Builder(MainActivity.this).setTitle(title)
                         .setMessage(messageText)
-                        // TODO (Anyone): Move "Ok" string to strings resource
                         .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                             }
@@ -197,7 +196,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     }
 
     /**
-     * TODO (Steven): Delete if we don't need this. If we do need it, remove this TODO
+     * TODO (Steven): Delete if we don't need this. If we do need it, remove this
      * This method is a hook for background threads and async tasks that need to provide the
      * user a response UI when an exception occurs.
      */
