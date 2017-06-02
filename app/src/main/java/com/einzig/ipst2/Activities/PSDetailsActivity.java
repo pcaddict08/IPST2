@@ -22,10 +22,11 @@
  * ********************************************************************************************** */
 
 package com.einzig.ipst2.activities;
-
-import android.app.Dialog;
-import android.content.DialogInterface;
-import android.graphics.drawable.ColorDrawable;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -35,23 +36,22 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.einzig.ipst2.R;
 import com.einzig.ipst2.portal.PortalSubmission;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class PSDetailsActivity extends AppCompatActivity {
-
     PortalSubmission portalSubmission;
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -75,6 +75,12 @@ public class PSDetailsActivity extends AppCompatActivity {
             ((TextView) findViewById(R.id.name_psdetailsactivity)).setText(portalSubmission.getName());
             ((TextView) findViewById(R.id.submitted_psdetailsactivity)).setText(portalSubmission.getSubmittedDateString());
             ((TextView) findViewById(R.id.daysinqueue_psdetailsactivity)).setText(String.valueOf(portalSubmission.getDaysInQueue()));
+            findViewById(R.id.saveportalimage_psdetailsactivity).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    imageDownload(PSDetailsActivity.this, portalSubmission.getPictureURL());
+                }
+            });
             Picasso.with(this)
                     .load(portalSubmission.getPictureURL())
                     .error(R.drawable.ic_warning_white)
@@ -108,5 +114,50 @@ public class PSDetailsActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    public void imageDownload(final Context context, final String url){
+        Target target = new Target(){
+            @Override
+            public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, portalSubmission.getName() , "Saved from IPST2");
+                            PSDetailsActivity.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(context, "Image Saved", Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        } catch (Exception e) {
+                            PSDetailsActivity.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(context, "Image Save Failed", Toast.LENGTH_LONG).show();
+                                }
+                            });
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
+            }
+            @Override
+            public void onBitmapFailed(Drawable errorDrawable) {
+                PSDetailsActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(context, "Image Save Failed", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable) {
+            }
+        };
+        Picasso.with(context)
+                .load(url)
+                .into(target);
     }
 }
