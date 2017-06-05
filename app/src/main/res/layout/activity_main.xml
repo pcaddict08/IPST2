@@ -84,14 +84,13 @@
             android:padding="15dip">
 
             <LinearLayout
+                android:id="@+id/pendingbutton_mainactivity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dip"
                 android:orientation="vertical">
 
-
-                <ImageButton
-                    android:id="@+id/pendingbutton_mainactivity"
+                <ImageView
                     android:layout_width="75dip"
                     android:layout_height="75dip"
                     android:background="@color/pending"
@@ -124,14 +123,13 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/acceptedbutton_mainactivity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dip"
                 android:orientation="vertical">
 
-
-                <ImageButton
-                    android:id="@+id/acceptedbutton_mainactivity"
+                <ImageView
                     android:layout_width="75dip"
                     android:layout_height="75dip"
                     android:background="@color/accepted"
@@ -141,7 +139,7 @@
                     app:srcCompat="@drawable/ic_check" />
 
                 <TextView
-                    android:id="@+id/percentaccepted_mainactivity"
+                    android:id="@+id/acceptedgraph_mainactivity"
                     android:layout_width="75dip"
                     android:layout_height="25dip"
                     android:layout_gravity="top"
@@ -157,7 +155,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-
                     android:layout_marginTop="10dip"
                     android:text="@string/notavailable"
                     android:textAppearance="?android:textAppearanceMedium" />
@@ -165,15 +162,14 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/rejectedbutton_mainactivity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dip"
-
                 android:orientation="vertical">
 
 
-                <ImageButton
-                    android:id="@+id/rejectedbutton_mainactivity"
+                <ImageView
                     android:layout_width="75dip"
                     android:layout_height="75dip"
                     android:background="@color/rejected"
