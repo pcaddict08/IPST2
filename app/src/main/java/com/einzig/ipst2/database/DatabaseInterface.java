@@ -345,6 +345,19 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     }
 
     /**
+     * Get all portals after date from the database
+     * @return all portals after date from the database
+     */
+    public Vector<PortalSubmission> getAllPortalsFromDate(Date fromDate) {
+        Vector<PortalSubmission> portals = new Vector<>();
+        portals.addAll(getAllPendingByDate(fromDate));
+        portals.addAll(getAllAcceptedByResponseDate(fromDate));
+        portals.addAll(getAllRejectedByResponseDate(fromDate));
+        return portals;
+    }
+
+
+    /**
      * Just to prove I could. For the love of Cthulhu don't call this ever. Please.
      *
      * Theoretically this would replace getAllAcceptedByDate, getAllPendingByDate and

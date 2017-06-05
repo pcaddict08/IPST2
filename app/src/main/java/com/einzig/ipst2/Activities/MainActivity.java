@@ -32,6 +32,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -58,6 +59,8 @@ import com.einzig.ipst2.portal.PortalSubmission;
 import com.google.android.gms.auth.GooglePlayServicesAvailabilityException;
 import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.common.GoogleApiAvailability;
+
+import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -326,22 +329,27 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
             viewButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    Vector<PortalSubmission> mainList = new Vector<>();
                     if (((Button) view).getText().toString().equalsIgnoreCase("View List - All")) {
                         Log.d(MainActivity.TAG, "Going to All List");
-                        Vector<PortalSubmission> mainList = MainActivity.this.db.getAllPortals();
-                        if (mainList.size() != 0) {
-                            Intent intent = new Intent(MainActivity.this, PSListActivity.class);
-                            intent.putExtra("psList", mainList);
-                            startActivity(intent);
-                        } else {
-                            DialogHelper.showSimpleDialog(R.string.noportalwarning, R.string.noportalmessage, MainActivity.this);
-                        }
+                        mainList = MainActivity.this.db.getAllPortals();
                     } else if (((Button) view).getText().toString().equalsIgnoreCase("View List - Month")) {
                         Log.d(MainActivity.TAG, "Going to Month List");
+                        db.getAllPortalsFromDate(new DateTime().minusDays(30).toDate());
                     } else if (((Button) view).getText().toString().equalsIgnoreCase("View List - Week")) {
                         Log.d(MainActivity.TAG, "Going to Week List");
+                        db.getAllPortalsFromDate(new DateTime().minusDays(7).toDate());
                     } else if (((Button) view).getText().toString().equalsIgnoreCase("View List - Today")) {
                         Log.d(MainActivity.TAG, "Going to Today List");
+                        db.getAllPortalsFromDate(new DateTime().minusDays(1).toDate());
+                    }
+
+                    if (mainList.size() != 0) {
+                        Intent intent = new Intent(MainActivity.this, PSListActivity.class);
+                        intent.putExtra("psList", mainList);
+                        startActivity(intent);
+                    } else {
+                        DialogHelper.showSimpleDialog(R.string.noportalwarning, R.string.noportalmessage, MainActivity.this);
                     }
                 }
             });
@@ -354,12 +362,13 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         ((TextView) findViewById(R.id.pendingtext_mainactivity)).setText(String.format(Locale.getDefault(), "%d", pending));
         ((TextView) findViewById(R.id.acceptedtext_mainactivity)).setText(String.format(Locale.getDefault(), "%d", accepted));
         ((TextView) findViewById(R.id.rejectedtext_mainactivity)).setText(String.format(Locale.getDefault(), "%d", rejected));
-        setLayoutParamsGraphBars((int) ((pending * 100) / (accepted + rejected + pending)), (TextView) findViewById(R.id.pendinggraph_mainactivity));
-        setLayoutParamsGraphBars((int) ((rejected * 100) / (accepted + rejected + pending)), (TextView) findViewById(R.id.rejectedgraph_mainactivity));
-        setLayoutParamsGraphBars((int) ((accepted * 100) / (accepted + rejected + pending)), (TextView) findViewById(R.id.percentaccepted_mainactivity));
-        ((TextView) findViewById(R.id.percentaccepted_mainactivity)).setText(String.format(Locale.getDefault(), "%d%%", (int) ((accepted * 100) / (accepted + rejected + pending))));
-        ((TextView) findViewById(R.id.rejectedgraph_mainactivity)).setText(String.format(Locale.getDefault(), "%d%%", (int) ((rejected * 100) / (accepted + rejected + pending))));
-        ((TextView) findViewById(R.id.pendinggraph_mainactivity)).setText(String.format(Locale.getDefault(), "%d%%", (int) ((pending * 100) / (accepted + rejected + pending))));
+        long totalnum = accepted + rejected + pending + 1;
+        setLayoutParamsGraphBars((int) ((pending * 100) / (totalnum)), (TextView) findViewById(R.id.pendinggraph_mainactivity));
+        setLayoutParamsGraphBars((int) ((rejected * 100) / (totalnum)), (TextView) findViewById(R.id.rejectedgraph_mainactivity));
+        setLayoutParamsGraphBars((int) ((accepted * 100) / (totalnum)), (TextView) findViewById(R.id.percentaccepted_mainactivity));
+        ((TextView) findViewById(R.id.percentaccepted_mainactivity)).setText(String.format(Locale.getDefault(), "%d%%", (int) ((accepted * 100) / (totalnum))));
+        ((TextView) findViewById(R.id.rejectedgraph_mainactivity)).setText(String.format(Locale.getDefault(), "%d%%", (int) ((rejected * 100) / (totalnum))));
+        ((TextView) findViewById(R.id.pendinggraph_mainactivity)).setText(String.format(Locale.getDefault(), "%d%%", (int) ((pending * 100) / (totalnum))));
     }
 
     /*
@@ -384,22 +393,27 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         switch (view.getId()) {
             case R.id.todaytab_mainactivity:
                 if (checked) {
-                    //TODO set text of labels what the today things are.
-
+                    formatUI(db.getAllAcceptedByResponseDate(new DateTime().minusDays(1).toDate()).size()
+                            , db.getAllRejectedByResponseDate(new DateTime().minusDays(1).toDate()).size()
+                            , db.getAllPendingByDate(new DateTime().minusDays(1).toDate()).size());
                     Button buttonTextSet = (Button) findViewById(R.id.viewlist_mainactivity);
                     buttonTextSet.setText(R.string.viewlisttoday);
                 }
                 break;
             case R.id.weektab_mainactivity:
                 if (checked) {
-
+                    formatUI(db.getAllAcceptedByResponseDate(new DateTime().minusDays(7).toDate()).size()
+                            , db.getAllRejectedByResponseDate(new DateTime().minusDays(7).toDate()).size()
+                            , db.getAllPendingByDate(new DateTime().minusDays(7).toDate()).size());
                     Button buttonTextSet = (Button) findViewById(R.id.viewlist_mainactivity);
                     buttonTextSet.setText(R.string.viewlistweek);
                 }
                 break;
             case R.id.monthtab_mainactivity:
                 if (checked) {
-
+                    formatUI(db.getAllAcceptedByResponseDate(new DateTime().minusDays(30).toDate()).size()
+                            , db.getAllRejectedByResponseDate(new DateTime().minusDays(30).toDate()).size()
+                            , db.getAllPendingByDate(new DateTime().minusDays(30).toDate()).size());
                     Button buttonTextSet = (Button) findViewById(R.id.viewlist_mainactivity);
                     buttonTextSet.setText(R.string.viewlistmonth);
                 }
@@ -407,7 +421,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
             case R.id.alltab_mainactivity:
                 if (checked) {
 
-
+                    formatUI(db.getAcceptedCount(), db.getRejectedCount(), db.getPendingCount());
                     Button buttonTextSet = (Button) findViewById(R.id.viewlist_mainactivity);
                     buttonTextSet.setText(R.string.viewlistall);
                 }

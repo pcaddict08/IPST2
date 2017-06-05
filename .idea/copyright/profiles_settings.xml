@@ -1,3 +1,14 @@
 <component name="CopyrightManager">
-  <settings default="IPST2" />
+  <settings default="IPST2">
+    <LanguageOptions name="JAVA">
+      <option name="separateBefore" value="true" />
+      <option name="separateAfter" value="true" />
+      <option name="box" value="true" />
+    </LanguageOptions>
+    <LanguageOptions name="__TEMPLATE__">
+      <option name="separateBefore" value="true" />
+      <option name="separateAfter" value="true" />
+      <option name="box" value="true" />
+    </LanguageOptions>
+  </settings>
 </component>
