@@ -38,6 +38,31 @@
     <string name="viewlisttoday">&viewlist;&separator;&today;</string>
     <string name="viewlistweek">&viewlist;&separator;&week;</string>
     <string name="week">&week;</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="gmailloginbutton">Gmail Login</string>
+    <string name="pendingbuttondescrip">Pending</string>
+    <string name="acceptedbuttondescrip">Accepted</string>
+    <string name="rejectedbuttondescrip">Rejected</string>
+    <string name="stockloadingtext">Loading…</string>
+    <string name="notavailable">N/A</string>
+    <string name="noportalwarning">"No Portal Submissions"</string>
+    <string name="noportalmessage">No Portal Submissions were found in the local database.  Try refreshing.</string>
+    <string name="pslisttitle_activity">Portal Submissions</string>
+    <string name="saveportalimage_psdetailsactivity">Save Portal Image</string>
+    <string name="submittedna_psdetailsactivity">Submitted: </string>
+    <string name="namena_psdetailsactivity">Name: </string>
+    <string name="detailsimagedesc_psdetailsactivity">Portal Submission Image</string>
+    <string name="daysinqueue_psdetailsactivity">Days in Queue</string>
+    <string name="closebutton_imagedetails">Close</string>
+    <string name="dateresponded_psdetailsactivity">Date Responded</string>
+    <string name="rejectionreason_psdetailsactivity">Rejection Reason</string>
+    <string name="liveaddress_psdetailsactivity">Live Address</string>
+    <string name="viewonintel_psdetailsactivity">View On Intel Map</string>
+
+    <string name="errormessage_viewintellink">The Intel URL for this Portal Submission is invalid. Something wasn\'t parsed right.</string>
+    <string name="errortitle_viewintellink">Invalid Intel URL</string>
+    <string name="action_search">Search</string>
+    <string name="action_sortlist">Sort List</string>
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->

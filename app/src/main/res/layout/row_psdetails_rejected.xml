@@ -2,7 +2,7 @@
   ~ /* ********************************************************************************************** *
   ~  * ********************************************************************************************** *
   ~  *                                                                                                *
-  ~  * Copyright 2017 Steven Foskett, Jimmy Ho, Ryan Porterfield                                      *
+  ~  * Copyright 2017 Steven Foskett, Ryan Porterfield                                      *
   ~  *                                                                                                *
   ~  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software  *
   ~  * and associated documentation files (the "Software"), to deal in the Software without           *
@@ -25,62 +25,29 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:orientation="vertical"
-    android:layout_height="match_parent">
-    <LinearLayout
-        android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="5dip"
+    android:background="@drawable/cell_shape"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="5dip"
-        android:background="@drawable/cell_shape"
-        android:orientation="vertical">
+        android:layout_marginLeft="10dip"
+        android:layout_marginRight="10dip"
+        android:layout_marginTop="10dip"
+        android:text="@string/rejectionreason_psdetailsactivity"
+        android:textAppearance="?android:textAppearanceLarge" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dip"
-            android:layout_marginRight="10dip"
-            android:layout_marginTop="10dip"
-            android:text="Date Rejected"
-            android:textAppearance="?android:textAppearanceMedium" />
-
-        <TextView
-            android:id="@+id/daterejected_rejectedrow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dip"
-            android:layout_marginLeft="10dip"
-            android:layout_marginRight="10dip"
-            android:text="N/A"
-            android:textAppearance="?android:textAppearanceLarge"
-            android:textStyle="bold" />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/rejectionreason_rejectedrow"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="5dip"
-        android:background="@drawable/cell_shape"
-        android:orientation="vertical">
+        android:layout_marginBottom="10dip"
+        android:layout_marginLeft="10dip"
+        android:layout_marginRight="10dip"
+        android:text="@string/notavailable"
+        android:textAppearance="?android:textAppearanceMedium"
+        />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dip"
-            android:layout_marginRight="10dip"
-            android:layout_marginTop="10dip"
-            android:text="Rejection Reason"
-            android:textAppearance="?android:textAppearanceMedium" />
-
-        <TextView
-            android:id="@+id/rejectionreason_rejectedrow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dip"
-            android:layout_marginLeft="10dip"
-            android:layout_marginRight="10dip"
-            android:text="N/A"
-            android:textAppearance="?android:textAppearanceLarge"
-            android:textStyle="bold" />
-    </LinearLayout>
-
-    
 </LinearLayout>

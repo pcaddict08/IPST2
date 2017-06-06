@@ -26,42 +26,28 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_margin="5dip"
+    android:background="@drawable/cell_shape"
     android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="5dip"
-        android:background="@drawable/cell_shape"
-        android:orientation="vertical">
+        android:layout_marginLeft="10dip"
+        android:layout_marginRight="10dip"
+        android:layout_marginTop="10dip"
+        android:text="@string/dateresponded_psdetailsactivity"
+        android:textAppearance="?android:textAppearanceLarge" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dip"
-            android:layout_marginRight="10dip"
-            android:layout_marginTop="10dip"
-            android:text="@string/liveaddress_psdetailsactivity"
-            android:textAppearance="?android:textAppearanceLarge" />
-
-        <TextView
-            android:id="@+id/liveaddress_acceptedrow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dip"
-            android:layout_marginLeft="10dip"
-            android:layout_marginRight="10dip"
-            android:text="@string/notavailable"
-            android:textAppearance="?android:textAppearanceMedium"
-            />
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/viewonintelmapbutton_acceptedrow"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/dateresponded_respondedrow"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="5dip"
-        android:background="@drawable/cell_shape"
-        android:text="@string/viewonintel_psdetailsactivity" />
+        android:layout_marginBottom="10dip"
+        android:layout_marginLeft="10dip"
+        android:layout_marginRight="10dip"
+        android:text="@string/notavailable"
+        android:textAppearance="?android:textAppearanceMedium"
+        />
 
 </LinearLayout>

@@ -25,6 +25,9 @@ package com.einzig.ipst2.portal;
 
 import android.os.Parcel;
 
+import org.joda.time.DateTime;
+import org.joda.time.Days;
+
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -72,6 +75,23 @@ public abstract class PortalResponded extends PortalSubmission {
     public long getResponseTime() {
         long diff = dateResponded.getTime() - getDateSubmitted().getTime();
         return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+    }
+
+    /*
+   *  Return a formatted responded date
+   * */
+    public String getDateRespondedString()
+    {
+        return sdf_stringdates.format(this.dateResponded);
+    }
+
+    /*
+    * Return days since Niantic has responded
+    * */
+    @Override
+    public int getDaysSinceResponse()
+    {
+        return Days.daysBetween(new DateTime(this.dateResponded).toLocalDate(), new DateTime().toLocalDate()).getDays();
     }
 
     /*

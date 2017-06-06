@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission
         android:name="android.permission.USE_CREDENTIALS"
         android:maxSdkVersion="22" />
@@ -24,9 +25,10 @@
         </activity>
         <activity
             android:name=".activities.SettingsActivity"
-            android:label="@string/title_settingsactivity" />
-        <activity android:name=".activities.PSListActivity" />
-        <activity android:name=".activities.PSDetailsActivity"></activity>
+            android:label="@string/title_activity_settings" />
+        <activity android:name=".activities.PSListActivity"
+            android:label="@string/pslisttitle_activity"/>
+        <activity android:name=".activities.PSDetailsActivity"/>
     </application>
 
 </manifest>

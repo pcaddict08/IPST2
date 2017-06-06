@@ -1,5 +1,5 @@
 <component name="CopyrightManager">
-  <settings default="IPST2">
+  <settings default="ipst">
     <LanguageOptions name="JAVA">
       <option name="separateBefore" value="true" />
       <option name="separateAfter" value="true" />

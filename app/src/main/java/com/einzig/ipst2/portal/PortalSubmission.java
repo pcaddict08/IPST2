@@ -26,8 +26,13 @@ package com.einzig.ipst2.portal;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import org.joda.time.DateTime;
+import org.joda.time.Days;
+
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class PortalSubmission implements Parcelable, Serializable {
     private static final long serialVersionUID = -223108874747293680L;
@@ -48,6 +53,11 @@ public class PortalSubmission implements Parcelable, Serializable {
     };
 
     /**
+     * Date format for returning string dates
+     */
+    SimpleDateFormat sdf_stringdates = new SimpleDateFormat("MM-dd-yyyy", Locale.getDefault());
+
+    /**
      * The name of the portal.
      * @serial
      */
@@ -56,7 +66,7 @@ public class PortalSubmission implements Parcelable, Serializable {
      * The date the portal was submitted.
      * @serial
      */
-    private Date dateSubmitted;
+    Date dateSubmitted;
     /**
      * The URL that links to the submission picture.
      * @serial
@@ -133,6 +143,22 @@ public class PortalSubmission implements Parcelable, Serializable {
      */
     public void setDateSubmitted(Date dateSubmitted) {
         this.dateSubmitted = dateSubmitted;
+    }
+
+    /*
+    *  Return a formatted submitted date
+    * */
+    public String getSubmittedDateString()
+    {
+       return sdf_stringdates.format(this.dateSubmitted);
+    }
+
+    /*
+    * Return days since Niantic has responded
+    * */
+    public int getDaysSinceResponse()
+    {
+        return Days.daysBetween(new DateTime(dateSubmitted).toLocalDate(), new DateTime().toLocalDate()).getDays();
     }
 
     /*

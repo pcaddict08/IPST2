@@ -35,7 +35,6 @@ import com.einzig.ipst2.portal.PortalAccepted;
 import com.einzig.ipst2.portal.PortalRejected;
 import com.einzig.ipst2.portal.PortalSubmission;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -391,44 +390,14 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     }
 
     /**
-     * Just to prove I could. For the love of Cthulhu don't call this ever. Please.
-     *
-     * Theoretically this would replace getAllAcceptedByDate, getPendingByDate and
-     * getRejectedByDate. This follows the DRY (Don't Repeat Yourself) programming paradigm and
-     * makes testing and debugging easier. If you have to make a change to one of the methods this
-     * replaces, you have to be sure to change all of them. With this method you only have to change
-     * it here, once. However, it breaks the KISS (Keep It Simple Stupid) programming paradigm, and
-     * it's basically impossible for anyone else to figure out what the hell is going on here.
-     *
-     * For example, getAcceptedBySubmissionDate would instead call:
-     *      getAllPortalsByDate(PortalAcceptedBuilder.class, KEY_DATE_SUBMITTED, fromDate, toDate);
-     * getPendingByDate would call:
-     *      getAllPortalsByDate(PortalSubmissionBuilder.class, KEY_DATE_SUBMITTED, fromDate, toDate);
-     * and getRejectedByResponseDate would call:
-     *      getAllPortalsByDate(PortalRejectedBuilder.class, KEY_DATE_RESPONDED, fromDate, toDate);
-     *
-     * @param c Class of PortalBuilder to instantiate
-     * @param dateKey Database key used for searching. Can be either KEY_DATE_SUBMITTED or
-     *                KEY_DATE_RESPONDED
-     * @param fromDate Date to start searching from
-     * @param toDate Date to stop searching at
-     * @param <P> Subclass of PortalSubmission being returned
-     * @return Vector of portals (either accepted, pending, or rejected) which were either submitted
-     * or approved/rejected in between fromDate and toDate
+     * Get all portals after date from the database
+     * @return all portals after date from the database
      */
-    private <P extends PortalSubmission> Vector<P> getAllPortalsByDate(Class<PortalBuilder<P>> c, String dateKey, Date fromDate, Date toDate) {
-        SQLiteDatabase db = getReadableDatabase();
-        Vector<P> portals = null;
-        try {
-            Constructor<PortalBuilder<P>> ctor = c.getDeclaredConstructor(SimpleDateFormat.class, SQLiteDatabase.class);
-            PortalBuilder<P> b = ctor.newInstance(dateFormatter, db);
-            portals = b.getPortalsByDate(dateKey, fromDate, toDate);
-        } catch (NoSuchMethodException e) {
-            Log.e(MainActivity.TAG, "Couldn't get constructor\n" + e.toString());
-        } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
-            Log.e(MainActivity.TAG, "Couldn't instantiate PortalBuilder\n" + e.toString());
-        }
-        db.close();
+    public Vector<PortalSubmission> getAllPortalsFromDate(Date fromDate) {
+        Vector<PortalSubmission> portals = new Vector<>();
+        portals.addAll(getPendingByDate(fromDate));
+        portals.addAll(getAcceptedByResponseDate(fromDate));
+        portals.addAll(getRejectedByResponseDate(fromDate));
         return portals;
     }
 
