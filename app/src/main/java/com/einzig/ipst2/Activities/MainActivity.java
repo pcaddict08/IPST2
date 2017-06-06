@@ -25,9 +25,6 @@ package com.einzig.ipst2.activities;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.accounts.AccountManagerFuture;
-import android.accounts.AuthenticatorException;
-import android.accounts.OperationCanceledException;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -41,6 +38,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.util.SparseIntArray;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -56,7 +54,6 @@ import android.widget.TextView;
 
 import com.einzig.ipst2.R;
 import com.einzig.ipst2.database.DatabaseInterface;
-import com.einzig.ipst2.parse.AuthToken;
 import com.einzig.ipst2.parse.AuthenticatorTask;
 import com.einzig.ipst2.parse.EmailParseTask;
 import com.einzig.ipst2.parse.GetMailTask;
@@ -65,7 +62,6 @@ import com.google.android.gms.auth.GooglePlayServicesAvailabilityException;
 import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.common.GoogleApiAvailability;
 
-import java.io.IOException;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
@@ -121,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
      */
     private void errorFoundMessage(final int title, final int messageText) {
         Log.d(TAG, "Displaying error message");
-        this.runOnUiThread(new Runnable() {
+        runOnUiThread(new Runnable() {
             public void run() {
                 new AlertDialog.Builder(MainActivity.this).setTitle(title)
                         .setMessage(messageText)
@@ -167,9 +163,9 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
      * Search through accounts on the user's device now that we have permission to do so.
      */
     public void gotPermission_accounts() {
-        AccountManager tempAM = AccountManager.get(MainActivity.this);
+        AccountManager manager = AccountManager.get(MainActivity.this);
         int numGoogAcct = 0;
-        Account[] accountList = tempAM.getAccounts();
+        Account[] accountList = manager.getAccounts();
         for (Account a : accountList) {
             if (a.type.equals("com.google")) {
                 numGoogAcct++;
@@ -187,7 +183,6 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
                     });
             builder.show();
         } else {
-            // TODO (anyone): Find a way to do this that isn't deprecated
             Intent intent = AccountManager.newChooseAccountIntent(null, null,
                     new String[]{"com.google"}, false, null, null, null, null);
             startActivityForResult(intent, LOGIN_ACTIVITY_CODE);
@@ -304,6 +299,15 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         boolean checked = ((RadioButton) view).isChecked();
         RadioButton tempButton = (RadioButton) view;
         tempButton.setTypeface(null, Typeface.BOLD);
+        /*SparseIntArray textMap = new SparseIntArray();
+        textMap.put(R.id.alltab_mainactivity, R.string.viewlistall);
+        textMap.put(R.id.monthtab_mainactivity, R.string.viewlistmonth);
+        textMap.put(R.id.todaytab_mainactivity, R.string.viewlisttoday);
+        textMap.put(R.id.weektab_mainactivity, R.string.viewlistweek);
+        if (checked) {
+            Button buttonTextSet = (Button) findViewById(R.id.viewlist_mainactivity);
+            buttonTextSet.setText(textMap.get(view.getId()));
+        }*/
         // Check which radio button was clicked
         switch (view.getId()) {
             case R.id.todaytab_mainactivity:
@@ -355,7 +359,6 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // Ryan's code
         Log.d(TAG, "onActivityResult(" + requestCode + ") -> " + resultCode);
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode != LOGIN_ACTIVITY_CODE || resultCode != RESULT_OK) {
@@ -366,7 +369,6 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         editor.apply();
         Log.d(TAG, "Got account name " + data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME));
         parseEmail();
-        // Steven's code
         Account me = getAccount();
         if (me != null) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
