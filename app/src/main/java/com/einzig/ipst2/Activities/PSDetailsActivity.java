@@ -43,6 +43,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -66,9 +67,27 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class PSDetailsActivity extends AppCompatActivity {
     PortalSubmission portalSubmission;
     static final int WRITE_EXTERNAL_STORAGE = 2;
+
+    @BindView(R.id.name_psdetailsactivity)
+    TextView namelabel;
+    @BindView(R.id.submitted_psdetailsactivity)
+    TextView submittedLabel;
+    @BindView(R.id.psimage_psdetailsactivity)
+    ImageView psimage;
+    @BindView(R.id.daysinqueue_psdetailsactivity)
+    TextView daysinqueueLabel;
+    @BindView(R.id.psstatusimage_psdetailsactivity)
+    ImageView psstatusimage;
+    @BindView(R.id.extralayout_psdetailsactivity)
+    LinearLayout extralayout;
+    @BindView(R.id.saveportalimage_psdetailsactivity)
+    Button saveportalimage;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -84,6 +103,8 @@ public class PSDetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_psdetails);
+        ButterKnife.bind(this);
+
         ActionBar supportActionBar = getSupportActionBar();
         if (supportActionBar != null)
             supportActionBar.setDisplayHomeAsUpEnabled(true);
@@ -107,12 +128,12 @@ public class PSDetailsActivity extends AppCompatActivity {
 
     public void buildUI() {
         Log.d(MainActivity.TAG, "PS Type: " + portalSubmission.getClass().getName());
-        ((TextView) findViewById(R.id.name_psdetailsactivity)).setText(portalSubmission.getName());
-        ((TextView) findViewById(R.id.submitted_psdetailsactivity)).setText(portalSubmission.getSubmittedDateString());
+        namelabel.setText(portalSubmission.getName());
+        submittedLabel.setText(portalSubmission.getSubmittedDateString());
         Picasso.with(this)
                 .load(portalSubmission.getPictureURL())
                 .error(R.drawable.ic_warning_white)
-                .into(((ImageView) findViewById(R.id.psimage_psdetailsactivity)));
+                .into(psimage);
         setUpExtraUI();
         setUpImageDownloadButton();
         setUpImageDetailsView();
@@ -120,20 +141,20 @@ public class PSDetailsActivity extends AppCompatActivity {
 
     public void setUpExtraUI() {
         if (portalSubmission instanceof PortalResponded) {
-            ((TextView) findViewById(R.id.daysinqueue_psdetailsactivity)).setText(String.valueOf(((PortalResponded) portalSubmission).getResponseTime()));
-            LinearLayout respondedLayout = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.row_psdetails_responded, (LinearLayout) findViewById(R.id.extralayout_psdetailsactivity), false);
+            daysinqueueLabel.setText(String.valueOf(((PortalResponded) portalSubmission).getResponseTime()));
+            LinearLayout respondedLayout = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.row_psdetails_responded, extralayout, false);
             ((TextView) respondedLayout.findViewById(R.id.dateresponded_respondedrow)).setText(((PortalResponded) portalSubmission).getDateRespondedString());
-            ((LinearLayout) findViewById(R.id.extralayout_psdetailsactivity)).addView(respondedLayout);
+            extralayout.addView(respondedLayout);
             if (portalSubmission instanceof PortalRejected) {
-                findViewById(R.id.psstatusimage_psdetailsactivity).setBackgroundColor(getResources().getColor(R.color.rejected));
-                ((ImageView) findViewById(R.id.psstatusimage_psdetailsactivity)).setImageDrawable(getResources().getDrawable(R.drawable.ic_rejected));
-                LinearLayout rejectedLayout = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.row_psdetails_rejected, (LinearLayout) findViewById(R.id.extralayout_psdetailsactivity), false);
+                psstatusimage.setBackgroundColor(getResources().getColor(R.color.rejected));
+                psstatusimage.setImageDrawable(getResources().getDrawable(R.drawable.ic_rejected));
+                LinearLayout rejectedLayout = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.row_psdetails_rejected, extralayout, false);
                 ((TextView) rejectedLayout.findViewById(R.id.rejectionreason_rejectedrow)).setText(((PortalRejected) portalSubmission).getRejectionReason());
-                ((LinearLayout) findViewById(R.id.extralayout_psdetailsactivity)).addView(rejectedLayout);
+                extralayout.addView(rejectedLayout);
             } else if (portalSubmission instanceof PortalAccepted) {
-                findViewById(R.id.psstatusimage_psdetailsactivity).setBackgroundColor(getResources().getColor(R.color.accepted));
-                ((ImageView) findViewById(R.id.psstatusimage_psdetailsactivity)).setImageDrawable(getResources().getDrawable(R.drawable.ic_check));
-                LinearLayout acceptedLayout = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.row_psdetails_accepted, (LinearLayout) findViewById(R.id.extralayout_psdetailsactivity), false);
+                psstatusimage.setBackgroundColor(getResources().getColor(R.color.accepted));
+                psstatusimage.setImageDrawable(getResources().getDrawable(R.drawable.ic_check));
+                LinearLayout acceptedLayout = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.row_psdetails_accepted, extralayout, false);
                 ((TextView) acceptedLayout.findViewById(R.id.liveaddress_acceptedrow)).setText(((PortalAccepted) portalSubmission).getLiveAddress());
                 acceptedLayout.findViewById(R.id.viewonintelmapbutton_acceptedrow).setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -141,10 +162,10 @@ public class PSDetailsActivity extends AppCompatActivity {
                         goToIntel();
                     }
                 });
-                ((LinearLayout) findViewById(R.id.extralayout_psdetailsactivity)).addView(acceptedLayout);
+                extralayout.addView(acceptedLayout);
             }
         } else
-            ((TextView) findViewById(R.id.daysinqueue_psdetailsactivity)).setText(String.valueOf(portalSubmission.getDaysSinceResponse()));
+            daysinqueueLabel.setText(String.valueOf(portalSubmission.getDaysSinceResponse()));
     }
 
     public void goToIntel() {
@@ -159,7 +180,7 @@ public class PSDetailsActivity extends AppCompatActivity {
     }
 
     public void setUpImageDownloadButton() {
-        findViewById(R.id.saveportalimage_psdetailsactivity).setOnClickListener(new View.OnClickListener() {
+        saveportalimage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (ContextCompat.checkSelfPermission(PSDetailsActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -175,7 +196,7 @@ public class PSDetailsActivity extends AppCompatActivity {
     public void setUpImageDetailsView() {
         final DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        findViewById(R.id.psimage_psdetailsactivity).setOnClickListener(new View.OnClickListener() {
+        psimage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 try {

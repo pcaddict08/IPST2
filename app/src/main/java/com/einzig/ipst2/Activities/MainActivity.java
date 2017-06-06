@@ -369,6 +369,25 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         }
     }
 
+    @OnClick (R.id.acceptedbutton_mainactivity)
+    public void onClickAccepted(View view)
+    {
+        Vector<PortalSubmission> mainList = new Vector<>();
+        switch(viewButton.getText().toString())
+        {
+            case "View - All":
+
+                break;
+        }
+        if (mainList.size() != 0) {
+            Intent intent = new Intent(MainActivity.this, PSListActivity.class);
+            intent.putExtra("psList", mainList);
+            startActivity(intent);
+        } else {
+            DialogHelper.showSimpleDialog(R.string.noportalwarning, R.string.noportalmessage, MainActivity.this);
+        }
+    }
+
     /*
     * Method to format UI when changing radio buttons
      */
