@@ -28,10 +28,12 @@ package com.einzig.ipst2.adapters;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -59,6 +61,7 @@ import com.einzig.ipst2.R;
 import com.einzig.ipst2.activities.MainActivity;
 import com.einzig.ipst2.portal.PortalAccepted;
 import com.einzig.ipst2.portal.PortalRejected;
+import com.einzig.ipst2.portal.PortalResponded;
 import com.einzig.ipst2.portal.PortalSubmission;
 
 import org.joda.time.DateTime;
@@ -79,7 +82,7 @@ public class ListItemAdapter_PS extends BaseAdapter implements Filterable {
     }
 
     public int getCount() {
-        return this.originalItems.size();
+        return this.shownItems.size();
     }
 
     public PortalSubmission getItem(int position) {
@@ -95,26 +98,22 @@ public class ListItemAdapter_PS extends BaseAdapter implements Filterable {
     public View getView(int position, View convertView, ViewGroup parent) {
         final PortalSubmission item = this.shownItems.get(position);
 
-        LinearLayout itemLayout = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.row_pslist, parent, false);
+        @SuppressLint("ViewHolder") LinearLayout itemLayout = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.row_pslist, parent, false);
         ImageView iconView = (ImageView) itemLayout.findViewById(R.id.status_icon);
         if (iconView != null) {
-            if(item instanceof PortalAccepted) {
+            if (item instanceof PortalAccepted) {
                 iconView.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_check));
                 iconView.setBackgroundColor(context.getResources().getColor(R.color.accepted));
-            }
-            else if(item instanceof PortalRejected)
-            {
+            } else if (item instanceof PortalRejected) {
                 iconView.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_rejected));
                 iconView.setBackgroundColor(context.getResources().getColor(R.color.rejected));
-            }
-            else
-            {
+            } else {
                 iconView.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_pending));
             }
         }
 
         TextView pstimelabel = (TextView) itemLayout.findViewById(R.id.psdate_rowpslist);
-        if(pstimelabel != null) {
+        if (pstimelabel != null) {
             pstimelabel.setText(item.getSubmittedDateString() + " - " + item.getDaysSinceResponse() + " day(s) ago");
         }
         TextView psnamelabel = (TextView) itemLayout.findViewById(R.id.psname_rowpslist);
@@ -172,5 +171,45 @@ public class ListItemAdapter_PS extends BaseAdapter implements Filterable {
     public void resetData() {
         this.shownItems = new ArrayList<>(originalItems);
         notifyDataSetChanged();
+    }
+
+
+    /*
+     * Simple Sort class to sort ps by name
+     * */
+    public static class SortPortalSubmissions_alph implements Comparator<PortalSubmission> {
+        @Override
+        public int compare(PortalSubmission o1, PortalSubmission o2) {
+            return o1.getName().compareTo(o2.getName());
+        }
+    }
+
+    /*
+     * Simple Sort class to sort ps by date submitted
+     * */
+    public static class SortPortalSubmissions_datesub implements Comparator<PortalSubmission> {
+        @Override
+        public int compare(PortalSubmission o1, PortalSubmission o2) {
+            return o1.getDateSubmitted().compareTo(o2.getDateSubmitted());
+        }
+    }
+
+    /*
+   * Simple Sort class to sort ps by date responded
+   * */
+    public static class SortPortalSubmissions_dateresp implements Comparator<PortalSubmission> {
+        @Override
+        public int compare(PortalSubmission o1, PortalSubmission o2) {
+            int portal1int = o1.getDaysSinceResponse();
+            int portal2int = o2.getDaysSinceResponse();
+
+            if (portal1int > portal2int) {
+                return 1;
+            } else if (portal1int < portal2int) {
+                return -1;
+            } else {
+                return 0;
+            }
+        }
     }
 }

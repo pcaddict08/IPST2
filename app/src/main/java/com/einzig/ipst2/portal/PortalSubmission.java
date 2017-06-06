@@ -173,15 +173,4 @@ public class PortalSubmission implements Parcelable, Serializable {
         dest.writeSerializable(dateSubmitted);
         dest.writeString(pictureURL);
     }
-
-
-    /*
-    * Simple Sort class to sort ps by date
-    * */
-    public static class SortPortalSubmissions_date implements Comparator<PortalSubmission> {
-        @Override
-        public int compare(PortalSubmission o1, PortalSubmission o2) {
-            return o1.getDateSubmitted().compareTo(o2.getDateSubmitted());
-        }
-    }
 }

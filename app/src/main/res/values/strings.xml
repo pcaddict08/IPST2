@@ -31,6 +31,8 @@
 
     <string name="errormessage_viewintellink">The Intel URL for this Portal Submission is invalid. Something wasn\'t parsed right.</string>
     <string name="errortitle_viewintellink">Invalid Intel URL</string>
+    <string name="action_search">Search</string>
+    <string name="action_sortlist">Sort List</string>
 
     <!-- Strings related to Settings -->
 

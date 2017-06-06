@@ -363,6 +363,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         openList(mainList);
     }
 
+    /* Method for viewing specific lists */
     @OnClick({R.id.acceptedbutton_mainactivity, R.id.pendingbutton_mainactivity, R.id.rejectedbutton_mainactivity})
     public void onClickAccepted(View view) {
         Vector<PortalSubmission> mainList = new Vector<>();
