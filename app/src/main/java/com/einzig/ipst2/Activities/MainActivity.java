@@ -360,28 +360,56 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
             db.getAllPortalsFromDate(new DateTime().minusDays(1).toDate());
         }
 
-        if (mainList.size() != 0) {
-            Intent intent = new Intent(MainActivity.this, PSListActivity.class);
-            intent.putExtra("psList", mainList);
-            startActivity(intent);
-        } else {
-            DialogHelper.showSimpleDialog(R.string.noportalwarning, R.string.noportalmessage, MainActivity.this);
-        }
+        openList(mainList);
     }
 
-    @OnClick (R.id.acceptedbutton_mainactivity)
-    public void onClickAccepted(View view)
-    {
+    @OnClick({R.id.acceptedbutton_mainactivity, R.id.pendingbutton_mainactivity, R.id.rejectedbutton_mainactivity})
+    public void onClickAccepted(View view) {
         Vector<PortalSubmission> mainList = new Vector<>();
-        switch(viewButton.getText().toString())
-        {
-            case "View - All":
-
+        switch (viewButton.getText().toString()) {
+            case "View List - All":
+                if (view.getId() == R.id.acceptedbutton_mainactivity)
+                    mainList.addAll(db.getAllAccepted());
+                else if (view.getId() == R.id.rejectedbutton_mainactivity)
+                    mainList.addAll(db.getAllRejected());
+                else
+                    mainList.addAll(db.getAllPending());
+                break;
+            case "View List - Month":
+                if (view.getId() == R.id.acceptedbutton_mainactivity)
+                    mainList.addAll(db.getAllAcceptedByResponseDate(new DateTime().minusDays(30).toDate()));
+                else if (view.getId() == R.id.rejectedbutton_mainactivity)
+                    mainList.addAll(db.getAllRejectedByResponseDate(new DateTime().minusDays(30).toDate()));
+                else
+                    mainList.addAll(db.getAllPendingByDate(new DateTime().minusDays(30).toDate()));
+                break;
+            case "View List - Week":
+                if (view.getId() == R.id.acceptedbutton_mainactivity)
+                    mainList.addAll(db.getAllAcceptedByResponseDate(new DateTime().minusDays(7).toDate()));
+                else if (view.getId() == R.id.rejectedbutton_mainactivity)
+                    mainList.addAll(db.getAllRejectedByResponseDate(new DateTime().minusDays(7).toDate()));
+                else
+                    mainList.addAll(db.getAllPendingByDate(new DateTime().minusDays(7).toDate()));
+                break;
+            case "View List - Today":
+                if (view.getId() == R.id.acceptedbutton_mainactivity)
+                    mainList.addAll(db.getAllAcceptedByResponseDate(new DateTime().minusDays(1).toDate()));
+                else if (view.getId() == R.id.rejectedbutton_mainactivity)
+                    mainList.addAll(db.getAllRejectedByResponseDate(new DateTime().minusDays(1).toDate()));
+                else
+                    mainList.addAll(db.getAllPendingByDate(new DateTime().minusDays(1).toDate()));
                 break;
         }
-        if (mainList.size() != 0) {
+        openList(mainList);
+    }
+
+    /*
+     * Method to open listview once list has been created
+     */
+    public void openList(Vector<PortalSubmission> list) {
+        if (list.size() != 0) {
             Intent intent = new Intent(MainActivity.this, PSListActivity.class);
-            intent.putExtra("psList", mainList);
+            intent.putExtra("psList", list);
             startActivity(intent);
         } else {
             DialogHelper.showSimpleDialog(R.string.noportalwarning, R.string.noportalmessage, MainActivity.this);
