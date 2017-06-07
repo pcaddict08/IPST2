@@ -57,6 +57,8 @@ import com.einzig.ipst2.parse.AuthenticatorTask;
 import com.einzig.ipst2.parse.EmailParseTask;
 import com.einzig.ipst2.parse.GetMailTask;
 import com.einzig.ipst2.parse.MailBundle;
+import com.einzig.ipst2.portal.PortalAccepted;
+import com.einzig.ipst2.portal.PortalRejected;
 import com.einzig.ipst2.portal.PortalSubmission;
 import com.google.android.gms.auth.GooglePlayServicesAvailabilityException;
 import com.google.android.gms.auth.UserRecoverableAuthException;
@@ -64,6 +66,8 @@ import com.google.android.gms.common.GoogleApiAvailability;
 
 import org.joda.time.DateTime;
 
+import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
 import java.util.concurrent.ExecutionException;
@@ -104,15 +108,13 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     static private final int LOGIN_ACTIVITY_CODE = 0;
     static final int REQUEST_CODE_EMAIL = 1;
     static final int REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR = 1002;
-    /**
-     * Preferences for saving app settings
-     */
-    private SharedPreferences preferences;
 
-    /*
-    * Database Handle for getting portals and such
-    * */
+    /** Database Handle for getting portals and such */
     private DatabaseInterface db;
+    /**  */
+    private Date viewDate;
+    /** Preferences for saving app settings */
+    private SharedPreferences preferences;
 
     /*Butterknife Binds for Views*/
     @BindView(R.id.viewlist_mainactivity)
@@ -142,9 +144,26 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
      * MainActivity constructor, initialize variables.
      */
     public MainActivity() {
+        db = new DatabaseInterface(this);
         preferences = null;
-        this.db = new DatabaseInterface(this);
+        viewDate = null;
+    }
 
+    /*
+    *  Method for building/showing the ui once emails are parsed.
+    */
+    public void buildUIAfterParsing() {
+        DatabaseInterface db = new DatabaseInterface(this);
+        long accepted = db.getAcceptedCount();
+        long pending = db.getPendingCount();
+        long rejected = db.getRejectedCount();
+        findViewById(R.id.progress_view_mainactivity).setVisibility(View.INVISIBLE);
+        findViewById(R.id.mainui_mainactivity).setVisibility(View.VISIBLE);
+        formatUI(accepted, rejected, pending);
+        todaytab.setOnCheckedChangeListener(this);
+        weektab.setOnCheckedChangeListener(this);
+        monthtab.setOnCheckedChangeListener(this);
+        alltab.setOnCheckedChangeListener(this);
     }
 
     /**
@@ -165,6 +184,22 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
                         }).show();
             }
         });
+    }
+
+    /*
+    * Method to format UI when changing radio buttons
+     */
+    public void formatUI(long accepted, long rejected, long pending) {
+        pendingtext.setText(String.format(Locale.getDefault(), "%d", pending));
+        acceptedtext.setText(String.format(Locale.getDefault(), "%d", accepted));
+        rejectedtext.setText(String.format(Locale.getDefault(), "%d", rejected));
+        long totalnum = accepted + rejected + pending + 1;
+        setLayoutParamsGraphBars((int) ((pending * 100) / (totalnum)), pendinggraph);
+        setLayoutParamsGraphBars((int) ((rejected * 100) / (totalnum)), rejectedgraph);
+        setLayoutParamsGraphBars((int) ((accepted * 100) / (totalnum)), acceptedgraph);
+        acceptedgraph.setText(String.format(Locale.getDefault(), "%d%%", (int) ((accepted * 100) / (totalnum))));
+        rejectedgraph.setText(String.format(Locale.getDefault(), "%d%%", (int) ((rejected * 100) / (totalnum))));
+        pendinggraph.setText(String.format(Locale.getDefault(), "%d%%", (int) ((pending * 100) / (totalnum))));
     }
 
     /**
@@ -229,7 +264,6 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     }
 
     /**
-     * TODO (Steven): Delete if we don't need this. If we do need it, remove this
      * This method is a hook for background threads and async tasks that need to provide the
      * user a response UI when an exception occurs.
      */
@@ -278,192 +312,6 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         }
     }
 
-    /*
-    *  Method for building/showing the ui once emails are parsed.
-    */
-    public void buildUIAfterParsing() {
-        DatabaseInterface db = new DatabaseInterface(this);
-        long accepted = db.getAcceptedCount();
-        long pending = db.getPendingCount();
-        long rejected = db.getRejectedCount();
-        findViewById(R.id.progress_view_mainactivity).setVisibility(View.INVISIBLE);
-        findViewById(R.id.mainui_mainactivity).setVisibility(View.VISIBLE);
-        formatUI(accepted, rejected, pending);
-        todaytab.setOnCheckedChangeListener(this);
-        weektab.setOnCheckedChangeListener(this);
-        monthtab.setOnCheckedChangeListener(this);
-        alltab.setOnCheckedChangeListener(this);
-    }
-
-    /* Method for when view list button is clicked */
-    @OnClick(R.id.viewlist_mainactivity)
-    public void onClickViewList(View view) {
-        Vector<PortalSubmission> mainList = new Vector<>();
-        if (((Button) view).getText().toString().equalsIgnoreCase("View List - All")) {
-            Log.d(MainActivity.TAG, "Going to All List");
-            mainList = db.getAllPortals();
-        } else if (((Button) view).getText().toString().equalsIgnoreCase("View List - Month")) {
-            Log.d(MainActivity.TAG, "Going to Month List");
-            db.getAllPortalsFromDate(new DateTime().minusDays(30).toDate());
-        } else if (((Button) view).getText().toString().equalsIgnoreCase("View List - Week")) {
-            Log.d(MainActivity.TAG, "Going to Week List");
-            db.getAllPortalsFromDate(new DateTime().minusDays(7).toDate());
-        } else if (((Button) view).getText().toString().equalsIgnoreCase("View List - Today")) {
-            Log.d(MainActivity.TAG, "Going to Today List");
-            db.getAllPortalsFromDate(new DateTime().minusDays(1).toDate());
-        }
-
-        openList(mainList);
-    }
-
-    /* Method for viewing specific lists */
-    @OnClick({R.id.acceptedbutton_mainactivity, R.id.pendingbutton_mainactivity, R.id.rejectedbutton_mainactivity})
-    public void onClickAccepted(View view) {
-        Vector<PortalSubmission> mainList = new Vector<>();
-        switch (viewButton.getText().toString()) {
-            case "View List - All":
-                if (view.getId() == R.id.acceptedbutton_mainactivity)
-                    mainList.addAll(db.getAllAccepted());
-                else if (view.getId() == R.id.rejectedbutton_mainactivity)
-                    mainList.addAll(db.getAllRejected());
-                else
-                    mainList.addAll(db.getAllPending());
-                break;
-            case "View List - Month":
-                if (view.getId() == R.id.acceptedbutton_mainactivity)
-                    mainList.addAll(db.getAcceptedByResponseDate(new DateTime().minusDays(30).toDate()));
-                else if (view.getId() == R.id.rejectedbutton_mainactivity)
-                    mainList.addAll(db.getRejectedByResponseDate(new DateTime().minusDays(30).toDate()));
-                else
-                    mainList.addAll(db.getPendingByDate(new DateTime().minusDays(30).toDate()));
-                break;
-            case "View List - Week":
-                if (view.getId() == R.id.acceptedbutton_mainactivity)
-                    mainList.addAll(db.getAcceptedByResponseDate(new DateTime().minusDays(7).toDate()));
-                else if (view.getId() == R.id.rejectedbutton_mainactivity)
-                    mainList.addAll(db.getRejectedByResponseDate(new DateTime().minusDays(7).toDate()));
-                else
-                    mainList.addAll(db.getPendingByDate(new DateTime().minusDays(7).toDate()));
-                break;
-            case "View List - Today":
-                if (view.getId() == R.id.acceptedbutton_mainactivity)
-                    mainList.addAll(db.getAcceptedByResponseDate(new DateTime().minusDays(1).toDate()));
-                else if (view.getId() == R.id.rejectedbutton_mainactivity)
-                    mainList.addAll(db.getRejectedByResponseDate(new DateTime().minusDays(1).toDate()));
-                else
-                    mainList.addAll(db.getPendingByDate(new DateTime().minusDays(1).toDate()));
-                break;
-        }
-        openList(mainList);
-    }
-
-    /*
-     * Method to open listview once list has been created
-     */
-    public void openList(Vector<PortalSubmission> list) {
-        if (list.size() != 0) {
-            Intent intent = new Intent(MainActivity.this, PSListActivity.class);
-            intent.putExtra("psList", list);
-            startActivity(intent);
-        } else {
-            DialogHelper.showSimpleDialog(R.string.noportalwarning, R.string.noportalmessage, MainActivity.this);
-        }
-    }
-
-    /*
-    * Method to format UI when changing radio buttons
-     */
-    public void formatUI(long accepted, long rejected, long pending) {
-        pendingtext.setText(String.format(Locale.getDefault(), "%d", pending));
-        acceptedtext.setText(String.format(Locale.getDefault(), "%d", accepted));
-        rejectedtext.setText(String.format(Locale.getDefault(), "%d", rejected));
-        long totalnum = accepted + rejected + pending + 1;
-        setLayoutParamsGraphBars((int) ((pending * 100) / (totalnum)), pendinggraph);
-        setLayoutParamsGraphBars((int) ((rejected * 100) / (totalnum)), rejectedgraph);
-        setLayoutParamsGraphBars((int) ((accepted * 100) / (totalnum)), acceptedgraph);
-        acceptedgraph.setText(String.format(Locale.getDefault(), "%d%%", (int) ((accepted * 100) / (totalnum))));
-        rejectedgraph.setText(String.format(Locale.getDefault(), "%d%%", (int) ((rejected * 100) / (totalnum))));
-        pendinggraph.setText(String.format(Locale.getDefault(), "%d%%", (int) ((pending * 100) / (totalnum))));
-    }
-
-    /*
-    * Method to set layout params for graph bars
-     */
-    public void setLayoutParamsGraphBars(int height, TextView layout) {
-        ViewGroup.LayoutParams params = layout.getLayoutParams();
-        params.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, height + 35, getResources().getDisplayMetrics());
-        Log.d(MainActivity.TAG, "HEIGHT: " + params.height);
-        layout.setLayoutParams(params);
-    }
-
-    /*
-    *  Method for when radiobuttons are clicked
-    */
-    public void onRadioButtonClicked(View view) {
-        boolean checked = ((RadioButton) view).isChecked();
-        RadioButton tempButton = (RadioButton) view;
-        tempButton.setTypeface(null, Typeface.BOLD);
-        /*SparseIntArray textMap = new SparseIntArray();
-        textMap.put(R.id.alltab_mainactivity, R.string.viewlistall);
-        textMap.put(R.id.monthtab_mainactivity, R.string.viewlistmonth);
-        textMap.put(R.id.todaytab_mainactivity, R.string.viewlisttoday);
-        textMap.put(R.id.weektab_mainactivity, R.string.viewlistweek);
-        if (checked) {
-            Button buttonTextSet = (Button) findViewById(R.id.viewlist_mainactivity);
-            buttonTextSet.setText(textMap.get(view.getId()));
-        }*/
-        // Check which radio button was clicked
-        switch (view.getId()) {
-            case R.id.todaytab_mainactivity:
-                if (checked) {
-                    formatUI(db.getAcceptedByResponseDate(new DateTime().minusDays(1).toDate()).size()
-                            , db.getRejectedByResponseDate(new DateTime().minusDays(1).toDate()).size()
-                            , db.getPendingByDate(new DateTime().minusDays(1).toDate()).size());
-                    Button buttonTextSet = (Button) findViewById(R.id.viewlist_mainactivity);
-                    buttonTextSet.setText(R.string.viewlisttoday);
-                }
-                break;
-            case R.id.weektab_mainactivity:
-                if (checked) {
-                    formatUI(db.getAcceptedByResponseDate(new DateTime().minusDays(7).toDate()).size()
-                            , db.getRejectedByResponseDate(new DateTime().minusDays(7).toDate()).size()
-                            , db.getPendingByDate(new DateTime().minusDays(7).toDate()).size());
-                    Button buttonTextSet = (Button) findViewById(R.id.viewlist_mainactivity);
-                    buttonTextSet.setText(R.string.viewlistweek);
-                }
-                break;
-            case R.id.monthtab_mainactivity:
-                if (checked) {
-                    formatUI(db.getAcceptedByResponseDate(new DateTime().minusDays(30).toDate()).size()
-                            , db.getRejectedByResponseDate(new DateTime().minusDays(30).toDate()).size()
-                            , db.getPendingByDate(new DateTime().minusDays(30).toDate()).size());
-                    Button buttonTextSet = (Button) findViewById(R.id.viewlist_mainactivity);
-                    buttonTextSet.setText(R.string.viewlistmonth);
-                }
-                break;
-            case R.id.alltab_mainactivity:
-                if (checked) {
-
-                    formatUI(db.getAcceptedCount(), db.getRejectedCount(), db.getPendingCount());
-                    Button buttonTextSet = (Button) findViewById(R.id.viewlist_mainactivity);
-                    buttonTextSet.setText(R.string.viewlistall);
-                }
-                break;
-        }
-    }
-
-    /*
-    *  This method fixes formatting when radio boxes are changed
-    * */
-    @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        buttonView.setTypeface(isChecked ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
-        buttonView.setTextColor(isChecked ? getResources().getColor(R.color.white)
-                : getResources().getColor(R.color.colorPrimaryDark));
-        buttonView.setBackground(isChecked ? getResources().getDrawable(R.drawable.cell_shape_radio)
-                : getResources().getDrawable(R.drawable.cell_shape_radio_clear));
-    }
-
 
     /*
      * Callback method if an activity is started for result via startActivityForResult().
@@ -492,6 +340,72 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     }
 
     /*
+    *  This method fixes formatting when radio boxes are changed
+    * */
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        buttonView.setTypeface(isChecked ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
+        buttonView.setTextColor(isChecked ? getResources().getColor(R.color.white)
+                : getResources().getColor(R.color.colorPrimaryDark));
+        buttonView.setBackground(isChecked ? getResources().getDrawable(R.drawable.cell_shape_radio)
+                : getResources().getDrawable(R.drawable.cell_shape_radio_clear));
+    }
+
+    /* Method for when view list button is clicked */
+    @OnClick(R.id.viewlist_mainactivity)
+    public void onClickViewList(View view) {
+        Log.d(TAG, "View all button clicked");
+        Vector<PortalSubmission> mainList = new Vector<>();
+        if (((Button) view).getText().toString().equals(getString(R.string.viewlistall))) {
+            Log.d(MainActivity.TAG, "Going to All List");
+            mainList = db.getAllPortals();
+        } else if (((Button) view).getText().toString().equals(getString(R.string.viewlistmonth))) {
+            Log.d(MainActivity.TAG, "Going to Month List");
+            db.getAllPortalsFromDate(new DateTime().minusDays(30).toDate());
+        } else if (((Button) view).getText().toString().equals(getString(R.string.viewlistweek))) {
+            Log.d(MainActivity.TAG, "Going to Week List");
+            db.getAllPortalsFromDate(new DateTime().minusDays(7).toDate());
+        } else if (((Button) view).getText().toString().equals(getString(R.string.viewlisttoday))) {
+            Log.d(MainActivity.TAG, "Going to Today List");
+            db.getAllPortalsFromDate(new DateTime().minusDays(1).toDate());
+        }
+
+        openList(mainList);
+    }
+
+    /* Method for viewing specific lists */
+    @OnClick({R.id.acceptedbutton_mainactivity})
+    public void onClickAccepted(View view) {
+        Log.d(TAG, "Status list button clicked");
+        Vector<PortalAccepted> portals;
+        if (viewDate == null)
+            portals = db.getAllAccepted();
+        else
+            portals = db.getAcceptedByResponseDate(viewDate);
+        openList(portals);
+    }
+
+    @OnClick({R.id.pendingbutton_mainactivity})
+    public void onClickPending(View view) {
+        Vector<PortalSubmission> portals;
+        if (viewDate == null)
+            portals = db.getAllPending();
+        else
+            portals = db.getPendingByDate(viewDate);
+        openList(portals);
+    }
+
+    @OnClick({R.id.rejectedbutton_mainactivity})
+    public void onClickRejected(View view) {
+        Vector<PortalRejected> portals;
+        if (viewDate == null)
+            portals = db.getAllRejected();
+        else
+            portals = db.getRejectedByResponseDate(viewDate);
+        openList(portals);
+    }
+
+    /*
      * Called on startup by Android after the app starts and resources are available.
      * Used for more advanced initializations.
      */
@@ -512,6 +426,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
                 }
             });
         }
+        // TODO fix bug with not getting permission on re-install
         if (!preferences.getString(EMAIL_KEY, NULL_KEY).equalsIgnoreCase(NULL_KEY)) {
             findViewById(R.id.progress_view_mainactivity).setVisibility(View.VISIBLE);
             findViewById(R.id.gmail_login_button).setVisibility(View.INVISIBLE);
@@ -537,6 +452,47 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         }
     }
 
+    /**
+     *  Method for when radiobuttons are clicked
+     *  @param view RadioButton
+     */
+    public void onRadioButtonClicked(View view) {
+        if (!((RadioButton) view).isChecked())
+            return;
+        RadioButton tempButton = (RadioButton) view;
+        tempButton.setTypeface(null, Typeface.BOLD);
+        // Check which radio button was clicked
+        Button viewList = (Button) findViewById(R.id.viewlist_mainactivity);
+        switch (view.getId()) {
+            case R.id.todaytab_mainactivity:
+                viewDate = new DateTime().minusDays(1).toDate();
+                viewList.setText(R.string.viewlisttoday);
+                break;
+            case R.id.weektab_mainactivity:
+                viewDate = new DateTime().minusDays(7).toDate();
+                viewList.setText(R.string.viewlistweek);
+                break;
+            case R.id.monthtab_mainactivity:
+                viewDate = new DateTime().minusMonths(1).toDate();
+                viewList.setText(R.string.viewlistmonth);
+                break;
+            case R.id.alltab_mainactivity:
+                viewDate = null;
+                formatUI(db.getAcceptedCount(), db.getRejectedCount(), db.getPendingCount());
+                viewList.setText(R.string.viewlistall);
+                break;
+        }
+        Log.d(TAG, "viewDate -> " + viewDate);
+        if (viewDate == null)
+            formatUI(db.getAcceptedCount(),
+                    db.getRejectedCount(),
+                    db.getPendingCount());
+        else
+            formatUI(db.getAcceptedCountByResponseDate(viewDate),
+                    db.getRejectedCountByResponseDate(viewDate),
+                    db.getPendingCountByDate(viewDate));
+    }
+
     /*
      * Provides the results of permission requests
      */
@@ -552,6 +508,18 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         }
     }
 
+    /*
+     * Method to open listview once list has been created
+     */
+    public void openList(Vector<? extends PortalSubmission> list) {
+        if (list.size() > 0) {
+            Intent intent = new Intent(MainActivity.this, PSListActivity.class);
+            intent.putExtra("psList", list);
+            startActivity(intent);
+        } else {
+            DialogHelper.showSimpleDialog(R.string.noportalwarning, R.string.noportalmessage, MainActivity.this);
+        }
+    }
 
     /**
      * Parse emails from Niantic
@@ -569,4 +537,13 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         }
     }
 
+    /*
+    * Method to set layout params for graph bars
+     */
+    public void setLayoutParamsGraphBars(int height, TextView layout) {
+        ViewGroup.LayoutParams params = layout.getLayoutParams();
+        params.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, height + 35, getResources().getDisplayMetrics());
+        Log.d(MainActivity.TAG, "HEIGHT: " + params.height);
+        layout.setLayoutParams(params);
+    }
 }

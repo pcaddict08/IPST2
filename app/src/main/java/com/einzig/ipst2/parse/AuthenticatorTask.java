@@ -34,7 +34,6 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.einzig.ipst2.activities.MainActivity;
-import com.google.android.gms.auth.api.Auth;
 
 import java.io.IOException;
 
