@@ -72,7 +72,7 @@ public class ListItemAdapter_PS extends BaseAdapter implements Filterable {
     SubmissionFilter submissionFilter;
 
     private ArrayList<PortalSubmission> originalItems;
-    private ArrayList<PortalSubmission> shownItems;
+    public ArrayList<PortalSubmission> shownItems;
     private Context context;
 
     public ListItemAdapter_PS(final ArrayList<PortalSubmission> items, Context context) {
@@ -147,16 +147,12 @@ public class ListItemAdapter_PS extends BaseAdapter implements Filterable {
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            if (results.count == 0)
-                notifyDataSetInvalidated();
-            else {
-                try {
-                    ListItemAdapter_PS.this.shownItems = (ArrayList<PortalSubmission>) results.values;
-                    System.out.println("PUBLISHED: " + ListItemAdapter_PS.this.shownItems.size());
-                    notifyDataSetChanged();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            try {
+                ListItemAdapter_PS.this.shownItems = (ArrayList<PortalSubmission>) results.values;
+                System.out.println("PUBLISHED: " + ListItemAdapter_PS.this.shownItems.size());
+                notifyDataSetChanged();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }

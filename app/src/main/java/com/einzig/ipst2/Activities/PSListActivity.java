@@ -118,14 +118,15 @@ public class PSListActivity extends AppCompatActivity {
         if (psList != null) {
             Log.d(MainActivity.TAG, "PS LIST SIZE: " + psList.size());
             sortList(psList);
-            listView.setAdapter(new ListItemAdapter_PS(psList, PSListActivity.this));
+            final ListItemAdapter_PS psLISTADAPTER = new ListItemAdapter_PS(psList, PSListActivity.this);
+            listView.setAdapter(psLISTADAPTER);
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                     Log.d(MainActivity.TAG, "Item Selected at index: " + i);
                     try {
                         Intent intent = new Intent(PSListActivity.this, PSDetailsActivity.class);
-                        intent.putExtra("ps", (Parcelable) psList.get(i));
+                        intent.putExtra("ps", (Parcelable) psLISTADAPTER.shownItems.get(i));
                         startActivity(intent);
                     } catch (Exception e) {
                         e.printStackTrace();
