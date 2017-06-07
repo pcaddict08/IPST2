@@ -24,15 +24,22 @@
 package com.einzig.ipst2.parse;
 
 import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.einzig.ipst2.DialogHelper;
+import com.einzig.ipst2.R;
 import com.einzig.ipst2.activities.MainActivity;
 import com.einzig.ipst2.oauth.OAuth2Authenticator;
+import com.google.android.gms.auth.GoogleAuthException;
+import com.google.android.gms.auth.GoogleAuthUtil;
+import com.google.android.gms.auth.GooglePlayServicesAvailabilityException;
 import com.sun.mail.imap.IMAPStore;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -61,9 +68,13 @@ import javax.mail.search.SubjectTerm;
 public class GetMailTask extends AsyncTask<Void, Void, MailBundle> {
     final private Account account;
     final private Activity activity;
-    /** Format for parsing and printing dates */
+    /**
+     * Format for parsing and printing dates
+     */
     final private DateFormat dateFormat;
-    /** App preferences */
+    /**
+     * App preferences
+     */
     final private SharedPreferences preferences;
     final private String token;
 
@@ -80,21 +91,27 @@ public class GetMailTask extends AsyncTask<Void, Void, MailBundle> {
         OAuth2Authenticator sender = new OAuth2Authenticator();
         IMAPStore store = sender.getIMAPStore(account.name, token);
         Log.d(MainActivity.TAG, "store is null? " + (store == null));
-        try {
-            Folder folder = getFolder(store);
-            folder.open(Folder.READ_ONLY);
-            Message[] messages = searchMailbox(folder);
-            fetchMessages(folder, messages);
-            return new MailBundle(folder, messages, store);
-        } catch (MessagingException e) {
-            Log.e(MainActivity.TAG, e.toString());
+        if (store == null) {
+            DialogHelper.showSimpleDialog(R.string.invalidtokentitle_getmailtask, R.string.invalidtokenmessage_getmailtask, activity);
+            AccountManager.get(activity).invalidateAuthToken("com.google", token);
+        } else {
+            try {
+                Folder folder = getFolder(store);
+                folder.open(Folder.READ_ONLY);
+                Message[] messages = searchMailbox(folder);
+                fetchMessages(folder, messages);
+                return new MailBundle(folder, messages, store);
+            } catch (MessagingException e) {
+                Log.e(MainActivity.TAG, e.toString());
+            }
         }
         return null;
     }
 
     /**
      * Fetch envelope and content info of messages
-     * @param folder Folder messages are contained in
+     *
+     * @param folder   Folder messages are contained in
      * @param messages Array of messages that matched the search
      * @see FetchProfile
      */
@@ -122,6 +139,7 @@ public class GetMailTask extends AsyncTask<Void, Void, MailBundle> {
 
     /**
      * Get the last date email was parsed
+     *
      * @param dateStr String representation of the last parse date
      * @return Date the email was parsed if previously parsed, otherwise the date Ingress launched
      */
@@ -129,7 +147,8 @@ public class GetMailTask extends AsyncTask<Void, Void, MailBundle> {
         Date d;
         try {
             d = dateFormat.parse(dateStr);
-        } catch (ParseException e) {Calendar c = Calendar.getInstance();
+        } catch (ParseException e) {
+            Calendar c = Calendar.getInstance();
             // Remember the first day of Ingress? Pepperidge Farm remembers.
             c.set(Calendar.MONTH, Calendar.NOVEMBER);
             c.set(Calendar.DAY_OF_MONTH, 15);
@@ -141,6 +160,7 @@ public class GetMailTask extends AsyncTask<Void, Void, MailBundle> {
 
     /**
      * Get SearchTerm to find relevant emails
+     *
      * @param lastParseDate Date of previous parse for ReceivedDateTerm
      * @return Search term that will find all portal submission emails
      */
@@ -164,6 +184,7 @@ public class GetMailTask extends AsyncTask<Void, Void, MailBundle> {
 
     /**
      * Search a mail folder for portal submission and response emails
+     *
      * @param folder Mail folder containing portal submission emails
      * @return All emails matching the search terms
      * @throws MessagingException if the library encounters an error

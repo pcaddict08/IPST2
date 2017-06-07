@@ -47,6 +47,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
@@ -84,27 +85,49 @@ import butterknife.OnClick;
  * @since 2017-05-15
  */
 public class MainActivity extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener {
-    /** ??? */
+    /**
+     * ???
+     */
     static public final String EXTRA_ACCOUNTNAME = "extra_accountname";
-    /** Preferences key used for saving and retrieving the user's email address */
+    /**
+     * Preferences key used for saving and retrieving the user's email address
+     */
     static public final String EMAIL_KEY = "email";
-    /** Preferences key for email folder containing portal emails */
+    /**
+     * Preferences key for email folder containing portal emails
+     */
     static final public String FOLDER_KEY = "mailFolder";
-    /** Preferences key for sending date through Bundle */
+    /**
+     * Preferences key for sending date through Bundle
+     */
     static public final String MOST_RECENT_DATE_KEY = "recentDate";
-    /** Used for the default key when something is uninitialized */
+    /**
+     * Used for the default key when something is uninitialized
+     */
     static public final String NULL_KEY = "uninitialized";
-    /** Preferences key for sending a portal through a bundle */
+    /**
+     * Preferences key for sending a portal through a bundle
+     */
     static public final String PORTAL_KEY = "portal";
-    /** Preferences key for sending a portal list through Bundle */
+    /**
+     * Preferences key for sending a portal list through Bundle
+     */
     static public final String PORTAL_LIST_KEY = "portalList";
-    /** The PortalSubmission being combined with a PortalResponded */
+    /**
+     * The PortalSubmission being combined with a PortalResponded
+     */
     static public final String PORTAL_SUBMISSION_KEY = "portalSubmission";
-    /** The key for saving portal submission sort preference */
+    /**
+     * The key for saving portal submission sort preference
+     */
     static public final String SORT_KEY = "sort";
-    /** Tag used for logging for this class */
+    /**
+     * Tag used for logging for this class
+     */
     static public final String TAG = "IPST";
-    /** Used to get the result of LoginActivity */
+    /**
+     * Used to get the result of LoginActivity
+     */
     static private final int LOGIN_ACTIVITY_CODE = 0;
     static final int REQUEST_CODE_EMAIL = 1;
     static final int REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR = 1002;
@@ -139,6 +162,10 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     RadioButton monthtab;
     @BindView(R.id.alltab_mainactivity)
     RadioButton alltab;
+    @BindView(R.id.gmail_login_button)
+    Button gmail_login_button;
+    @BindView(R.id.progress_view_mainactivity)
+    LinearLayout progress_view_mainactivity;
 
     /**
      * MainActivity constructor, initialize variables.
@@ -250,10 +277,10 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
             builder.setMessage(R.string.noaccountsmessage);//.  Would you like to log in manually?")
             builder.setCancelable(true);
             builder.setNeutralButton(R.string.ok, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.cancel();
-                        }
-                    });
+                public void onClick(DialogInterface dialog, int id) {
+                    dialog.cancel();
+                }
+            });
             builder.show();
         } else {
             Intent intent = AccountManager.newChooseAccountIntent(null, null,
@@ -417,19 +444,15 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         ButterKnife.bind(this);
 
         getPreferences();
-        Button gmail_login_button = (Button) findViewById(R.id.gmail_login_button);
-        if (gmail_login_button != null) {
-            gmail_login_button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    loginHitMethod();
-                }
-            });
-        }
-        // TODO fix bug with not getting permission on re-install
+        gmail_login_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                loginHitMethod();
+            }
+        });
         if (!preferences.getString(EMAIL_KEY, NULL_KEY).equalsIgnoreCase(NULL_KEY)) {
-            findViewById(R.id.progress_view_mainactivity).setVisibility(View.VISIBLE);
-            findViewById(R.id.gmail_login_button).setVisibility(View.INVISIBLE);
+            progress_view_mainactivity.setVisibility(View.VISIBLE);
+            gmail_login_button.setVisibility(View.INVISIBLE);
             parseEmail();
         }
     }
@@ -530,7 +553,12 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
             try {
                 String token = new AuthenticatorTask(this, account).execute().get();
                 MailBundle bundle = new GetMailTask(this, account, token).execute().get();
-                new EmailParseTask(this, bundle).execute();
+                if (bundle != null)
+                    new EmailParseTask(this, bundle).execute();
+                else {
+                    gmail_login_button.setVisibility(View.VISIBLE);
+                    progress_view_mainactivity.setVisibility(View.INVISIBLE);
+                }
             } catch (InterruptedException | ExecutionException e) {
                 Log.e(TAG, e.toString());
             }

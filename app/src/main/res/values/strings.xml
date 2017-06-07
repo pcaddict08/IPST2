@@ -58,6 +58,8 @@
     <string name="rejectionreason_psdetailsactivity">Rejection Reason</string>
     <string name="liveaddress_psdetailsactivity">Live Address</string>
     <string name="viewonintel_psdetailsactivity">View On Intel Map</string>
+    <string name="invalidtokentitle_getmailtask">Invalid Token</string>
+    <string name="invalidtokenmessage_getmailtask">Your auth token was invalid. Try again.</string>
 
     <string name="errormessage_viewintellink">The Intel URL for this Portal Submission is invalid. Something wasn\'t parsed right.</string>
     <string name="errortitle_viewintellink">Invalid Intel URL</string>
