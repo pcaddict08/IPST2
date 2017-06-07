@@ -91,6 +91,7 @@ public class OAuth2Authenticator {
 			initialize();
 			return connectToImap("imap.gmail.com", 993, user, oauthToken, false);
 		} catch (Exception e) {
+			e.printStackTrace();
 			Log.d(MainActivity.TAG, e.toString());
 		}
 		return null;
