@@ -21,42 +21,31 @@
  *                                                                            *
  ******************************************************************************/
 
-package com.einzig.ipst2.database;
+package com.einzig.ipst2.sort;
 
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-
+import com.einzig.ipst2.portal.PortalResponded;
 import com.einzig.ipst2.portal.PortalSubmission;
 
-import java.text.SimpleDateFormat;
+import java.util.Comparator;
 import java.util.Date;
 
 /**
  * @author Ryan Porterfield
- * @since 2017-05-19
+ * @since 2017-06-01
  */
-
-final class PortalSubmissionBuilder extends PortalBuilder<PortalSubmission> {
-    /**
-     * @param dateFormatter date format that MySQL uses to store DATETIME objects
-     * @param db reference to a SQLite database to run queries on
-     */
-    PortalSubmissionBuilder(SimpleDateFormat dateFormatter, SQLiteDatabase db) {
-        super(dateFormatter, db, DatabaseInterface.TABLE_PENDING);
-    }
-
-    /**
-     * Create an instance of PortalSubmission from a database entry.
-     * @param cursor Cursor containing the database fields of the portal.
-     * @return a PortalSubmission representation of a portal in the database.
-     */
+public class DateComparator implements Comparator<PortalSubmission> {
     @Override
-    PortalSubmission createPortal(Cursor cursor) {
-        String name, pictureURL;
-        Date dateSubmitted;
-        name = cursor.getString(0);
-        dateSubmitted = parseDate(cursor.getString(1));
-        pictureURL = cursor.getString(2);
-        return new PortalSubmission(name, dateSubmitted, pictureURL);
+    public int compare(PortalSubmission p0, PortalSubmission p1) {
+        Date recent0, recent1;
+        if (p0 instanceof PortalResponded)
+            recent0 = ((PortalResponded) p0).getDateResponded();
+        else
+            recent0 = p0.getDateSubmitted();
+        if (p1 instanceof PortalResponded)
+            recent1 = ((PortalResponded) p1).getDateResponded();
+        else
+            recent1 = p0.getDateSubmitted();
+        return recent0.compareTo(recent1);
     }
 }
+

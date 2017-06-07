@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="@string/gmailloginbutton"
+        android:text="@string/gmaillogin"
         android:visibility="visible" />
 
     <LinearLayout
@@ -119,7 +119,6 @@
                     android:text="@string/notavailable"
                     android:textAppearance="?android:textAppearanceMedium" />
 
-
             </LinearLayout>
 
             <LinearLayout
@@ -167,7 +166,6 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="5dip"
                 android:orientation="vertical">
-
 
                 <ImageView
                     android:layout_width="75dip"
@@ -233,7 +231,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="@string/stockloadingtext"
+            android:text="@string/loading"
             android:textColor="@color/colorPrimaryDark" />
     </LinearLayout>
 

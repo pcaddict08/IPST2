@@ -1,19 +1,49 @@
+<!DOCTYPE resources [
+    <!ENTITY appname "IPST2">
+    <!ENTITY viewlist "View List">
+    <!ENTITY separator "&#160;-&#160;">
+    <!ENTITY all "All">
+    <!ENTITY month "Month">
+    <!ENTITY today "Today">
+    <!ENTITY week "Week">]>
+
 <resources>
-    <string name="app_name">IPST2</string>
+    <string name="app_name">&appname;</string>
+
+    <string name="accepted">Accepted</string>
+    <string name="allmail">All Mail</string>
+    <string name="allmailmissing">&#160;Either it\'s been deleted, or your GMail is not in English.</string>
+    <string name="accountnotfoundtitle">Account Not Found</string>
+    <string name="accountnotfoundmessage">The account you selected wasn\'t found on this device.</string>
+    <string name="all">&all;</string>
+    <string name="cantfindfolder">&appname; can\'t find the \'%1$s\' folder.</string>
+    <string name="custommissing">&#160;Either it\'s been deleted, or is missing for some other reason. Would you like to set a new folder to parse, or reset to \'All Mail\'?</string>
+    <string name="error">Error:&#160;</string>
+    <string name="foldermissing">&#160;Folder Missing</string>
+    <string name="gmaillogin">GMail Login</string>
+    <string name="loading">Loading…</string>
+    <string name="month">&month;</string>
+    <string name="na">N/A</string>
+    <string name="noaccountsmessage">You have no Google accounts on your device</string>
+    <string name="noaccountstitle">No Accounts</string>
+    <string name="ok">OK</string>
+    <string name="pending">Pending</string>
+    <string name="rejected">Rejected</string>
+    <string name="setcustomfolder">Set Custom Folder</string>
+    <string name="title_settingsactivity">Settings</string>
+    <string name="today">&today;</string>
+    <string name="viewlist">&viewlist;</string>
+    <string name="viewlistall">&viewlist;&separator;&all;</string>
+    <string name="viewlistmonth">&viewlist;&separator;&month;</string>
+    <string name="viewlisttoday">&viewlist;&separator;&today;</string>
+    <string name="viewlistweek">&viewlist;&separator;&week;</string>
+    <string name="week">&week;</string>
     <string name="title_activity_settings">Settings</string>
     <string name="gmailloginbutton">Gmail Login</string>
     <string name="pendingbuttondescrip">Pending</string>
     <string name="acceptedbuttondescrip">Accepted</string>
     <string name="rejectedbuttondescrip">Rejected</string>
-    <string name="today">Today</string>
-    <string name="week">Week</string>
-    <string name="month">Month</string>
-    <string name="all">All</string>
     <string name="stockloadingtext">Loading…</string>
-    <string name="viewlistall">View List - All</string>
-    <string name="viewlisttoday">View List - Today</string>
-    <string name="viewlistweek">View List - Week</string>
-    <string name="viewlistmonth">View List - Month</string>
     <string name="notavailable">N/A</string>
     <string name="noportalwarning">"No Portal Submissions"</string>
     <string name="noportalmessage">No Portal Submissions were found in the local database.  Try refreshing.</string>
@@ -28,12 +58,13 @@
     <string name="rejectionreason_psdetailsactivity">Rejection Reason</string>
     <string name="liveaddress_psdetailsactivity">Live Address</string>
     <string name="viewonintel_psdetailsactivity">View On Intel Map</string>
+    <string name="invalidtokentitle_getmailtask">Invalid Token</string>
+    <string name="invalidtokenmessage_getmailtask">Your auth token was invalid. Try again.</string>
 
     <string name="errormessage_viewintellink">The Intel URL for this Portal Submission is invalid. Something wasn\'t parsed right.</string>
     <string name="errortitle_viewintellink">Invalid Intel URL</string>
     <string name="action_search">Search</string>
     <string name="action_sortlist">Sort List</string>
-
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->

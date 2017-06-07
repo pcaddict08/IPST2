@@ -1,25 +1,25 @@
-/* ********************************************************************************************** *
- * ********************************************************************************************** *
- *                                                                                                *
- * Copyright 2017 Steven Foskett, Ryan Porterfield                                      *
- *                                                                                                *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software  *
- * and associated documentation files (the "Software"), to deal in the Software without           *
- * restriction, including without limitation the rights to use, copy, modify, merge, publish,     *
- * distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the  *
- * Software is furnished to do so, subject to the following conditions:                           *
- *                                                                                                *
- * The above copyright notice and this permission notice shall be included in all copies or       *
- * substantial portions of the Software.                                                          *
- *                                                                                                *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING  *
- * BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND     *
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,   *
- * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, *
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.        *
- *                                                                                                *
- * ********************************************************************************************** *
- * ********************************************************************************************** */
+/******************************************************************************
+ *                                                                            *
+ * Copyright 2017 Steven Foskett, Jimmy Ho, Ryan Porterfield                  *
+ * Permission is hereby granted, free of charge, to any person obtaining a    *
+ * copy of this software and associated documentation files (the "Software"), *
+ * to deal in the Software without restriction, including without limitation  *
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,   *
+ * and/or sell copies of the Software, and to permit persons to whom the      *
+ * Software is furnished to do so, subject to the following conditions:       *
+ *                                                                            *
+ * The above copyright notice and this permission notice shall be included in *
+ * all copies or substantial portions of the Software.                        *
+ *                                                                            *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR *
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,   *
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE*
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER     *
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING    *
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER        *
+ * DEALINGS IN THE SOFTWARE.                                                  *
+ *                                                                            *
+ ******************************************************************************/
 
 package com.einzig.ipst2.activities;
 
@@ -47,13 +47,19 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.einzig.ipst2.DialogHelper;
 import com.einzig.ipst2.R;
 import com.einzig.ipst2.database.DatabaseInterface;
+import com.einzig.ipst2.parse.AuthenticatorTask;
 import com.einzig.ipst2.parse.EmailParseTask;
+import com.einzig.ipst2.parse.GetMailTask;
+import com.einzig.ipst2.parse.MailBundle;
+import com.einzig.ipst2.portal.PortalAccepted;
+import com.einzig.ipst2.portal.PortalRejected;
 import com.einzig.ipst2.portal.PortalSubmission;
 import com.google.android.gms.auth.GooglePlayServicesAvailabilityException;
 import com.google.android.gms.auth.UserRecoverableAuthException;
@@ -61,9 +67,11 @@ import com.google.android.gms.common.GoogleApiAvailability;
 
 import org.joda.time.DateTime;
 
-import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
+import java.util.concurrent.ExecutionException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -82,11 +90,15 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
      */
     static public final String EXTRA_ACCOUNTNAME = "extra_accountname";
     /**
-     * String key used for saving and retrieving the user's email address
+     * Preferences key used for saving and retrieving the user's email address
      */
     static public final String EMAIL_KEY = "email";
     /**
-     * String key for sending date through Bundle
+     * Preferences key for email folder containing portal emails
+     */
+    static final public String FOLDER_KEY = "mailFolder";
+    /**
+     * Preferences key for sending date through Bundle
      */
     static public final String MOST_RECENT_DATE_KEY = "recentDate";
     /**
@@ -94,11 +106,11 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
      */
     static public final String NULL_KEY = "uninitialized";
     /**
-     * String key for sending a portal through a bundle
+     * Preferences key for sending a portal through a bundle
      */
     static public final String PORTAL_KEY = "portal";
     /**
-     * String key for sending a portal list through Bundle
+     * Preferences key for sending a portal list through Bundle
      */
     static public final String PORTAL_LIST_KEY = "portalList";
     /**
@@ -119,15 +131,13 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     static private final int LOGIN_ACTIVITY_CODE = 0;
     static final int REQUEST_CODE_EMAIL = 1;
     static final int REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR = 1002;
-    /**
-     * Preferences for saving app settings
-     */
-    private SharedPreferences preferences;
 
-    /*
-    * Database Handle for getting portals and such
-    * */
+    /** Database Handle for getting portals and such */
     private DatabaseInterface db;
+    /**  */
+    private Date viewDate;
+    /** Preferences for saving app settings */
+    private SharedPreferences preferences;
 
     /*Butterknife Binds for Views*/
     @BindView(R.id.viewlist_mainactivity)
@@ -152,46 +162,35 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     RadioButton monthtab;
     @BindView(R.id.alltab_mainactivity)
     RadioButton alltab;
+    @BindView(R.id.gmail_login_button)
+    Button gmail_login_button;
+    @BindView(R.id.progress_view_mainactivity)
+    LinearLayout progress_view_mainactivity;
 
     /**
      * MainActivity constructor, initialize variables.
      */
     public MainActivity() {
+        db = new DatabaseInterface(this);
         preferences = null;
-        this.db = new DatabaseInterface(this);
-
+        viewDate = null;
     }
 
-    /**
-     * Set a mail folder to look for Ingress emails
-     *
-     * @param folderList List of folders that can be selected.
-     */
-    public void addCustomFolder(final ArrayList<String> folderList) {
-        this.runOnUiThread(new Runnable() {
-            public void run() {
-                String[] stockArr = new String[folderList.size()];
-                stockArr = folderList.toArray(stockArr);
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setTitle("Set Custom Folder To Parse")
-                        .setItems(stockArr, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                SharedPreferences.Editor editor = preferences.edit();
-                                Log.d(TAG, "FOLDER: " + folderList.get(which));
-                                editor.putString("mail_pref", folderList.get(which));
-                                editor.apply();
-                                Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                                i.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                                startActivity(i);
-                                finish();
-                                overridePendingTransition(0, 0);
-                            }
-                        });
-                AlertDialog alertDialog = builder.create();
-                alertDialog.show();
-            }
-        });
+    /*
+    *  Method for building/showing the ui once emails are parsed.
+    */
+    public void buildUIAfterParsing() {
+        DatabaseInterface db = new DatabaseInterface(this);
+        long accepted = db.getAcceptedCount();
+        long pending = db.getPendingCount();
+        long rejected = db.getRejectedCount();
+        findViewById(R.id.progress_view_mainactivity).setVisibility(View.INVISIBLE);
+        findViewById(R.id.mainui_mainactivity).setVisibility(View.VISIBLE);
+        formatUI(accepted, rejected, pending);
+        todaytab.setOnCheckedChangeListener(this);
+        weektab.setOnCheckedChangeListener(this);
+        monthtab.setOnCheckedChangeListener(this);
+        alltab.setOnCheckedChangeListener(this);
     }
 
     /**
@@ -200,19 +199,34 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
      * @param title       Title for error dialog
      * @param messageText Message for error dialog
      */
-    private void errorFoundMessage(final String title, final String messageText) {
+    private void errorFoundMessage(final int title, final int messageText) {
         Log.d(TAG, "Displaying error message");
-        this.runOnUiThread(new Runnable() {
+        runOnUiThread(new Runnable() {
             public void run() {
-                new android.app.AlertDialog.Builder(MainActivity.this).setTitle(title)
+                new AlertDialog.Builder(MainActivity.this).setTitle(title)
                         .setMessage(messageText)
-                        // TODO (Anyone): Move "Ok" string to strings resource
-                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                             }
                         }).show();
             }
         });
+    }
+
+    /*
+    * Method to format UI when changing radio buttons
+     */
+    public void formatUI(long accepted, long rejected, long pending) {
+        pendingtext.setText(String.format(Locale.getDefault(), "%d", pending));
+        acceptedtext.setText(String.format(Locale.getDefault(), "%d", accepted));
+        rejectedtext.setText(String.format(Locale.getDefault(), "%d", rejected));
+        long totalnum = accepted + rejected + pending + 1;
+        setLayoutParamsGraphBars((int) ((pending * 100) / (totalnum)), pendinggraph);
+        setLayoutParamsGraphBars((int) ((rejected * 100) / (totalnum)), rejectedgraph);
+        setLayoutParamsGraphBars((int) ((accepted * 100) / (totalnum)), acceptedgraph);
+        acceptedgraph.setText(String.format(Locale.getDefault(), "%d%%", (int) ((accepted * 100) / (totalnum))));
+        rejectedgraph.setText(String.format(Locale.getDefault(), "%d%%", (int) ((rejected * 100) / (totalnum))));
+        pendinggraph.setText(String.format(Locale.getDefault(), "%d%%", (int) ((pending * 100) / (totalnum))));
     }
 
     /**
@@ -249,30 +263,26 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
      * Search through accounts on the user's device now that we have permission to do so.
      */
     public void gotPermission_accounts() {
-        AccountManager tempAM = AccountManager.get(MainActivity.this);
+        AccountManager manager = AccountManager.get(MainActivity.this);
         int numGoogAcct = 0;
-        Account[] accountList = tempAM.getAccounts();
+        Account[] accountList = manager.getAccounts();
         for (Account a : accountList) {
             if (a.type.equals("com.google")) {
                 numGoogAcct++;
             }
         }
         if (numGoogAcct == 0) {
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
-            alertDialogBuilder.setTitle("No Accounts");
-            alertDialogBuilder
-                    .setMessage("You have no Google accounts on your device")//.  Would you like to log in manually?")
-                    .setCancelable(true)
-                    .setNeutralButton("Ok", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.cancel();
-                        }
-                    });
-            AlertDialog alertDialog = alertDialogBuilder.create();
-            alertDialog.show();
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle(R.string.noaccountstitle);
+            builder.setMessage(R.string.noaccountsmessage);//.  Would you like to log in manually?")
+            builder.setCancelable(true);
+            builder.setNeutralButton(R.string.ok, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    dialog.cancel();
+                }
+            });
+            builder.show();
         } else {
-            Log.d(TAG, "Found Some Accounts");
-            // TODO (anyone): Find a way to do this that isn't deprecated
             Intent intent = AccountManager.newChooseAccountIntent(null, null,
                     new String[]{"com.google"}, false, null, null, null, null);
             startActivityForResult(intent, LOGIN_ACTIVITY_CODE);
@@ -329,164 +339,30 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         }
     }
 
-    /*
-    *  Method for building/showing the ui once emails are parsed.
-    */
-    public void buildUIAfterParsing(long acceptedcount, long pendingcount, long rejectedcount) {
-        findViewById(R.id.progress_view_mainactivity).setVisibility(View.INVISIBLE);
-        findViewById(R.id.mainui_mainactivity).setVisibility(View.VISIBLE);
-        formatUI(acceptedcount, rejectedcount, pendingcount);
-        todaytab.setOnCheckedChangeListener(this);
-        weektab.setOnCheckedChangeListener(this);
-        monthtab.setOnCheckedChangeListener(this);
-        alltab.setOnCheckedChangeListener(this);
-    }
-
-    /* Method for when view list button is clicked */
-    @OnClick(R.id.viewlist_mainactivity)
-    public void onClickViewList(View view) {
-        Vector<PortalSubmission> mainList = new Vector<>();
-        if (((Button) view).getText().toString().equalsIgnoreCase("View List - All")) {
-            Log.d(MainActivity.TAG, "Going to All List");
-            mainList = MainActivity.this.db.getAllPortals();
-        } else if (((Button) view).getText().toString().equalsIgnoreCase("View List - Month")) {
-            Log.d(MainActivity.TAG, "Going to Month List");
-            db.getAllPortalsFromDate(new DateTime().minusDays(30).toDate());
-        } else if (((Button) view).getText().toString().equalsIgnoreCase("View List - Week")) {
-            Log.d(MainActivity.TAG, "Going to Week List");
-            db.getAllPortalsFromDate(new DateTime().minusDays(7).toDate());
-        } else if (((Button) view).getText().toString().equalsIgnoreCase("View List - Today")) {
-            Log.d(MainActivity.TAG, "Going to Today List");
-            db.getAllPortalsFromDate(new DateTime().minusDays(1).toDate());
-        }
-
-        openList(mainList);
-    }
-
-    /* Method for viewing specific lists */
-    @OnClick({R.id.acceptedbutton_mainactivity, R.id.pendingbutton_mainactivity, R.id.rejectedbutton_mainactivity})
-    public void onClickAccepted(View view) {
-        Vector<PortalSubmission> mainList = new Vector<>();
-        switch (viewButton.getText().toString()) {
-            case "View List - All":
-                if (view.getId() == R.id.acceptedbutton_mainactivity)
-                    mainList.addAll(db.getAllAccepted());
-                else if (view.getId() == R.id.rejectedbutton_mainactivity)
-                    mainList.addAll(db.getAllRejected());
-                else
-                    mainList.addAll(db.getAllPending());
-                break;
-            case "View List - Month":
-                if (view.getId() == R.id.acceptedbutton_mainactivity)
-                    mainList.addAll(db.getAllAcceptedByResponseDate(new DateTime().minusDays(30).toDate()));
-                else if (view.getId() == R.id.rejectedbutton_mainactivity)
-                    mainList.addAll(db.getAllRejectedByResponseDate(new DateTime().minusDays(30).toDate()));
-                else
-                    mainList.addAll(db.getAllPendingByDate(new DateTime().minusDays(30).toDate()));
-                break;
-            case "View List - Week":
-                if (view.getId() == R.id.acceptedbutton_mainactivity)
-                    mainList.addAll(db.getAllAcceptedByResponseDate(new DateTime().minusDays(7).toDate()));
-                else if (view.getId() == R.id.rejectedbutton_mainactivity)
-                    mainList.addAll(db.getAllRejectedByResponseDate(new DateTime().minusDays(7).toDate()));
-                else
-                    mainList.addAll(db.getAllPendingByDate(new DateTime().minusDays(7).toDate()));
-                break;
-            case "View List - Today":
-                if (view.getId() == R.id.acceptedbutton_mainactivity)
-                    mainList.addAll(db.getAllAcceptedByResponseDate(new DateTime().minusDays(1).toDate()));
-                else if (view.getId() == R.id.rejectedbutton_mainactivity)
-                    mainList.addAll(db.getAllRejectedByResponseDate(new DateTime().minusDays(1).toDate()));
-                else
-                    mainList.addAll(db.getAllPendingByDate(new DateTime().minusDays(1).toDate()));
-                break;
-        }
-        openList(mainList);
-    }
 
     /*
-     * Method to open listview once list has been created
+     * Callback method if an activity is started for result via startActivityForResult().
      */
-    public void openList(Vector<PortalSubmission> list) {
-        if (list.size() != 0) {
-            Intent intent = new Intent(MainActivity.this, PSListActivity.class);
-            intent.putExtra("psList", list);
-            startActivity(intent);
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d(TAG, "onActivityResult(" + requestCode + ") -> " + resultCode);
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode != LOGIN_ACTIVITY_CODE || resultCode != RESULT_OK) {
+            return;
+        }
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(EMAIL_KEY, data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME));
+        editor.apply();
+        Log.d(TAG, "Got account name " + data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME));
+        parseEmail();
+        Account me = getAccount();
+        if (me != null) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            // SHOW LOADING THINGIES
+            findViewById(R.id.progress_view_mainactivity).setVisibility(View.VISIBLE);
+            findViewById(R.id.gmail_login_button).setVisibility(View.INVISIBLE);
         } else {
-            DialogHelper.showSimpleDialog(R.string.noportalwarning, R.string.noportalmessage, MainActivity.this);
-        }
-    }
-
-    /*
-    * Method to format UI when changing radio buttons
-     */
-    public void formatUI(long accepted, long rejected, long pending) {
-        pendingtext.setText(String.format(Locale.getDefault(), "%d", pending));
-        acceptedtext.setText(String.format(Locale.getDefault(), "%d", accepted));
-        rejectedtext.setText(String.format(Locale.getDefault(), "%d", rejected));
-        long totalnum = accepted + rejected + pending + 1;
-        setLayoutParamsGraphBars((int) ((pending * 100) / (totalnum)), pendinggraph);
-        setLayoutParamsGraphBars((int) ((rejected * 100) / (totalnum)), rejectedgraph);
-        setLayoutParamsGraphBars((int) ((accepted * 100) / (totalnum)), acceptedgraph);
-        acceptedgraph.setText(String.format(Locale.getDefault(), "%d%%", (int) ((accepted * 100) / (totalnum))));
-        rejectedgraph.setText(String.format(Locale.getDefault(), "%d%%", (int) ((rejected * 100) / (totalnum))));
-        pendinggraph.setText(String.format(Locale.getDefault(), "%d%%", (int) ((pending * 100) / (totalnum))));
-    }
-
-    /*
-    * Method to set layout params for graph bars
-     */
-    public void setLayoutParamsGraphBars(int height, TextView layout) {
-        ViewGroup.LayoutParams params = layout.getLayoutParams();
-        params.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, height + 35, getResources().getDisplayMetrics());
-        Log.d(MainActivity.TAG, "HEIGHT: " + params.height);
-        layout.setLayoutParams(params);
-    }
-
-    /*
-    *  Method for when radiobuttons are clicked
-    */
-    public void onRadioButtonClicked(View view) {
-        boolean checked = ((RadioButton) view).isChecked();
-        RadioButton tempButton = (RadioButton) view;
-        tempButton.setTypeface(null, Typeface.BOLD);
-        // Check which radio button was clicked
-        switch (view.getId()) {
-            case R.id.todaytab_mainactivity:
-                if (checked) {
-                    formatUI(db.getAllAcceptedByResponseDate(new DateTime().minusDays(1).toDate()).size()
-                            , db.getAllRejectedByResponseDate(new DateTime().minusDays(1).toDate()).size()
-                            , db.getAllPendingByDate(new DateTime().minusDays(1).toDate()).size());
-                    Button buttonTextSet = (Button) findViewById(R.id.viewlist_mainactivity);
-                    buttonTextSet.setText(R.string.viewlisttoday);
-                }
-                break;
-            case R.id.weektab_mainactivity:
-                if (checked) {
-                    formatUI(db.getAllAcceptedByResponseDate(new DateTime().minusDays(7).toDate()).size()
-                            , db.getAllRejectedByResponseDate(new DateTime().minusDays(7).toDate()).size()
-                            , db.getAllPendingByDate(new DateTime().minusDays(7).toDate()).size());
-                    Button buttonTextSet = (Button) findViewById(R.id.viewlist_mainactivity);
-                    buttonTextSet.setText(R.string.viewlistweek);
-                }
-                break;
-            case R.id.monthtab_mainactivity:
-                if (checked) {
-                    formatUI(db.getAllAcceptedByResponseDate(new DateTime().minusDays(30).toDate()).size()
-                            , db.getAllRejectedByResponseDate(new DateTime().minusDays(30).toDate()).size()
-                            , db.getAllPendingByDate(new DateTime().minusDays(30).toDate()).size());
-                    Button buttonTextSet = (Button) findViewById(R.id.viewlist_mainactivity);
-                    buttonTextSet.setText(R.string.viewlistmonth);
-                }
-                break;
-            case R.id.alltab_mainactivity:
-                if (checked) {
-
-                    formatUI(db.getAcceptedCount(), db.getRejectedCount(), db.getPendingCount());
-                    Button buttonTextSet = (Button) findViewById(R.id.viewlist_mainactivity);
-                    buttonTextSet.setText(R.string.viewlistall);
-                }
-                break;
+            errorFoundMessage(R.string.accountnotfoundtitle, R.string.accountnotfoundmessage);
         }
     }
 
@@ -502,35 +378,58 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
                 : getResources().getDrawable(R.drawable.cell_shape_radio_clear));
     }
 
+    /* Method for when view list button is clicked */
+    @OnClick(R.id.viewlist_mainactivity)
+    public void onClickViewList(View view) {
+        Log.d(TAG, "View all button clicked");
+        Vector<PortalSubmission> mainList = new Vector<>();
+        if (((Button) view).getText().toString().equals(getString(R.string.viewlistall))) {
+            Log.d(MainActivity.TAG, "Going to All List");
+            mainList = db.getAllPortals();
+        } else if (((Button) view).getText().toString().equals(getString(R.string.viewlistmonth))) {
+            Log.d(MainActivity.TAG, "Going to Month List");
+            db.getAllPortalsFromDate(new DateTime().minusDays(30).toDate());
+        } else if (((Button) view).getText().toString().equals(getString(R.string.viewlistweek))) {
+            Log.d(MainActivity.TAG, "Going to Week List");
+            db.getAllPortalsFromDate(new DateTime().minusDays(7).toDate());
+        } else if (((Button) view).getText().toString().equals(getString(R.string.viewlisttoday))) {
+            Log.d(MainActivity.TAG, "Going to Today List");
+            db.getAllPortalsFromDate(new DateTime().minusDays(1).toDate());
+        }
 
-    /*
-     * Callback method if an activity is started for result via startActivityForResult().
-     */
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // Ryan's code
-        Log.d(TAG, "onActivityResult(" + requestCode + ") -> " + resultCode);
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode != LOGIN_ACTIVITY_CODE || resultCode != RESULT_OK) {
-            return;
-        }
-        SharedPreferences.Editor editor = preferences.edit();
-        // TODO
-        editor.putString(EMAIL_KEY, data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME));
-        editor.apply();
-        Log.d(TAG, "Got account name " + data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME));
-        parseEmail();
-        // Steven's code
-        Account me = getAccount();
-        if (me != null) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-            // SHOW LOADING THINGIES
-            findViewById(R.id.progress_view_mainactivity).setVisibility(View.VISIBLE);
-            findViewById(R.id.gmail_login_button).setVisibility(View.INVISIBLE);
-        } else {
-            errorFoundMessage("Account Not Found",
-                    "The account you selected wasn't found on this device.");
-        }
+        openList(mainList);
+    }
+
+    /* Method for viewing specific lists */
+    @OnClick({R.id.acceptedbutton_mainactivity})
+    public void onClickAccepted(View view) {
+        Log.d(TAG, "Status list button clicked");
+        Vector<PortalAccepted> portals;
+        if (viewDate == null)
+            portals = db.getAllAccepted();
+        else
+            portals = db.getAcceptedByResponseDate(viewDate);
+        openList(portals);
+    }
+
+    @OnClick({R.id.pendingbutton_mainactivity})
+    public void onClickPending(View view) {
+        Vector<PortalSubmission> portals;
+        if (viewDate == null)
+            portals = db.getAllPending();
+        else
+            portals = db.getPendingByDate(viewDate);
+        openList(portals);
+    }
+
+    @OnClick({R.id.rejectedbutton_mainactivity})
+    public void onClickRejected(View view) {
+        Vector<PortalRejected> portals;
+        if (viewDate == null)
+            portals = db.getAllRejected();
+        else
+            portals = db.getRejectedByResponseDate(viewDate);
+        openList(portals);
     }
 
     /*
@@ -545,18 +444,15 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         ButterKnife.bind(this);
 
         getPreferences();
-        Button gmail_login_button = (Button) findViewById(R.id.gmail_login_button);
-        if (gmail_login_button != null) {
-            gmail_login_button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    loginHitMethod();
-                }
-            });
-        }
+        gmail_login_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                loginHitMethod();
+            }
+        });
         if (!preferences.getString(EMAIL_KEY, NULL_KEY).equalsIgnoreCase(NULL_KEY)) {
-            findViewById(R.id.progress_view_mainactivity).setVisibility(View.VISIBLE);
-            findViewById(R.id.gmail_login_button).setVisibility(View.INVISIBLE);
+            progress_view_mainactivity.setVisibility(View.VISIBLE);
+            gmail_login_button.setVisibility(View.INVISIBLE);
             parseEmail();
         }
     }
@@ -579,7 +475,47 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         }
     }
 
-    // TODO (Ryan): Look into how this works
+    /**
+     *  Method for when radiobuttons are clicked
+     *  @param view RadioButton
+     */
+    public void onRadioButtonClicked(View view) {
+        if (!((RadioButton) view).isChecked())
+            return;
+        RadioButton tempButton = (RadioButton) view;
+        tempButton.setTypeface(null, Typeface.BOLD);
+        // Check which radio button was clicked
+        Button viewList = (Button) findViewById(R.id.viewlist_mainactivity);
+        switch (view.getId()) {
+            case R.id.todaytab_mainactivity:
+                viewDate = new DateTime().minusDays(1).toDate();
+                viewList.setText(R.string.viewlisttoday);
+                break;
+            case R.id.weektab_mainactivity:
+                viewDate = new DateTime().minusDays(7).toDate();
+                viewList.setText(R.string.viewlistweek);
+                break;
+            case R.id.monthtab_mainactivity:
+                viewDate = new DateTime().minusMonths(1).toDate();
+                viewList.setText(R.string.viewlistmonth);
+                break;
+            case R.id.alltab_mainactivity:
+                viewDate = null;
+                formatUI(db.getAcceptedCount(), db.getRejectedCount(), db.getPendingCount());
+                viewList.setText(R.string.viewlistall);
+                break;
+        }
+        Log.d(TAG, "viewDate -> " + viewDate);
+        if (viewDate == null)
+            formatUI(db.getAcceptedCount(),
+                    db.getRejectedCount(),
+                    db.getPendingCount());
+        else
+            formatUI(db.getAcceptedCountByResponseDate(viewDate),
+                    db.getRejectedCountByResponseDate(viewDate),
+                    db.getPendingCountByDate(viewDate));
+    }
+
     /*
      * Provides the results of permission requests
      */
@@ -595,56 +531,17 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         }
     }
 
-    // TODO (Ryan): Check master branch to see if this is used
-    // TODO (Anyone): Move strings to strings resource
     /*
-     * Handles the error when GMail's All Mail folder is missing and the custom folder set by the
-     * user is unset, or also missing.
+     * Method to open listview once list has been created
      */
-    public void noAllMailFolder(final String customFolder, final ArrayList<String> folderList) {
-        this.runOnUiThread(new Runnable() {
-            public void run() {
-                findViewById(R.id.progress_view_mainactivity).setVisibility(View.INVISIBLE);
-                findViewById(R.id.gmail_login_button).setVisibility(View.VISIBLE);
-                ((TextView) findViewById(R.id.loading_text_mainactivity)).setText("Loading...");
-
-                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-                if (customFolder.equalsIgnoreCase("")) {
-                    new AlertDialog.Builder(MainActivity.this)
-                            .setTitle("Error: All Mail Folder Missing")
-                            .setMessage("IPST couldn't find the 'All Mail' folder.  Either it's been deleted, or your Gmail is not in English."
-                                    + " Currently the 'All Mail' folder is how IPST parses for portal submissions.  \n\n")
-                            .setPositiveButton("Set Custom Folder", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    addCustomFolder(folderList);
-                                }
-                            }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            // Do nothing.
-                        }
-                    }).show();
-                } else {
-                    new AlertDialog.Builder(MainActivity.this)
-                            .setTitle("Error: Custom Mail Folder '" + customFolder + "' Missing")
-                            .setMessage("IPST couldn't find the '" + customFolder + "' folder.  Either it's been deleted, or is missing for some other reason. \n\n"
-                                    + "Would you like to set a new folder to parse, or reset to 'All Mail'?")
-                            .setPositiveButton("Set Custom Folder", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    addCustomFolder(folderList);
-                                }
-                            })
-                            .setNeutralButton("All Mail", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    resetAllMail();
-                                }
-                            })
-                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                }
-                            }).show();
-                }
-            }
-        });
+    public void openList(Vector<? extends PortalSubmission> list) {
+        if (list.size() > 0) {
+            Intent intent = new Intent(MainActivity.this, PSListActivity.class);
+            intent.putExtra("psList", list);
+            startActivity(intent);
+        } else {
+            DialogHelper.showSimpleDialog(R.string.noportalwarning, R.string.noportalmessage, MainActivity.this);
+        }
     }
 
     /**
@@ -653,22 +550,28 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     private void parseEmail() {
         Account account = getAccount();
         if (account != null) {
-            new EmailParseTask(this, account).execute();
+            try {
+                String token = new AuthenticatorTask(this, account).execute().get();
+                MailBundle bundle = new GetMailTask(this, account, token).execute().get();
+                if (bundle != null)
+                    new EmailParseTask(this, bundle).execute();
+                else {
+                    gmail_login_button.setVisibility(View.VISIBLE);
+                    progress_view_mainactivity.setVisibility(View.INVISIBLE);
+                }
+            } catch (InterruptedException | ExecutionException e) {
+                Log.e(TAG, e.toString());
+            }
         }
     }
 
-    /**
-     * Reset the mail folder preference to GMail's All Mail folder
+    /*
+    * Method to set layout params for graph bars
      */
-    public void resetAllMail() {
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("mail_pref", "All Mail");
-        editor.apply();
-        Intent i = new Intent(getApplicationContext(), MainActivity.class);
-        i.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-        startActivity(i);
-        finish();
-        overridePendingTransition(0, 0);
+    public void setLayoutParamsGraphBars(int height, TextView layout) {
+        ViewGroup.LayoutParams params = layout.getLayoutParams();
+        params.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, height + 35, getResources().getDisplayMetrics());
+        Log.d(MainActivity.TAG, "HEIGHT: " + params.height);
+        layout.setLayoutParams(params);
     }
-
 }

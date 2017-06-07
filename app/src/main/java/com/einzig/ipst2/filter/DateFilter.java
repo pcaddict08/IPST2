@@ -21,42 +21,21 @@
  *                                                                            *
  ******************************************************************************/
 
-package com.einzig.ipst2.database;
+package com.einzig.ipst2.filter;
 
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-
-import com.einzig.ipst2.portal.PortalSubmission;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Calendar;
 
 /**
  * @author Ryan Porterfield
- * @since 2017-05-19
+ * @since 2015-07-28
  */
-
-final class PortalSubmissionBuilder extends PortalBuilder<PortalSubmission> {
+public interface DateFilter {
     /**
-     * @param dateFormatter date format that MySQL uses to store DATETIME objects
-     * @param db reference to a SQLite database to run queries on
+     * Check if the date is in the range of filter.
+     *
+     * @param filter The start date of a range of dates that date needs to be in.
+     * @param date The date being checked against the range of valid dates for the filter.
+     * @return true if the date is valid, or false if it is not.
      */
-    PortalSubmissionBuilder(SimpleDateFormat dateFormatter, SQLiteDatabase db) {
-        super(dateFormatter, db, DatabaseInterface.TABLE_PENDING);
-    }
-
-    /**
-     * Create an instance of PortalSubmission from a database entry.
-     * @param cursor Cursor containing the database fields of the portal.
-     * @return a PortalSubmission representation of a portal in the database.
-     */
-    @Override
-    PortalSubmission createPortal(Cursor cursor) {
-        String name, pictureURL;
-        Date dateSubmitted;
-        name = cursor.getString(0);
-        dateSubmitted = parseDate(cursor.getString(1));
-        pictureURL = cursor.getString(2);
-        return new PortalSubmission(name, dateSubmitted, pictureURL);
-    }
+   boolean filter(Calendar filter, Calendar date);
 }

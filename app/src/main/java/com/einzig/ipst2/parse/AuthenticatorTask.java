@@ -21,42 +21,57 @@
  *                                                                            *
  ******************************************************************************/
 
-package com.einzig.ipst2.database;
+package com.einzig.ipst2.parse;
 
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.accounts.AccountManagerFuture;
+import android.accounts.AuthenticatorException;
+import android.accounts.OperationCanceledException;
+import android.app.Activity;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.util.Log;
 
-import com.einzig.ipst2.portal.PortalSubmission;
+import com.einzig.ipst2.activities.MainActivity;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.io.IOException;
 
 /**
  * @author Ryan Porterfield
- * @since 2017-05-19
+ * @since 2017-05-28
  */
 
-final class PortalSubmissionBuilder extends PortalBuilder<PortalSubmission> {
-    /**
-     * @param dateFormatter date format that MySQL uses to store DATETIME objects
-     * @param db reference to a SQLite database to run queries on
-     */
-    PortalSubmissionBuilder(SimpleDateFormat dateFormatter, SQLiteDatabase db) {
-        super(dateFormatter, db, DatabaseInterface.TABLE_PENDING);
+public class AuthenticatorTask extends AsyncTask<Void, Void, String> {
+    /** The URL to get the OAuth token from */
+    static final private String AUTH_URL = "oauth2:https://mail.google.com/";
+    private final Account account;
+    private final Activity activity;
+
+    public AuthenticatorTask(Activity activity, Account account) {
+        this.account = account;
+        this.activity = activity;
     }
 
     /**
-     * Create an instance of PortalSubmission from a database entry.
-     * @param cursor Cursor containing the database fields of the portal.
-     * @return a PortalSubmission representation of a portal in the database.
+     * Authenticate with GMail.
+     * @return the OAuth token as a string.
      */
+    private String authenticate() {
+        String token = null;
+        AccountManagerFuture<Bundle> future = AccountManager.get(activity).getAuthToken(account,
+                AUTH_URL, null, activity, new AuthToken(), null);
+        try {
+            token = future.getResult().getString(AccountManager.KEY_AUTHTOKEN);
+            Log.i(MainActivity.TAG, future.getResult().toString());
+        } catch (IOException | AuthenticatorException | OperationCanceledException e) {
+            Log.e(MainActivity.TAG, e.toString());
+        }
+        return token;
+    }
+
     @Override
-    PortalSubmission createPortal(Cursor cursor) {
-        String name, pictureURL;
-        Date dateSubmitted;
-        name = cursor.getString(0);
-        dateSubmitted = parseDate(cursor.getString(1));
-        pictureURL = cursor.getString(2);
-        return new PortalSubmission(name, dateSubmitted, pictureURL);
+    protected String doInBackground(Void... voids) {
+        return authenticate();
     }
 }

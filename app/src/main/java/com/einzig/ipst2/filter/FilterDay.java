@@ -21,42 +21,21 @@
  *                                                                            *
  ******************************************************************************/
 
-package com.einzig.ipst2.database;
+package com.einzig.ipst2.filter;
 
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-
-import com.einzig.ipst2.portal.PortalSubmission;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Calendar;
 
 /**
+ * Filters out all things that do not have the same date as the filter reference.
+ *
  * @author Ryan Porterfield
- * @since 2017-05-19
+ * @since 2015-07-28
  */
+public class FilterDay implements DateFilter {
 
-final class PortalSubmissionBuilder extends PortalBuilder<PortalSubmission> {
-    /**
-     * @param dateFormatter date format that MySQL uses to store DATETIME objects
-     * @param db reference to a SQLite database to run queries on
-     */
-    PortalSubmissionBuilder(SimpleDateFormat dateFormatter, SQLiteDatabase db) {
-        super(dateFormatter, db, DatabaseInterface.TABLE_PENDING);
-    }
-
-    /**
-     * Create an instance of PortalSubmission from a database entry.
-     * @param cursor Cursor containing the database fields of the portal.
-     * @return a PortalSubmission representation of a portal in the database.
-     */
     @Override
-    PortalSubmission createPortal(Cursor cursor) {
-        String name, pictureURL;
-        Date dateSubmitted;
-        name = cursor.getString(0);
-        dateSubmitted = parseDate(cursor.getString(1));
-        pictureURL = cursor.getString(2);
-        return new PortalSubmission(name, dateSubmitted, pictureURL);
+    public boolean filter(Calendar filter, Calendar date) {
+        return (filter.get(Calendar.YEAR) == date.get(Calendar.YEAR)) &&
+                (filter.get(Calendar.DAY_OF_MONTH) == date.get(Calendar.DAY_OF_MONTH));
     }
 }

@@ -21,42 +21,43 @@
  *                                                                            *
  ******************************************************************************/
 
-package com.einzig.ipst2.database;
+package com.einzig.ipst2.parse;
 
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
-import com.einzig.ipst2.portal.PortalSubmission;
+import com.einzig.ipst2.activities.MainActivity;
+import com.sun.mail.imap.IMAPStore;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import javax.mail.Folder;
+import javax.mail.Message;
+import javax.mail.MessagingException;
 
 /**
  * @author Ryan Porterfield
- * @since 2017-05-19
+ * @since 2017-05-28
  */
 
-final class PortalSubmissionBuilder extends PortalBuilder<PortalSubmission> {
-    /**
-     * @param dateFormatter date format that MySQL uses to store DATETIME objects
-     * @param db reference to a SQLite database to run queries on
-     */
-    PortalSubmissionBuilder(SimpleDateFormat dateFormatter, SQLiteDatabase db) {
-        super(dateFormatter, db, DatabaseInterface.TABLE_PENDING);
+public class MailBundle {
+    private final Folder folder;
+    private final Message[] messages;
+    private final IMAPStore store;
+
+    public MailBundle(Folder folder, Message[] messages, IMAPStore store) {
+        this.folder = folder;
+        this.messages = messages;
+        this.store = store;
     }
 
-    /**
-     * Create an instance of PortalSubmission from a database entry.
-     * @param cursor Cursor containing the database fields of the portal.
-     * @return a PortalSubmission representation of a portal in the database.
-     */
-    @Override
-    PortalSubmission createPortal(Cursor cursor) {
-        String name, pictureURL;
-        Date dateSubmitted;
-        name = cursor.getString(0);
-        dateSubmitted = parseDate(cursor.getString(1));
-        pictureURL = cursor.getString(2);
-        return new PortalSubmission(name, dateSubmitted, pictureURL);
+    void cleanup() {
+        try {
+            folder.close(true);
+            store.close();
+        } catch (MessagingException e) {
+            Log.e(MainActivity.TAG, e.toString());
+        }
+    }
+
+    Message[] getMessages() {
+        return messages;
     }
 }
