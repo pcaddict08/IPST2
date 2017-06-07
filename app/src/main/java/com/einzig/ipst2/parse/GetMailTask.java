@@ -84,6 +84,7 @@ public class GetMailTask extends AsyncTask<Void, Void, MailBundle> {
         this.dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US);
         this.preferences = activity.getPreferences(MainActivity.MODE_PRIVATE);
         this.token = token;
+        Log.d(MainActivity.TAG, "GetMailTask:token -> " + token);
     }
 
     @Override
