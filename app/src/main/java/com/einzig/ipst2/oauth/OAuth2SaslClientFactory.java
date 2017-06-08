@@ -37,11 +37,12 @@ import myjavax.security.sasl.SaslClientFactory;
  * <p>Only the "XOAUTH2" mechanism is supported. The {@code callbackHandler} is
  * passed to the OAuth2SaslClient. Other parameters are ignored.
  */
-class OAuth2SaslClientFactory implements SaslClientFactory {
-    static final String OAUTH_TOKEN_PROP =
-            "mail.imaps.sasl.mechanisms.oauth2.oauthToken";
-    private static final Logger logger =
-            Logger.getLogger(OAuth2SaslClientFactory.class.getName());
+public class OAuth2SaslClientFactory implements SaslClientFactory {
+  private static final Logger logger =
+      Logger.getLogger(OAuth2SaslClientFactory.class.getName());
+
+  static final String OAUTH_TOKEN_PROP =
+      "mail.imaps.sasl.mechanisms.oauth2.oauthToken";
 
     public SaslClient createSaslClient(String[] mechanisms,
                                        String authorizationId,
