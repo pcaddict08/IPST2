@@ -43,6 +43,8 @@ import java.util.List;
 import javax.mail.Folder;
 import javax.mail.MessagingException;
 
+import static com.einzig.ipst2.activities.MainActivity.TAG;
+
 /**
  * @author Ryan Porterfield
  * @since 2017-05-25
@@ -72,7 +74,7 @@ class FolderGetter {
                 if (subfolders.length > 0)
                     folderList.addAll(flattenFolders(subfolders));
             } catch (MessagingException e) {
-                Log.e(MainActivity.TAG, e.toString());
+                Log.e(TAG, e.toString());
             }
         }
         return folderList;
@@ -106,7 +108,7 @@ class FolderGetter {
 
     Folder getFolder() throws MessagingException {
         String folderPref = preferences.getString(MainActivity.FOLDER_KEY, MainActivity.NULL_KEY);
-        Log.d(MainActivity.TAG, "Folder: " + folderPref);
+        Log.d(TAG, "Folder: " + folderPref);
         Folder folder = null;
         if (folderPref.equals(MainActivity.NULL_KEY))
             folder = getDefaultFolder();
@@ -116,10 +118,10 @@ class FolderGetter {
                     folder = f;
             }
         }
-        Log.d(MainActivity.TAG, "Number of folders: " + folders.size());
-        Log.d(MainActivity.TAG, "Folders: ");
+        Log.d(TAG, "Number of folders: " + folders.size());
+        Log.d(TAG, "Folders: ");
         for (Folder f : folders)
-            Log.d(MainActivity.TAG, "\t" + f.getFullName());
+            Log.d(TAG, "\t" + f.getFullName());
 
         if (folder == null)
             folder = noAllMailFolder(folderPref);
@@ -136,7 +138,7 @@ class FolderGetter {
     private DialogInterface.OnClickListener getListener() {
         return new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                Log.d(MainActivity.TAG, "FOLDER: " + folders.get(which));
+                Log.d(TAG, "FOLDER: " + folders.get(which));
                 folder = folders.get(which);
             }
         };

@@ -29,7 +29,6 @@ import android.content.DialogInterface;
 /**
  * Created by Steven Foskett on 5/26/2017.
  */
-
 public class DialogHelper {
 
     public static void showSimpleDialog(final int title, final int message, final Context context)

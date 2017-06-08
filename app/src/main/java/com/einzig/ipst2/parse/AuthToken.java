@@ -31,22 +31,20 @@ import android.accounts.OperationCanceledException;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.einzig.ipst2.activities.MainActivity;
-
 import java.io.IOException;
-import java.util.concurrent.CountDownLatch;
+
+import static com.einzig.ipst2.activities.MainActivity.TAG;
 
 /**
  * @author Ryan Porterfield
  * @since 2017-05-17
  */
-public class AuthToken implements AccountManagerCallback<Bundle> {
-
+class AuthToken implements AccountManagerCallback<Bundle> {
     /**
      * Create an AuthToken container class to get an AuthToken for accessing GMail.
      */
-    public AuthToken() {
-        Log.d(MainActivity.TAG, "Creating a new AuthToken");
+    AuthToken() {
+        Log.d(TAG, "Creating a new AuthToken");
     }
 
     /*
@@ -57,16 +55,16 @@ public class AuthToken implements AccountManagerCallback<Bundle> {
      */
     @Override
     public void run(AccountManagerFuture<Bundle> result) {
-        Log.d(MainActivity.TAG, "Running AuthToken");
+        Log.d(TAG, "Running AuthToken");
         try {
             Bundle bundle = result.getResult();
-            Log.i(MainActivity.TAG, "authToken -> " + bundle.getString(AccountManager.KEY_AUTHTOKEN));
+            Log.i(TAG, "authToken -> " + bundle.getString(AccountManager.KEY_AUTHTOKEN));
         } catch (AuthenticatorException e) {
-            Log.e(MainActivity.TAG, "Could not authenticate:\n" + e);
+            Log.e(TAG, "Could not authenticate:\n" + e);
         } catch (IOException e) {
-            Log.e(MainActivity.TAG, e.toString());
+            Log.e(TAG, e.toString());
         } catch (OperationCanceledException e) {
-            Log.e(MainActivity.TAG, "Operation cancelled:\n" + e);
+            Log.e(TAG, "Operation cancelled:\n" + e);
         }
     }
 }

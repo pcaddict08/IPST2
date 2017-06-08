@@ -29,15 +29,13 @@ import android.accounts.AccountManagerFuture;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.WindowManager;
-
-import com.einzig.ipst2.activities.MainActivity;
 
 import java.io.IOException;
+
+import static com.einzig.ipst2.activities.MainActivity.TAG;
 
 /**
  * @author Ryan Porterfield
@@ -67,9 +65,9 @@ public class AuthenticatorTask extends AsyncTask<Void, Void, String> {
                 AUTH_URL, null, activity, new AuthToken(), null);
         try {
             token = future.getResult().getString(AccountManager.KEY_AUTHTOKEN);
-            Log.i(MainActivity.TAG, future.getResult().toString());
+            Log.i(TAG, future.getResult().toString());
         } catch (IOException | AuthenticatorException | OperationCanceledException e) {
-            Log.e(MainActivity.TAG, e.toString());
+            Log.e(TAG, e.toString());
         }
         return token;
     }

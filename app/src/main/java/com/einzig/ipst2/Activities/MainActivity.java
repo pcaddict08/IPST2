@@ -384,16 +384,16 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         Log.d(TAG, "View all button clicked");
         Vector<PortalSubmission> mainList = new Vector<>();
         if (((Button) view).getText().toString().equals(getString(R.string.viewlistall))) {
-            Log.d(MainActivity.TAG, "Going to All List");
+            Log.d(TAG, "Going to All List");
             mainList = db.getAllPortals();
         } else if (((Button) view).getText().toString().equals(getString(R.string.viewlistmonth))) {
-            Log.d(MainActivity.TAG, "Going to Month List");
+            Log.d(TAG, "Going to Month List");
             db.getAllPortalsFromDate(new DateTime().minusDays(30).toDate());
         } else if (((Button) view).getText().toString().equals(getString(R.string.viewlistweek))) {
-            Log.d(MainActivity.TAG, "Going to Week List");
+            Log.d(TAG, "Going to Week List");
             db.getAllPortalsFromDate(new DateTime().minusDays(7).toDate());
         } else if (((Button) view).getText().toString().equals(getString(R.string.viewlisttoday))) {
-            Log.d(MainActivity.TAG, "Going to Today List");
+            Log.d(TAG, "Going to Today List");
             db.getAllPortalsFromDate(new DateTime().minusDays(1).toDate());
         }
 
@@ -601,7 +601,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     public void setLayoutParamsGraphBars(int height, TextView layout) {
         ViewGroup.LayoutParams params = layout.getLayoutParams();
         params.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, height + 35, getResources().getDisplayMetrics());
-        Log.d(MainActivity.TAG, "HEIGHT: " + params.height);
+        Log.d(TAG, "HEIGHT: " + params.height);
         layout.setLayoutParams(params);
     }
 }

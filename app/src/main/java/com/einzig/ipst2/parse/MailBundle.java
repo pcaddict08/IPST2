@@ -32,6 +32,8 @@ import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 
+import static com.einzig.ipst2.activities.MainActivity.TAG;
+
 /**
  * @author Ryan Porterfield
  * @since 2017-05-28
@@ -53,7 +55,7 @@ public class MailBundle {
             folder.close(true);
             store.close();
         } catch (MessagingException e) {
-            Log.e(MainActivity.TAG, e.toString());
+            Log.e(TAG, e.toString());
         }
     }
 

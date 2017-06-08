@@ -70,6 +70,8 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.einzig.ipst2.activities.MainActivity.TAG;
+
 public class PSDetailsActivity extends AppCompatActivity {
     PortalSubmission portalSubmission;
     static final int WRITE_EXTERNAL_STORAGE = 2;
@@ -127,7 +129,7 @@ public class PSDetailsActivity extends AppCompatActivity {
     }
 
     public void buildUI() {
-        Log.d(MainActivity.TAG, "PS Type: " + portalSubmission.getClass().getName());
+        Log.d(TAG, "PS Type: " + portalSubmission.getClass().getName());
         namelabel.setText(portalSubmission.getName());
         submittedLabel.setText(portalSubmission.getSubmittedDateString());
         Picasso.with(this)
@@ -233,7 +235,7 @@ public class PSDetailsActivity extends AppCompatActivity {
                     public void run() {
                         final File pictureFile = getOutputMediaFile();
                         if (pictureFile == null) {
-                            Log.d(MainActivity.TAG, "Error creating media file, check storage permissions: ");
+                            Log.d(TAG, "Error creating media file, check storage permissions: ");
                             PSDetailsActivity.this.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -258,7 +260,7 @@ public class PSDetailsActivity extends AppCompatActivity {
                                         Toast.makeText(context, "Image Save Failed", Toast.LENGTH_LONG).show();
                                     }
                                 });
-                                Log.d(MainActivity.TAG, "File not found: " + e.getMessage());
+                                Log.d(TAG, "File not found: " + e.getMessage());
                             } catch (IOException e) {
                                 PSDetailsActivity.this.runOnUiThread(new Runnable() {
                                     @Override
@@ -266,7 +268,7 @@ public class PSDetailsActivity extends AppCompatActivity {
                                         Toast.makeText(context, "Image Save Failed", Toast.LENGTH_LONG).show();
                                     }
                                 });
-                                Log.d(MainActivity.TAG, "Error accessing file: " + e.getMessage());
+                                Log.d(TAG, "Error accessing file: " + e.getMessage());
                             }
                         }
                     }

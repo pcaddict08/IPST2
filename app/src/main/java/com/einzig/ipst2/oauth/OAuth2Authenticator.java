@@ -26,7 +26,6 @@ package com.einzig.ipst2.oauth;
 
 import android.util.Log;
 
-import com.einzig.ipst2.activities.MainActivity;
 import com.sun.mail.imap.IMAPSSLStore;
 import com.sun.mail.imap.IMAPStore;
 
@@ -36,6 +35,8 @@ import java.util.Properties;
 
 import javax.mail.Session;
 import javax.mail.URLName;
+
+import static com.einzig.ipst2.activities.MainActivity.TAG;
 
 
 /**
@@ -92,7 +93,7 @@ public class OAuth2Authenticator {
 			return connectToImap("imap.gmail.com", 993, user, oauthToken, false);
 		} catch (Exception e) {
 			e.printStackTrace();
-			Log.d(MainActivity.TAG, e.toString());
+			Log.d(TAG, e.toString());
 		}
 		return null;
 	}

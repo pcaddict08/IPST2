@@ -54,6 +54,8 @@ import java.util.Collections;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.einzig.ipst2.activities.MainActivity.TAG;
+
 public class PSListActivity extends AppCompatActivity {
     ArrayList<PortalSubmission> psList = new ArrayList<>();
 
@@ -100,7 +102,7 @@ public class PSListActivity extends AppCompatActivity {
             });
         }
         else
-            Log.d(MainActivity.TAG, "MENU ITEM ACTION VIEW FOR SEARCH IS NULL");
+            Log.d(TAG, "MENU ITEM ACTION VIEW FOR SEARCH IS NULL");
 
         return true;
     }
@@ -116,13 +118,13 @@ public class PSListActivity extends AppCompatActivity {
 
         psList = getIntent().getExtras().getParcelableArrayList("psList");
         if (psList != null) {
-            Log.d(MainActivity.TAG, "PS LIST SIZE: " + psList.size());
+            Log.d(TAG, "PS LIST SIZE: " + psList.size());
             sortList(psList);
             listView.setAdapter(new ListItemAdapter_PS(psList, PSListActivity.this));
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    Log.d(MainActivity.TAG, "Item Selected at index: " + i);
+                    Log.d(TAG, "Item Selected at index: " + i);
                     try {
                         Intent intent = new Intent(PSListActivity.this, PSDetailsActivity.class);
                         intent.putExtra("ps", (Parcelable) psList.get(i));

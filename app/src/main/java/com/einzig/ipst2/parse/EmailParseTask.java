@@ -43,6 +43,7 @@ import javax.activation.MailcapCommandMap;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 
+import static com.einzig.ipst2.activities.MainActivity.TAG;
 import static com.einzig.ipst2.database.DatabaseInterface.dateFormatter;
 
 /**
@@ -77,7 +78,7 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
         this.bundle = bundle;
         this.db = new DatabaseInterface(activity);
         this.messages = bundle.getMessages();
-        this.parser = new EmailParser(db);
+        this.parser = new EmailParser();
         this.preferences = activity.getPreferences(MainActivity.MODE_PRIVATE);
         addMailcaps();
         initProgressDialog();
@@ -115,7 +116,7 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
      * @param portal Instance of PortalAccepted to add to the database
      */
     private void addPortalAccepted(PortalAccepted portal) {
-        Log.d(MainActivity.TAG, "Adding approved portal: " + portal.getName());
+        Log.d(TAG, "Adding approved portal: " + portal.getName());
         PortalSubmission pending = db.getPendingPortal(portal.getPictureURL());
         if (pending != null)
             db.deletePending(pending);
@@ -127,7 +128,7 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
      * @param portal Instance of PortalSubmission (but not a subclass) to add to the database
      */
     private void addPortalSubmission(PortalSubmission portal) {
-        Log.d(MainActivity.TAG, "Adding submitted portal: " + portal.getName());
+        Log.d(TAG, "Adding submitted portal: " + portal.getName());
         db.addPortalSubmission(portal);
     }
 
@@ -136,7 +137,7 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
      * @param portal Instance of PortalRejected to add to the database
      */
     private void addPortalRejected(PortalRejected portal) {
-        Log.d(MainActivity.TAG, "Adding rejected portal: " + portal.getName());
+        Log.d(TAG, "Adding rejected portal: " + portal.getName());
         PortalSubmission pending = db.getPendingPortal(portal.getPictureURL());
         if (pending != null)
             db.deletePending(pending);
@@ -145,7 +146,7 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
 
     @Override
     protected Void doInBackground(Void... voids) {
-        Log.d(MainActivity.TAG, "Parsing email");
+        Log.d(TAG, "Parsing email");
         Date parseDate = Calendar.getInstance().getTime();
         for (int i = 0; i < messages.length; i++) {
             PortalSubmission p = parser.getPortal(messages[i]);
@@ -155,7 +156,7 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
                 try {
                     parseDate = messages[i].getReceivedDate();
                 } catch (MessagingException e) {
-                    Log.e(MainActivity.TAG, e.toString());
+                    Log.e(TAG, e.toString());
                 }
                 break;
             }
@@ -182,7 +183,7 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
      */
     private void onEmailParse(Date parseDate) {
         String dateString = dateFormatter.format(parseDate.getTime());
-        Log.d(MainActivity.TAG, MainActivity.MOST_RECENT_DATE_KEY + " -> " + dateString);
+        Log.d(TAG, MainActivity.MOST_RECENT_DATE_KEY + " -> " + dateString);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(MainActivity.MOST_RECENT_DATE_KEY, dateString);
         editor.apply();
@@ -202,9 +203,9 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
      */
     @Override
     protected void onPostExecute(Void voids) {
-        Log.d(MainActivity.TAG, "Accepted portals: " + db.getAcceptedCount());
-        Log.d(MainActivity.TAG, "Pending portals: " + db.getPendingCount());
-        Log.d(MainActivity.TAG, "Rejected portals: " + db.getRejectedCount());
+        Log.d(TAG, "Accepted portals: " + db.getAcceptedCount());
+        Log.d(TAG, "Pending portals: " + db.getPendingCount());
+        Log.d(TAG, "Rejected portals: " + db.getRejectedCount());
         activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         dialog.dismiss();
         activity.buildUIAfterParsing();
@@ -216,6 +217,6 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
     @Override
     protected void onProgressUpdate(Integer... progress) {
         dialog.setProgress(progress[0] + 1);
-        Log.v(MainActivity.TAG, "Parsing: " + dialog.getProgress() + " / " + dialog.getMax());
+        Log.v(TAG, "Parsing: " + dialog.getProgress() + " / " + dialog.getMax());
     }
 }

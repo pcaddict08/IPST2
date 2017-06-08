@@ -53,6 +53,7 @@ import javax.mail.search.ReceivedDateTerm;
 import javax.mail.search.SearchTerm;
 import javax.mail.search.SubjectTerm;
 
+import static com.einzig.ipst2.activities.MainActivity.TAG;
 import static com.einzig.ipst2.database.DatabaseInterface.dateFormatter;
 
 /**
@@ -80,7 +81,7 @@ public class GetMailTask extends AsyncTask<Void, Void, MailBundle> {
     protected MailBundle doInBackground(Void... voids) {
         OAuth2Authenticator sender = new OAuth2Authenticator();
         IMAPStore store = sender.getIMAPStore(account.name, token);
-        Log.d(MainActivity.TAG, "store is null? " + (store == null));
+        Log.d(TAG, "store is null? " + (store == null));
         if (store == null) {
             DialogHelper.showSimpleDialog(R.string.invalidtokentitle_getmailtask, R.string.invalidtokenmessage_getmailtask, activity);
             AccountManager.get(activity).invalidateAuthToken("com.google", token);
@@ -92,7 +93,7 @@ public class GetMailTask extends AsyncTask<Void, Void, MailBundle> {
                 fetchMessages(folder, messages);
                 return new MailBundle(folder, messages, store);
             } catch (MessagingException e) {
-                Log.e(MainActivity.TAG, e.toString());
+                Log.e(TAG, e.toString());
             }
         }
         return null;
@@ -109,18 +110,18 @@ public class GetMailTask extends AsyncTask<Void, Void, MailBundle> {
         FetchProfile fp = new FetchProfile();
         fp.add(FetchProfile.Item.ENVELOPE);
         fp.add(FetchProfile.Item.CONTENT_INFO);
-        Log.d(MainActivity.TAG, "Fetching messages");
+        Log.d(TAG, "Fetching messages");
         try {
             folder.fetch(messages, fp);
         } catch (MessagingException e) {
-            Log.e(MainActivity.TAG, e.toString());
+            Log.e(TAG, e.toString());
         }
     }
 
     private Folder getFolder(IMAPStore store) throws MessagingException {
         Folder[] folders = store.getDefaultFolder().list();
         Folder folder = new FolderGetter(activity, folders, preferences).getFolder();
-        Log.d(MainActivity.TAG, MainActivity.FOLDER_KEY + " -> " + folder.getFullName());
+        Log.d(TAG, MainActivity.FOLDER_KEY + " -> " + folder.getFullName());
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(MainActivity.FOLDER_KEY, folder.getFullName());
         editor.apply();
