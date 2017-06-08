@@ -1,5 +1,4 @@
 /******************************************************************************
- *                                                                            *
  * Copyright 2017 Steven Foskett, Jimmy Ho, Ryan Porterfield                  *
  * Permission is hereby granted, free of charge, to any person obtaining a    *
  * copy of this software and associated documentation files (the "Software"), *
@@ -18,7 +17,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING    *
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER        *
  * DEALINGS IN THE SOFTWARE.                                                  *
- *                                                                            *
  ******************************************************************************/
 
 package com.einzig.ipst2.database;
@@ -29,34 +27,52 @@ import android.database.sqlite.SQLiteDatabase;
 import com.einzig.ipst2.portal.PortalSubmission;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static com.einzig.ipst2.database.DatabaseInterface.KEY_PICTURE_URL;
+import static com.einzig.ipst2.database.DatabaseInterface.dateFormatter;
 
 /**
  * @author Ryan Porterfield
  * @since 2017-05-19
  */
 
-abstract class PortalBuilder<P extends PortalSubmission> {
-    /** Date format that MySQL uses to store DATETIME objects */
-    private final SimpleDateFormat dateFormatter;
+public abstract class PortalBuilder<P extends PortalSubmission> {
     /** Reference to a SQLite database to run queries on */
     private final SQLiteDatabase db;
     /**  */
     private final String table;
 
     /**
-     * @param dateFormatter date format that MySQL uses to store DATETIME objects
      * @param db reference to a SQLite database to run queries on
      */
-    PortalBuilder(SimpleDateFormat dateFormatter, SQLiteDatabase db, String table) {
-        this.dateFormatter = dateFormatter;
+    PortalBuilder(SQLiteDatabase db, String table) {
         this.db = db;
         this.table = table;
     }
 
-    abstract P createPortal(Cursor cursor);
+    /**
+     * Create an instance of Portal* from a database entry.
+     * @param cursor Cursor containing the database fields of the portal.
+     * @return instance of Portal* from a database entry.
+     */
+    abstract P build(Cursor cursor);
+
+    /**
+     * Create a new portal
+     *
+     * @param name The portal name.
+     * @param dateResponded The date the portal was rejected.
+     * @param message The body of the email as a String for parsing.
+     */
+    public abstract P build(String name, Date dateResponded, String message);
+
+    PortalSubmission findPortal(String pictureURL) {
+        return getPortal(KEY_PICTURE_URL + " = ?", new String[]{pictureURL});
+    }
 
     /**
      * @param selection Selection parameters following a WHERE clause in the SELECT statement
@@ -82,7 +98,7 @@ abstract class PortalBuilder<P extends PortalSubmission> {
             return portals;
         cursor.moveToFirst();
         do {
-            portals.add(createPortal(cursor));
+            portals.add(build(cursor));
         } while (cursor.moveToNext());
         cursor.close();
         return portals;
@@ -118,5 +134,22 @@ abstract class PortalBuilder<P extends PortalSubmission> {
             parse = new Date();
         }
         return parse;
+    }
+
+    /**
+     * Parse the URL of the portal picture from the email.
+     * @param message The body of the email as a String for parsing.
+     * @return the URL of the portal picture.
+     */
+    String parsePictureURL(String message) {
+        String pictureURL;
+        Pattern pattern = Pattern.compile("<img[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>",
+                Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(message);
+        if (matcher.find())
+            pictureURL = matcher.group(1);
+        else
+            pictureURL = "No Picture Found";
+        return pictureURL;
     }
 }

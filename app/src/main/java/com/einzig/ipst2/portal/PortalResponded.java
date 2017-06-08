@@ -82,7 +82,7 @@ public abstract class PortalResponded extends PortalSubmission {
    * */
     public String getDateRespondedString()
     {
-        return sdf_stringdates.format(this.dateResponded);
+        return dateFormat.format(this.dateResponded);
     }
 
     /*

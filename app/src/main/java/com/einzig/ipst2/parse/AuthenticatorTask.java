@@ -29,9 +29,11 @@ import android.accounts.AccountManagerFuture;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.WindowManager;
 
 import com.einzig.ipst2.activities.MainActivity;
 
@@ -45,7 +47,9 @@ import java.io.IOException;
 public class AuthenticatorTask extends AsyncTask<Void, Void, String> {
     /** The URL to get the OAuth token from */
     static final private String AUTH_URL = "oauth2:https://mail.google.com/";
+    /** GMail account used for Ingress */
     private final Account account;
+    /** Parent activity of this task */
     private final Activity activity;
 
     public AuthenticatorTask(Activity activity, Account account) {

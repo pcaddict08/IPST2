@@ -35,24 +35,28 @@ import com.einzig.ipst2.portal.PortalAccepted;
 import com.einzig.ipst2.portal.PortalRejected;
 import com.einzig.ipst2.portal.PortalSubmission;
 
-import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Vector;
 
-/** TODO (Ryan): Get # of portals after date sorted by SORT_KEY
+/**
  * @author Ryan Porterfield
  * @since 2017-05-18
  */
 public class DatabaseInterface extends SQLiteOpenHelper {
+    /** The date format that MySQL stores DATETIME objects in */
+    static public final SimpleDateFormat dateFormatter =
+            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
     /** The name of the table in containing accepted portal submissions */
     static final String TABLE_ACCEPTED = "acceptedSubmissions";
     /** The name of the table in containing pending portal submissions */
     static final String TABLE_PENDING = "pendingSubmissions";
     /** The name of the table in containing rejected portal submissions */
     static final String TABLE_REJECTED = "rejectedSubmissions";
+    /** Table key for the URL to the submission picture */
+    static final String KEY_PICTURE_URL = "pictureURL";
     /** Database version */
     static private final int DATABASE_VERSION = 1;
     /** Database name */
@@ -69,10 +73,6 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     static private final String KEY_INTEL_LINK_URL = "intelLinkURL";
     /** Table key for the reason the portal was rejected */
     static private final String KEY_REJECTION_REASON = "rejectionReason";
-    /** Table key for the URL to the submission picture */
-    static private final String KEY_PICTURE_URL = "pictureURL";
-    /** The date format that MySQL stores DATETIME objects in */
-    private final SimpleDateFormat dateFormatter;
 
     /**
      * Create a new DatabaseInterface to interact with the SQLite database for the application
@@ -80,7 +80,6 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      */
     public DatabaseInterface(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
     }
 
     /**
@@ -341,7 +340,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      */
     public PortalAccepted getAcceptedPortal(String portalPictureURL) {
         SQLiteDatabase db = getReadableDatabase();
-        PortalAcceptedBuilder b = new PortalAcceptedBuilder(dateFormatter, db);
+        PortalAcceptedBuilder b = new PortalAcceptedBuilder(db);
         PortalAccepted p = b.getPortal(KEY_PICTURE_URL + " = ?", new String[]{portalPictureURL});
         db.close();
         return p;
@@ -354,7 +353,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     public Vector<PortalAccepted> getAllAccepted() {
         Log.d(MainActivity.TAG, "Get all accepted portals");
         SQLiteDatabase db = getReadableDatabase();
-        PortalAcceptedBuilder b = new PortalAcceptedBuilder(dateFormatter, db);
+        PortalAcceptedBuilder b = new PortalAcceptedBuilder(db);
         Vector<PortalAccepted> portals = b.getPortals(null, null);
         db.close();
         return portals;
@@ -372,7 +371,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     private Vector<PortalAccepted> getAllAcceptedByDate(String dateKey, Date fromDate, Date toDate) {
         Log.d(MainActivity.TAG, "Getting all accepted portals within date range");
         SQLiteDatabase db = getReadableDatabase();
-        PortalAcceptedBuilder b = new PortalAcceptedBuilder(dateFormatter, db);
+        PortalAcceptedBuilder b = new PortalAcceptedBuilder(db);
         Vector<PortalAccepted> portals = b.getPortalsByDate(dateKey, fromDate, toDate);
         db.close();
         return portals;
@@ -408,7 +407,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     public Vector<PortalSubmission> getAllPending() {
         Log.d(MainActivity.TAG, "Get all pending portals");
         SQLiteDatabase db = getReadableDatabase();
-        PortalSubmissionBuilder b = new PortalSubmissionBuilder(dateFormatter, db);
+        PortalSubmissionBuilder b = new PortalSubmissionBuilder(db);
         Vector<PortalSubmission> portals = b.getPortals(null, null);
         db.close();
         return portals;
@@ -421,7 +420,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     public Vector<PortalRejected> getAllRejected() {
         Log.d(MainActivity.TAG, "Get all rejected portals");
         SQLiteDatabase db = getReadableDatabase();
-        PortalRejectedBuilder b = new PortalRejectedBuilder(dateFormatter, db);
+        PortalRejectedBuilder b = new PortalRejectedBuilder(db);
         Vector<PortalRejected> portals = b.getPortals(null, null);
         db.close();
         return portals;
@@ -483,7 +482,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     public Vector<PortalSubmission> getPendingByDate(Date fromDate, Date toDate) {
         Log.d(MainActivity.TAG, "Getting all pending portals in a date range");
         SQLiteDatabase db = getReadableDatabase();
-        PortalSubmissionBuilder b = new PortalSubmissionBuilder(dateFormatter, db);
+        PortalSubmissionBuilder b = new PortalSubmissionBuilder(db);
         Vector<PortalSubmission> portals = b.getPortalsByDate(KEY_DATE_SUBMITTED, fromDate, toDate);
         db.close();
         return portals;
@@ -533,7 +532,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     public PortalSubmission getPendingPortal(String portalPictureURL) {
         Log.d(MainActivity.TAG, "Getting pending portal");
         SQLiteDatabase db = getReadableDatabase();
-        PortalSubmissionBuilder b = new PortalSubmissionBuilder(dateFormatter, db);
+        PortalSubmissionBuilder b = new PortalSubmissionBuilder(db);
         PortalSubmission p = b.getPortal(KEY_PICTURE_URL + " = ?", new String[]{portalPictureURL});
         db.close();
         return p;
@@ -551,7 +550,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     private Vector<PortalRejected> getRejectedByDate(String dateKey, Date fromDate, Date toDate) {
         Log.d(MainActivity.TAG, "Getting all rejected portals within date range");
         SQLiteDatabase db = getReadableDatabase();
-        PortalRejectedBuilder b = new PortalRejectedBuilder(dateFormatter, db);
+        PortalRejectedBuilder b = new PortalRejectedBuilder(db);
         Vector<PortalRejected> portals = b.getPortalsByDate(dateKey, fromDate, toDate);
         db.close();
         return portals;
@@ -649,7 +648,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     public PortalRejected getRejectedPortal(String portalPictureURL) {
         Log.d(MainActivity.TAG, "Getting rejected portal");
         SQLiteDatabase db = getReadableDatabase();
-        PortalRejectedBuilder b = new PortalRejectedBuilder(dateFormatter, db);
+        PortalRejectedBuilder b = new PortalRejectedBuilder(db);
         PortalRejected p = b.getPortal(KEY_PICTURE_URL + " = ?", new String[]{portalPictureURL});
         db.close();
         return p;

@@ -52,10 +52,8 @@ public class PortalSubmission implements Parcelable, Serializable {
         }
     };
 
-    /**
-     * Date format for returning string dates
-     */
-    SimpleDateFormat sdf_stringdates = new SimpleDateFormat("MM-dd-yyyy", Locale.getDefault());
+    /** Date format for returning string dates */
+    SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy", Locale.getDefault());
 
     /**
      * The name of the portal.
@@ -66,7 +64,7 @@ public class PortalSubmission implements Parcelable, Serializable {
      * The date the portal was submitted.
      * @serial
      */
-    Date dateSubmitted;
+    private Date dateSubmitted;
     /**
      * The URL that links to the submission picture.
      * @serial
@@ -150,7 +148,7 @@ public class PortalSubmission implements Parcelable, Serializable {
     * */
     public String getSubmittedDateString()
     {
-       return sdf_stringdates.format(this.dateSubmitted);
+       return dateFormat.format(this.dateSubmitted);
     }
 
     /*

@@ -1,5 +1,4 @@
 /******************************************************************************
- *                                                                            *
  * Copyright 2017 Steven Foskett, Jimmy Ho, Ryan Porterfield                  *
  * Permission is hereby granted, free of charge, to any person obtaining a    *
  * copy of this software and associated documentation files (the "Software"), *
@@ -18,7 +17,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING    *
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER        *
  * DEALINGS IN THE SOFTWARE.                                                  *
- *                                                                            *
  ******************************************************************************/
 
 package com.einzig.ipst2.database;
@@ -36,13 +34,12 @@ import java.util.Date;
  * @since 2017-05-19
  */
 
-final class PortalSubmissionBuilder extends PortalBuilder<PortalSubmission> {
+public final class PortalSubmissionBuilder extends PortalBuilder<PortalSubmission> {
     /**
-     * @param dateFormatter date format that MySQL uses to store DATETIME objects
      * @param db reference to a SQLite database to run queries on
      */
-    PortalSubmissionBuilder(SimpleDateFormat dateFormatter, SQLiteDatabase db) {
-        super(dateFormatter, db, DatabaseInterface.TABLE_PENDING);
+    public PortalSubmissionBuilder(SQLiteDatabase db) {
+        super(db, DatabaseInterface.TABLE_PENDING);
     }
 
     /**
@@ -51,12 +48,18 @@ final class PortalSubmissionBuilder extends PortalBuilder<PortalSubmission> {
      * @return a PortalSubmission representation of a portal in the database.
      */
     @Override
-    PortalSubmission createPortal(Cursor cursor) {
+    PortalSubmission build(Cursor cursor) {
         String name, pictureURL;
         Date dateSubmitted;
         name = cursor.getString(0);
         dateSubmitted = parseDate(cursor.getString(1));
         pictureURL = cursor.getString(2);
         return new PortalSubmission(name, dateSubmitted, pictureURL);
+    }
+
+    @Override
+    public PortalSubmission build(String name, Date dateResponded, String message) {
+        String pictureURL = parsePictureURL(message);
+        return new PortalSubmission(name, dateResponded, pictureURL);
     }
 }

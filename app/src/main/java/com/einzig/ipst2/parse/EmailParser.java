@@ -27,6 +27,10 @@ import android.util.Log;
 
 import com.einzig.ipst2.activities.MainActivity;
 import com.einzig.ipst2.database.DatabaseInterface;
+import com.einzig.ipst2.database.PortalAcceptedBuilder;
+import com.einzig.ipst2.database.PortalBuilder;
+import com.einzig.ipst2.database.PortalRejectedBuilder;
+import com.einzig.ipst2.database.PortalSubmissionBuilder;
 import com.einzig.ipst2.portal.PortalSubmission;
 
 import java.io.IOException;
@@ -54,9 +58,9 @@ class EmailParser {
      * @see PortalBuilder
      */
     EmailParser(DatabaseInterface db) {
-        acceptedBuilder = new PortalAcceptedBuilder(db);
-        rejectedBuilder = new PortalRejectedBuilder(db);
-        submissionBuilder = new PortalSubmissionBuilder(db);
+        acceptedBuilder = new PortalAcceptedBuilder(null);
+        rejectedBuilder = new PortalRejectedBuilder(null);
+        submissionBuilder = new PortalSubmissionBuilder(null);
     }
 
     /**

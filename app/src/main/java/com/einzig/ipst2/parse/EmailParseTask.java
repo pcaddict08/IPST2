@@ -35,16 +35,15 @@ import com.einzig.ipst2.portal.PortalAccepted;
 import com.einzig.ipst2.portal.PortalRejected;
 import com.einzig.ipst2.portal.PortalSubmission;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 import javax.activation.CommandMap;
 import javax.activation.MailcapCommandMap;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+
+import static com.einzig.ipst2.database.DatabaseInterface.dateFormatter;
 
 /**
  * Asynchronously parses the user's emails to update portal submission activity.
@@ -53,8 +52,6 @@ import javax.mail.MessagingException;
  * @since 2015-07-30
  */
 public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
-    /** Format for parsing and printing dates */
-    final private DateFormat dateFormat;
     /** Database for adding portals */
     final private DatabaseInterface db;
     /** Does the actual parsing of emails */
@@ -65,7 +62,7 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
     final private MailBundle bundle;
     /** The calling activity. Used to update UI elements */
     final private MainActivity activity;
-    /**  */
+    /** Array of messages that match the search terms */
     final private Message[] messages;
     /** Display parsing progress */
     private ProgressDialog dialog;
@@ -78,7 +75,6 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
     public EmailParseTask(MainActivity activity, MailBundle bundle) {
         this.activity = activity;
         this.bundle = bundle;
-        this.dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US);
         this.db = new DatabaseInterface(activity);
         this.messages = bundle.getMessages();
         this.parser = new EmailParser(db);
@@ -185,7 +181,7 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
      * @param parseDate Last time email was parsed
      */
     private void onEmailParse(Date parseDate) {
-        String dateString = dateFormat.format(parseDate.getTime());
+        String dateString = dateFormatter.format(parseDate.getTime());
         Log.d(MainActivity.TAG, MainActivity.MOST_RECENT_DATE_KEY + " -> " + dateString);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(MainActivity.MOST_RECENT_DATE_KEY, dateString);

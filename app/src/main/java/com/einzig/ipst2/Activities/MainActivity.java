@@ -26,6 +26,7 @@ package com.einzig.ipst2.activities;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -68,7 +69,6 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import org.joda.time.DateTime;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
 import java.util.concurrent.ExecutionException;
@@ -545,23 +545,53 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     }
 
     /**
-     * Parse emails from Niantic
+     * Wrapper function for parseEmailWork.
+     * <p>
+     *     Builds the progress dialog for, then calls parseEmailWork
+     * </p>
+     * @see MainActivity#parseEmailWork(Account, ProgressDialog)
      */
     private void parseEmail() {
         Account account = getAccount();
         if (account != null) {
-            try {
-                String token = new AuthenticatorTask(this, account).execute().get();
-                MailBundle bundle = new GetMailTask(this, account, token).execute().get();
-                if (bundle != null)
-                    new EmailParseTask(this, bundle).execute();
-                else {
-                    gmail_login_button.setVisibility(View.VISIBLE);
-                    progress_view_mainactivity.setVisibility(View.INVISIBLE);
-                }
-            } catch (InterruptedException | ExecutionException e) {
-                Log.e(TAG, e.toString());
+            ProgressDialog dialog = new ProgressDialog(this);
+            dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            dialog.setIndeterminate(true);
+            dialog.setTitle("Searching Email");
+            dialog.setCanceledOnTouchOutside(false);
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            parseEmailWork(account, dialog);
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        }
+    }
+
+    /**
+     * Parses emails for portals
+     * <p>
+     *     Runs 3 tasks to:
+     *     <ol>
+     *         <li>Get OAuth token</li>
+     *         <li>Search for relevant emails</li>
+     *         <li>Parse portals from the relevant emails</li>
+     *     </ol>
+     * </p>
+     * @param account GMail account
+     * @param dialog Progress dialog to display while authenticating and searching for mail
+     */
+    private void parseEmailWork(Account account, ProgressDialog dialog) {
+        try {
+            dialog.show();
+            String token = new AuthenticatorTask(this, account).execute().get();
+            MailBundle bundle = new GetMailTask(this, account, token).execute().get();
+            dialog.dismiss();
+            if (bundle != null)
+                new EmailParseTask(this, bundle).execute();
+            else {
+                gmail_login_button.setVisibility(View.VISIBLE);
+                progress_view_mainactivity.setVisibility(View.INVISIBLE);
             }
+        } catch (InterruptedException | ExecutionException e) {
+            Log.e(TAG, e.toString());
         }
     }
 
