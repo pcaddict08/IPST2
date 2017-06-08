@@ -111,9 +111,12 @@ public class PSListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_pslist);
         ButterKnife.bind(this);
         ActionBar ab = getSupportActionBar();
-        if (ab != null)
+        if (ab != null) {
             ab.setDisplayHomeAsUpEnabled(true);
-
+            ab.setLogo(R.mipmap.ic_launcher);
+            ab.setDisplayUseLogoEnabled(true);
+            ab.setDisplayShowHomeEnabled(true);
+        }
         psList = getIntent().getExtras().getParcelableArrayList("psList");
         if (psList != null) {
             Log.d(MainActivity.TAG, "PS LIST SIZE: " + psList.size());

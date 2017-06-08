@@ -35,6 +35,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -49,6 +50,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.einzig.ipst2.DialogHelper;
@@ -132,11 +134,15 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     static final int REQUEST_CODE_EMAIL = 1;
     static final int REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR = 1002;
 
-    /** Database Handle for getting portals and such */
+    /**
+     * Database Handle for getting portals and such
+     */
     private DatabaseInterface db;
     /**  */
     private Date viewDate;
-    /** Preferences for saving app settings */
+    /**
+     * Preferences for saving app settings
+     */
     private SharedPreferences preferences;
 
     /*Butterknife Binds for Views*/
@@ -166,6 +172,10 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     Button gmail_login_button;
     @BindView(R.id.progress_view_mainactivity)
     LinearLayout progress_view_mainactivity;
+    @BindView(R.id.tabs_mainactivity)
+    RadioGroup tabs_mainactivity;
+    @BindView(R.id.mainui_mainactivity)
+    LinearLayout mainui_mainactivity;
 
     /**
      * MainActivity constructor, initialize variables.
@@ -184,8 +194,10 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         long accepted = db.getAcceptedCount();
         long pending = db.getPendingCount();
         long rejected = db.getRejectedCount();
-        findViewById(R.id.progress_view_mainactivity).setVisibility(View.INVISIBLE);
-        findViewById(R.id.mainui_mainactivity).setVisibility(View.VISIBLE);
+        progress_view_mainactivity.setVisibility(View.INVISIBLE);
+        mainui_mainactivity.setVisibility(View.VISIBLE);
+        tabs_mainactivity.setVisibility(View.VISIBLE);
+        viewButton.setVisibility(View.VISIBLE);
         formatUI(accepted, rejected, pending);
         todaytab.setOnCheckedChangeListener(this);
         weektab.setOnCheckedChangeListener(this);
@@ -221,7 +233,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         acceptedtext.setText(String.format(Locale.getDefault(), "%d", accepted));
         rejectedtext.setText(String.format(Locale.getDefault(), "%d", rejected));
         double totalnum = accepted + rejected + pending;
-        if(totalnum == 0)
+        if (totalnum == 0)
             totalnum += 1;
         setLayoutParamsGraphBars((int) ((pending * 100) / (totalnum)), pendinggraph);
         setLayoutParamsGraphBars((int) ((rejected * 100) / (totalnum)), rejectedgraph);
@@ -360,7 +372,6 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         Account me = getAccount();
         if (me != null) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-            // SHOW LOADING THINGIES
             findViewById(R.id.progress_view_mainactivity).setVisibility(View.VISIBLE);
             findViewById(R.id.gmail_login_button).setVisibility(View.INVISIBLE);
         } else {
@@ -374,10 +385,10 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         buttonView.setTypeface(isChecked ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
-        buttonView.setTextColor(isChecked ? getResources().getColor(R.color.white)
-                : getResources().getColor(R.color.colorPrimaryDark));
-        buttonView.setBackground(isChecked ? getResources().getDrawable(R.drawable.cell_shape_radio)
-                : getResources().getDrawable(R.drawable.cell_shape_radio_clear));
+        buttonView.setTextColor(isChecked ? ActivityCompat.getColor(this, R.color.white)
+                : ActivityCompat.getColor(this, R.color.colorPrimaryDark));
+        buttonView.setBackground(isChecked ? ActivityCompat.getDrawable(this, R.drawable.cell_shape_radio)
+                : ActivityCompat.getDrawable(this, R.drawable.cell_shape_radio_clear));
     }
 
     /* Method for when view list button is clicked */
@@ -444,6 +455,12 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+        ActionBar ab = getSupportActionBar();
+        if (ab != null) {
+            ab.setLogo(R.mipmap.ic_launcher);
+            ab.setDisplayUseLogoEnabled(true);
+            ab.setDisplayShowHomeEnabled(true);
+        }
         getPreferences();
         gmail_login_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -481,8 +498,9 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     }
 
     /**
-     *  Method for when radiobuttons are clicked
-     *  @param view RadioButton
+     * Method for when radiobuttons are clicked
+     *
+     * @param view RadioButton
      */
     public void onRadioButtonClicked(View view) {
         if (!((RadioButton) view).isChecked())

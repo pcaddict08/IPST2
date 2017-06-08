@@ -106,8 +106,12 @@ public class PSDetailsActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         ActionBar supportActionBar = getSupportActionBar();
-        if (supportActionBar != null)
+        if (supportActionBar != null) {
             supportActionBar.setDisplayHomeAsUpEnabled(true);
+            supportActionBar.setLogo(R.mipmap.ic_launcher);
+            supportActionBar.setDisplayUseLogoEnabled(true);
+            supportActionBar.setDisplayShowHomeEnabled(true);
+        }
         portalSubmission = getIntent().getExtras().getParcelable("ps");
         if (portalSubmission != null) {
             buildUI();

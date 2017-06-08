@@ -47,7 +47,8 @@
     <string name="notavailable">N/A</string>
     <string name="noportalwarning">"No Portal Submissions"</string>
     <string name="noportalmessage">No Portal Submissions were found in the local database.  Try refreshing.</string>
-    <string name="pslisttitle_activity">Portal Submissions</string>
+    <string name="pslisttitle_activity">Submissions</string>
+    <string name="psdetailstitle_activity">Details</string>
     <string name="saveportalimage_psdetailsactivity">Save Portal Image</string>
     <string name="submittedna_psdetailsactivity">Submitted: </string>
     <string name="namena_psdetailsactivity">Name: </string>
