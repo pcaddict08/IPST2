@@ -469,9 +469,13 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         switch (item.getItemId()) {
             case R.id.settings_mainactivity:
                 startActivity(new Intent(this, SettingsActivity.class));
-            default:
-                return super.onOptionsItemSelected(item);
+                break;
+            case R.id.refresh_mainactivity:
+                finish();
+                startActivity(getIntent());
+                break;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     /**
