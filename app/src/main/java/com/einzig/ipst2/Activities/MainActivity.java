@@ -220,13 +220,15 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         pendingtext.setText(String.format(Locale.getDefault(), "%d", pending));
         acceptedtext.setText(String.format(Locale.getDefault(), "%d", accepted));
         rejectedtext.setText(String.format(Locale.getDefault(), "%d", rejected));
-        long totalnum = accepted + rejected + pending + 1;
+        double totalnum = accepted + rejected + pending;
+        if(totalnum == 0)
+            totalnum += 1;
         setLayoutParamsGraphBars((int) ((pending * 100) / (totalnum)), pendinggraph);
         setLayoutParamsGraphBars((int) ((rejected * 100) / (totalnum)), rejectedgraph);
         setLayoutParamsGraphBars((int) ((accepted * 100) / (totalnum)), acceptedgraph);
-        acceptedgraph.setText(String.format(Locale.getDefault(), "%d%%", (int) ((accepted * 100) / (totalnum))));
-        rejectedgraph.setText(String.format(Locale.getDefault(), "%d%%", (int) ((rejected * 100) / (totalnum))));
-        pendinggraph.setText(String.format(Locale.getDefault(), "%d%%", (int) ((pending * 100) / (totalnum))));
+        acceptedgraph.setText(String.format(Locale.getDefault(), "%.1f%%", ((accepted * 100) / (totalnum))));
+        rejectedgraph.setText(String.format(Locale.getDefault(), "%.1f%%", ((rejected * 100) / (totalnum))));
+        pendinggraph.setText(String.format(Locale.getDefault(), "%.1f%%", ((pending * 100) / (totalnum))));
     }
 
     /**
