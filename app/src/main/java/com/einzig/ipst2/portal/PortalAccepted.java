@@ -36,17 +36,18 @@ public class PortalAccepted extends PortalResponded {
     /**
      * Inflates a PortalSubmission from a Parcel
      */
-    public static final Parcelable.Creator<PortalAccepted> CREATOR = new Parcelable.Creator<PortalAccepted>() {
-        @Override
-        public PortalAccepted createFromParcel(Parcel in) {
-            return new PortalAccepted(in);
-        }
+    public static final Parcelable.Creator<PortalAccepted> CREATOR =
+            new Parcelable.Creator<PortalAccepted>() {
+                @Override
+                public PortalAccepted createFromParcel(Parcel in) {
+                    return new PortalAccepted(in);
+                }
 
-        @Override
-        public PortalAccepted[] newArray(int size) {
-            return new PortalAccepted[size];
-        }
-    };
+                @Override
+                public PortalAccepted[] newArray(int size) {
+                    return new PortalAccepted[size];
+                }
+            };
 
     /** URL that points to the portal on the Ingress Intel site. */
     private final String intelLinkURL;
@@ -55,9 +56,10 @@ public class PortalAccepted extends PortalResponded {
 
     /**
      * Create a new PortalAccepted.
-     * @param name The name of the portal.
+     *
+     * @param name          The name of the portal.
      * @param dateSubmitted The date the portal was submitted.
-     * @param pictureURL The URL of the portal submission picture.
+     * @param pictureURL    The URL of the portal submission picture.
      * @param dateResponded The date that Niantic approved the portal.
      */
     public PortalAccepted(String name, Date dateSubmitted, String pictureURL, Date dateResponded,
@@ -69,6 +71,7 @@ public class PortalAccepted extends PortalResponded {
 
     /**
      * Create a new PortalAccepted from a Parcel.
+     *
      * @param in Parcel that contains the PortalAccepted.
      */
     private PortalAccepted(Parcel in) {
@@ -79,6 +82,7 @@ public class PortalAccepted extends PortalResponded {
 
     /**
      * Get the URL to the portal on the Ingress Intel site.
+     *
      * @return URL to the portal on the Ingress Intel site.
      */
     public String getIntelLinkURL() {
@@ -87,6 +91,7 @@ public class PortalAccepted extends PortalResponded {
 
     /**
      * Get the real-world address of the portal.
+     *
      * @return real-world address of the portal.
      */
     public String getLiveAddress() {

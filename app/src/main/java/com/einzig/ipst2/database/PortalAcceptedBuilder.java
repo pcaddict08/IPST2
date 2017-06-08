@@ -35,7 +35,6 @@ import java.util.regex.Pattern;
  * @author Ryan Porterfield
  * @since 2017-05-19
  */
-
 public final class PortalAcceptedBuilder extends PortalBuilder<PortalAccepted> {
     /**
      * @param db reference to a SQLite database to run queries on
@@ -53,11 +52,13 @@ public final class PortalAcceptedBuilder extends PortalBuilder<PortalAccepted> {
             dateSubmitted = submission.getDateSubmitted();
         String address = parseLiveAddress(message);
         String intelLink = parseIntelLink(message);
-        return new PortalAccepted(name, dateSubmitted, pictureURL, dateResponded, address, intelLink);
+        return new PortalAccepted(name, dateSubmitted, pictureURL, dateResponded, address,
+                intelLink);
     }
 
     /**
      * Create an instance of PortalAccepted from a database entry.
+     *
      * @param cursor Cursor containing the database fields of the portal.
      * @return a PortalAccepted representation of a portal in the database.
      */
@@ -86,8 +87,7 @@ public final class PortalAcceptedBuilder extends PortalBuilder<PortalAccepted> {
         Matcher m = p.matcher(messageString);
         if (m.find()) {
             intelLinkURL = m.group(1);
-        }
-        else
+        } else
             intelLinkURL = "N/A";
         return intelLinkURL;
     }
@@ -105,8 +105,7 @@ public final class PortalAcceptedBuilder extends PortalBuilder<PortalAccepted> {
         Matcher regexMatcher = titleFinder.matcher(messageString);
         if (regexMatcher.find()) {
             liveAddress = regexMatcher.group(1);
-        }
-        else
+        } else
             liveAddress = "N/A";
         return liveAddress;
     }

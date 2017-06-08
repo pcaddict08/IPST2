@@ -21,8 +21,6 @@
  *                                                                            *
  ******************************************************************************/
 
-
-
 package com.einzig.ipst2.parse;
 
 import android.app.Activity;
@@ -82,6 +80,7 @@ class FolderGetter {
 
     /**
      * Set a mail folder to look for Ingress emails
+     *
      * @param folderList List of folders that can be selected.
      */
     private void getCustomFolder(final List<Folder> folderList) {
@@ -99,7 +98,7 @@ class FolderGetter {
     private Folder getDefaultFolder() {
         for (Folder folder : folders) {
             if (folder.getFullName().equals(DEFAULT_FOLDER)) {
-            //if (folder.getFullName().equals(TEST_FOLDER)) {
+                //if (folder.getFullName().equals(TEST_FOLDER)) {
                 return folder;
             }
         }
@@ -146,6 +145,7 @@ class FolderGetter {
 
     /**
      * Called when DEFAULT_FOLDER doesn't exist.
+     *
      * @param folderPref The folder that was previously being used for emails
      * @return a new folder to parse.
      * @see FolderGetter#DEFAULT_FOLDER
@@ -167,17 +167,18 @@ class FolderGetter {
      * Used when the folder we were checking for emails doesn't exist.
      */
     private class AllMailError implements Runnable {
-        /** Dialog title */
-        private String title;
         /** Dialog message */
         private String message;
-        /** Positive button text */
-        private String positive;
         /** Neutral button text */
         private String neutral;
+        /** Positive button text */
+        private String positive;
+        /** Dialog title */
+        private String title;
 
         /**
          * Create a new runnable to handle a missing mail folder error
+         *
          * @param previousFolder Previous folder we checked for mail which doesn't exist.
          */
         AllMailError(String previousFolder) {
@@ -188,7 +189,7 @@ class FolderGetter {
             message = String.format(message, previousFolder);
             neutral = "";
             if (previousFolder.equalsIgnoreCase(DEFAULT_FOLDER)) {
-                 message += activity.getResources().getString(R.string.allmailmissing);
+                message += activity.getResources().getString(R.string.allmailmissing);
             } else {
                 message += activity.getResources().getString(R.string.custommissing);
                 neutral = activity.getResources().getString(R.string.allmail);
@@ -210,10 +211,10 @@ class FolderGetter {
             AlertDialog.Builder builder = new AlertDialog.Builder(activity);
             builder.setTitle(title).setMessage(message);
             builder.setPositiveButton(positive, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            getCustomFolder(folders);
-                        }
-                    });
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    getCustomFolder(folders);
+                }
+            });
             builder.setCancelable(true);
             if (!neutral.equals(""))
                 builder.setNeutralButton(neutral, new DialogInterface.OnClickListener() {

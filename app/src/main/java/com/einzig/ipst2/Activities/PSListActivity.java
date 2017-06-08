@@ -57,55 +57,9 @@ import butterknife.ButterKnife;
 import static com.einzig.ipst2.activities.MainActivity.TAG;
 
 public class PSListActivity extends AppCompatActivity {
-    ArrayList<PortalSubmission> psList = new ArrayList<>();
-
     @BindView(R.id.listview_pslistactivity)
     ListView listView;
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == android.R.id.home) {
-            this.finish();
-            return true;
-        } else if (id == R.id.sortlist_pslistactivity) {
-            sortMenuOptionSelected();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_pslistactivity, menu);
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) menu.findItem(R.id.search_pslistactivity).getActionView();
-        if (searchView != null) {
-            searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-            searchView.setSubmitButtonEnabled(true);
-            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                @Override
-                public boolean onQueryTextSubmit(String query) {
-                    return false;
-                }
-
-                @Override
-                public boolean onQueryTextChange(String newText) {
-                    if (TextUtils.isEmpty(newText)) {
-                        ((ListItemAdapter_PS) listView.getAdapter()).resetData();
-                    } else {
-                        ((ListItemAdapter_PS) listView.getAdapter()).getFilter().filter(newText);
-                    }
-                    return false;
-                }
-            });
-        }
-        else
-            Log.d(TAG, "MENU ITEM ACTION VIEW FOR SEARCH IS NULL");
-
-        return true;
-    }
+    ArrayList<PortalSubmission> psList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,6 +89,51 @@ public class PSListActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_pslistactivity, menu);
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView =
+                (SearchView) menu.findItem(R.id.search_pslistactivity).getActionView();
+        if (searchView != null) {
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+            searchView.setSubmitButtonEnabled(true);
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextChange(String newText) {
+                    if (TextUtils.isEmpty(newText)) {
+                        ((ListItemAdapter_PS) listView.getAdapter()).resetData();
+                    } else {
+                        ((ListItemAdapter_PS) listView.getAdapter()).getFilter().filter(newText);
+                    }
+                    return false;
+                }
+
+                @Override
+                public boolean onQueryTextSubmit(String query) {
+                    return false;
+                }
+            });
+        } else
+            Log.d(TAG, "MENU ITEM ACTION VIEW FOR SEARCH IS NULL");
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            this.finish();
+            return true;
+        } else if (id == R.id.sortlist_pslistactivity) {
+            sortMenuOptionSelected();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     /* Method to sort the list based on settings the user has saved */
@@ -170,7 +169,9 @@ public class PSListActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         String[] some_array = getResources().getStringArray(R.array.sortTypes);
                         System.out.println("SELECTED: " + some_array[which]);
-                        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(PSListActivity.this).edit();
+                        SharedPreferences.Editor editor =
+                                PreferenceManager.getDefaultSharedPreferences(PSListActivity.this)
+                                        .edit();
                         editor.putString("sort-type", some_array[which].toLowerCase());
                         editor.apply();
                         Intent i = getIntent();

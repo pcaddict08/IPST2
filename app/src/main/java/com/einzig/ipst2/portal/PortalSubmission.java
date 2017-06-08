@@ -35,8 +35,6 @@ import java.util.Date;
 import java.util.Locale;
 
 public class PortalSubmission implements Parcelable, Serializable {
-    private static final long serialVersionUID = -223108874747293680L;
-
     /**
      * Inflates a PortalSubmission from a Parcel
      */
@@ -51,32 +49,34 @@ public class PortalSubmission implements Parcelable, Serializable {
             return new PortalSubmission[size];
         }
     };
-
-    /** Date format for returning string dates */
-    SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy", Locale.getDefault());
-
+    private static final long serialVersionUID = -223108874747293680L;
     /**
      * The name of the portal.
+     *
      * @serial
      */
     private final String name;
     /**
-     * The date the portal was submitted.
-     * @serial
-     */
-    private Date dateSubmitted;
-    /**
      * The URL that links to the submission picture.
+     *
      * @serial
      */
     private final String pictureURL;
+    /** Date format for returning string dates */
+    SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy", Locale.getDefault());
+    /**
+     * The date the portal was submitted.
+     *
+     * @serial
+     */
+    private Date dateSubmitted;
 
     /**
      * Create a new PortalSubmission.
      *
-     * @param name The name of the portal.
+     * @param name          The name of the portal.
      * @param dateSubmitted The date the portal was submitted.
-     * @param pictureURL The URL of the portal submission picture.
+     * @param pictureURL    The URL of the portal submission picture.
      */
     public PortalSubmission(String name, Date dateSubmitted, String pictureURL) {
         this.name = name;
@@ -86,6 +86,7 @@ public class PortalSubmission implements Parcelable, Serializable {
 
     /**
      * Create a new PortalSubmission from a Parcel.
+     *
      * @param in Parcel that contains the PortalSubmission.
      */
     PortalSubmission(Parcel in) {
@@ -104,6 +105,7 @@ public class PortalSubmission implements Parcelable, Serializable {
 
     /**
      * Check if two PortalSubmissions are the same.
+     *
      * @param submission The submission being compared.
      * @return @c true if the two portal submissions are the same, otherwise false.
      */
@@ -113,14 +115,24 @@ public class PortalSubmission implements Parcelable, Serializable {
 
     /**
      * Get the date that the portal was submitted.
+     *
      * @return the date that the portal was submitted.
      */
     public Date getDateSubmitted() {
         return dateSubmitted;
     }
 
+    /*
+    * Return days since Niantic has responded
+    * */
+    public int getDaysSinceResponse() {
+        return Days.daysBetween(new DateTime(dateSubmitted).toLocalDate(),
+                new DateTime().toLocalDate()).getDays();
+    }
+
     /**
      * Get the portal's name
+     *
      * @return the portal's name.
      */
     public String getName() {
@@ -129,34 +141,27 @@ public class PortalSubmission implements Parcelable, Serializable {
 
     /**
      * Get the URL of the portal submission picture
+     *
      * @return the portal submission picture URL.
      */
     public String getPictureURL() {
         return pictureURL;
     }
 
+    /*
+    *  Return a formatted submitted date
+    * */
+    public String getSubmittedDateString() {
+        return dateFormat.format(this.dateSubmitted);
+    }
+
     /**
      * Change the date that the portal was submitted.
+     *
      * @param dateSubmitted the modified date the portal was submitted.
      */
     public void setDateSubmitted(Date dateSubmitted) {
         this.dateSubmitted = dateSubmitted;
-    }
-
-    /*
-    *  Return a formatted submitted date
-    * */
-    public String getSubmittedDateString()
-    {
-       return dateFormat.format(this.dateSubmitted);
-    }
-
-    /*
-    * Return days since Niantic has responded
-    * */
-    public int getDaysSinceResponse()
-    {
-        return Days.daysBetween(new DateTime(dateSubmitted).toLocalDate(), new DateTime().toLocalDate()).getDays();
     }
 
     /*

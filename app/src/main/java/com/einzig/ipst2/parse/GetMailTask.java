@@ -83,7 +83,8 @@ public class GetMailTask extends AsyncTask<Void, Void, MailBundle> {
         IMAPStore store = sender.getIMAPStore(account.name, token);
         Log.d(TAG, "store is null? " + (store == null));
         if (store == null) {
-            DialogHelper.showSimpleDialog(R.string.invalidtokentitle_getmailtask, R.string.invalidtokenmessage_getmailtask, activity);
+            DialogHelper.showSimpleDialog(R.string.invalidtokentitle_getmailtask,
+                    R.string.invalidtokenmessage_getmailtask, activity);
             AccountManager.get(activity).invalidateAuthToken("com.google", token);
         } else {
             try {

@@ -53,18 +53,18 @@ import static com.einzig.ipst2.database.DatabaseInterface.dateFormatter;
  * @since 2015-07-30
  */
 public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
+    /** The calling activity. Used to update UI elements */
+    final private MainActivity activity;
+    /** Wrapper class for IMAPStore, Folder, and Message[] resources */
+    final private MailBundle bundle;
     /** Database for adding portals */
     final private DatabaseInterface db;
+    /** Array of messages that match the search terms */
+    final private Message[] messages;
     /** Does the actual parsing of emails */
     final private EmailParser parser;
     /** App preferences */
     final private SharedPreferences preferences;
-    /** Wrapper class for IMAPStore, Folder, and Message[] resources  */
-    final private MailBundle bundle;
-    /** The calling activity. Used to update UI elements */
-    final private MainActivity activity;
-    /** Array of messages that match the search terms */
-    final private Message[] messages;
     /** Display parsing progress */
     private ProgressDialog dialog;
 
@@ -94,12 +94,14 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
         mc.addMailcap("text/xml;; x-java-content-handler=com.sun.mail.handlers.text_xml");
         mc.addMailcap("text/plain;; x-java-content-handler=com.sun.mail.handlers.text_plain");
         mc.addMailcap("multipart/*;; x-java-content-handler=com.sun.mail.handlers.multipart_mixed");
-        mc.addMailcap("message/rfc822;; x-java-content- handler=com.sun.mail.handlers.message_rfc822");
+        mc.addMailcap(
+                "message/rfc822;; x-java-content- handler=com.sun.mail.handlers.message_rfc822");
         CommandMap.setDefaultCommandMap(mc);
     }
 
     /**
      * Add a portal to the database
+     *
      * @param p Instance of PortalSubmission or subclass to add to the database
      */
     private void addPortal(PortalSubmission p) {
@@ -113,6 +115,7 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
 
     /**
      * Add a portal to the database
+     *
      * @param portal Instance of PortalAccepted to add to the database
      */
     private void addPortalAccepted(PortalAccepted portal) {
@@ -125,15 +128,7 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
 
     /**
      * Add a portal to the database
-     * @param portal Instance of PortalSubmission (but not a subclass) to add to the database
-     */
-    private void addPortalSubmission(PortalSubmission portal) {
-        Log.d(TAG, "Adding submitted portal: " + portal.getName());
-        db.addPortalSubmission(portal);
-    }
-
-    /**
-     * Add a portal to the database
+     *
      * @param portal Instance of PortalRejected to add to the database
      */
     private void addPortalRejected(PortalRejected portal) {
@@ -142,6 +137,16 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
         if (pending != null)
             db.deletePending(pending);
         db.addPortalRejected(portal);
+    }
+
+    /**
+     * Add a portal to the database
+     *
+     * @param portal Instance of PortalSubmission (but not a subclass) to add to the database
+     */
+    private void addPortalSubmission(PortalSubmission portal) {
+        Log.d(TAG, "Adding submitted portal: " + portal.getName());
+        db.addPortalSubmission(portal);
     }
 
     @Override
@@ -179,6 +184,7 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
 
     /**
      * Update the mostRecentDate preference after email has been parsed.
+     *
      * @param parseDate Last time email was parsed
      */
     private void onEmailParse(Date parseDate) {
@@ -187,15 +193,6 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(MainActivity.MOST_RECENT_DATE_KEY, dateString);
         editor.apply();
-    }
-
-    /*
-     * Populate messages array and display progress dialog
-     */
-    @Override
-    protected void onPreExecute() {
-        activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        dialog.show();
     }
 
     /*
@@ -209,6 +206,15 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
         activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         dialog.dismiss();
         activity.buildUIAfterParsing();
+    }
+
+    /*
+     * Populate messages array and display progress dialog
+     */
+    @Override
+    protected void onPreExecute() {
+        activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        dialog.show();
     }
 
     /*

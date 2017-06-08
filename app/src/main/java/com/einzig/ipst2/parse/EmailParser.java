@@ -62,7 +62,29 @@ class EmailParser {
     }
 
     /**
+     * Get a portal object from an email
+     *
+     * @param message A Message being parsed.
+     * @return PortalSubmission or subclass if the email can be parsed, otherwise null
+     */
+    PortalSubmission getPortal(Message message) {
+        String messageString, subject;
+        Date receivedDate;
+        try {
+            subject = message.getSubject();
+            receivedDate = message.getReceivedDate();
+        } catch (MessagingException e) {
+            return null;
+        }
+        /*if (!isEmailFromNiantic(message))
+            return null;*/
+        messageString = getText(message);
+        return parse(subject, messageString, receivedDate);
+    }
+
+    /**
      * Get portal name from email subject
+     *
      * @param subject Email subject line
      * @return portal name from email subjec
      */
@@ -72,6 +94,7 @@ class EmailParser {
 
     /**
      * Get body of the email
+     *
      * @param p The body of the message.
      * @return A String representation of the email body.
      */
@@ -103,29 +126,11 @@ class EmailParser {
     }
 
     /**
-     * Get a portal object from an email
-     * @param message A Message being parsed.
-     * @return PortalSubmission or subclass if the email can be parsed, otherwise null
-     */
-    PortalSubmission getPortal(Message message) {
-        String messageString, subject;
-        Date receivedDate;
-        try {
-            subject = message.getSubject();
-            receivedDate = message.getReceivedDate();
-        } catch (MessagingException e) {
-            return null;
-        }
-        /*if (!isEmailFromNiantic(message))
-            return null;*/
-        messageString = getText(message);
-        return parse(subject, messageString, receivedDate);
-    }
-
-    /** TODO: Speed up parsing
+     * TODO: Speed up parsing
      * Parse a portal submission email
-     * @param subject Email subject line
-     * @param message Email body
+     *
+     * @param subject      Email subject line
+     * @param message      Email body
      * @param receivedDate Date the email was delivered
      * @return PortalSubmission or subclass if the email can be parsed, otherwise null
      */
@@ -146,8 +151,9 @@ class EmailParser {
 
     /**
      * Parse the new portal submission email format
-     * @param portalName Name of the portal
-     * @param message Email body
+     *
+     * @param portalName   Name of the portal
+     * @param message      Email body
      * @param receivedDate Date the email was delivered
      * @return PortalSubmission or subclass if the email can be parsed, otherwise null
      */

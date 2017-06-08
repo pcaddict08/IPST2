@@ -57,6 +57,7 @@ public class AuthenticatorTask extends AsyncTask<Void, Void, String> {
 
     /**
      * Authenticate with GMail.
+     *
      * @return the OAuth token as a string.
      */
     private String authenticate() {

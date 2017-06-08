@@ -33,7 +33,6 @@ import java.util.Date;
  * @author Ryan Porterfield
  * @since 2017-05-19
  */
-
 public final class PortalRejectedBuilder extends PortalBuilder<PortalRejected> {
     /**
      * @param db reference to a SQLite database to run queries on
@@ -44,6 +43,7 @@ public final class PortalRejectedBuilder extends PortalBuilder<PortalRejected> {
 
     /**
      * Create an instance of PortalRejected from a database entry.
+     *
      * @param cursor Cursor containing the database fields of the portal.
      * @return a PortalRejected representation of a portal in the database.
      */
@@ -72,6 +72,7 @@ public final class PortalRejectedBuilder extends PortalBuilder<PortalRejected> {
 
     /**
      * Parse the reason a portal was rejected.
+     *
      * @param messageString The body of the email as a String for parsing.
      * @return the reason the portal was rejected.
      */
@@ -82,7 +83,7 @@ public final class PortalRejectedBuilder extends PortalBuilder<PortalRejected> {
         if (messageString.contains("duplicate"))
             rejectionReason = "Duplicate of another portal";
         if (messageString.contains("too close")) {
-            if(rejectionReason.equalsIgnoreCase("N/A"))
+            if (rejectionReason.equalsIgnoreCase("N/A"))
                 rejectionReason = "Too Close to another portal";
             else
                 rejectionReason = rejectionReason + " or too close to another portal";

@@ -84,11 +84,8 @@ import butterknife.OnClick;
  * @author Steven Foskett
  * @since 2017-05-15
  */
-public class MainActivity extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener {
-    /**
-     * ???
-     */
-    static public final String EXTRA_ACCOUNTNAME = "extra_accountname";
+public class MainActivity extends AppCompatActivity
+        implements CompoundButton.OnCheckedChangeListener {
     /**
      * Preferences key used for saving and retrieving the user's email address
      */
@@ -125,47 +122,45 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
      * Tag used for logging for this class
      */
     static public final String TAG = "IPST";
+    static final int REQUEST_CODE_EMAIL = 1;
+    static final int REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR = 1002;
     /**
      * Used to get the result of LoginActivity
      */
     static private final int LOGIN_ACTIVITY_CODE = 0;
-    static final int REQUEST_CODE_EMAIL = 1;
-    static final int REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR = 1002;
-
-    /** Database Handle for getting portals and such */
-    private DatabaseInterface db;
-    /**  */
-    private Date viewDate;
-    /** Preferences for saving app settings */
-    private SharedPreferences preferences;
-
-    /*Butterknife Binds for Views*/
-    @BindView(R.id.viewlist_mainactivity)
-    Button viewButton;
-    @BindView(R.id.pendingtext_mainactivity)
-    TextView pendingtext;
-    @BindView(R.id.acceptedtext_mainactivity)
-    TextView acceptedtext;
-    @BindView(R.id.rejectedtext_mainactivity)
-    TextView rejectedtext;
     @BindView(R.id.acceptedgraph_mainactivity)
     TextView acceptedgraph;
-    @BindView(R.id.rejectedgraph_mainactivity)
-    TextView rejectedgraph;
-    @BindView(R.id.pendinggraph_mainactivity)
-    TextView pendinggraph;
-    @BindView(R.id.todaytab_mainactivity)
-    RadioButton todaytab;
-    @BindView(R.id.weektab_mainactivity)
-    RadioButton weektab;
-    @BindView(R.id.monthtab_mainactivity)
-    RadioButton monthtab;
+    @BindView(R.id.acceptedtext_mainactivity)
+    TextView acceptedtext;
     @BindView(R.id.alltab_mainactivity)
     RadioButton alltab;
     @BindView(R.id.gmail_login_button)
     Button gmail_login_button;
+    @BindView(R.id.monthtab_mainactivity)
+    RadioButton monthtab;
+    @BindView(R.id.pendinggraph_mainactivity)
+    TextView pendinggraph;
+    @BindView(R.id.pendingtext_mainactivity)
+    TextView pendingtext;
     @BindView(R.id.progress_view_mainactivity)
     LinearLayout progress_view_mainactivity;
+    @BindView(R.id.rejectedgraph_mainactivity)
+    TextView rejectedgraph;
+    @BindView(R.id.rejectedtext_mainactivity)
+    TextView rejectedtext;
+    @BindView(R.id.todaytab_mainactivity)
+    RadioButton todaytab;
+    /*Butterknife Binds for Views*/
+    @BindView(R.id.viewlist_mainactivity)
+    Button viewButton;
+    @BindView(R.id.weektab_mainactivity)
+    RadioButton weektab;
+    /** Database Handle for getting portals and such */
+    private DatabaseInterface db;
+    /** Preferences for saving app settings */
+    private SharedPreferences preferences;
+    /**  */
+    private Date viewDate;
 
     /**
      * MainActivity constructor, initialize variables.
@@ -176,9 +171,9 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         viewDate = null;
     }
 
-    /*
-    *  Method for building/showing the ui once emails are parsed.
-    */
+    /**
+     * Build and showing the UI once emails are parsed.
+     */
     public void buildUIAfterParsing() {
         DatabaseInterface db = new DatabaseInterface(this);
         long accepted = db.getAcceptedCount();
@@ -213,8 +208,8 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         });
     }
 
-    /*
-    * Method to format UI when changing radio buttons
+    /**
+     * Format UI when changing radio buttons
      */
     public void formatUI(long accepted, long rejected, long pending) {
         pendingtext.setText(String.format(Locale.getDefault(), "%d", pending));
@@ -224,9 +219,12 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         setLayoutParamsGraphBars((int) ((pending * 100) / (totalnum)), pendinggraph);
         setLayoutParamsGraphBars((int) ((rejected * 100) / (totalnum)), rejectedgraph);
         setLayoutParamsGraphBars((int) ((accepted * 100) / (totalnum)), acceptedgraph);
-        acceptedgraph.setText(String.format(Locale.getDefault(), "%d%%", (int) ((accepted * 100) / (totalnum))));
-        rejectedgraph.setText(String.format(Locale.getDefault(), "%d%%", (int) ((rejected * 100) / (totalnum))));
-        pendinggraph.setText(String.format(Locale.getDefault(), "%d%%", (int) ((pending * 100) / (totalnum))));
+        acceptedgraph.setText(
+                String.format(Locale.getDefault(), "%d%%", (int) ((accepted * 100) / (totalnum))));
+        rejectedgraph.setText(
+                String.format(Locale.getDefault(), "%d%%", (int) ((rejected * 100) / (totalnum))));
+        pendinggraph.setText(
+                String.format(Locale.getDefault(), "%d%%", (int) ((pending * 100) / (totalnum))));
     }
 
     /**
@@ -255,7 +253,8 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     private void getPreferences() {
         preferences = getPreferences(MODE_PRIVATE);
         Log.i(TAG, EMAIL_KEY + " -> " + preferences.getString(EMAIL_KEY, NULL_KEY));
-        Log.i(TAG, MOST_RECENT_DATE_KEY + " -> " + preferences.getString(MOST_RECENT_DATE_KEY, NULL_KEY));
+        Log.i(TAG, MOST_RECENT_DATE_KEY + " -> " +
+                preferences.getString(MOST_RECENT_DATE_KEY, NULL_KEY));
         Log.i(TAG, SORT_KEY + " -> " + preferences.getString(SORT_KEY, NULL_KEY));
     }
 
@@ -286,7 +285,6 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
             Intent intent = AccountManager.newChooseAccountIntent(null, null,
                     new String[]{"com.google"}, false, null, null, null, null);
             startActivityForResult(intent, LOGIN_ACTIVITY_CODE);
-
         }
     }
 
@@ -332,13 +330,13 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
                     == PackageManager.PERMISSION_GRANTED) {
                 gotPermission_accounts();
             } else {
-                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.GET_ACCOUNTS}, REQUEST_CODE_EMAIL);
+                ActivityCompat.requestPermissions(this,
+                        new String[]{android.Manifest.permission.GET_ACCOUNTS}, REQUEST_CODE_EMAIL);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
 
     /*
      * Callback method if an activity is started for result via startActivityForResult().
@@ -366,9 +364,9 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         }
     }
 
-    /*
-    *  This method fixes formatting when radio boxes are changed
-    * */
+    /**
+     * This method fixes formatting when radio boxes are changed
+     */
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         buttonView.setTypeface(isChecked ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
@@ -378,7 +376,49 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
                 : getResources().getDrawable(R.drawable.cell_shape_radio_clear));
     }
 
-    /* Method for when view list button is clicked */
+    /*
+     * View list of accepted portals
+     */
+    @OnClick({R.id.acceptedbutton_mainactivity})
+    public void onClickAccepted(View view) {
+        Log.d(TAG, "Status list button clicked");
+        Vector<PortalAccepted> portals;
+        if (viewDate == null)
+            portals = db.getAllAccepted();
+        else
+            portals = db.getAcceptedByResponseDate(viewDate);
+        openList(portals);
+    }
+
+    /*
+     * View list of pending portals
+     */
+    @OnClick({R.id.pendingbutton_mainactivity})
+    public void onClickPending(View view) {
+        Vector<PortalSubmission> portals;
+        if (viewDate == null)
+            portals = db.getAllPending();
+        else
+            portals = db.getPendingByDate(viewDate);
+        openList(portals);
+    }
+
+    /*
+     * View list of rejected portals
+     */
+    @OnClick({R.id.rejectedbutton_mainactivity})
+    public void onClickRejected(View view) {
+        Vector<PortalRejected> portals;
+        if (viewDate == null)
+            portals = db.getAllRejected();
+        else
+            portals = db.getRejectedByResponseDate(viewDate);
+        openList(portals);
+    }
+
+    /*
+     * View list of all portals
+     */
     @OnClick(R.id.viewlist_mainactivity)
     public void onClickViewList(View view) {
         Log.d(TAG, "View all button clicked");
@@ -398,38 +438,6 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         }
 
         openList(mainList);
-    }
-
-    /* Method for viewing specific lists */
-    @OnClick({R.id.acceptedbutton_mainactivity})
-    public void onClickAccepted(View view) {
-        Log.d(TAG, "Status list button clicked");
-        Vector<PortalAccepted> portals;
-        if (viewDate == null)
-            portals = db.getAllAccepted();
-        else
-            portals = db.getAcceptedByResponseDate(viewDate);
-        openList(portals);
-    }
-
-    @OnClick({R.id.pendingbutton_mainactivity})
-    public void onClickPending(View view) {
-        Vector<PortalSubmission> portals;
-        if (viewDate == null)
-            portals = db.getAllPending();
-        else
-            portals = db.getPendingByDate(viewDate);
-        openList(portals);
-    }
-
-    @OnClick({R.id.rejectedbutton_mainactivity})
-    public void onClickRejected(View view) {
-        Vector<PortalRejected> portals;
-        if (viewDate == null)
-            portals = db.getAllRejected();
-        else
-            portals = db.getRejectedByResponseDate(viewDate);
-        openList(portals);
     }
 
     /*
@@ -468,16 +476,17 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
-            case R.id.settings_mainactivity:
-                startActivity(new Intent(this, SettingsActivity.class));
-            default:
-                return super.onOptionsItemSelected(item);
+        case R.id.settings_mainactivity:
+            startActivity(new Intent(this, SettingsActivity.class));
+        default:
+            return super.onOptionsItemSelected(item);
         }
     }
 
     /**
-     *  Method for when radiobuttons are clicked
-     *  @param view RadioButton
+     * Method for when radiobuttons are clicked
+     *
+     * @param view RadioButton
      */
     public void onRadioButtonClicked(View view) {
         if (!((RadioButton) view).isChecked())
@@ -487,23 +496,23 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         // Check which radio button was clicked
         Button viewList = (Button) findViewById(R.id.viewlist_mainactivity);
         switch (view.getId()) {
-            case R.id.todaytab_mainactivity:
-                viewDate = new DateTime().minusDays(1).toDate();
-                viewList.setText(R.string.viewlisttoday);
-                break;
-            case R.id.weektab_mainactivity:
-                viewDate = new DateTime().minusDays(7).toDate();
-                viewList.setText(R.string.viewlistweek);
-                break;
-            case R.id.monthtab_mainactivity:
-                viewDate = new DateTime().minusMonths(1).toDate();
-                viewList.setText(R.string.viewlistmonth);
-                break;
-            case R.id.alltab_mainactivity:
-                viewDate = null;
-                formatUI(db.getAcceptedCount(), db.getRejectedCount(), db.getPendingCount());
-                viewList.setText(R.string.viewlistall);
-                break;
+        case R.id.todaytab_mainactivity:
+            viewDate = new DateTime().minusDays(1).toDate();
+            viewList.setText(R.string.viewlisttoday);
+            break;
+        case R.id.weektab_mainactivity:
+            viewDate = new DateTime().minusDays(7).toDate();
+            viewList.setText(R.string.viewlistweek);
+            break;
+        case R.id.monthtab_mainactivity:
+            viewDate = new DateTime().minusMonths(1).toDate();
+            viewList.setText(R.string.viewlistmonth);
+            break;
+        case R.id.alltab_mainactivity:
+            viewDate = null;
+            formatUI(db.getAcceptedCount(), db.getRejectedCount(), db.getPendingCount());
+            viewList.setText(R.string.viewlistall);
+            break;
         }
         Log.d(TAG, "viewDate -> " + viewDate);
         if (viewDate == null)
@@ -540,15 +549,17 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
             intent.putExtra("psList", list);
             startActivity(intent);
         } else {
-            DialogHelper.showSimpleDialog(R.string.noportalwarning, R.string.noportalmessage, MainActivity.this);
+            DialogHelper.showSimpleDialog(R.string.noportalwarning, R.string.noportalmessage,
+                    MainActivity.this);
         }
     }
 
     /**
      * Wrapper function for parseEmailWork.
      * <p>
-     *     Builds the progress dialog for, then calls parseEmailWork
+     * Builds the progress dialog for, then calls parseEmailWork
      * </p>
+     *
      * @see MainActivity#parseEmailWork(Account, ProgressDialog)
      */
     private void parseEmail() {
@@ -568,15 +579,16 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     /**
      * Parses emails for portals
      * <p>
-     *     Runs 3 tasks to:
-     *     <ol>
-     *         <li>Get OAuth token</li>
-     *         <li>Search for relevant emails</li>
-     *         <li>Parse portals from the relevant emails</li>
-     *     </ol>
+     * Runs 3 tasks to:
+     * <ol>
+     * <li>Get OAuth token</li>
+     * <li>Search for relevant emails</li>
+     * <li>Parse portals from the relevant emails</li>
+     * </ol>
      * </p>
+     *
      * @param account GMail account
-     * @param dialog Progress dialog to display while authenticating and searching for mail
+     * @param dialog  Progress dialog to display while authenticating and searching for mail
      */
     private void parseEmailWork(Account account, ProgressDialog dialog) {
         try {
@@ -600,7 +612,8 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
      */
     public void setLayoutParamsGraphBars(int height, TextView layout) {
         ViewGroup.LayoutParams params = layout.getLayoutParams();
-        params.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, height + 35, getResources().getDisplayMetrics());
+        params.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, height + 35,
+                getResources().getDisplayMetrics());
         Log.d(TAG, "HEIGHT: " + params.height);
         layout.setLayoutParams(params);
     }

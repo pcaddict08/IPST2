@@ -27,13 +27,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 
 /**
- * Created by Steven Foskett on 5/26/2017.
+ * @author Steven Foskett
+ * @since 2017-05-26
  */
 public class DialogHelper {
 
-    public static void showSimpleDialog(final int title, final int message, final Context context)
-    {
-        try{
+    public static void showSimpleDialog(final int title, final int message, final Context context) {
+        try {
             ((Activity) context).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -48,10 +48,8 @@ public class DialogHelper {
                             .show();
                 }
             });
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
 }

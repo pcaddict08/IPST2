@@ -39,7 +39,6 @@ import static com.einzig.ipst2.database.DatabaseInterface.dateFormatter;
  * @author Ryan Porterfield
  * @since 2017-05-19
  */
-
 public abstract class PortalBuilder<P extends PortalSubmission> {
     /** Reference to a SQLite database to run queries on */
     private final SQLiteDatabase db;
@@ -56,6 +55,7 @@ public abstract class PortalBuilder<P extends PortalSubmission> {
 
     /**
      * Create an instance of Portal* from a database entry.
+     *
      * @param cursor Cursor containing the database fields of the portal.
      * @return instance of Portal* from a database entry.
      */
@@ -64,9 +64,9 @@ public abstract class PortalBuilder<P extends PortalSubmission> {
     /**
      * Create a new portal
      *
-     * @param name The portal name.
+     * @param name          The portal name.
      * @param dateResponded The date the portal was rejected.
-     * @param message The body of the email as a String for parsing.
+     * @param message       The body of the email as a String for parsing.
      */
     public abstract P build(String name, Date dateResponded, String message);
 
@@ -76,7 +76,7 @@ public abstract class PortalBuilder<P extends PortalSubmission> {
 
     /**
      * @param selection Selection parameters following a WHERE clause in the SELECT statement
-     * @param values Values to fill wildcards in selection
+     * @param values    Values to fill wildcards in selection
      * @return the first portal matching selection
      */
     P getPortal(final String selection, final String[] values) {
@@ -86,8 +86,9 @@ public abstract class PortalBuilder<P extends PortalSubmission> {
 
     /**
      * Create a Vector of portals from a database query.
+     *
      * @param selection Selection parameters following a WHERE clause in the SELECT statement
-     * @param values Values to fill wildcards in selection
+     * @param values    Values to fill wildcards in selection
      * @return Vector of accepted portals from a database query string.
      */
     Vector<P> getPortals(final String selection, final String[] values) {
@@ -106,12 +107,13 @@ public abstract class PortalBuilder<P extends PortalSubmission> {
 
     /**
      * Get all portals in a range of dates.
-     * @param dateKey Database key used for searching. Can be either KEY_DATE_SUBMITTED or
-     *                KEY_DATE_RESPONDED
+     *
+     * @param dateKey  Database key used for searching. Can be either KEY_DATE_SUBMITTED or
+     *                 KEY_DATE_RESPONDED
      * @param fromDate Date to start searching from
-     * @param toDate Date to stop searching at
+     * @param toDate   Date to stop searching at
      * @return Vector of portals which were either submitted or approved from fromDate to
-     *         toDate.
+     * toDate.
      * @see DatabaseInterface#KEY_DATE_RESPONDED
      * @see DatabaseInterface#KEY_DATE_SUBMITTED
      */
@@ -123,6 +125,7 @@ public abstract class PortalBuilder<P extends PortalSubmission> {
 
     /**
      * Parse a String to a Date.
+     *
      * @param dateString The date in ISO format yyyy-MM-dd HH:mm:ss
      * @return a Date object representing the date that dateString contained.
      */
@@ -138,6 +141,7 @@ public abstract class PortalBuilder<P extends PortalSubmission> {
 
     /**
      * Parse the URL of the portal picture from the email.
+     *
      * @param message The body of the email as a String for parsing.
      * @return the URL of the portal picture.
      */

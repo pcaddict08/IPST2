@@ -33,7 +33,6 @@ import java.util.Date;
  * @author Ryan Porterfield
  * @since 2017-05-19
  */
-
 public final class PortalSubmissionBuilder extends PortalBuilder<PortalSubmission> {
     /**
      * @param db reference to a SQLite database to run queries on
@@ -44,6 +43,7 @@ public final class PortalSubmissionBuilder extends PortalBuilder<PortalSubmissio
 
     /**
      * Create an instance of PortalSubmission from a database entry.
+     *
      * @param cursor Cursor containing the database fields of the portal.
      * @return a PortalSubmission representation of a portal in the database.
      */
