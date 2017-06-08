@@ -388,15 +388,14 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
             mainList = db.getAllPortals();
         } else if (((Button) view).getText().toString().equals(getString(R.string.viewlistmonth))) {
             Log.d(MainActivity.TAG, "Going to Month List");
-            db.getAllPortalsFromDate(new DateTime().minusDays(30).toDate());
+            mainList = db.getAllPortalsFromDate(new DateTime().minusMonths(1).toDate());
         } else if (((Button) view).getText().toString().equals(getString(R.string.viewlistweek))) {
             Log.d(MainActivity.TAG, "Going to Week List");
-            db.getAllPortalsFromDate(new DateTime().minusDays(7).toDate());
+            mainList = db.getAllPortalsFromDate(new DateTime().minusDays(7).toDate());
         } else if (((Button) view).getText().toString().equals(getString(R.string.viewlisttoday))) {
             Log.d(MainActivity.TAG, "Going to Today List");
-            db.getAllPortalsFromDate(new DateTime().minusDays(1).toDate());
+            mainList = db.getAllPortalsFromDate(new DateTime().minusDays(1).toDate());
         }
-
         openList(mainList);
     }
 

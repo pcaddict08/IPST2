@@ -24,7 +24,11 @@
 package com.einzig.ipst2.database;
 
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
+
+import com.einzig.ipst2.activities.MainActivity;
 import com.einzig.ipst2.portal.PortalSubmission;
 
 import java.text.ParseException;
@@ -77,13 +81,16 @@ abstract class PortalBuilder<P extends PortalSubmission> {
         Vector<P> portals = new Vector<>();
         Cursor cursor;
         cursor = db.query(table, null, selection, values, null, null, null, null);
+        Log.d(MainActivity.TAG, "CURSOR: " + DatabaseUtils.dumpCursorToString(cursor));
         if (cursor.getCount() < 1)    // return empty list
             return portals;
         cursor.moveToFirst();
         do {
+            Log.d(MainActivity.TAG, "ADDING PORTAL");
             portals.add(createPortal(cursor));
         } while (cursor.moveToNext());
         cursor.close();
+        Log.d(MainActivity.TAG, "GOT PORTALS: " + portals.size());
         return portals;
     }
 
