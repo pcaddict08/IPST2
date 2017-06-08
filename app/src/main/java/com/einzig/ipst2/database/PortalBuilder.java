@@ -25,7 +25,6 @@ package com.einzig.ipst2.database;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-
 import com.einzig.ipst2.portal.PortalSubmission;
 
 import java.text.ParseException;
