@@ -90,6 +90,7 @@ public class PSDetailsActivity extends AppCompatActivity {
     @BindView(R.id.submitted_psdetailsactivity)
     TextView submittedLabel;
 
+
     public void buildUI() {
         Log.d(TAG, "PS Type: " + portalSubmission.getClass().getName());
         namelabel.setText(portalSubmission.getName());

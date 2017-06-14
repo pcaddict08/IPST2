@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:id="@+id/settings_mainactivity"
-        android:title="Settings"
-        app:showAsAction="never"/>
+    <item
+        android:id="@+id/refresh_mainactivity"
+        android:icon="@drawable/ic_refresh_24dp"
+        android:title="@string/refresh_menumainactivity"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/settings_mainactivity"
+        android:icon="@drawable/ic_settings_24dp"
+        android:title="@string/title_settingsactivity"
+        app:showAsAction="ifRoom" />
 </menu>

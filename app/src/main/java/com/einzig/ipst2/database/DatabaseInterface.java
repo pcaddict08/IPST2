@@ -485,9 +485,9 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     private long getCountByDate(String table, String dateKey, Date fromDate, Date toDate) {
         String fromDateStr = dateFormatter.format(fromDate);
         String toDateStr = dateFormatter.format(toDate);
-        return getEntryCount(table, "? BETWEEN ? AND ?",
-                new String[]{dateKey, fromDateStr, toDateStr});
-    }
+
+        return getEntryCount(table, dateKey + " BETWEEN ? AND ?",
+                new String[] {fromDateStr, toDateStr});
 
     /**
      * Get the total number of portals in the database

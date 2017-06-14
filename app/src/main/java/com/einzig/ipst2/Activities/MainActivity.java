@@ -33,9 +33,11 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -50,6 +52,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.einzig.ipst2.DialogHelper;
@@ -128,6 +131,7 @@ public class MainActivity extends AppCompatActivity
      * Used to get the result of LoginActivity
      */
     static private final int LOGIN_ACTIVITY_CODE = 0;
+
     @BindView(R.id.acceptedgraph_mainactivity)
     TextView acceptedgraph;
     @BindView(R.id.acceptedtext_mainactivity)
@@ -162,6 +166,7 @@ public class MainActivity extends AppCompatActivity
     /**  */
     private Date viewDate;
 
+
     /**
      * MainActivity constructor, initialize variables.
      */
@@ -179,13 +184,25 @@ public class MainActivity extends AppCompatActivity
         long accepted = db.getAcceptedCount();
         long pending = db.getPendingCount();
         long rejected = db.getRejectedCount();
-        findViewById(R.id.progress_view_mainactivity).setVisibility(View.INVISIBLE);
-        findViewById(R.id.mainui_mainactivity).setVisibility(View.VISIBLE);
+        progress_view_mainactivity.setVisibility(View.INVISIBLE);
+        mainui_mainactivity.setVisibility(View.VISIBLE);
+        tabs_mainactivity.setVisibility(View.VISIBLE);
+        viewButton.setVisibility(View.VISIBLE);
         formatUI(accepted, rejected, pending);
         todaytab.setOnCheckedChangeListener(this);
         weektab.setOnCheckedChangeListener(this);
         monthtab.setOnCheckedChangeListener(this);
         alltab.setOnCheckedChangeListener(this);
+    }
+
+    /* RESET ui to show gmail button*/
+    public void resetUI()
+    {
+        gmail_login_button.setVisibility(View.VISIBLE);
+        progress_view_mainactivity.setVisibility(View.INVISIBLE);
+        mainui_mainactivity.setVisibility(View.INVISIBLE);
+        tabs_mainactivity.setVisibility(View.INVISIBLE);
+        viewButton.setVisibility(View.INVISIBLE);
     }
 
     /**
@@ -215,16 +232,15 @@ public class MainActivity extends AppCompatActivity
         pendingtext.setText(String.format(Locale.getDefault(), "%d", pending));
         acceptedtext.setText(String.format(Locale.getDefault(), "%d", accepted));
         rejectedtext.setText(String.format(Locale.getDefault(), "%d", rejected));
-        long totalnum = accepted + rejected + pending + 1;
+        double totalnum = accepted + rejected + pending;
+        if (totalnum == 0)
+            totalnum += 1;
         setLayoutParamsGraphBars((int) ((pending * 100) / (totalnum)), pendinggraph);
         setLayoutParamsGraphBars((int) ((rejected * 100) / (totalnum)), rejectedgraph);
         setLayoutParamsGraphBars((int) ((accepted * 100) / (totalnum)), acceptedgraph);
-        acceptedgraph.setText(
-                String.format(Locale.getDefault(), "%d%%", (int) ((accepted * 100) / (totalnum))));
-        rejectedgraph.setText(
-                String.format(Locale.getDefault(), "%d%%", (int) ((rejected * 100) / (totalnum))));
-        pendinggraph.setText(
-                String.format(Locale.getDefault(), "%d%%", (int) ((pending * 100) / (totalnum))));
+        acceptedgraph.setText(String.format(Locale.getDefault(), "%.1f%%", ((accepted * 100) / (totalnum))));
+        rejectedgraph.setText(String.format(Locale.getDefault(), "%.1f%%", ((rejected * 100) / (totalnum))));
+        pendinggraph.setText(String.format(Locale.getDefault(), "%.1f%%", ((pending * 100) / (totalnum))));
     }
 
     /**
@@ -251,7 +267,7 @@ public class MainActivity extends AppCompatActivity
      * Get saved user preferences.
      */
     private void getPreferences() {
-        preferences = getPreferences(MODE_PRIVATE);
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);//getPreferences(MODE_PRIVATE);
         Log.i(TAG, EMAIL_KEY + " -> " + preferences.getString(EMAIL_KEY, NULL_KEY));
         Log.i(TAG, MOST_RECENT_DATE_KEY + " -> " +
                 preferences.getString(MOST_RECENT_DATE_KEY, NULL_KEY));
@@ -345,22 +361,29 @@ public class MainActivity extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.d(TAG, "onActivityResult(" + requestCode + ") -> " + resultCode);
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode != LOGIN_ACTIVITY_CODE || resultCode != RESULT_OK) {
-            return;
-        }
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(EMAIL_KEY, data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME));
-        editor.apply();
-        Log.d(TAG, "Got account name " + data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME));
-        parseEmail();
-        Account me = getAccount();
-        if (me != null) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-            // SHOW LOADING THINGIES
-            findViewById(R.id.progress_view_mainactivity).setVisibility(View.VISIBLE);
-            findViewById(R.id.gmail_login_button).setVisibility(View.INVISIBLE);
-        } else {
-            errorFoundMessage(R.string.accountnotfoundtitle, R.string.accountnotfoundmessage);
+        switch (requestCode)
+        {
+            case LOGIN_ACTIVITY_CODE:
+                if(resultCode != RESULT_OK)
+                    return;
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putString(EMAIL_KEY, data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME));
+                editor.apply();
+                Log.d(TAG, "Got account name " + data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME));
+                parseEmail();
+                Account me = getAccount();
+                if (me != null) {
+                    getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                    findViewById(R.id.progress_view_mainactivity).setVisibility(View.VISIBLE);
+                    findViewById(R.id.gmail_login_button).setVisibility(View.INVISIBLE);
+                } else {
+                    errorFoundMessage(R.string.accountnotfoundtitle, R.string.accountnotfoundmessage);
+                }
+                break;
+            case SETTINGS_ACTIVITY_CODE:
+                if(preferences != null && preferences.getString(EMAIL_KEY, NULL_KEY).equalsIgnoreCase(NULL_KEY))
+                    resetUI();
+                break;
         }
     }
 
@@ -370,10 +393,10 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         buttonView.setTypeface(isChecked ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
-        buttonView.setTextColor(isChecked ? getResources().getColor(R.color.white)
-                : getResources().getColor(R.color.colorPrimaryDark));
-        buttonView.setBackground(isChecked ? getResources().getDrawable(R.drawable.cell_shape_radio)
-                : getResources().getDrawable(R.drawable.cell_shape_radio_clear));
+        buttonView.setTextColor(isChecked ? ActivityCompat.getColor(this, R.color.white)
+                : ActivityCompat.getColor(this, R.color.colorPrimaryDark));
+        buttonView.setBackground(isChecked ? ActivityCompat.getDrawable(this, R.drawable.cell_shape_radio)
+                : ActivityCompat.getDrawable(this, R.drawable.cell_shape_radio_clear));
     }
 
     /*
@@ -428,13 +451,13 @@ public class MainActivity extends AppCompatActivity
             mainList = db.getAllPortals();
         } else if (((Button) view).getText().toString().equals(getString(R.string.viewlistmonth))) {
             Log.d(TAG, "Going to Month List");
-            db.getAllPortalsFromDate(new DateTime().minusDays(30).toDate());
+            mainList = db.getAllPortalsFromDate(new DateTime().minusDays(30).toDate());
         } else if (((Button) view).getText().toString().equals(getString(R.string.viewlistweek))) {
             Log.d(TAG, "Going to Week List");
-            db.getAllPortalsFromDate(new DateTime().minusDays(7).toDate());
+            mainList = db.getAllPortalsFromDate(new DateTime().minusDays(7).toDate());
         } else if (((Button) view).getText().toString().equals(getString(R.string.viewlisttoday))) {
             Log.d(TAG, "Going to Today List");
-            db.getAllPortalsFromDate(new DateTime().minusDays(1).toDate());
+            mainList = db.getAllPortalsFromDate(new DateTime().minusDays(1).toDate());
         }
 
         openList(mainList);
@@ -451,6 +474,12 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+        ActionBar ab = getSupportActionBar();
+        if (ab != null) {
+            ab.setLogo(R.mipmap.ic_launcher);
+            ab.setDisplayUseLogoEnabled(true);
+            ab.setDisplayShowHomeEnabled(true);
+        }
         getPreferences();
         gmail_login_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -458,11 +487,17 @@ public class MainActivity extends AppCompatActivity
                 loginHitMethod();
             }
         });
+        Log.d(MainActivity.TAG, "PREF FOR EMAIL: " + preferences.getString(EMAIL_KEY, NULL_KEY));
         if (!preferences.getString(EMAIL_KEY, NULL_KEY).equalsIgnoreCase(NULL_KEY)) {
             progress_view_mainactivity.setVisibility(View.VISIBLE);
             gmail_login_button.setVisibility(View.INVISIBLE);
             parseEmail();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override
@@ -476,11 +511,16 @@ public class MainActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
-        case R.id.settings_mainactivity:
-            startActivity(new Intent(this, SettingsActivity.class));
-        default:
-            return super.onOptionsItemSelected(item);
+
+            case R.id.settings_mainactivity:
+                startActivityForResult(new Intent(this, SettingsActivity.class), SETTINGS_ACTIVITY_CODE);
+                break;
+            case R.id.refresh_mainactivity:
+                finish();
+                startActivity(getIntent());
+                break;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     /**
