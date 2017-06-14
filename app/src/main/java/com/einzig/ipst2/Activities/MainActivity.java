@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity
      * Used to get the result of LoginActivity
      */
     static private final int LOGIN_ACTIVITY_CODE = 0;
-
+    static private final int SETTINGS_ACTIVITY_CODE = 101;
     @BindView(R.id.acceptedgraph_mainactivity)
     TextView acceptedgraph;
     @BindView(R.id.acceptedtext_mainactivity)
@@ -159,6 +159,10 @@ public class MainActivity extends AppCompatActivity
     Button viewButton;
     @BindView(R.id.weektab_mainactivity)
     RadioButton weektab;
+    @BindView(R.id.mainui_mainactivity)
+    RadioButton mainui_mainactivity;
+    @BindView(R.id.tabs_mainactivity)
+    RadioGroup tabs_mainactivity;
     /** Database Handle for getting portals and such */
     private DatabaseInterface db;
     /** Preferences for saving app settings */
