@@ -21,21 +21,24 @@
 
 <preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- These settings headers are only used on tablets. -->
+    <header
+        android:fragment="com.einzig.ipst2.activities.SettingsActivity$DBPreferenceFragment"
+        android:icon="@drawable/ic_database"
+        android:title="@string/dbsettings_prefheader" />
 
     <header
-        android:fragment="com.einzig.ipst2.activities.SettingsActivity$GeneralPreferenceFragment"
+        android:fragment="com.einzig.ipst2.activities.SettingsActivity$ListSettingsFragment"
+        android:icon="@drawable/ic_view_list_black_24dp"
+        android:title="@string/listsettings_prefheader" />
+
+    <header
+        android:fragment="com.einzig.ipst2.activities.SettingsActivity$MiscSettingsFragment"
+        android:icon="@drawable/ic_settings_applications_black_24dp"
+        android:title="@string/miscsettings_prefheader" />
+
+    <header
+        android:fragment="com.einzig.ipst2.activities.SettingsActivity$AboutSettingsFragment"
         android:icon="@drawable/ic_info_black_24dp"
-        android:title="@string/pref_header_general" />
-
-    <header
-        android:fragment="com.einzig.ipst2.activities.SettingsActivity$NotificationPreferenceFragment"
-        android:icon="@drawable/ic_notifications_black_24dp"
-        android:title="@string/pref_header_notifications" />
-
-    <header
-        android:fragment="com.einzig.ipst2.activities.SettingsActivity$DataSyncPreferenceFragment"
-        android:icon="@drawable/ic_sync_black_24dp"
-        android:title="@string/pref_header_data_sync" />
+        android:title="@string/aboutcontact_prefheader" />
 
 </preference-headers>

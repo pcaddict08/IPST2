@@ -32,6 +32,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -131,6 +132,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
      * Used to get the result of LoginActivity
      */
     static private final int LOGIN_ACTIVITY_CODE = 0;
+    static final int SETTINGS_ACTIVITY_CODE = 101;
     static final int REQUEST_CODE_EMAIL = 1;
     static final int REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR = 1002;
 
@@ -205,6 +207,16 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         alltab.setOnCheckedChangeListener(this);
     }
 
+    /* RESET ui to show gmail button*/
+    public void resetUI()
+    {
+        gmail_login_button.setVisibility(View.VISIBLE);
+        progress_view_mainactivity.setVisibility(View.INVISIBLE);
+        mainui_mainactivity.setVisibility(View.INVISIBLE);
+        tabs_mainactivity.setVisibility(View.INVISIBLE);
+        viewButton.setVisibility(View.INVISIBLE);
+    }
+
     /**
      * Display an error message dialog
      *
@@ -267,7 +279,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
      * Get saved user preferences.
      */
     private void getPreferences() {
-        preferences = getPreferences(MODE_PRIVATE);
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);//getPreferences(MODE_PRIVATE);
         Log.i(TAG, EMAIL_KEY + " -> " + preferences.getString(EMAIL_KEY, NULL_KEY));
         Log.i(TAG, MOST_RECENT_DATE_KEY + " -> " + preferences.getString(MOST_RECENT_DATE_KEY, NULL_KEY));
         Log.i(TAG, SORT_KEY + " -> " + preferences.getString(SORT_KEY, NULL_KEY));
@@ -361,21 +373,29 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.d(TAG, "onActivityResult(" + requestCode + ") -> " + resultCode);
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode != LOGIN_ACTIVITY_CODE || resultCode != RESULT_OK) {
-            return;
-        }
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(EMAIL_KEY, data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME));
-        editor.apply();
-        Log.d(TAG, "Got account name " + data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME));
-        parseEmail();
-        Account me = getAccount();
-        if (me != null) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-            findViewById(R.id.progress_view_mainactivity).setVisibility(View.VISIBLE);
-            findViewById(R.id.gmail_login_button).setVisibility(View.INVISIBLE);
-        } else {
-            errorFoundMessage(R.string.accountnotfoundtitle, R.string.accountnotfoundmessage);
+        switch (requestCode)
+        {
+            case LOGIN_ACTIVITY_CODE:
+                if(resultCode != RESULT_OK)
+                    return;
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putString(EMAIL_KEY, data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME));
+                editor.apply();
+                Log.d(TAG, "Got account name " + data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME));
+                parseEmail();
+                Account me = getAccount();
+                if (me != null) {
+                    getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                    findViewById(R.id.progress_view_mainactivity).setVisibility(View.VISIBLE);
+                    findViewById(R.id.gmail_login_button).setVisibility(View.INVISIBLE);
+                } else {
+                    errorFoundMessage(R.string.accountnotfoundtitle, R.string.accountnotfoundmessage);
+                }
+                break;
+            case SETTINGS_ACTIVITY_CODE:
+                if(preferences != null && preferences.getString(EMAIL_KEY, NULL_KEY).equalsIgnoreCase(NULL_KEY))
+                    resetUI();
+                break;
         }
     }
 
@@ -468,11 +488,17 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
                 loginHitMethod();
             }
         });
+        Log.d(MainActivity.TAG, "PREF FOR EMAIL: " + preferences.getString(EMAIL_KEY, NULL_KEY));
         if (!preferences.getString(EMAIL_KEY, NULL_KEY).equalsIgnoreCase(NULL_KEY)) {
             progress_view_mainactivity.setVisibility(View.VISIBLE);
             gmail_login_button.setVisibility(View.INVISIBLE);
             parseEmail();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override
@@ -487,7 +513,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.settings_mainactivity:
-                startActivity(new Intent(this, SettingsActivity.class));
+                startActivityForResult(new Intent(this, SettingsActivity.class), SETTINGS_ACTIVITY_CODE);
                 break;
             case R.id.refresh_mainactivity:
                 finish();

@@ -28,6 +28,7 @@ import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.einzig.ipst2.DialogHelper;
@@ -82,7 +83,7 @@ public class GetMailTask extends AsyncTask<Void, Void, MailBundle> {
         this.account = account;
         this.activity = activity;
         this.dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US);
-        this.preferences = activity.getPreferences(MainActivity.MODE_PRIVATE);
+        this.preferences = PreferenceManager.getDefaultSharedPreferences(activity);//activity.getPreferences(MainActivity.MODE_PRIVATE);
         this.token = token;
         Log.d(MainActivity.TAG, "GetMailTask:token -> " + token);
     }

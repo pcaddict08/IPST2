@@ -26,6 +26,7 @@ package com.einzig.ipst2.parse;
 import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.WindowManager;
 
@@ -82,7 +83,7 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
         this.db = new DatabaseInterface(activity);
         this.messages = bundle.getMessages();
         this.parser = new EmailParser(db);
-        this.preferences = activity.getPreferences(MainActivity.MODE_PRIVATE);
+        this.preferences = PreferenceManager.getDefaultSharedPreferences(activity);//activity.getPreferences(MainActivity.MODE_PRIVATE);
         addMailcaps();
         initProgressDialog();
         System.getProperties().setProperty("mail.store.protocol", "imaps");
