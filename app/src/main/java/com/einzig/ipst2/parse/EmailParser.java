@@ -57,9 +57,9 @@ class EmailParser {
      * Create a new EmailParser
      */
     EmailParser(DatabaseInterface db) {
-        acceptedBuilder = new PortalAcceptedBuilder(db);
-        rejectedBuilder = new PortalRejectedBuilder(db);
-        submissionBuilder = new PortalSubmissionBuilder(db);
+        acceptedBuilder = new PortalAcceptedBuilder(db.getReadableDatabase());
+        rejectedBuilder = new PortalRejectedBuilder(db.getReadableDatabase());
+        submissionBuilder = new PortalSubmissionBuilder(db.getReadableDatabase());
     }
 
     /**
