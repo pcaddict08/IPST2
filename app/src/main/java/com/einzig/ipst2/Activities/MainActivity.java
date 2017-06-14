@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity
     @BindView(R.id.weektab_mainactivity)
     RadioButton weektab;
     @BindView(R.id.mainui_mainactivity)
-    RadioButton mainui_mainactivity;
+    LinearLayout mainui_mainactivity;
     @BindView(R.id.tabs_mainactivity)
     RadioGroup tabs_mainactivity;
     /** Database Handle for getting portals and such */
