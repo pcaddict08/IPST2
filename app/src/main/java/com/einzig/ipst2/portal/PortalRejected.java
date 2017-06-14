@@ -33,23 +33,22 @@ import java.util.Date;
  * @since 2015-07-24
  */
 public class PortalRejected extends PortalResponded {
-    private static final long serialVersionUID = 622210508012331815L;
-
     /**
      * Inflates a PortalSubmission from a Parcel
      */
-    public static final Parcelable.Creator<PortalRejected> CREATOR = new Parcelable.Creator<PortalRejected>() {
-        @Override
-        public PortalRejected createFromParcel(Parcel in) {
-            return new PortalRejected(in);
-        }
+    public static final Parcelable.Creator<PortalRejected> CREATOR =
+            new Parcelable.Creator<PortalRejected>() {
+                @Override
+                public PortalRejected createFromParcel(Parcel in) {
+                    return new PortalRejected(in);
+                }
 
-        @Override
-        public PortalRejected[] newArray(int size) {
-            return new PortalRejected[size];
-        }
-    };
-
+                @Override
+                public PortalRejected[] newArray(int size) {
+                    return new PortalRejected[size];
+                }
+            };
+    private static final long serialVersionUID = 622210508012331815L;
     /**
      * The reason Niantic gave for the portal being rejected.
      */
@@ -58,10 +57,10 @@ public class PortalRejected extends PortalResponded {
     /**
      * Create a new PortalRejected.
      *
-     * @param name The name of the portal.
-     * @param dateSubmitted The date the portal was submitted.
-     * @param pictureURL The URL of the portal submission picture.
-     * @param dateResponded The date that Niantic denied the portal.
+     * @param name            The name of the portal.
+     * @param dateSubmitted   The date the portal was submitted.
+     * @param pictureURL      The URL of the portal submission picture.
+     * @param dateResponded   The date that Niantic denied the portal.
      * @param rejectionReason The reason Niantic gave for rejecting the portal submission.
      */
     public PortalRejected(String name, Date dateSubmitted, String pictureURL, Date dateResponded, String rejectionReason) {
@@ -71,6 +70,7 @@ public class PortalRejected extends PortalResponded {
 
     /**
      * Create a new PortalRejected from a Parcel.
+     *
      * @param in Parcel that contains the PortalRejected.
      */
     private PortalRejected(Parcel in) {
@@ -80,6 +80,7 @@ public class PortalRejected extends PortalResponded {
 
     /**
      * Get the reason the submission was rejected.
+     *
      * @return the reason the submission was rejected.
      */
     public String getRejectionReason() {

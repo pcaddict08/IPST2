@@ -33,9 +33,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.einzig.ipst2.activities.MainActivity;
-
 import java.io.IOException;
+
+import static com.einzig.ipst2.activities.MainActivity.TAG;
 
 /**
  * @author Ryan Porterfield
@@ -45,7 +45,9 @@ import java.io.IOException;
 public class AuthenticatorTask extends AsyncTask<Void, Void, String> {
     /** The URL to get the OAuth token from */
     static final private String AUTH_URL = "oauth2:https://mail.google.com/";
+    /** GMail account used for Ingress */
     private final Account account;
+    /** Parent activity of this task */
     private final Activity activity;
 
     public AuthenticatorTask(Activity activity, Account account) {
@@ -55,6 +57,7 @@ public class AuthenticatorTask extends AsyncTask<Void, Void, String> {
 
     /**
      * Authenticate with GMail.
+     *
      * @return the OAuth token as a string.
      */
     private String authenticate() {
@@ -63,9 +66,9 @@ public class AuthenticatorTask extends AsyncTask<Void, Void, String> {
                 AUTH_URL, null, activity, new AuthToken(), null);
         try {
             token = future.getResult().getString(AccountManager.KEY_AUTHTOKEN);
-            Log.i(MainActivity.TAG, future.getResult().toString());
+            Log.i(TAG, future.getResult().toString());
         } catch (IOException | AuthenticatorException | OperationCanceledException e) {
-            Log.e(MainActivity.TAG, e.toString());
+            Log.e(TAG, e.toString());
         }
         return token;
     }

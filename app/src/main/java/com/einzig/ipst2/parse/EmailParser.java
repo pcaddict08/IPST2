@@ -25,8 +25,10 @@ package com.einzig.ipst2.parse;
 
 import android.util.Log;
 
-import com.einzig.ipst2.activities.MainActivity;
-import com.einzig.ipst2.database.DatabaseInterface;
+import com.einzig.ipst2.database.PortalAcceptedBuilder;
+import com.einzig.ipst2.database.PortalBuilder;
+import com.einzig.ipst2.database.PortalRejectedBuilder;
+import com.einzig.ipst2.database.PortalSubmissionBuilder;
 import com.einzig.ipst2.portal.PortalSubmission;
 
 import java.io.IOException;
@@ -36,6 +38,8 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Part;
+
+import static com.einzig.ipst2.activities.MainActivity.TAG;
 
 /**
  * Parses portal submission and review emails
@@ -50,17 +54,37 @@ class EmailParser {
 
     /**
      * Create a new EmailParser
-     * @param db Database reference for PortalBuilder
-     * @see PortalBuilder
      */
-    EmailParser(DatabaseInterface db) {
-        acceptedBuilder = new PortalAcceptedBuilder(db);
-        rejectedBuilder = new PortalRejectedBuilder(db);
-        submissionBuilder = new PortalSubmissionBuilder(db);
+    EmailParser() {
+        acceptedBuilder = new PortalAcceptedBuilder(null);
+        rejectedBuilder = new PortalRejectedBuilder(null);
+        submissionBuilder = new PortalSubmissionBuilder(null);
+    }
+
+    /**
+     * Get a portal object from an email
+     *
+     * @param message A Message being parsed.
+     * @return PortalSubmission or subclass if the email can be parsed, otherwise null
+     */
+    PortalSubmission getPortal(Message message) {
+        String messageString, subject;
+        Date receivedDate;
+        try {
+            subject = message.getSubject();
+            receivedDate = message.getReceivedDate();
+        } catch (MessagingException e) {
+            return null;
+        }
+        /*if (!isEmailFromNiantic(message))
+            return null;*/
+        messageString = getText(message);
+        return parse(subject, messageString, receivedDate);
     }
 
     /**
      * Get portal name from email subject
+     *
      * @param subject Email subject line
      * @return portal name from email subjec
      */
@@ -70,6 +94,7 @@ class EmailParser {
 
     /**
      * Get body of the email
+     *
      * @param p The body of the message.
      * @return A String representation of the email body.
      */
@@ -95,40 +120,22 @@ class EmailParser {
                 return text;
             }
         } catch (MessagingException | IOException e) {
-            Log.e(MainActivity.TAG, e.toString());
+            Log.e(TAG, e.toString());
         }
         return null;
     }
 
     /**
-     * Get a portal object from an email
-     * @param message A Message being parsed.
-     * @return PortalSubmission or subclass if the email can be parsed, otherwise null
-     */
-    PortalSubmission getPortal(Message message) {
-        String messageString, subject;
-        Date receivedDate;
-        try {
-            subject = message.getSubject();
-            receivedDate = message.getReceivedDate();
-        } catch (MessagingException e) {
-            return null;
-        }
-        /*if (!isEmailFromNiantic(message))
-            return null;*/
-        messageString = getText(message);
-        return parse(subject, messageString, receivedDate);
-    }
-
-    /** TODO: Speed up parsing
+     * TODO: Speed up parsing
      * Parse a portal submission email
-     * @param subject Email subject line
-     * @param message Email body
+     *
+     * @param subject      Email subject line
+     * @param message      Email body
      * @param receivedDate Date the email was delivered
      * @return PortalSubmission or subclass if the email can be parsed, otherwise null
      */
     private PortalSubmission parse(String subject, String message, Date receivedDate) {
-        Log.d(MainActivity.TAG, "Parsing: " + subject);
+        Log.d(TAG, "Parsing: " + subject);
         String portalName = getPortalName(subject).trim();
         subject = subject.toLowerCase();
         if (subject.contains("submitted"))
@@ -144,8 +151,9 @@ class EmailParser {
 
     /**
      * Parse the new portal submission email format
-     * @param portalName Name of the portal
-     * @param message Email body
+     *
+     * @param portalName   Name of the portal
+     * @param message      Email body
      * @param receivedDate Date the email was delivered
      * @return PortalSubmission or subclass if the email can be parsed, otherwise null
      */

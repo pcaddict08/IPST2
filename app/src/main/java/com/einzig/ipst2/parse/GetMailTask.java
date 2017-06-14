@@ -35,18 +35,11 @@ import com.einzig.ipst2.DialogHelper;
 import com.einzig.ipst2.R;
 import com.einzig.ipst2.activities.MainActivity;
 import com.einzig.ipst2.oauth.OAuth2Authenticator;
-import com.google.android.gms.auth.GoogleAuthException;
-import com.google.android.gms.auth.GoogleAuthUtil;
-import com.google.android.gms.auth.GooglePlayServicesAvailabilityException;
 import com.sun.mail.imap.IMAPStore;
 
-import java.io.IOException;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 import javax.mail.FetchProfile;
 import javax.mail.Folder;
@@ -61,22 +54,21 @@ import javax.mail.search.ReceivedDateTerm;
 import javax.mail.search.SearchTerm;
 import javax.mail.search.SubjectTerm;
 
+import static com.einzig.ipst2.activities.MainActivity.TAG;
+import static com.einzig.ipst2.database.DatabaseInterface.dateFormatter;
+
 /**
  * @author Ryan Porterfield
  * @since 2017-05-28
  */
-
 public class GetMailTask extends AsyncTask<Void, Void, MailBundle> {
+    /** GMail account used for Ingress */
     final private Account account;
+    /** Parent activity of this task */
     final private Activity activity;
-    /**
-     * Format for parsing and printing dates
-     */
-    final private DateFormat dateFormat;
-    /**
-     * App preferences
-     */
+    /** App preferences */
     final private SharedPreferences preferences;
+    /** OAuth token */
     final private String token;
 
     public GetMailTask(Activity activity, Account account, String token) {
@@ -85,16 +77,16 @@ public class GetMailTask extends AsyncTask<Void, Void, MailBundle> {
         this.dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US);
         this.preferences = PreferenceManager.getDefaultSharedPreferences(activity);//activity.getPreferences(MainActivity.MODE_PRIVATE);
         this.token = token;
-        Log.d(MainActivity.TAG, "GetMailTask:token -> " + token);
     }
 
     @Override
     protected MailBundle doInBackground(Void... voids) {
         OAuth2Authenticator sender = new OAuth2Authenticator();
         IMAPStore store = sender.getIMAPStore(account.name, token);
-        Log.d(MainActivity.TAG, "store is null? " + (store == null));
+        Log.d(TAG, "store is null? " + (store == null));
         if (store == null) {
-            DialogHelper.showSimpleDialog(R.string.invalidtokentitle_getmailtask, R.string.invalidtokenmessage_getmailtask, activity);
+            DialogHelper.showSimpleDialog(R.string.invalidtokentitle_getmailtask,
+                    R.string.invalidtokenmessage_getmailtask, activity);
             AccountManager.get(activity).invalidateAuthToken("com.google", token);
         } else {
             try {
@@ -104,7 +96,7 @@ public class GetMailTask extends AsyncTask<Void, Void, MailBundle> {
                 fetchMessages(folder, messages);
                 return new MailBundle(folder, messages, store);
             } catch (MessagingException e) {
-                Log.e(MainActivity.TAG, e.toString());
+                Log.e(TAG, e.toString());
             }
         }
         return null;
@@ -121,18 +113,18 @@ public class GetMailTask extends AsyncTask<Void, Void, MailBundle> {
         FetchProfile fp = new FetchProfile();
         fp.add(FetchProfile.Item.ENVELOPE);
         fp.add(FetchProfile.Item.CONTENT_INFO);
-        Log.d(MainActivity.TAG, "Fetching messages");
+        Log.d(TAG, "Fetching messages");
         try {
             folder.fetch(messages, fp);
         } catch (MessagingException e) {
-            Log.e(MainActivity.TAG, e.toString());
+            Log.e(TAG, e.toString());
         }
     }
 
     private Folder getFolder(IMAPStore store) throws MessagingException {
         Folder[] folders = store.getDefaultFolder().list();
         Folder folder = new FolderGetter(activity, folders, preferences).getFolder();
-        Log.d(MainActivity.TAG, MainActivity.FOLDER_KEY + " -> " + folder.getFullName());
+        Log.d(TAG, MainActivity.FOLDER_KEY + " -> " + folder.getFullName());
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(MainActivity.FOLDER_KEY, folder.getFullName());
         editor.apply();
@@ -148,7 +140,7 @@ public class GetMailTask extends AsyncTask<Void, Void, MailBundle> {
     private Date getLastParseDate(String dateStr) {
         Date d;
         try {
-            d = dateFormat.parse(dateStr);
+            d = dateFormatter.parse(dateStr);
         } catch (ParseException e) {
             Calendar c = Calendar.getInstance();
             // Remember the first day of Ingress? Pepperidge Farm remembers.

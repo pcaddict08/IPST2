@@ -45,9 +45,9 @@ public abstract class PortalResponded extends PortalSubmission {
     /**
      * Create a new PortalResponded.
      *
-     * @param name The name of the portal.
+     * @param name          The name of the portal.
      * @param dateSubmitted The date the portal was submitted.
-     * @param pictureURL The URL of the portal submission picture.
+     * @param pictureURL    The URL of the portal submission picture.
      * @param dateResponded The date that Niantic approved or denied the portal.
      */
     PortalResponded(String name, Date dateSubmitted, String pictureURL, Date dateResponded) {
@@ -57,6 +57,7 @@ public abstract class PortalResponded extends PortalSubmission {
 
     /**
      * Create a new PortalResponded from a Parcel.
+     *
      * @param in Parcel that contains the PortalResponded.
      */
     PortalResponded(Parcel in) {
@@ -66,32 +67,32 @@ public abstract class PortalResponded extends PortalSubmission {
 
     /**
      * Get the date the portal submission was processed.
+     *
      * @return The date the portal was approved or rejected.
      */
     public Date getDateResponded() {
         return this.dateResponded;
     }
 
-    public long getResponseTime() {
-        long diff = dateResponded.getTime() - getDateSubmitted().getTime();
-        return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
-    }
-
     /*
    *  Return a formatted responded date
    * */
-    public String getDateRespondedString()
-    {
-        return sdf_stringdates.format(this.dateResponded);
+    public String getDateRespondedString() {
+        return dateFormat.format(this.dateResponded);
     }
 
     /*
     * Return days since Niantic has responded
     * */
     @Override
-    public int getDaysSinceResponse()
-    {
-        return Days.daysBetween(new DateTime(this.dateResponded).toLocalDate(), new DateTime().toLocalDate()).getDays();
+    public int getDaysSinceResponse() {
+        return Days.daysBetween(new DateTime(this.dateResponded).toLocalDate(),
+                new DateTime().toLocalDate()).getDays();
+    }
+
+    public long getResponseTime() {
+        long diff = dateResponded.getTime() - getDateSubmitted().getTime();
+        return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
     }
 
     /*

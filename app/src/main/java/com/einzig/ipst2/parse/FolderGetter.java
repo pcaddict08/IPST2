@@ -21,8 +21,6 @@
  *                                                                            *
  ******************************************************************************/
 
-
-
 package com.einzig.ipst2.parse;
 
 import android.app.Activity;
@@ -42,6 +40,8 @@ import java.util.List;
 
 import javax.mail.Folder;
 import javax.mail.MessagingException;
+
+import static com.einzig.ipst2.activities.MainActivity.TAG;
 
 /**
  * @author Ryan Porterfield
@@ -72,7 +72,7 @@ class FolderGetter {
                 if (subfolders.length > 0)
                     folderList.addAll(flattenFolders(subfolders));
             } catch (MessagingException e) {
-                Log.e(MainActivity.TAG, e.toString());
+                Log.e(TAG, e.toString());
             }
         }
         return folderList;
@@ -80,6 +80,7 @@ class FolderGetter {
 
     /**
      * Set a mail folder to look for Ingress emails
+     *
      * @param folderList List of folders that can be selected.
      */
     private void getCustomFolder(final List<Folder> folderList) {
@@ -97,7 +98,7 @@ class FolderGetter {
     private Folder getDefaultFolder() {
         for (Folder folder : folders) {
             if (folder.getFullName().equals(DEFAULT_FOLDER)) {
-            //if (folder.getFullName().equals(TEST_FOLDER)) {
+                //if (folder.getFullName().equals(TEST_FOLDER)) {
                 return folder;
             }
         }
@@ -106,7 +107,7 @@ class FolderGetter {
 
     Folder getFolder() throws MessagingException {
         String folderPref = preferences.getString(MainActivity.FOLDER_KEY, MainActivity.NULL_KEY);
-        Log.d(MainActivity.TAG, "Folder: " + folderPref);
+        Log.d(TAG, "Folder: " + folderPref);
         Folder folder = null;
         if (folderPref.equals(MainActivity.NULL_KEY))
             folder = getDefaultFolder();
@@ -116,10 +117,10 @@ class FolderGetter {
                     folder = f;
             }
         }
-        Log.d(MainActivity.TAG, "Number of folders: " + folders.size());
-        Log.d(MainActivity.TAG, "Folders: ");
+        Log.d(TAG, "Number of folders: " + folders.size());
+        Log.d(TAG, "Folders: ");
         for (Folder f : folders)
-            Log.d(MainActivity.TAG, "\t" + f.getFullName());
+            Log.d(TAG, "\t" + f.getFullName());
 
         if (folder == null)
             folder = noAllMailFolder(folderPref);
@@ -136,7 +137,7 @@ class FolderGetter {
     private DialogInterface.OnClickListener getListener() {
         return new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                Log.d(MainActivity.TAG, "FOLDER: " + folders.get(which));
+                Log.d(TAG, "FOLDER: " + folders.get(which));
                 folder = folders.get(which);
             }
         };
@@ -144,6 +145,7 @@ class FolderGetter {
 
     /**
      * Called when DEFAULT_FOLDER doesn't exist.
+     *
      * @param folderPref The folder that was previously being used for emails
      * @return a new folder to parse.
      * @see FolderGetter#DEFAULT_FOLDER
@@ -165,17 +167,18 @@ class FolderGetter {
      * Used when the folder we were checking for emails doesn't exist.
      */
     private class AllMailError implements Runnable {
-        /** Dialog title */
-        private String title;
         /** Dialog message */
         private String message;
-        /** Positive button text */
-        private String positive;
         /** Neutral button text */
         private String neutral;
+        /** Positive button text */
+        private String positive;
+        /** Dialog title */
+        private String title;
 
         /**
          * Create a new runnable to handle a missing mail folder error
+         *
          * @param previousFolder Previous folder we checked for mail which doesn't exist.
          */
         AllMailError(String previousFolder) {
@@ -186,7 +189,7 @@ class FolderGetter {
             message = String.format(message, previousFolder);
             neutral = "";
             if (previousFolder.equalsIgnoreCase(DEFAULT_FOLDER)) {
-                 message += activity.getResources().getString(R.string.allmailmissing);
+                message += activity.getResources().getString(R.string.allmailmissing);
             } else {
                 message += activity.getResources().getString(R.string.custommissing);
                 neutral = activity.getResources().getString(R.string.allmail);
@@ -208,10 +211,10 @@ class FolderGetter {
             AlertDialog.Builder builder = new AlertDialog.Builder(activity);
             builder.setTitle(title).setMessage(message);
             builder.setPositiveButton(positive, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            getCustomFolder(folders);
-                        }
-                    });
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    getCustomFolder(folders);
+                }
+            });
             builder.setCancelable(true);
             if (!neutral.equals(""))
                 builder.setNeutralButton(neutral, new DialogInterface.OnClickListener() {

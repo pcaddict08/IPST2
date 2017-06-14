@@ -54,11 +54,74 @@ import java.util.Collections;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class PSListActivity extends AppCompatActivity {
-    ArrayList<PortalSubmission> psList = new ArrayList<>();
+import static com.einzig.ipst2.activities.MainActivity.TAG;
 
+public class PSListActivity extends AppCompatActivity {
     @BindView(R.id.listview_pslistactivity)
     ListView listView;
+    ArrayList<PortalSubmission> psList = new ArrayList<>();
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_pslist);
+        ButterKnife.bind(this);
+        ActionBar ab = getSupportActionBar();
+        if (ab != null)
+            ab.setDisplayHomeAsUpEnabled(true);
+
+        psList = getIntent().getExtras().getParcelableArrayList("psList");
+        if (psList != null) {
+            Log.d(TAG, "PS LIST SIZE: " + psList.size());
+            sortList(psList);
+            listView.setAdapter(new ListItemAdapter_PS(psList, PSListActivity.this));
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    Log.d(TAG, "Item Selected at index: " + i);
+                    try {
+                        Intent intent = new Intent(PSListActivity.this, PSDetailsActivity.class);
+                        intent.putExtra("ps", (Parcelable) psList.get(i));
+                        startActivity(intent);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_pslistactivity, menu);
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView =
+                (SearchView) menu.findItem(R.id.search_pslistactivity).getActionView();
+        if (searchView != null) {
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+            searchView.setSubmitButtonEnabled(true);
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextChange(String newText) {
+                    if (TextUtils.isEmpty(newText)) {
+                        ((ListItemAdapter_PS) listView.getAdapter()).resetData();
+                    } else {
+                        ((ListItemAdapter_PS) listView.getAdapter()).getFilter().filter(newText);
+                    }
+                    return false;
+                }
+
+                @Override
+                public boolean onQueryTextSubmit(String query) {
+                    return false;
+                }
+            });
+        } else
+            Log.d(TAG, "MENU ITEM ACTION VIEW FOR SEARCH IS NULL");
+
+        return true;
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -71,72 +134,6 @@ public class PSListActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_pslistactivity, menu);
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) menu.findItem(R.id.search_pslistactivity).getActionView();
-        if (searchView != null) {
-            searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-            searchView.setSubmitButtonEnabled(true);
-            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                @Override
-                public boolean onQueryTextSubmit(String query) {
-                    return false;
-                }
-
-                @Override
-                public boolean onQueryTextChange(String newText) {
-                    if (TextUtils.isEmpty(newText)) {
-                        ((ListItemAdapter_PS) listView.getAdapter()).resetData();
-                    } else {
-                        ((ListItemAdapter_PS) listView.getAdapter()).getFilter().filter(newText);
-                    }
-                    return false;
-                }
-            });
-        }
-        else
-            Log.d(MainActivity.TAG, "MENU ITEM ACTION VIEW FOR SEARCH IS NULL");
-
-        return true;
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pslist);
-        ButterKnife.bind(this);
-        ActionBar ab = getSupportActionBar();
-        if (ab != null) {
-            ab.setDisplayHomeAsUpEnabled(true);
-            ab.setLogo(R.mipmap.ic_launcher);
-            ab.setDisplayUseLogoEnabled(true);
-            ab.setDisplayShowHomeEnabled(true);
-        }
-        psList = getIntent().getExtras().getParcelableArrayList("psList");
-        if (psList != null) {
-            Log.d(MainActivity.TAG, "PS LIST SIZE: " + psList.size());
-            sortList(psList);
-            final ListItemAdapter_PS psLISTADAPTER = new ListItemAdapter_PS(psList, PSListActivity.this);
-            listView.setAdapter(psLISTADAPTER);
-            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    Log.d(MainActivity.TAG, "Item Selected at index: " + i);
-                    try {
-                        Intent intent = new Intent(PSListActivity.this, PSDetailsActivity.class);
-                        intent.putExtra("ps", (Parcelable) psLISTADAPTER.shownItems.get(i));
-                        startActivity(intent);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-        }
     }
 
     /* Method to sort the list based on settings the user has saved */
@@ -172,7 +169,9 @@ public class PSListActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         String[] some_array = getResources().getStringArray(R.array.sortTypes);
                         System.out.println("SELECTED: " + some_array[which]);
-                        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(PSListActivity.this).edit();
+                        SharedPreferences.Editor editor =
+                                PreferenceManager.getDefaultSharedPreferences(PSListActivity.this)
+                                        .edit();
                         editor.putString("sort-type", some_array[which].toLowerCase());
                         editor.apply();
                         Intent i = getIntent();

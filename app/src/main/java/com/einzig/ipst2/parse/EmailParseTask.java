@@ -36,16 +36,16 @@ import com.einzig.ipst2.portal.PortalAccepted;
 import com.einzig.ipst2.portal.PortalRejected;
 import com.einzig.ipst2.portal.PortalSubmission;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 import javax.activation.CommandMap;
 import javax.activation.MailcapCommandMap;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+
+import static com.einzig.ipst2.activities.MainActivity.TAG;
+import static com.einzig.ipst2.database.DatabaseInterface.dateFormatter;
 
 /**
  * Asynchronously parses the user's emails to update portal submission activity.
@@ -54,20 +54,18 @@ import javax.mail.MessagingException;
  * @since 2015-07-30
  */
 public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
-    /** Format for parsing and printing dates */
-    final private DateFormat dateFormat;
+    /** The calling activity. Used to update UI elements */
+    final private MainActivity activity;
+    /** Wrapper class for IMAPStore, Folder, and Message[] resources */
+    final private MailBundle bundle;
     /** Database for adding portals */
     final private DatabaseInterface db;
+    /** Array of messages that match the search terms */
+    final private Message[] messages;
     /** Does the actual parsing of emails */
     final private EmailParser parser;
     /** App preferences */
     final private SharedPreferences preferences;
-    /** Wrapper class for IMAPStore, Folder, and Message[] resources  */
-    final private MailBundle bundle;
-    /** The calling activity. Used to update UI elements */
-    final private MainActivity activity;
-    /**  */
-    final private Message[] messages;
     /** Display parsing progress */
     private ProgressDialog dialog;
 
@@ -79,10 +77,9 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
     public EmailParseTask(MainActivity activity, MailBundle bundle) {
         this.activity = activity;
         this.bundle = bundle;
-        this.dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US);
         this.db = new DatabaseInterface(activity);
         this.messages = bundle.getMessages();
-        this.parser = new EmailParser(db);
+        this.parser = new EmailParser();
         this.preferences = PreferenceManager.getDefaultSharedPreferences(activity);//activity.getPreferences(MainActivity.MODE_PRIVATE);
         addMailcaps();
         initProgressDialog();
@@ -98,12 +95,14 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
         mc.addMailcap("text/xml;; x-java-content-handler=com.sun.mail.handlers.text_xml");
         mc.addMailcap("text/plain;; x-java-content-handler=com.sun.mail.handlers.text_plain");
         mc.addMailcap("multipart/*;; x-java-content-handler=com.sun.mail.handlers.multipart_mixed");
-        mc.addMailcap("message/rfc822;; x-java-content- handler=com.sun.mail.handlers.message_rfc822");
+        mc.addMailcap(
+                "message/rfc822;; x-java-content- handler=com.sun.mail.handlers.message_rfc822");
         CommandMap.setDefaultCommandMap(mc);
     }
 
     /**
      * Add a portal to the database
+     *
      * @param p Instance of PortalSubmission or subclass to add to the database
      */
     private void addPortal(PortalSubmission p) {
@@ -117,10 +116,11 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
 
     /**
      * Add a portal to the database
+     *
      * @param portal Instance of PortalAccepted to add to the database
      */
     private void addPortalAccepted(PortalAccepted portal) {
-        Log.d(MainActivity.TAG, "Adding approved portal: " + portal.getName());
+        Log.d(TAG, "Adding approved portal: " + portal.getName());
         PortalSubmission pending = db.getPendingPortal(portal.getPictureURL());
         if (pending != null)
             db.deletePending(pending);
@@ -129,28 +129,30 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
 
     /**
      * Add a portal to the database
-     * @param portal Instance of PortalSubmission (but not a subclass) to add to the database
-     */
-    private void addPortalSubmission(PortalSubmission portal) {
-        Log.d(MainActivity.TAG, "Adding submitted portal: " + portal.getName());
-        db.addPortalSubmission(portal);
-    }
-
-    /**
-     * Add a portal to the database
+     *
      * @param portal Instance of PortalRejected to add to the database
      */
     private void addPortalRejected(PortalRejected portal) {
-        Log.d(MainActivity.TAG, "Adding rejected portal: " + portal.getName());
+        Log.d(TAG, "Adding rejected portal: " + portal.getName());
         PortalSubmission pending = db.getPendingPortal(portal.getPictureURL());
         if (pending != null)
             db.deletePending(pending);
         db.addPortalRejected(portal);
     }
 
+    /**
+     * Add a portal to the database
+     *
+     * @param portal Instance of PortalSubmission (but not a subclass) to add to the database
+     */
+    private void addPortalSubmission(PortalSubmission portal) {
+        Log.d(TAG, "Adding submitted portal: " + portal.getName());
+        db.addPortalSubmission(portal);
+    }
+
     @Override
     protected Void doInBackground(Void... voids) {
-        Log.d(MainActivity.TAG, "Parsing email");
+        Log.d(TAG, "Parsing email");
         Date parseDate = Calendar.getInstance().getTime();
         for (int i = 0; i < messages.length; i++) {
             PortalSubmission p = parser.getPortal(messages[i]);
@@ -160,7 +162,7 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
                 try {
                     parseDate = messages[i].getReceivedDate();
                 } catch (MessagingException e) {
-                    Log.e(MainActivity.TAG, e.toString());
+                    Log.e(TAG, e.toString());
                 }
                 break;
             }
@@ -183,14 +185,28 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
 
     /**
      * Update the mostRecentDate preference after email has been parsed.
+     *
      * @param parseDate Last time email was parsed
      */
     private void onEmailParse(Date parseDate) {
-        String dateString = dateFormat.format(parseDate.getTime());
-        Log.d(MainActivity.TAG, MainActivity.MOST_RECENT_DATE_KEY + " -> " + dateString);
+        String dateString = dateFormatter.format(parseDate.getTime());
+        Log.d(TAG, MainActivity.MOST_RECENT_DATE_KEY + " -> " + dateString);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(MainActivity.MOST_RECENT_DATE_KEY, dateString);
         editor.apply();
+    }
+
+    /*
+     * Dismiss progress dialog and print some debug info
+     */
+    @Override
+    protected void onPostExecute(Void voids) {
+        Log.d(TAG, "Accepted portals: " + db.getAcceptedCount());
+        Log.d(TAG, "Pending portals: " + db.getPendingCount());
+        Log.d(TAG, "Rejected portals: " + db.getRejectedCount());
+        activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        dialog.dismiss();
+        activity.buildUIAfterParsing();
     }
 
     /*
@@ -203,24 +219,11 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
     }
 
     /*
-     * Dismiss progress dialog and print some debug info
-     */
-    @Override
-    protected void onPostExecute(Void voids) {
-        Log.d(MainActivity.TAG, "Accepted portals: " + db.getAcceptedCount());
-        Log.d(MainActivity.TAG, "Pending portals: " + db.getPendingCount());
-        Log.d(MainActivity.TAG, "Rejected portals: " + db.getRejectedCount());
-        activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        dialog.dismiss();
-        activity.buildUIAfterParsing();
-    }
-
-    /*
      * Update progress dialog
      */
     @Override
     protected void onProgressUpdate(Integer... progress) {
         dialog.setProgress(progress[0] + 1);
-        Log.v(MainActivity.TAG, "Parsing: " + dialog.getProgress() + " / " + dialog.getMax());
+        Log.v(TAG, "Parsing: " + dialog.getProgress() + " / " + dialog.getMax());
     }
 }
