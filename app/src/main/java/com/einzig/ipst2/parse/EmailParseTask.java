@@ -79,7 +79,7 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
         this.bundle = bundle;
         this.db = new DatabaseInterface(activity);
         this.messages = bundle.getMessages();
-        this.parser = new EmailParser();
+        this.parser = new EmailParser(this.db);
         this.preferences = PreferenceManager.getDefaultSharedPreferences(activity);//activity.getPreferences(MainActivity.MODE_PRIVATE);
         addMailcaps();
         initProgressDialog();

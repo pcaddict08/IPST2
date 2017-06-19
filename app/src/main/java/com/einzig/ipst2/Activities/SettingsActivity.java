@@ -48,7 +48,6 @@ import java.util.List;
 
 public class SettingsActivity extends AppCompatPreferenceActivity {
 
-
     /**
      * Helper method to determine if the device has an extra-large screen. For
      * example, 10" tablets are extra-large.
@@ -133,31 +132,38 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_dbsheet);
             setHasOptionsMenu(true);
-            DBPreferenceFragment.this.findPreference("cleardb_pref").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    confirmClearDialog();
-                    return false;
-                }
-            });
+            DBPreferenceFragment.this.findPreference("cleardb_pref")
+                    .setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                        @Override
+                        public boolean onPreferenceClick(Preference preference) {
+                            confirmClearDialog();
+                            return false;
+                        }
+                    });
 
-            DBPreferenceFragment.this.findPreference("exportdb_pref").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    //TODO add confirm export dialog and go to export db method
-                    //TODO add export db method, show toast when start and finish
-                    return false;
-                }
-            });
+            Preference exportDBPref = DBPreferenceFragment.this.findPreference("exportdb_pref");
+            if (exportDBPref != null)
+                exportDBPref.setOnPreferenceClickListener(new Preference
+                        .OnPreferenceClickListener() {
+                    @Override
+                    public boolean onPreferenceClick(Preference preference) {
+                        //TODO add confirm export dialog and go to export db method
+                        //TODO add export db method, show toast when start and finish
+                        return false;
+                    }
+                });
 
-            DBPreferenceFragment.this.findPreference("importdb_pref").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    //TODO add confirm import dialog and go to export db method
-                    //TODO add import db method, show toast when start and finish
-                    return false;
-                }
-            });
+            Preference importDBPref = DBPreferenceFragment.this.findPreference("importdb_pref");
+            if (importDBPref != null)
+                importDBPref.setOnPreferenceClickListener(
+                        new Preference.OnPreferenceClickListener() {
+                            @Override
+                            public boolean onPreferenceClick(Preference preference) {
+                                //TODO add confirm import dialog and go to export db method
+                                //TODO add import db method, show toast when start and finish
+                                return false;
+                            }
+                        });
         }
 
         @Override
@@ -178,17 +184,19 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                         new AlertDialog.Builder(getActivity(), R.style.dialogtheme)
                                 .setTitle(R.string.confirmcleardbpref_title)
                                 .setMessage(R.string.confirmcleardbpref_message)
-                                .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        clearAllData();
-                                    }
-                                })
-                                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                    }
-                                })
+                                .setPositiveButton(R.string.confirm,
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                clearAllData();
+                                            }
+                                        })
+                                .setNegativeButton(R.string.cancel,
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                            }
+                                        })
                                 .setIcon(R.drawable.ic_warning)
                                 .show();
                     }
@@ -201,10 +209,11 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         public void clearAllData() {
             DatabaseInterface db = new DatabaseInterface(getActivity());
             db.deleteAll();
-            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            SharedPreferences sharedPreferences =
+                    PreferenceManager.getDefaultSharedPreferences(getActivity());
             sharedPreferences.edit().clear().apply();
             PreferencesHelper.printAllPrefs(sharedPreferences);
-            ((SettingsActivity)getActivity()).clearedData();
+            ((SettingsActivity) getActivity()).clearedData();
         }
     }
 
@@ -217,7 +226,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.pref_notification);
+            addPreferencesFromResource(R.xml.pref_listsheet);
             setHasOptionsMenu(true);
 
             // Bind the summaries of EditText/List/Dialog/Ringtone preferences
@@ -238,7 +247,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     }
 
     /**
-
      * This fragment shows data and sync preferences only. It is used when the
      * activity is showing a two-pane settings UI.
      */
@@ -277,7 +285,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.pref_notification);
+            addPreferencesFromResource(R.xml.pref_listsheet);
             setHasOptionsMenu(true);
 
             // Bind the summaries of EditText/List/Dialog/Ringtone preferences

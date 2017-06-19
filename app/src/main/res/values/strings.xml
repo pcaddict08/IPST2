@@ -61,6 +61,8 @@
     <string name="action_sortlist">Sort List</string>
     <string name="refresh_menumainactivity">Refresh</string>
     <string name="title_activity_settings2">Settings</string>
+    <string name="listsorttypes">Sort Type</string>
+    <string name="datetype">Date Format</string>
 
     <!-- Strings related to Settings -->
     <string name="dbsettings_prefheader">Database Settings</string>

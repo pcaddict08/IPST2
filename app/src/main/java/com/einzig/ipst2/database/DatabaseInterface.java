@@ -98,7 +98,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         long result = db.insert(table, null, values);
         if (result == -1)
             Log.e(TAG, values.get(KEY_PICTURE_URL) + " NOT UNIQUE");
-        db.close();
+        //db.close();
     }
 
     /**
@@ -230,7 +230,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         Log.d(TAG, "Remove accepted portal: " + portal.getName());
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_ACCEPTED, KEY_PICTURE_URL + " = ?", new String[]{portal.getPictureURL()});
-        db.close();
+        //db.close();
     }
 
     /**
@@ -241,7 +241,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         db.delete(TABLE_PENDING, null, null);
         db.delete(TABLE_ACCEPTED, null, null);
         db.delete(TABLE_REJECTED, null, null);
-        db.close();
+        //db.close();
     }
 
     /**
@@ -253,7 +253,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         Log.d(TAG, "Remove portal submission: " + portal.getName());
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_PENDING, KEY_PICTURE_URL + " = ?", new String[]{portal.getPictureURL()});
-        db.close();
+        //db.close();
     }
 
     /**
@@ -265,7 +265,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         Log.d(TAG, "Remove rejected portal: " + portal.getName());
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_REJECTED, KEY_PICTURE_URL + " = ?", new String[]{portal.getPictureURL()});
-        db.close();
+        //db.close();
     }
 
     /**
@@ -371,7 +371,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         PortalAcceptedBuilder b = new PortalAcceptedBuilder(db);
         PortalAccepted p = b.getPortal(KEY_PICTURE_URL + " = ?", new String[]{portalPictureURL});
-        db.close();
+        //db.close();
         return p;
     }
 
@@ -385,7 +385,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         PortalAcceptedBuilder b = new PortalAcceptedBuilder(db);
         Vector<PortalAccepted> portals = b.getPortals(null, null);
-        db.close();
+        //db.close();
         return portals;
     }
 
@@ -404,7 +404,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         PortalAcceptedBuilder b = new PortalAcceptedBuilder(db);
         Vector<PortalAccepted> portals = b.getPortalsByDate(dateKey, fromDate, toDate);
-        db.close();
+        //db.close();
         return portals;
     }
 
@@ -418,7 +418,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         PortalSubmissionBuilder b = new PortalSubmissionBuilder(db);
         Vector<PortalSubmission> portals = b.getPortals(null, null);
-        db.close();
+        //db.close();
         return portals;
     }
 
@@ -457,7 +457,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         PortalRejectedBuilder b = new PortalRejectedBuilder(db);
         Vector<PortalRejected> portals = b.getPortals(null, null);
-        db.close();
+        //db.close();
         return portals;
     }
 
@@ -508,7 +508,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     private long getEntryCount(String table, String selection, String[] selectionArgs) {
         SQLiteDatabase db = getReadableDatabase();
         long count = DatabaseUtils.queryNumEntries(db, table, selection, selectionArgs);
-        db.close();
+        //db.close();
         return count;
     }
 
@@ -524,7 +524,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         PortalSubmissionBuilder b = new PortalSubmissionBuilder(db);
         Vector<PortalSubmission> portals = b.getPortalsByDate(KEY_DATE_SUBMITTED, fromDate, toDate);
-        db.close();
+        //db.close();
         return portals;
     }
 
@@ -579,7 +579,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         PortalSubmissionBuilder b = new PortalSubmissionBuilder(db);
         PortalSubmission p = b.getPortal(KEY_PICTURE_URL + " = ?", new String[]{portalPictureURL});
-        db.close();
+        //db.close();
         return p;
     }
 
@@ -598,7 +598,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         PortalRejectedBuilder b = new PortalRejectedBuilder(db);
         Vector<PortalRejected> portals = b.getPortalsByDate(dateKey, fromDate, toDate);
-        db.close();
+        //db.close();
         return portals;
     }
 
@@ -706,7 +706,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         PortalRejectedBuilder b = new PortalRejectedBuilder(db);
         PortalRejected p = b.getPortal(KEY_PICTURE_URL + " = ?", new String[]{portalPictureURL});
-        db.close();
+        //db.close();
         return p;
     }
 
@@ -757,7 +757,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         db.update(TABLE_ACCEPTED, values, KEY_PICTURE_URL + " = ?",
                 new String[]{String.valueOf(oldPortal.getPictureURL())});
 
-        db.close();
+        //db.close();
     }
 
     /**
@@ -777,7 +777,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
 
         db.update(TABLE_PENDING, values, KEY_PICTURE_URL + " = ?",
                 new String[]{String.valueOf(oldPortal.getPictureURL())});
-        db.close();
+        //db.close();
     }
 
     /**
@@ -801,6 +801,6 @@ public class DatabaseInterface extends SQLiteOpenHelper {
 
         db.update(TABLE_REJECTED, values, KEY_PICTURE_URL + " = ?",
                 new String[]{String.valueOf(oldPortal.getPictureURL())});
-        db.close();
+        //db.close();
     }
 }

@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:text="@string/gmaillogin"
-        android:visibility="visible" />
+        android:visibility="invisible" />
 
     <RadioGroup
         android:id="@+id/tabs_mainactivity"
@@ -226,7 +226,7 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:orientation="vertical"
-        android:visibility="invisible">
+        android:visibility="visible">
 
         <com.singh.daman.proprogressviews.DoubleArcProgress
             android:layout_width="140dip"

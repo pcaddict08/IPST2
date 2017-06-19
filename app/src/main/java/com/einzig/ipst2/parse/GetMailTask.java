@@ -90,10 +90,12 @@ public class GetMailTask extends AsyncTask<Void, Void, MailBundle> {
         } else {
             try {
                 Folder folder = getFolder(store);
-                folder.open(Folder.READ_ONLY);
-                Message[] messages = searchMailbox(folder);
-                fetchMessages(folder, messages);
-                return new MailBundle(folder, messages, store);
+                if(folder != null) {
+                    folder.open(Folder.READ_ONLY);
+                    Message[] messages = searchMailbox(folder);
+                    fetchMessages(folder, messages);
+                    return new MailBundle(folder, messages, store);
+                }
             } catch (MessagingException e) {
                 Log.e(TAG, e.toString());
             }
@@ -123,10 +125,12 @@ public class GetMailTask extends AsyncTask<Void, Void, MailBundle> {
     private Folder getFolder(IMAPStore store) throws MessagingException {
         Folder[] folders = store.getDefaultFolder().list();
         Folder folder = new FolderGetter(activity, folders, preferences).getFolder();
-        Log.d(TAG, MainActivity.FOLDER_KEY + " -> " + folder.getFullName());
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(MainActivity.FOLDER_KEY, folder.getFullName());
-        editor.apply();
+        if(folder != null) {
+            Log.d(TAG, MainActivity.FOLDER_KEY + " -> " + folder.getFullName());
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putString(MainActivity.FOLDER_KEY, folder.getFullName());
+            editor.apply();
+        }
         return folder;
     }
 

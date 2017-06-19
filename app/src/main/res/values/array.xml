@@ -41,4 +41,20 @@
         <item>Alphabetical</item>
         <item>Alphabetical Descending</item>
     </string-array>
+
+
+    <string-array name="dateTypes">
+        <item>monthdayyear</item>
+        <item>daymonthyear</item>
+        <item>yearmonthday</item>
+        <item>yeardaymonth</item>
+
+    </string-array>
+    <string-array name="dateTypesValues">
+        <item>MM/DD/YYYY</item>
+        <item>DD/MM/YYYY</item>
+        <item>YYYY/MM/DD</item>
+        <item>YYYY/DD/MM</item>
+
+    </string-array>
 </resources>

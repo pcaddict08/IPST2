@@ -60,6 +60,7 @@ import com.einzig.ipst2.R;
 import com.einzig.ipst2.database.DatabaseInterface;
 import com.einzig.ipst2.parse.AuthenticatorTask;
 import com.einzig.ipst2.parse.EmailParseTask;
+import com.einzig.ipst2.parse.FolderGetter;
 import com.einzig.ipst2.parse.GetMailTask;
 import com.einzig.ipst2.parse.MailBundle;
 import com.einzig.ipst2.portal.PortalAccepted;
@@ -170,7 +171,6 @@ public class MainActivity extends AppCompatActivity
     /**  */
     private Date viewDate;
 
-
     /**
      * MainActivity constructor, initialize variables.
      */
@@ -200,8 +200,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     /* RESET ui to show gmail button*/
-    public void resetUI()
-    {
+    public void resetUI() {
         gmail_login_button.setVisibility(View.VISIBLE);
         progress_view_mainactivity.setVisibility(View.INVISIBLE);
         mainui_mainactivity.setVisibility(View.INVISIBLE);
@@ -242,9 +241,12 @@ public class MainActivity extends AppCompatActivity
         setLayoutParamsGraphBars((int) ((pending * 100) / (totalnum)), pendinggraph);
         setLayoutParamsGraphBars((int) ((rejected * 100) / (totalnum)), rejectedgraph);
         setLayoutParamsGraphBars((int) ((accepted * 100) / (totalnum)), acceptedgraph);
-        acceptedgraph.setText(String.format(Locale.getDefault(), "%.1f%%", ((accepted * 100) / (totalnum))));
-        rejectedgraph.setText(String.format(Locale.getDefault(), "%.1f%%", ((rejected * 100) / (totalnum))));
-        pendinggraph.setText(String.format(Locale.getDefault(), "%.1f%%", ((pending * 100) / (totalnum))));
+        acceptedgraph.setText(
+                String.format(Locale.getDefault(), "%.1f%%", ((accepted * 100) / (totalnum))));
+        rejectedgraph.setText(
+                String.format(Locale.getDefault(), "%.1f%%", ((rejected * 100) / (totalnum))));
+        pendinggraph.setText(
+                String.format(Locale.getDefault(), "%.1f%%", ((pending * 100) / (totalnum))));
     }
 
     /**
@@ -271,7 +273,16 @@ public class MainActivity extends AppCompatActivity
      * Get saved user preferences.
      */
     private void getPreferences() {
-        preferences = PreferenceManager.getDefaultSharedPreferences(this);//getPreferences(MODE_PRIVATE);
+        preferences =
+                PreferenceManager.getDefaultSharedPreferences(this);//getPreferences(MODE_PRIVATE);
+        if (preferences.getString("date-type", "").equalsIgnoreCase(""))
+            preferences.edit().putString("date-type", "monthdayyear").apply();
+        if (preferences.getString("sort-type", "").equalsIgnoreCase(""))
+            preferences.edit().putString("sort-type", "respond-date").apply();
+        if (preferences.getString(MainActivity.FOLDER_KEY, MainActivity.NULL_KEY).equalsIgnoreCase
+                (MainActivity.NULL_KEY))
+            preferences.edit().putString(MainActivity.FOLDER_KEY, FolderGetter.DEFAULT_FOLDER)
+                    .apply();
         Log.i(TAG, EMAIL_KEY + " -> " + preferences.getString(EMAIL_KEY, NULL_KEY));
         Log.i(TAG, MOST_RECENT_DATE_KEY + " -> " +
                 preferences.getString(MOST_RECENT_DATE_KEY, NULL_KEY));
@@ -365,29 +376,34 @@ public class MainActivity extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.d(TAG, "onActivityResult(" + requestCode + ") -> " + resultCode);
         super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode)
-        {
-            case LOGIN_ACTIVITY_CODE:
-                if(resultCode != RESULT_OK)
-                    return;
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putString(EMAIL_KEY, data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME));
-                editor.apply();
-                Log.d(TAG, "Got account name " + data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME));
-                parseEmail();
-                Account me = getAccount();
-                if (me != null) {
-                    getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-                    findViewById(R.id.progress_view_mainactivity).setVisibility(View.VISIBLE);
-                    findViewById(R.id.gmail_login_button).setVisibility(View.INVISIBLE);
-                } else {
-                    errorFoundMessage(R.string.accountnotfoundtitle, R.string.accountnotfoundmessage);
-                }
-                break;
-            case SETTINGS_ACTIVITY_CODE:
-                if(preferences != null && preferences.getString(EMAIL_KEY, NULL_KEY).equalsIgnoreCase(NULL_KEY))
-                    resetUI();
-                break;
+        switch (requestCode) {
+        case LOGIN_ACTIVITY_CODE:
+            if (resultCode != RESULT_OK)
+                return;
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putString(EMAIL_KEY, data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME));
+            editor.apply();
+            Account me = getAccount();
+            if (me != null) {
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        findViewById(R.id.progress_view_mainactivity).setVisibility(View.VISIBLE);
+                        findViewById(R.id.gmail_login_button).setVisibility(View.INVISIBLE);
+                    }
+                });
+            } else {
+                errorFoundMessage(R.string.accountnotfoundtitle, R.string.accountnotfoundmessage);
+            }
+            Log.d(TAG, "Got account name " + data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME));
+            parseEmail();
+            break;
+        case SETTINGS_ACTIVITY_CODE:
+            if (preferences != null &&
+                    preferences.getString(EMAIL_KEY, NULL_KEY).equalsIgnoreCase(NULL_KEY))
+                resetUI();
+            break;
         }
     }
 
@@ -399,8 +415,9 @@ public class MainActivity extends AppCompatActivity
         buttonView.setTypeface(isChecked ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
         buttonView.setTextColor(isChecked ? ActivityCompat.getColor(this, R.color.white)
                 : ActivityCompat.getColor(this, R.color.colorPrimaryDark));
-        buttonView.setBackground(isChecked ? ActivityCompat.getDrawable(this, R.drawable.cell_shape_radio)
-                : ActivityCompat.getDrawable(this, R.drawable.cell_shape_radio_clear));
+        buttonView.setBackground(
+                isChecked ? ActivityCompat.getDrawable(this, R.drawable.cell_shape_radio)
+                        : ActivityCompat.getDrawable(this, R.drawable.cell_shape_radio_clear));
     }
 
     /*
@@ -493,9 +510,16 @@ public class MainActivity extends AppCompatActivity
         });
         Log.d(MainActivity.TAG, "PREF FOR EMAIL: " + preferences.getString(EMAIL_KEY, NULL_KEY));
         if (!preferences.getString(EMAIL_KEY, NULL_KEY).equalsIgnoreCase(NULL_KEY)) {
-            progress_view_mainactivity.setVisibility(View.VISIBLE);
-            gmail_login_button.setVisibility(View.INVISIBLE);
             parseEmail();
+        } else
+        {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    progress_view_mainactivity.setVisibility(View.INVISIBLE);
+                    gmail_login_button.setVisibility(View.VISIBLE);
+                }
+            });
         }
     }
 
@@ -516,13 +540,14 @@ public class MainActivity extends AppCompatActivity
         // Handle item selection
         switch (item.getItemId()) {
 
-            case R.id.settings_mainactivity:
-                startActivityForResult(new Intent(this, SettingsActivity.class), SETTINGS_ACTIVITY_CODE);
-                break;
-            case R.id.refresh_mainactivity:
-                finish();
-                startActivity(getIntent());
-                break;
+        case R.id.settings_mainactivity:
+            startActivityForResult(new Intent(this, SettingsActivity.class),
+                    SETTINGS_ACTIVITY_CODE);
+            break;
+        case R.id.refresh_mainactivity:
+            finish();
+            startActivity(getIntent());
+            break;
         }
         return super.onOptionsItemSelected(item);
     }

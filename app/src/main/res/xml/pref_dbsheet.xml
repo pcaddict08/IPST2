@@ -27,6 +27,7 @@
         android:summary="@string/cleardb_prefsummary"
         android:title="@string/cleardb_preftitle" />
 
+    <!--
     <Preference
         android:defaultValue="true"
         android:key="exportdb_pref"
@@ -38,6 +39,6 @@
         android:key="importdb_pref"
         android:summary="@string/importdb_prefsummary"
         android:title="@string/importdb_preftitle" />
-
+    -->
 
 </PreferenceScreen>
