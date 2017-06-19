@@ -56,10 +56,10 @@ class EmailParser {
     /**
      * Create a new EmailParser
      */
-    EmailParser(DatabaseInterface db) {
-        acceptedBuilder = new PortalAcceptedBuilder(db.getReadableDatabase());
-        rejectedBuilder = new PortalRejectedBuilder(db.getReadableDatabase());
-        submissionBuilder = new PortalSubmissionBuilder(db.getReadableDatabase());
+    EmailParser() {
+        acceptedBuilder = new PortalAcceptedBuilder(null);
+        rejectedBuilder = new PortalRejectedBuilder(null);
+        submissionBuilder = new PortalSubmissionBuilder(null);
     }
 
     /**
