@@ -132,6 +132,10 @@ public class MainActivity extends AppCompatActivity
      */
     static public final String DEFAULTCAT_KEY = "default-category";
 
+    /*
+    * The key for saving version num
+    * */
+    static public final String VERSION_KEY = "version";
     /**
      * Tag used for logging for this class
      */

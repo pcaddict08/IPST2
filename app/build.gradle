@@ -43,6 +43,7 @@ dependencies {
     compile 'com.google.firebase:firebase-core:10.0.1'
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.6.0'
+    compile 'org.apache.directory.studio:org.apache.commons.io:2.4'
 }
 
 

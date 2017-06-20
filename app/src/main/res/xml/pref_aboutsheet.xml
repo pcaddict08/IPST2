@@ -21,36 +21,21 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="manual-refresh"
-        android:summary="@string/manualrefresh_prefmessage"
-        android:title="@string/manualrefresh_preftitle"
+    <Preference
+        android:key="contact-dev"
+        android:summary="@string/contactdev_prefmessage"
+        android:title="@string/contactdev_preftitle"
         />
 
-    <EditTextPreference
-        android:defaultValue="@string/folderdefault_pref"
-        android:key="mailFolder"
-        android:title="@string/folderdefault_preftitle"
-        android:summary="@string/folderdefault_prefmessage"
+    <Preference
+        android:key="version-num"
+        android:summary="@string/versionnum_prefmessage"
+        android:title="@string/versionnum_preftitle"
         />
 
-    <ListPreference
-        android:key="default-category"
-        android:title="@string/defaultcategory_preftitle"
-        android:summary="@string/defaultcategory_prefmessage"
-        android:entries="@array/defaultCategoryValues"
-        android:defaultValue="@string/defaultcategory_default"
-        android:entryValues="@array/defaultCategories"
+    <Preference
+        android:key="upload-portals"
+        android:summary="@string/uploadportals_prefmessage"
+        android:title="@string/uploadportals_preftitle"
         />
-
-    <!--
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="dark-theme"
-        android:summary="@string/darktheme_prefmessage"
-        android:title="@string/darktheme_preftitle"
-        />
-        -->
-
 </PreferenceScreen>

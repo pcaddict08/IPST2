@@ -30,6 +30,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
@@ -39,9 +40,12 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.einzig.ipst2.PreferencesHelper;
 import com.einzig.ipst2.R;
+import com.einzig.ipst2.SendMessageHelper;
+import com.einzig.ipst2.SendPortalData;
 import com.einzig.ipst2.database.DatabaseInterface;
 
 import java.util.List;
@@ -75,6 +79,16 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     public void clearedData() {
         setResult(Activity.RESULT_OK, getIntent());
         finish();
+    }
+
+    public static String getVersionNum(Context context)
+    {
+        try {
+            return context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+            return "N/A";
+        }
     }
 
     @Override
@@ -258,6 +272,17 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_miscsheet);
             setHasOptionsMenu(true);
+
+            Preference darktheme = findPreference("dark-theme");
+            if (darktheme != null)
+                darktheme.setOnPreferenceClickListener(new Preference
+                        .OnPreferenceClickListener() {
+                    @Override
+                    public boolean onPreferenceClick(Preference preference) {
+                        //TODO add theme stuff
+                        return false;
+                    }
+                });
         }
 
         @Override
@@ -281,14 +306,37 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.pref_listsheet);
+            addPreferencesFromResource(R.xml.pref_aboutsheet);
             setHasOptionsMenu(true);
 
-            // Bind the summaries of EditText/List/Dialog/Ringtone preferences
-            // to their values. When their values change, their summaries are
-            // updated to reflect the new value, per the Android Design
-            // guidelines.
+            Preference versionnum = findPreference("version-num");
+            if(versionnum != null)
+                versionnum.setSummary(getVersionNum(getActivity()));
 
+            Preference contactdev = findPreference("contact-dev");
+            if(contactdev != null)
+                contactdev.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                    @Override
+                    public boolean onPreferenceClick(Preference preference) {
+                        SendMessageHelper.sendMessage(getActivity(), "Contactt IPST2 Dev - In App",
+                                "App Version - " + getVersionNum(getActivity()) + "\n",
+                                "portalsubmissiontracker2@gmail.com",
+                                "Contacting Dev...");
+                        return false;
+                    }
+                });
+            Preference uploadportals = findPreference("upload-portals");
+            if(uploadportals != null)
+                uploadportals.setOnPreferenceClickListener(
+                        new Preference.OnPreferenceClickListener() {
+                            @Override
+                            public boolean onPreferenceClick(Preference preference) {
+                                Toast.makeText(getActivity(), "Building portal data...", Toast
+                                        .LENGTH_SHORT).show();
+                                new SendPortalData(getActivity()).execute();
+                                return false;
+                            }
+                        });
         }
 
         @Override

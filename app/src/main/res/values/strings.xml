@@ -89,6 +89,22 @@
     <string name="manualrefresh_prefmessage">If checked, IPST will only refresh when the
         refresh button is clicked.</string>
 
+    <string name="contactdev_preftitle">Contact Developer</string>
+    <string name="contactdev_prefmessage">Open an email window to contact the developer of
+        IPST2 with issues.</string>
+
+    <string name="uploadportals_preftitle">Upload to IPST Stats</string>
+    <string name="uploadportals_prefmessage">Upload your portal submission data to IPST
+        Stats.  It will be anonymized.</string>
+
+    <string name="versionnum_preftitle">Current Version</string>
+    <string name="versionnum_prefmessage">0.0.0</string>
+
+    <string name="darktheme_preftitle">Dark Theme</string>
+    <string name="darktheme_prefmessage">If checked, IPST use a dark theme next time the app is
+        opened
+        .</string>
+
     <string name="confirmcleardbpref_message">Confirm clear *ALL* local data? You will have to re-login and re-parse all data.</string>
     <string name="confirmcleardb_preftitle">Confirm Clear Data?</string>
 
