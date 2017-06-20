@@ -19,26 +19,20 @@
   ~ DEALINGS IN THE SOFTWARE.                                                 ~
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
-<preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <header
-        android:fragment="com.einzig.ipst2.activities.SettingsActivity$DBPreferenceFragment"
-        android:icon="@drawable/ic_database"
-        android:title="@string/dbsettings_prefheader" />
+    <ListPreference
+        android:key="sort-type"
+        android:title="@string/listsorttypes"
+        android:entries="@array/sortTypesValues"
+        android:entryValues="@array/sortTypes"
+        />
 
-    <header
-        android:fragment="com.einzig.ipst2.activities.SettingsActivity$ListSettingsFragment"
-        android:icon="@drawable/ic_view_list_black_24dp"
-        android:title="@string/listsettings_prefheader" />
+    <ListPreference
+        android:key="date-type"
+        android:title="@string/datetype"
+        android:entries="@array/dateTypesValues"
+        android:entryValues="@array/dateTypes"
+        />
 
-    <header
-        android:fragment="com.einzig.ipst2.activities.SettingsActivity$MiscSettingsFragment"
-        android:icon="@drawable/ic_settings_applications_black_24dp"
-        android:title="@string/miscsettings_prefheader" />
-
-    <header
-        android:fragment="com.einzig.ipst2.activities.SettingsActivity$AboutSettingsFragment"
-        android:icon="@drawable/ic_info_black_24dp"
-        android:title="@string/aboutcontact_prefheader" />
-
-</preference-headers>
+</PreferenceScreen>

@@ -19,26 +19,26 @@
   ~ DEALINGS IN THE SOFTWARE.                                                 ~
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
-<preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <header
-        android:fragment="com.einzig.ipst2.activities.SettingsActivity$DBPreferenceFragment"
-        android:icon="@drawable/ic_database"
-        android:title="@string/dbsettings_prefheader" />
+    <Preference
+        android:defaultValue="true"
+        android:key="cleardb_pref"
+        android:summary="@string/cleardb_prefsummary"
+        android:title="@string/cleardb_preftitle" />
 
-    <header
-        android:fragment="com.einzig.ipst2.activities.SettingsActivity$ListSettingsFragment"
-        android:icon="@drawable/ic_view_list_black_24dp"
-        android:title="@string/listsettings_prefheader" />
+    <!--
+    <Preference
+        android:defaultValue="true"
+        android:key="exportdb_pref"
+        android:summary="@string/exportdb_prefsummary"
+        android:title="@string/exportdb_preftitle" />
 
-    <header
-        android:fragment="com.einzig.ipst2.activities.SettingsActivity$MiscSettingsFragment"
-        android:icon="@drawable/ic_settings_applications_black_24dp"
-        android:title="@string/miscsettings_prefheader" />
+    <Preference
+        android:defaultValue="true"
+        android:key="importdb_pref"
+        android:summary="@string/importdb_prefsummary"
+        android:title="@string/importdb_preftitle" />
+    -->
 
-    <header
-        android:fragment="com.einzig.ipst2.activities.SettingsActivity$AboutSettingsFragment"
-        android:icon="@drawable/ic_info_black_24dp"
-        android:title="@string/aboutcontact_prefheader" />
-
-</preference-headers>
+</PreferenceScreen>

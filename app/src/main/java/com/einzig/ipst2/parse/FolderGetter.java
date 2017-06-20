@@ -48,8 +48,8 @@ import static com.einzig.ipst2.activities.MainActivity.TAG;
  * @since 2017-05-25
  */
 
-class FolderGetter {
-    static final private String DEFAULT_FOLDER = "[Gmail]/All Mail";
+public class FolderGetter {
+    public static final String DEFAULT_FOLDER = "[Gmail]/All Mail";
     static final private String TEST_FOLDER = "";
     final private Activity activity;
     final private List<Folder> folders;
@@ -139,6 +139,10 @@ class FolderGetter {
             public void onClick(DialogInterface dialog, int which) {
                 Log.d(TAG, "FOLDER: " + folders.get(which));
                 folder = folders.get(which);
+                Log.d(TAG, MainActivity.FOLDER_KEY + " -> " + folder.getFullName());
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putString(MainActivity.FOLDER_KEY, folder.getFullName());
+                editor.apply();
             }
         };
     }
@@ -151,6 +155,7 @@ class FolderGetter {
      * @see FolderGetter#DEFAULT_FOLDER
      */
     private Folder noAllMailFolder(final String folderPref) {
+        Log.d(TAG, "NO ALL MAIL FOLDER");
         activity.runOnUiThread(new AllMailError(folderPref));
         return folder;
     }
@@ -182,6 +187,7 @@ class FolderGetter {
          * @param previousFolder Previous folder we checked for mail which doesn't exist.
          */
         AllMailError(String previousFolder) {
+            Log.d(TAG, "Got to all mail error");
             title = activity.getResources().getString(R.string.error) + previousFolder;
             title += activity.getResources().getString(R.string.foldermissing);
             positive = activity.getResources().getString(R.string.setcustomfolder);
@@ -223,6 +229,8 @@ class FolderGetter {
                     }
                 });
             builder.show();
+            Log.d(TAG, "SHOWING THING");
+
         }
     }
 }

@@ -123,6 +123,19 @@ public class PSListActivity extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            this.finish();
+            return true;
+        } else if (id == R.id.sortlist_pslistactivity) {
+            sortMenuOptionSelected();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     /* Method to sort the list based on settings the user has saved */
     public void sortList(ArrayList<PortalSubmission> psList) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
