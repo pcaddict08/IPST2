@@ -120,7 +120,7 @@ public abstract class PortalBuilder<P extends PortalSubmission> {
     Vector<P> getPortalsByDate(String dateKey, Date fromDate, Date toDate) {
         String fromDateStr = dateFormatter.format(fromDate);
         String toDateStr = dateFormatter.format(toDate);
-        return getPortals("? BETWEEN ? AND ?", new String[]{dateKey, fromDateStr, toDateStr});
+        return getPortals(dateKey + " BETWEEN ? AND ?", new String[]{fromDateStr, toDateStr});
     }
 
     /**
