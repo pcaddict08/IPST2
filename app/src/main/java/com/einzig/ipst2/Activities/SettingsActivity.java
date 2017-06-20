@@ -132,6 +132,12 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_dbsheet);
             setHasOptionsMenu(true);
+            SharedPreferences preferences =
+                    PreferenceManager.getDefaultSharedPreferences(getActivity());//getPreferences
+            if (preferences.getString("date-type", "").equalsIgnoreCase(""))
+                preferences.edit().putString("date-type", "monthdayyear").apply();
+            if (preferences.getString("sort-type", "").equalsIgnoreCase(""))
+                preferences.edit().putString("sort-type", "respond-date").apply();
             DBPreferenceFragment.this.findPreference("cleardb_pref")
                     .setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                         @Override

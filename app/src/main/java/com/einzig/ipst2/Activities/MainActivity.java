@@ -69,6 +69,7 @@ import com.einzig.ipst2.portal.PortalSubmission;
 import com.google.android.gms.auth.GooglePlayServicesAvailabilityException;
 import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.joda.time.DateTime;
 
@@ -316,6 +317,13 @@ public class MainActivity extends AppCompatActivity
             Intent intent = AccountManager.newChooseAccountIntent(null, null,
                     new String[]{"com.google"}, false, null, null, null, null);
             startActivityForResult(intent, LOGIN_ACTIVITY_CODE);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    findViewById(R.id.progress_view_mainactivity).setVisibility(View.VISIBLE);
+                    findViewById(R.id.gmail_login_button).setVisibility(View.INVISIBLE);
+                }
+            });
         }
     }
 
@@ -386,14 +394,14 @@ public class MainActivity extends AppCompatActivity
             Account me = getAccount();
             if (me != null) {
                 getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            } else {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        findViewById(R.id.progress_view_mainactivity).setVisibility(View.VISIBLE);
-                        findViewById(R.id.gmail_login_button).setVisibility(View.INVISIBLE);
+                        findViewById(R.id.progress_view_mainactivity).setVisibility(View.INVISIBLE);
+                        findViewById(R.id.gmail_login_button).setVisibility(View.VISIBLE);
                     }
                 });
-            } else {
                 errorFoundMessage(R.string.accountnotfoundtitle, R.string.accountnotfoundmessage);
             }
             Log.d(TAG, "Got account name " + data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME));
@@ -494,7 +502,7 @@ public class MainActivity extends AppCompatActivity
         Log.d(TAG, "onCreate");
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-
+        FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         ActionBar ab = getSupportActionBar();
         if (ab != null) {
             ab.setLogo(R.mipmap.ic_launcher);
