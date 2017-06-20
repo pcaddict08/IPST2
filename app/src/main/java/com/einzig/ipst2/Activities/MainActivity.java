@@ -123,6 +123,11 @@ public class MainActivity extends AppCompatActivity
      * The key for saving portal submission sort preference
      */
     static public final String SORT_KEY = "sort";
+
+    /**
+     * The key for saving manual refresh preference
+     */
+    static public final String MANUALREFRESH_KEY = "manual-refresh";
     /**
      * Tag used for logging for this class
      */
@@ -288,6 +293,7 @@ public class MainActivity extends AppCompatActivity
         Log.i(TAG, MOST_RECENT_DATE_KEY + " -> " +
                 preferences.getString(MOST_RECENT_DATE_KEY, NULL_KEY));
         Log.i(TAG, SORT_KEY + " -> " + preferences.getString(SORT_KEY, NULL_KEY));
+        Log.i(TAG, MANUALREFRESH_KEY + " -> " + preferences.getBoolean(MANUALREFRESH_KEY, false));
     }
 
     /**
@@ -503,6 +509,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        mFirebaseAnalytics.setAnalyticsCollectionEnabled(true);
         ActionBar ab = getSupportActionBar();
         if (ab != null) {
             ab.setLogo(R.mipmap.ic_launcher);
@@ -510,24 +517,27 @@ public class MainActivity extends AppCompatActivity
             ab.setDisplayShowHomeEnabled(true);
         }
         getPreferences();
+        boolean shouldRefresh = getIntent().getBooleanExtra("shouldRefresh", false);
         gmail_login_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 loginHitMethod();
             }
         });
-        Log.d(MainActivity.TAG, "PREF FOR EMAIL: " + preferences.getString(EMAIL_KEY, NULL_KEY));
-        if (!preferences.getString(EMAIL_KEY, NULL_KEY).equalsIgnoreCase(NULL_KEY)) {
-            parseEmail();
-        } else
-        {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    progress_view_mainactivity.setVisibility(View.INVISIBLE);
-                    gmail_login_button.setVisibility(View.VISIBLE);
-                }
-            });
+        if (!preferences.getBoolean(MANUALREFRESH_KEY, false) || shouldRefresh) {
+            if (!preferences.getString(EMAIL_KEY, NULL_KEY).equalsIgnoreCase(NULL_KEY)) {
+                parseEmail();
+            } else {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progress_view_mainactivity.setVisibility(View.INVISIBLE);
+                        gmail_login_button.setVisibility(View.VISIBLE);
+                    }
+                });
+            }
+        } else {
+            buildUIAfterParsing();
         }
     }
 
@@ -554,6 +564,8 @@ public class MainActivity extends AppCompatActivity
             break;
         case R.id.refresh_mainactivity:
             finish();
+            Intent nextIntent = getIntent();
+            nextIntent.putExtra("shouldRefresh", true);
             startActivity(getIntent());
             break;
         }

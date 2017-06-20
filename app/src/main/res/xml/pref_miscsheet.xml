@@ -21,8 +21,18 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <Preference android:title="DATASYNC">
-        <intent android:action="android.settings.SYNC_SETTINGS" />
-    </Preference>
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="manual-refresh"
+        android:summary="@string/manualrefresh_prefmessage"
+        android:title="@string/manualrefresh_preftitle"
+        />
+
+    <EditTextPreference
+        android:defaultValue="@string/folderdefault_pref"
+        android:key="mailFolder"
+        android:title="@string/folderdefault_preftitle"
+        android:summary="@string/folderdefault_prefmessage"
+        />
 
 </PreferenceScreen>

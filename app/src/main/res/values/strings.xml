@@ -77,9 +77,17 @@
     <string name="importdb_prefsummary">Import portal submissions from a CSV you exported from IPST2.  *WARNING* Importing from an IPST(original) CSV is not supported.</string>
     <string name="importdb_preftitle">Import</string>
 
+    <string name="manualrefresh_preftitle">Manual Refresh</string>
+    <string name="manualrefresh_prefmessage">If checked, IPST will only refresh when the
+        refresh button is clicked.</string>
+
     <string name="confirmcleardbpref_message">Confirm clear *ALL* local data? You will have to re-login and re-parse all data.</string>
-    <string name="confirmcleardbpref_title">Confirm Clear Data?</string>
+    <string name="confirmcleardb_preftitle">Confirm Clear Data?</string>
 
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
+    <string name="folderdefault_pref">[Gmail]/All Mail</string>
+    <string name="folderdefault_preftitle">Default Folder</string>
+    <string name="folderdefault_prefmessage">*IF IPST2 FINDS EMAILS DON\'T CHANGE THIS* This
+    preference allows you to manually set where IPST2 looks for emails.</string>
 </resources>

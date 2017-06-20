@@ -188,7 +188,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     @Override
                     public void run() {
                         new AlertDialog.Builder(getActivity(), R.style.dialogtheme)
-                                .setTitle(R.string.confirmcleardbpref_title)
+                                .setTitle(R.string.confirmcleardb_preftitle)
                                 .setMessage(R.string.confirmcleardbpref_message)
                                 .setPositiveButton(R.string.confirm,
                                         new DialogInterface.OnClickListener() {
@@ -234,11 +234,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_listsheet);
             setHasOptionsMenu(true);
-
-            // Bind the summaries of EditText/List/Dialog/Ringtone preferences
-            // to their values. When their values change, their summaries are
-            // updated to reflect the new value, per the Android Design
-            // guidelines.
         }
 
         @Override
@@ -261,13 +256,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.pref_data_sync);
+            addPreferencesFromResource(R.xml.pref_miscsheet);
             setHasOptionsMenu(true);
-
-            // Bind the summaries of EditText/List/Dialog/Ringtone preferences
-            // to their values. When their values change, their summaries are
-            // updated to reflect the new value, per the Android Design
-            // guidelines.
         }
 
         @Override
