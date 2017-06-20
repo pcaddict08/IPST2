@@ -33,6 +33,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -330,9 +331,6 @@ public class MainActivity extends AppCompatActivity
             });
             builder.show();
         } else {
-            Intent intent = AccountManager.newChooseAccountIntent(null, null,
-                    new String[]{"com.google"}, false, null, null, null, null);
-            startActivityForResult(intent, LOGIN_ACTIVITY_CODE);
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -340,6 +338,9 @@ public class MainActivity extends AppCompatActivity
                     findViewById(R.id.gmail_login_button).setVisibility(View.INVISIBLE);
                 }
             });
+            Intent intent = AccountManager.newChooseAccountIntent(null, null,
+                    new String[]{"com.google"}, false, null, null, null, null);
+            startActivityForResult(intent, LOGIN_ACTIVITY_CODE);
         }
     }
 
@@ -694,16 +695,24 @@ public class MainActivity extends AppCompatActivity
      * @see MainActivity#parseEmailWork(Account, ProgressDialog)
      */
     private void parseEmail() {
-        Account account = getAccount();
+        if(Looper.myLooper() == Looper.getMainLooper()) {
+            Log.d(TAG, "IS MAIN THREAD?!");
+        }
+        final Account account = getAccount();
         if (account != null) {
-            ProgressDialog dialog = new ProgressDialog(this);
+            final ProgressDialog dialog = new ProgressDialog(this);
             dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             dialog.setIndeterminate(true);
             dialog.setTitle("Searching Email");
             dialog.setCanceledOnTouchOutside(false);
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-            parseEmailWork(account, dialog);
-            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            dialog.show();
+            new Thread(){
+                public void run(){
+                    parseEmailWork(account, dialog);
+                }
+            }.start();
+            //getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            //getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
     }
 
@@ -721,18 +730,23 @@ public class MainActivity extends AppCompatActivity
      * @param account GMail account
      * @param dialog  Progress dialog to display while authenticating and searching for mail
      */
-    private void parseEmailWork(Account account, ProgressDialog dialog) {
+    private void parseEmailWork(Account account, final ProgressDialog dialog) {
         try {
-            dialog.show();
+            Log.d(TAG, "Showing DIALOG");
             String token = new AuthenticatorTask(this, account).execute().get();
-            MailBundle bundle = new GetMailTask(this, account, token).execute().get();
-            dialog.dismiss();
-            if (bundle != null)
-                new EmailParseTask(this, bundle).execute();
-            else {
-                gmail_login_button.setVisibility(View.VISIBLE);
-                progress_view_mainactivity.setVisibility(View.INVISIBLE);
-            }
+            final MailBundle bundle = new GetMailTask(this, account, token).execute().get();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    dialog.dismiss();
+                    if (bundle != null)
+                        new EmailParseTask(MainActivity.this, bundle).execute();
+                    else {
+                        gmail_login_button.setVisibility(View.VISIBLE);
+                        progress_view_mainactivity.setVisibility(View.INVISIBLE);
+                    }
+                }
+            });
         } catch (InterruptedException | ExecutionException e) {
             Log.e(TAG, e.toString());
         }
