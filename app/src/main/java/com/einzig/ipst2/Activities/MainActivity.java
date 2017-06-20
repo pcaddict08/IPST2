@@ -123,11 +123,15 @@ public class MainActivity extends AppCompatActivity
      * The key for saving portal submission sort preference
      */
     static public final String SORT_KEY = "sort";
-
     /**
      * The key for saving manual refresh preference
      */
     static public final String MANUALREFRESH_KEY = "manual-refresh";
+    /**
+     * The key for saving default category preference
+     */
+    static public final String DEFAULTCAT_KEY = "default-category";
+
     /**
      * Tag used for logging for this class
      */
@@ -203,6 +207,7 @@ public class MainActivity extends AppCompatActivity
         weektab.setOnCheckedChangeListener(this);
         monthtab.setOnCheckedChangeListener(this);
         alltab.setOnCheckedChangeListener(this);
+        selectRadioItem();
     }
 
     /* RESET ui to show gmail button*/
@@ -294,6 +299,7 @@ public class MainActivity extends AppCompatActivity
                 preferences.getString(MOST_RECENT_DATE_KEY, NULL_KEY));
         Log.i(TAG, SORT_KEY + " -> " + preferences.getString(SORT_KEY, NULL_KEY));
         Log.i(TAG, MANUALREFRESH_KEY + " -> " + preferences.getBoolean(MANUALREFRESH_KEY, false));
+        Log.i(TAG, DEFAULTCAT_KEY + " -> " + preferences.getString(DEFAULTCAT_KEY, NULL_KEY));
     }
 
     /**
@@ -433,6 +439,34 @@ public class MainActivity extends AppCompatActivity
                 isChecked ? ActivityCompat.getDrawable(this, R.drawable.cell_shape_radio)
                         : ActivityCompat.getDrawable(this, R.drawable.cell_shape_radio_clear));
     }
+
+    /**
+     * Set radio item active and the rest not
+     */
+    public void selectRadioItem() {
+        int position = R.id.alltab_mainactivity;
+        switch (preferences.getString("default-category", "all"))
+        {
+        case "all":
+            position = R.id.alltab_mainactivity;
+            break;
+        case "month":
+            position = R.id.monthtab_mainactivity;
+            break;
+        case "week":
+            position = R.id.weektab_mainactivity;
+            break;
+        case "today":
+            position = R.id.todaytab_mainactivity;
+            break;
+        default:
+            break;
+        }
+        formatUIFromRadio(position);
+        Log.d(TAG, "setting Position to " + position);
+        tabs_mainactivity.check(position);
+    }
+
 
     /*
      * View list of accepted portals
@@ -582,9 +616,13 @@ public class MainActivity extends AppCompatActivity
             return;
         RadioButton tempButton = (RadioButton) view;
         tempButton.setTypeface(null, Typeface.BOLD);
-        // Check which radio button was clicked
+        formatUIFromRadio(view.getId());
+    }
+
+    public void formatUIFromRadio(int viewID)
+    {
         Button viewList = (Button) findViewById(R.id.viewlist_mainactivity);
-        switch (view.getId()) {
+        switch (viewID) {
         case R.id.todaytab_mainactivity:
             viewDate = new DateTime().minusDays(1).toDate();
             viewList.setText(R.string.viewlisttoday);

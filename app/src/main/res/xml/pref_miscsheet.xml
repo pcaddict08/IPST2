@@ -35,4 +35,13 @@
         android:summary="@string/folderdefault_prefmessage"
         />
 
+    <ListPreference
+        android:key="default-category"
+        android:title="@string/defaultcategory_preftitle"
+        android:summary="@string/defaultcategory_prefmessage"
+        android:entries="@array/defaultCategoryValues"
+        android:defaultValue="@string/defaultcategory_default"
+        android:entryValues="@array/defaultCategories"
+        />
+
 </PreferenceScreen>

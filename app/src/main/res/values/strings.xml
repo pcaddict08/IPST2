@@ -61,8 +61,16 @@
     <string name="action_sortlist">Sort List</string>
     <string name="refresh_menumainactivity">Refresh</string>
     <string name="title_activity_settings2">Settings</string>
-    <string name="listsorttypes">Sort Type</string>
-    <string name="datetype">Date Format</string>
+    <string name="listsorttypes_preftitle">Sort Type</string>
+    <string name="listsorttypes_prefmessage">This sets the way the lists are sorted.</string>
+    <string name="datetype_preftitle">Date Format</string>
+    <string name="datetype_prefmessage">This sets the date format displayed throughout the
+        app.</string>
+
+    <string name="defaultcategory_preftitle">Default Main Category</string>
+    <string name="defaultcategory_default">all</string>
+    <string name="defaultcategory_prefmessage">This sets which tab is opened by default in the
+        app\'s main page.</string>
 
     <!-- Strings related to Settings -->
     <string name="dbsettings_prefheader">Database Settings</string>
