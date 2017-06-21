@@ -35,6 +35,7 @@ import com.einzig.ipst2.portal.PortalAccepted;
 import com.einzig.ipst2.portal.PortalRejected;
 import com.einzig.ipst2.portal.PortalSubmission;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -129,8 +130,8 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      */
     public void addPortalRejected(PortalRejected portal) {
         Log.d(TAG, "Add rejected portal: " + portal.getName());
-        String dateSubmitted = dateFormatter.format(portal.getDateSubmitted());
-        String dateResponded = dateFormatter.format(portal.getDateResponded());
+        String dateSubmitted = getDateStringSafe(portal.getDateSubmitted());
+        String dateResponded = getDateStringSafe(portal.getDateResponded());
         ContentValues values = new ContentValues();
         // Values put!
         values.put(KEY_NAME, portal.getName());
@@ -513,6 +514,16 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     }
 
     /**
+     * Safely get a String representation of date
+     *
+     * @param date A point in time
+     * @return String representation of date
+     */
+    private String getDateStringSafe(Date date) {
+        return (date != null) ? dateFormatter.format(date) : "";
+    }
+
+    /**
      * Get the number of entries in a table
      *
      * @param table Table to count rows on
@@ -600,7 +611,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
             PortalBuilder<P> builder) {
         Vector<P> portals = getAll(table, KEY_PICTURE_URL + " = ?", new String[]{pictureURL},
                 builder);
-        return (portals != null) ? portals.firstElement() : null;
+        return (portals.size() > 0) ? portals.firstElement() : null;
     }
 
     /**
