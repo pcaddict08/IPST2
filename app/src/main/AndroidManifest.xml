@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.einzig.ipst2">
+          package="com.einzig.ipst2">
 
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission
         android:name="android.permission.USE_CREDENTIALS"
-        android:maxSdkVersion="22" />
+        android:maxSdkVersion="22"/>
 
     <application
         android:allowBackup="true"
@@ -20,22 +20,29 @@
             android:name="io.fabric.ApiKey"
             android:value="71abaa2cb163e1ffb7de603f7a2f7496af03a935"
             />
-        <activity android:name=".activities.MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
+        <activity
+            android:name=".activities.MainActivity"
+            android:screenOrientation="portrait"
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
         <activity
             android:name=".activities.SettingsActivity"
-            android:label="@string/title_activity_settings" />
+            android:label="@string/title_activity_settings"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activities.PSListActivity"
-            android:label="@string/pslisttitle_activity" />
+            android:label="@string/pslisttitle_activity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activities.PSDetailsActivity"
-            android:label="@string/psdetailstitle_activity" />
+            android:label="@string/psdetailstitle_activity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>
