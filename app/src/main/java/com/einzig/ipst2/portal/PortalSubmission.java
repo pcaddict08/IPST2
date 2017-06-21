@@ -63,7 +63,7 @@ public class PortalSubmission implements Parcelable, Serializable {
      */
     private final String pictureURL;
     /** Date format for returning string dates */
-    SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy", Locale.getDefault());
+    SimpleDateFormat dateFormat;
     /**
      * The date the portal was submitted.
      *
@@ -95,9 +95,17 @@ public class PortalSubmission implements Parcelable, Serializable {
         pictureURL = in.readString();
     }
 
+    public SimpleDateFormat getDateFormat() {
+        return dateFormat;
+    }
+
+    public void setDateFormat(SimpleDateFormat dateFormat) {
+        this.dateFormat = dateFormat;
+    }
+
     /*
-     * No idea what this does
-     */
+         * No idea what this does
+         */
     @Override
     public int describeContents() {
         return 0;

@@ -34,6 +34,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.einzig.ipst2.PreferencesHelper;
 import com.einzig.ipst2.R;
 import com.einzig.ipst2.portal.PortalAccepted;
 import com.einzig.ipst2.portal.PortalRejected;
@@ -75,7 +76,7 @@ public class ListItemAdapter_PS extends BaseAdapter implements Filterable {
 
     public View getView(int position, View convertView, ViewGroup parent) {
         final PortalSubmission item = this.shownItems.get(position);
-
+        item.setDateFormat(PreferencesHelper.getSDF(context));
         @SuppressLint("ViewHolder") LinearLayout itemLayout = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.row_pslist, parent, false);
         ImageView iconView = (ImageView) itemLayout.findViewById(R.id.status_icon);
         if (iconView != null) {
