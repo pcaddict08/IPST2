@@ -21,20 +21,36 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <ListPreference
-        android:key="sort-type"
-        android:title="@string/listsorttypes_preftitle"
-        android:summary="@string/listsorttypes_prefmessage"
-        android:entries="@array/sortTypesValues"
-        android:entryValues="@array/sortTypes"
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="manual-refresh"
+        android:summary="@string/manualrefresh_prefmessage"
+        android:title="@string/manualrefresh_preftitle"
+        />
+
+    <EditTextPreference
+        android:defaultValue="@string/folderdefault_pref"
+        android:key="mailFolder"
+        android:title="@string/folderdefault_preftitle"
+        android:summary="@string/folderdefault_prefmessage"
         />
 
     <ListPreference
-        android:key="date-type"
-        android:title="@string/datetype_preftitle"
-        android:summary="@string/datetype_prefmessage"
-        android:entries="@array/dateTypesValues"
-        android:entryValues="@array/dateTypes"
+        android:key="default-category"
+        android:title="@string/defaultcategory_preftitle"
+        android:summary="@string/defaultcategory_prefmessage"
+        android:entries="@array/defaultCategoryValues"
+        android:defaultValue="@string/defaultcategory_default"
+        android:entryValues="@array/defaultCategories"
         />
+
+    <!--
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="dark-theme"
+        android:summary="@string/darktheme_prefmessage"
+        android:title="@string/darktheme_preftitle"
+        />
+        -->
 
 </PreferenceScreen>

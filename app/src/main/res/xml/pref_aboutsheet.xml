@@ -21,8 +21,21 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <Preference android:title="DATASYNC">
-        <intent android:action="android.settings.SYNC_SETTINGS" />
-    </Preference>
+    <Preference
+        android:key="contact-dev"
+        android:summary="@string/contactdev_prefmessage"
+        android:title="@string/contactdev_preftitle"
+        />
 
+    <Preference
+        android:key="version-num"
+        android:summary="@string/versionnum_prefmessage"
+        android:title="@string/versionnum_preftitle"
+        />
+
+    <Preference
+        android:key="upload-portals"
+        android:summary="@string/uploadportals_prefmessage"
+        android:title="@string/uploadportals_preftitle"
+        />
 </PreferenceScreen>

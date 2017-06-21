@@ -61,8 +61,16 @@
     <string name="action_sortlist">Sort List</string>
     <string name="refresh_menumainactivity">Refresh</string>
     <string name="title_activity_settings2">Settings</string>
-    <string name="listsorttypes">Sort Type</string>
-    <string name="datetype">Date Format</string>
+    <string name="listsorttypes_preftitle">Sort Type</string>
+    <string name="listsorttypes_prefmessage">This sets the way the lists are sorted.</string>
+    <string name="datetype_preftitle">Date Format</string>
+    <string name="datetype_prefmessage">This sets the date format displayed throughout the
+        app.</string>
+
+    <string name="defaultcategory_preftitle">Default Main Category</string>
+    <string name="defaultcategory_default">all</string>
+    <string name="defaultcategory_prefmessage">This sets which tab is opened by default in the
+        app\'s main page.</string>
 
     <!-- Strings related to Settings -->
     <string name="dbsettings_prefheader">Database Settings</string>
@@ -77,9 +85,33 @@
     <string name="importdb_prefsummary">Import portal submissions from a CSV you exported from IPST2.  *WARNING* Importing from an IPST(original) CSV is not supported.</string>
     <string name="importdb_preftitle">Import</string>
 
+    <string name="manualrefresh_preftitle">Manual Refresh</string>
+    <string name="manualrefresh_prefmessage">If checked, IPST will only refresh when the
+        refresh button is clicked.</string>
+
+    <string name="contactdev_preftitle">Contact Developer</string>
+    <string name="contactdev_prefmessage">Open an email window to contact the developer of
+        IPST2 with issues.</string>
+
+    <string name="uploadportals_preftitle">Upload to IPST Stats</string>
+    <string name="uploadportals_prefmessage">Upload your portal submission data to IPST
+        Stats.  It will be anonymized.</string>
+
+    <string name="versionnum_preftitle">Current Version</string>
+    <string name="versionnum_prefmessage">0.0.0</string>
+
+    <string name="darktheme_preftitle">Dark Theme</string>
+    <string name="darktheme_prefmessage">If checked, IPST use a dark theme next time the app is
+        opened
+        .</string>
+
     <string name="confirmcleardbpref_message">Confirm clear *ALL* local data? You will have to re-login and re-parse all data.</string>
-    <string name="confirmcleardbpref_title">Confirm Clear Data?</string>
+    <string name="confirmcleardb_preftitle">Confirm Clear Data?</string>
 
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
+    <string name="folderdefault_pref">[Gmail]/All Mail</string>
+    <string name="folderdefault_preftitle">Default Folder</string>
+    <string name="folderdefault_prefmessage">*IF IPST2 FINDS EMAILS DON\'T CHANGE THIS* This
+    preference allows you to manually set where IPST2 looks for emails.</string>
 </resources>

@@ -57,4 +57,20 @@
         <item>YYYY/DD/MM</item>
 
     </string-array>
+
+
+    <string-array name="defaultCategories">
+        <item>all</item>
+        <item>month</item>
+        <item>week</item>
+        <item>today</item>
+
+    </string-array>
+    <string-array name="defaultCategoryValues">
+        <item>All</item>
+        <item>Month</item>
+        <item>Week</item>
+        <item>Today</item>
+
+    </string-array>
 </resources>

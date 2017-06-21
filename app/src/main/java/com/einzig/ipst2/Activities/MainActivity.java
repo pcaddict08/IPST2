@@ -33,6 +33,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -69,6 +70,7 @@ import com.einzig.ipst2.portal.PortalSubmission;
 import com.google.android.gms.auth.GooglePlayServicesAvailabilityException;
 import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.joda.time.DateTime;
 
@@ -122,6 +124,19 @@ public class MainActivity extends AppCompatActivity
      * The key for saving portal submission sort preference
      */
     static public final String SORT_KEY = "sort";
+    /**
+     * The key for saving manual refresh preference
+     */
+    static public final String MANUALREFRESH_KEY = "manual-refresh";
+    /**
+     * The key for saving default category preference
+     */
+    static public final String DEFAULTCAT_KEY = "default-category";
+
+    /*
+    * The key for saving version num
+    * */
+    static public final String VERSION_KEY = "version";
     /**
      * Tag used for logging for this class
      */
@@ -197,6 +212,7 @@ public class MainActivity extends AppCompatActivity
         weektab.setOnCheckedChangeListener(this);
         monthtab.setOnCheckedChangeListener(this);
         alltab.setOnCheckedChangeListener(this);
+        selectRadioItem();
     }
 
     /* RESET ui to show gmail button*/
@@ -287,6 +303,8 @@ public class MainActivity extends AppCompatActivity
         Log.i(TAG, MOST_RECENT_DATE_KEY + " -> " +
                 preferences.getString(MOST_RECENT_DATE_KEY, NULL_KEY));
         Log.i(TAG, SORT_KEY + " -> " + preferences.getString(SORT_KEY, NULL_KEY));
+        Log.i(TAG, MANUALREFRESH_KEY + " -> " + preferences.getBoolean(MANUALREFRESH_KEY, false));
+        Log.i(TAG, DEFAULTCAT_KEY + " -> " + preferences.getString(DEFAULTCAT_KEY, NULL_KEY));
     }
 
     /**
@@ -313,6 +331,13 @@ public class MainActivity extends AppCompatActivity
             });
             builder.show();
         } else {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    findViewById(R.id.progress_view_mainactivity).setVisibility(View.VISIBLE);
+                    findViewById(R.id.gmail_login_button).setVisibility(View.INVISIBLE);
+                }
+            });
             Intent intent = AccountManager.newChooseAccountIntent(null, null,
                     new String[]{"com.google"}, false, null, null, null, null);
             startActivityForResult(intent, LOGIN_ACTIVITY_CODE);
@@ -386,14 +411,14 @@ public class MainActivity extends AppCompatActivity
             Account me = getAccount();
             if (me != null) {
                 getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            } else {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        findViewById(R.id.progress_view_mainactivity).setVisibility(View.VISIBLE);
-                        findViewById(R.id.gmail_login_button).setVisibility(View.INVISIBLE);
+                        findViewById(R.id.progress_view_mainactivity).setVisibility(View.INVISIBLE);
+                        findViewById(R.id.gmail_login_button).setVisibility(View.VISIBLE);
                     }
                 });
-            } else {
                 errorFoundMessage(R.string.accountnotfoundtitle, R.string.accountnotfoundmessage);
             }
             Log.d(TAG, "Got account name " + data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME));
@@ -419,6 +444,34 @@ public class MainActivity extends AppCompatActivity
                 isChecked ? ActivityCompat.getDrawable(this, R.drawable.cell_shape_radio)
                         : ActivityCompat.getDrawable(this, R.drawable.cell_shape_radio_clear));
     }
+
+    /**
+     * Set radio item active and the rest not
+     */
+    public void selectRadioItem() {
+        int position = R.id.alltab_mainactivity;
+        switch (preferences.getString("default-category", "all"))
+        {
+        case "all":
+            position = R.id.alltab_mainactivity;
+            break;
+        case "month":
+            position = R.id.monthtab_mainactivity;
+            break;
+        case "week":
+            position = R.id.weektab_mainactivity;
+            break;
+        case "today":
+            position = R.id.todaytab_mainactivity;
+            break;
+        default:
+            break;
+        }
+        formatUIFromRadio(position);
+        Log.d(TAG, "setting Position to " + position);
+        tabs_mainactivity.check(position);
+    }
+
 
     /*
      * View list of accepted portals
@@ -494,7 +547,8 @@ public class MainActivity extends AppCompatActivity
         Log.d(TAG, "onCreate");
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-
+        FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        mFirebaseAnalytics.setAnalyticsCollectionEnabled(true);
         ActionBar ab = getSupportActionBar();
         if (ab != null) {
             ab.setLogo(R.mipmap.ic_launcher);
@@ -502,24 +556,27 @@ public class MainActivity extends AppCompatActivity
             ab.setDisplayShowHomeEnabled(true);
         }
         getPreferences();
+        boolean shouldRefresh = getIntent().getBooleanExtra("shouldRefresh", false);
         gmail_login_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 loginHitMethod();
             }
         });
-        Log.d(MainActivity.TAG, "PREF FOR EMAIL: " + preferences.getString(EMAIL_KEY, NULL_KEY));
-        if (!preferences.getString(EMAIL_KEY, NULL_KEY).equalsIgnoreCase(NULL_KEY)) {
-            parseEmail();
-        } else
-        {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    progress_view_mainactivity.setVisibility(View.INVISIBLE);
-                    gmail_login_button.setVisibility(View.VISIBLE);
-                }
-            });
+        if (!preferences.getBoolean(MANUALREFRESH_KEY, false) || shouldRefresh) {
+            if (!preferences.getString(EMAIL_KEY, NULL_KEY).equalsIgnoreCase(NULL_KEY)) {
+                parseEmail();
+            } else {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progress_view_mainactivity.setVisibility(View.INVISIBLE);
+                        gmail_login_button.setVisibility(View.VISIBLE);
+                    }
+                });
+            }
+        } else {
+            buildUIAfterParsing();
         }
     }
 
@@ -546,6 +603,8 @@ public class MainActivity extends AppCompatActivity
             break;
         case R.id.refresh_mainactivity:
             finish();
+            Intent nextIntent = getIntent();
+            nextIntent.putExtra("shouldRefresh", true);
             startActivity(getIntent());
             break;
         }
@@ -562,9 +621,13 @@ public class MainActivity extends AppCompatActivity
             return;
         RadioButton tempButton = (RadioButton) view;
         tempButton.setTypeface(null, Typeface.BOLD);
-        // Check which radio button was clicked
+        formatUIFromRadio(view.getId());
+    }
+
+    public void formatUIFromRadio(int viewID)
+    {
         Button viewList = (Button) findViewById(R.id.viewlist_mainactivity);
-        switch (view.getId()) {
+        switch (viewID) {
         case R.id.todaytab_mainactivity:
             viewDate = new DateTime().minusDays(1).toDate();
             viewList.setText(R.string.viewlisttoday);
@@ -632,16 +695,24 @@ public class MainActivity extends AppCompatActivity
      * @see MainActivity#parseEmailWork(Account, ProgressDialog)
      */
     private void parseEmail() {
-        Account account = getAccount();
+        if(Looper.myLooper() == Looper.getMainLooper()) {
+            Log.d(TAG, "IS MAIN THREAD?!");
+        }
+        final Account account = getAccount();
         if (account != null) {
-            ProgressDialog dialog = new ProgressDialog(this);
+            final ProgressDialog dialog = new ProgressDialog(this);
             dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             dialog.setIndeterminate(true);
             dialog.setTitle("Searching Email");
             dialog.setCanceledOnTouchOutside(false);
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-            parseEmailWork(account, dialog);
-            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            dialog.show();
+            new Thread(){
+                public void run(){
+                    parseEmailWork(account, dialog);
+                }
+            }.start();
+            //getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            //getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
     }
 
@@ -659,18 +730,23 @@ public class MainActivity extends AppCompatActivity
      * @param account GMail account
      * @param dialog  Progress dialog to display while authenticating and searching for mail
      */
-    private void parseEmailWork(Account account, ProgressDialog dialog) {
+    private void parseEmailWork(Account account, final ProgressDialog dialog) {
         try {
-            dialog.show();
+            Log.d(TAG, "Showing DIALOG");
             String token = new AuthenticatorTask(this, account).execute().get();
-            MailBundle bundle = new GetMailTask(this, account, token).execute().get();
-            dialog.dismiss();
-            if (bundle != null)
-                new EmailParseTask(this, bundle).execute();
-            else {
-                gmail_login_button.setVisibility(View.VISIBLE);
-                progress_view_mainactivity.setVisibility(View.INVISIBLE);
-            }
+            final MailBundle bundle = new GetMailTask(this, account, token).execute().get();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    dialog.dismiss();
+                    if (bundle != null)
+                        new EmailParseTask(MainActivity.this, bundle).execute();
+                    else {
+                        gmail_login_button.setVisibility(View.VISIBLE);
+                        progress_view_mainactivity.setVisibility(View.INVISIBLE);
+                    }
+                }
+            });
         } catch (InterruptedException | ExecutionException e) {
             Log.e(TAG, e.toString());
         }
