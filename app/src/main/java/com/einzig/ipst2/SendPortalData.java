@@ -34,7 +34,6 @@ import com.einzig.ipst2.portal.PortalAccepted;
 import com.einzig.ipst2.portal.PortalRejected;
 import com.einzig.ipst2.portal.PortalSubmission;
 
-import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

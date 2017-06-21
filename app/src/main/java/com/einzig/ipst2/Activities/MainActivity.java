@@ -56,6 +56,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.crashlytics.android.Crashlytics;
 import com.einzig.ipst2.DialogHelper;
 import com.einzig.ipst2.R;
 import com.einzig.ipst2.database.DatabaseInterface;
@@ -82,6 +83,7 @@ import java.util.concurrent.ExecutionException;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.fabric.sdk.android.Fabric;
 
 /**
  * Main activity class which launches the app.
@@ -549,6 +551,7 @@ public class MainActivity extends AppCompatActivity
         ButterKnife.bind(this);
         FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         mFirebaseAnalytics.setAnalyticsCollectionEnabled(true);
+        Fabric.with(this, new Crashlytics());
         ActionBar ab = getSupportActionBar();
         if (ab != null) {
             ab.setLogo(R.mipmap.ic_launcher);
