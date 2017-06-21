@@ -22,10 +22,8 @@
 package com.einzig.ipst2.database;
 
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 
 import com.einzig.ipst2.portal.PortalAccepted;
-import com.einzig.ipst2.portal.PortalSubmission;
 
 import java.util.Date;
 import java.util.regex.Matcher;
@@ -37,22 +35,17 @@ import java.util.regex.Pattern;
  */
 public final class PortalAcceptedBuilder extends PortalBuilder<PortalAccepted> {
     /**
-     * @param db reference to a SQLite database to run queries on
+     *
      */
-    public PortalAcceptedBuilder(SQLiteDatabase db) {
-        super(db, DatabaseInterface.TABLE_ACCEPTED);
+    public PortalAcceptedBuilder() {
     }
 
     @Override
     public PortalAccepted build(String name, Date dateResponded, String message) {
         String pictureURL = parsePictureURL(message);
-        Date dateSubmitted = dateResponded;
-        PortalSubmission submission = findPortal(pictureURL);
-        if (submission != null)
-            dateSubmitted = submission.getDateSubmitted();
         String address = parseLiveAddress(message);
         String intelLink = parseIntelLink(message);
-        return new PortalAccepted(name, dateSubmitted, pictureURL, dateResponded, address,
+        return new PortalAccepted(name, null, pictureURL, dateResponded, address,
                 intelLink);
     }
 

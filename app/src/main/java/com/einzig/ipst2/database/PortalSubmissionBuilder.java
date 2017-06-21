@@ -22,11 +22,9 @@
 package com.einzig.ipst2.database;
 
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 
 import com.einzig.ipst2.portal.PortalSubmission;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -35,10 +33,9 @@ import java.util.Date;
  */
 public final class PortalSubmissionBuilder extends PortalBuilder<PortalSubmission> {
     /**
-     * @param db reference to a SQLite database to run queries on
+     *
      */
-    public PortalSubmissionBuilder(SQLiteDatabase db) {
-        super(db, DatabaseInterface.TABLE_PENDING);
+    public PortalSubmissionBuilder() {
     }
 
     /**

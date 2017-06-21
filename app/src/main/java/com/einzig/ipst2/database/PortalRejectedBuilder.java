@@ -22,10 +22,8 @@
 package com.einzig.ipst2.database;
 
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 
 import com.einzig.ipst2.portal.PortalRejected;
-import com.einzig.ipst2.portal.PortalSubmission;
 
 import java.util.Date;
 
@@ -35,10 +33,9 @@ import java.util.Date;
  */
 public final class PortalRejectedBuilder extends PortalBuilder<PortalRejected> {
     /**
-     * @param db reference to a SQLite database to run queries on
+     *
      */
-    public PortalRejectedBuilder(SQLiteDatabase db) {
-        super(db, DatabaseInterface.TABLE_REJECTED);
+    public PortalRejectedBuilder() {
     }
 
     /**
@@ -62,12 +59,8 @@ public final class PortalRejectedBuilder extends PortalBuilder<PortalRejected> {
     @Override
     public PortalRejected build(String name, Date dateResponded, String message) {
         String pictureURL = parsePictureURL(message);
-        Date dateSubmitted = dateResponded;
-        PortalSubmission submission = findPortal(pictureURL);
-        if (submission != null)
-            dateSubmitted = submission.getDateSubmitted();
         String rejectionReason = parseRejectionReason(message);
-        return new PortalRejected(name, dateSubmitted, pictureURL, dateResponded, rejectionReason);
+        return new PortalRejected(name, null, pictureURL, dateResponded, rejectionReason);
     }
 
     /**

@@ -79,7 +79,7 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
         this.bundle = bundle;
         this.db = new DatabaseInterface(activity);
         this.messages = bundle.getMessages();
-        this.parser = new EmailParser(this.db);
+        this.parser = new EmailParser();
         this.preferences = PreferenceManager.getDefaultSharedPreferences(activity);//activity.getPreferences(MainActivity.MODE_PRIVATE);
         addMailcaps();
         initProgressDialog();
@@ -120,10 +120,11 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
      * @param portal Instance of PortalAccepted to add to the database
      */
     private void addPortalAccepted(PortalAccepted portal) {
-        Log.d(TAG, "Adding approved portal: " + portal.getName());
         PortalSubmission pending = db.getPendingPortal(portal.getPictureURL());
-        if (pending != null)
+        if (pending != null) {
+            portal.setDateSubmitted(pending.getDateSubmitted());
             db.deletePending(pending);
+        }
         db.addPortalAccepted(portal);
     }
 
@@ -133,10 +134,13 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
      * @param portal Instance of PortalRejected to add to the database
      */
     private void addPortalRejected(PortalRejected portal) {
-        Log.d(TAG, "Adding rejected portal: " + portal.getName());
         PortalSubmission pending = db.getPendingPortal(portal.getPictureURL());
-        if (pending != null)
+        if (pending != null) {
+            // I don't like this, but it's the best way to do it without completely redoing the
+            // database
+            portal.setDateSubmitted(pending.getDateSubmitted());
             db.deletePending(pending);
+        }
         db.addPortalRejected(portal);
     }
 
@@ -146,7 +150,6 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
      * @param portal Instance of PortalSubmission (but not a subclass) to add to the database
      */
     private void addPortalSubmission(PortalSubmission portal) {
-        Log.d(TAG, "Adding submitted portal: " + portal.getName());
         db.addPortalSubmission(portal);
     }
 
