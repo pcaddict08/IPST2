@@ -81,7 +81,7 @@ public class PSListActivity extends AppCompatActivity {
                     Log.d(TAG, "Item Selected at index: " + i);
                     try {
                         Intent intent = new Intent(PSListActivity.this, PSDetailsActivity.class);
-                        intent.putExtra("ps", (Parcelable) psList.get(i));
+                        intent.putExtra("ps", (Parcelable) ((ListItemAdapter_PS)listView.getAdapter()).shownItems.get(i));
                         startActivity(intent);
                     } catch (Exception e) {
                         e.printStackTrace();

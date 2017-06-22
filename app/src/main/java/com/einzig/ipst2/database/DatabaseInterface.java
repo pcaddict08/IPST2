@@ -77,7 +77,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     static final private String TABLE_REJECTED = "rejectedSubmissions";
 
     static {
-        dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+        dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
     }
 
     /**
@@ -110,8 +110,10 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      */
     public void addPortalAccepted(PortalAccepted portal) {
         Log.d(TAG, "Add accepted portal: " + portal.getName());
-        String dateSubmitted = dateFormatter.format(portal.getDateSubmitted());
-        String dateResponded = dateFormatter.format(portal.getDateResponded());
+        if(portal.getDateSubmitted() == null)
+            portal.setDateSubmitted(portal.getDateResponded());
+        String dateSubmitted = getDateStringSafe(portal.getDateSubmitted());
+        String dateResponded = getDateStringSafe(portal.getDateResponded());
         ContentValues values = new ContentValues();
         // Values put!
         values.put(KEY_NAME, portal.getName());

@@ -138,7 +138,7 @@ class EmailParser {
         Log.d(TAG, "Parsing: " + subject);
         String portalName = getPortalName(subject).trim();
         subject = subject.toLowerCase();
-        if (subject.contains("submitted"))
+        if (subject.contains("submitted") || subject.contains("submission"))
             return submissionBuilder.build(portalName, receivedDate, message);
         else if (subject.contains("portal live") ||
                 subject.contains(" *success!*"))

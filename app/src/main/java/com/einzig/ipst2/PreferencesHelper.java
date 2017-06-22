@@ -21,11 +21,15 @@
 
 package com.einzig.ipst2;
 
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.einzig.ipst2.activities.MainActivity;
 
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -33,15 +37,42 @@ import java.util.Map;
  */
 
 public class PreferencesHelper {
-    public static void printAllPrefs(SharedPreferences prefs)
-    {
-        Map<String,?> keys = prefs.getAll();
+    public static void printAllPrefs(SharedPreferences prefs) {
+        Map<String, ?> keys = prefs.getAll();
 
-        if(keys.size() == 0)
+        if (keys.size() == 0)
             Log.d(MainActivity.TAG, "NO keys found in prefs");
-        for(Map.Entry<String,?> entry : keys.entrySet()){
-            Log.d("map values",entry.getKey() + ": " +
+        for (Map.Entry<String, ?> entry : keys.entrySet()) {
+            Log.d("map values", entry.getKey() + ": " +
                     entry.getValue().toString());
         }
+    }
+
+    public static SimpleDateFormat getSDF(Context context) {
+        SimpleDateFormat sdf = null;
+        String formatString =
+                PreferenceManager.getDefaultSharedPreferences(context).getString("date-type", "");
+        switch (formatString) {
+        case "":
+            sdf = new SimpleDateFormat("MM-dd-yyyy", Locale.getDefault());
+            break;
+        case "monthdayyear":
+            sdf = new SimpleDateFormat("MM-dd-yyyy", Locale.getDefault());
+
+            break;
+        case "daymonthyear":
+            sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+
+            break;
+        case "yearmonthday":
+            sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+
+            break;
+        case "yeardaymonth":
+            sdf = new SimpleDateFormat("yyyy-dd-MM", Locale.getDefault());
+
+            break;
+        }
+        return sdf;
     }
 }
