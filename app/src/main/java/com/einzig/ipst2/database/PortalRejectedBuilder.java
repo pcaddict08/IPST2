@@ -71,15 +71,17 @@ public final class PortalRejectedBuilder extends PortalBuilder<PortalRejected> {
      */
     private String parseRejectionReason(String messageString) {
         String rejectionReason = "N/A";
-        if (messageString.contains("does not meet the criteria"))
-            rejectionReason = "Does not meet portal criteria";
-        if (messageString.contains("duplicate"))
-            rejectionReason = "Duplicate of another portal";
-        if (messageString.contains("too close")) {
-            if (rejectionReason.equalsIgnoreCase("N/A"))
-                rejectionReason = "Too Close to another portal";
-            else
-                rejectionReason = rejectionReason + " or too close to another portal";
+        if (messageString != null) {
+            if (messageString.contains("does not meet the criteria"))
+                rejectionReason = "Does not meet portal criteria";
+            if (messageString.contains("duplicate"))
+                rejectionReason = "Duplicate of another portal";
+            if (messageString.contains("too close")) {
+                if (rejectionReason.equalsIgnoreCase("N/A"))
+                    rejectionReason = "Too Close to another portal";
+                else
+                    rejectionReason = rejectionReason + " or too close to another portal";
+            }
         }
         return rejectionReason;
     }

@@ -95,11 +95,15 @@ public final class PortalAcceptedBuilder extends PortalBuilder<PortalAccepted> {
         String liveAddress;
         Pattern titleFinder = Pattern.compile("<a[^>]*>(.*?)</a>",
                 Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
-        Matcher regexMatcher = titleFinder.matcher(messageString);
-        if (regexMatcher.find()) {
-            liveAddress = regexMatcher.group(1);
-        } else
-            liveAddress = "N/A";
+        liveAddress = "N/A";
+        try {
+            Matcher regexMatcher = titleFinder.matcher(messageString);
+            if (regexMatcher.find()) {
+                liveAddress = regexMatcher.group(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return liveAddress;
     }
 }
