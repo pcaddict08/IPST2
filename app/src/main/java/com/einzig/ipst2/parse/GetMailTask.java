@@ -164,7 +164,10 @@ public class GetMailTask extends AsyncTask<Void, Void, MailBundle> {
     private SearchTerm getSearchTerm(Date lastParseDate) {
         SearchTerm portalTerm = new SubjectTerm("ingress portal");
         SearchTerm reviewTerm = new SubjectTerm("portal review");
-        SearchTerm subjectTerm = new OrTerm(portalTerm, reviewTerm);
+        SearchTerm submissionTerm = new SubjectTerm("portal submission");
+        SearchTerm submittedTerm = new SubjectTerm("portal submitted");
+        SearchTerm subjectTerm = new OrTerm(new SearchTerm[] {portalTerm, reviewTerm,
+                submissionTerm, submittedTerm});
         ReceivedDateTerm minDateTerm = new ReceivedDateTerm(ComparisonTerm.GT, lastParseDate);
         SearchTerm invalidTerm = new NotTerm(new SubjectTerm("invalid"));
         SearchTerm editTerm = new NotTerm(new SubjectTerm("edit"));
