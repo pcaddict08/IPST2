@@ -87,9 +87,14 @@ public abstract class PortalBuilder<P extends PortalSubmission> {
         String pictureURL = portalName;
         Pattern pattern = Pattern.compile("<img[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>",
                 Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(message);
-        if (matcher.find())
-            pictureURL = matcher.group(1);
+        try {
+            Matcher matcher = pattern.matcher(message);
+            if (matcher.find())
+                pictureURL = matcher.group(1);
+        } catch (Exception e) {
+            e.printStackTrace();
+            pictureURL = "";
+        }
         return pictureURL;
     }
 }

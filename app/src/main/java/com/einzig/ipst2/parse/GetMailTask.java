@@ -173,15 +173,14 @@ public class GetMailTask extends AsyncTask<Void, Void, MailBundle> {
         SearchTerm editTerm = new NotTerm(new SubjectTerm("edit"));
         SearchTerm editsTerm = new NotTerm(new SubjectTerm("edits"));
         SearchTerm photoTerm = new NotTerm(new SubjectTerm("photo"));
-        //SearchTerm superOpsTerm = new FromStringTerm("super-ops@google.com");
-        //SearchTerm iSupportTerm1 = new FromStringTerm("ingress-support@google.com");
-        //SearchTerm iSupportTerm2 = new FromStringTerm("ingress-support@nianticlabs.com");
-        //SearchTerm fromTerm = new OrTerm(new SearchTerm[]
-        //        {superOpsTerm, iSupportTerm1, iSupportTerm2});
+        SearchTerm superOpsTerm = new FromStringTerm("super-ops@google.com");
+        SearchTerm iSupportTerm1 = new FromStringTerm("ingress-support@google.com");
+        SearchTerm iSupportTerm2 = new FromStringTerm("ingress-support@nianticlabs.com");
+        SearchTerm fromTerm = new OrTerm(new SearchTerm[]
+                {superOpsTerm, iSupportTerm1, iSupportTerm2});
         return new AndTerm(new SearchTerm[]
                 {subjectTerm, minDateTerm, invalidTerm, editTerm, editsTerm, photoTerm,
-                        // fromTerm});
-                });
+                         fromTerm});
     }
 
     /**
