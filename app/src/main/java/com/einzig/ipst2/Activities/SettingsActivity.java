@@ -32,6 +32,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
@@ -327,6 +328,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                         return false;
                     }
                 });
+
             Preference uploadportals = findPreference("upload-portals");
             if (uploadportals != null)
                 uploadportals.setOnPreferenceClickListener(
@@ -348,6 +350,19 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                                     Toast.makeText(getActivity(), "Recently Sent Portal Data, " +
                                             "Please wait and try again.", Toast.LENGTH_LONG).show();
                                 }
+                                return false;
+                            }
+                        });
+            Preference viewipststats = findPreference("view-ipststats");
+            if(viewipststats != null)
+                viewipststats.setOnPreferenceClickListener(
+                        new Preference.OnPreferenceClickListener() {
+                            @Override
+                            public boolean onPreferenceClick(Preference preference) {
+                                String url = "https://demaerschalck.eu/ingress/";
+                                Intent i = new Intent(Intent.ACTION_VIEW);
+                                i.setData(Uri.parse(url));
+                                startActivity(i);
                                 return false;
                             }
                         });

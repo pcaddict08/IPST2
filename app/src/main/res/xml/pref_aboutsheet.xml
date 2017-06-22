@@ -38,4 +38,9 @@
         android:summary="@string/uploadportals_prefmessage"
         android:title="@string/uploadportals_preftitle"
         />
+    <Preference
+        android:key="view-ipststats"
+        android:summary="IPST Stats is a place to view charts and maps of global submissions."
+        android:title="Go to IPST Stats"
+        />
 </PreferenceScreen>

@@ -11,8 +11,8 @@ android {
         applicationId "com.einzig.ipst2"
         minSdkVersion 19
         targetSdkVersion 25
-        versionCode 12
-        versionName "0.0.10"
+        versionCode 13
+        versionName "0.0.11"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
