@@ -28,6 +28,12 @@
         />
 
     <Preference
+        android:key="goto-tg"
+        android:summary="@string/gototg_prefmessage"
+        android:title="@string/gototg_preftitle"
+        />
+
+    <Preference
         android:key="version-num"
         android:summary="@string/versionnum_prefmessage"
         android:title="@string/versionnum_preftitle"
@@ -40,7 +46,7 @@
         />
     <Preference
         android:key="view-ipststats"
-        android:summary="IPST Stats is a place to view charts and maps of global submissions."
-        android:title="Go to IPST Stats"
+        android:summary="@string/viewipststats_prefmessage"
+        android:title="@string/viewipststats_preftitle"
         />
 </PreferenceScreen>

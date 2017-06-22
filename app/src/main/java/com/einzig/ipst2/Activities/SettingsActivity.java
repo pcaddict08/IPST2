@@ -306,6 +306,13 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 
     public static class AboutSettingsFragment extends PreferenceFragment {
+
+        public void goToURL(String urlString) {
+            Intent i = new Intent(Intent.ACTION_VIEW);
+            i.setData(Uri.parse(urlString));
+            startActivity(i);
+        }
+
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -354,18 +361,24 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                             }
                         });
             Preference viewipststats = findPreference("view-ipststats");
-            if(viewipststats != null)
+            if (viewipststats != null)
                 viewipststats.setOnPreferenceClickListener(
                         new Preference.OnPreferenceClickListener() {
                             @Override
                             public boolean onPreferenceClick(Preference preference) {
-                                String url = "https://demaerschalck.eu/ingress/";
-                                Intent i = new Intent(Intent.ACTION_VIEW);
-                                i.setData(Uri.parse(url));
-                                startActivity(i);
+                                goToURL("https://demaerschalck.eu/ingress/");
                                 return false;
                             }
                         });
+            Preference gototg = findPreference("goto-tg");
+            if (gototg != null)
+                gototg.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                    @Override
+                    public boolean onPreferenceClick(Preference preference) {
+                        goToURL("https://t.me/ipst2");
+                        return false;
+                    }
+                });
         }
 
         @Override

@@ -114,4 +114,8 @@
     <string name="folderdefault_preftitle">Default Folder</string>
     <string name="folderdefault_prefmessage">*IF IPST2 FINDS EMAILS DON\'T CHANGE THIS* This
     preference allows you to manually set where IPST2 looks for emails.</string>
+    <string name="viewipststats_prefmessage">IPST Stats is a place to view charts and maps of global submissions.</string>
+    <string name="viewipststats_preftitle">Go to IPST Stats</string>
+    <string name="gototg_prefmessage">Open telegram and join the IPST Announcements Channel.</string>
+    <string name="gototg_preftitle">Announcements Channel</string>
 </resources>
