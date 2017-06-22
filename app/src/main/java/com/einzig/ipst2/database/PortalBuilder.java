@@ -83,15 +83,13 @@ public abstract class PortalBuilder<P extends PortalSubmission> {
      * @param message The body of the email as a String for parsing.
      * @return the URL of the portal picture.
      */
-    String parsePictureURL(String message) {
-        String pictureURL;
+    String parsePictureURL(String message, String portalName) {
+        String pictureURL = portalName;
         Pattern pattern = Pattern.compile("<img[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>",
                 Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(message);
         if (matcher.find())
             pictureURL = matcher.group(1);
-        else
-            pictureURL = "No Picture Found";
         return pictureURL;
     }
 }

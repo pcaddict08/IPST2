@@ -58,7 +58,7 @@ public final class PortalRejectedBuilder extends PortalBuilder<PortalRejected> {
 
     @Override
     public PortalRejected build(String name, Date dateResponded, String message) {
-        String pictureURL = parsePictureURL(message);
+        String pictureURL = parsePictureURL(message, name);
         String rejectionReason = parseRejectionReason(message);
         return new PortalRejected(name, null, pictureURL, dateResponded, rejectionReason);
     }

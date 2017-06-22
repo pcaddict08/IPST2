@@ -42,7 +42,7 @@ public final class PortalAcceptedBuilder extends PortalBuilder<PortalAccepted> {
 
     @Override
     public PortalAccepted build(String name, Date dateResponded, String message) {
-        String pictureURL = parsePictureURL(message);
+        String pictureURL = parsePictureURL(message, name);
         String address = parseLiveAddress(message);
         String intelLink = parseIntelLink(message);
         return new PortalAccepted(name, null, pictureURL, dateResponded, address,

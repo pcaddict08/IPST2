@@ -56,7 +56,7 @@ public final class PortalSubmissionBuilder extends PortalBuilder<PortalSubmissio
 
     @Override
     public PortalSubmission build(String name, Date dateResponded, String message) {
-        String pictureURL = parsePictureURL(message);
+        String pictureURL = parsePictureURL(message, name);
         return new PortalSubmission(name, dateResponded, pictureURL);
     }
 }
