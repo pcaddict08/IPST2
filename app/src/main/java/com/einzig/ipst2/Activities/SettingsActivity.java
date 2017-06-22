@@ -37,6 +37,7 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.view.MenuItem;
@@ -81,10 +82,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         finish();
     }
 
-    public static String getVersionNum(Context context)
-    {
+    public static String getVersionNum(Context context) {
         try {
-            return context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
+            return context.getPackageManager()
+                    .getPackageInfo(context.getPackageName(), 0).versionName;
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
             return "N/A";
@@ -214,7 +215,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                                 .setNegativeButton(R.string.cancel,
                                         new DialogInterface.OnClickListener() {
                                             @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                            public void onClick(DialogInterface dialogInterface,
+                                                    int i) {
                                             }
                                         })
                                 .setIcon(R.drawable.ic_warning)
@@ -310,11 +312,11 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             setHasOptionsMenu(true);
 
             Preference versionnum = findPreference("version-num");
-            if(versionnum != null)
+            if (versionnum != null)
                 versionnum.setSummary(getVersionNum(getActivity()));
 
             Preference contactdev = findPreference("contact-dev");
-            if(contactdev != null)
+            if (contactdev != null)
                 contactdev.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                     @Override
                     public boolean onPreferenceClick(Preference preference) {
@@ -326,14 +328,26 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     }
                 });
             Preference uploadportals = findPreference("upload-portals");
-            if(uploadportals != null)
+            if (uploadportals != null)
                 uploadportals.setOnPreferenceClickListener(
                         new Preference.OnPreferenceClickListener() {
                             @Override
                             public boolean onPreferenceClick(Preference preference) {
-                                Toast.makeText(getActivity(), "Building portal data...", Toast
-                                        .LENGTH_SHORT).show();
-                                new SendPortalData(getActivity()).execute();
+                                SharedPreferences preferences = PreferenceManager
+                                        .getDefaultSharedPreferences(getActivity());
+                                long timeNow = System.currentTimeMillis();
+                                long timeSent = preferences.getLong("last-portal-data", 0);
+                                if (timeSent == 0 || (timeNow - timeSent) >= (1000 * 60 * 15)) {
+                                    Toast.makeText(getActivity(), "Building portal data...", Toast
+                                            .LENGTH_SHORT).show();
+                                    preferences.edit()
+                                            .putLong("last-portal-data", System.currentTimeMillis())
+                                            .apply();
+                                    new SendPortalData(getActivity()).execute();
+                                } else {
+                                    Toast.makeText(getActivity(), "Recently Sent Portal Data, " +
+                                            "Please wait and try again.", Toast.LENGTH_LONG).show();
+                                }
                                 return false;
                             }
                         });

@@ -74,7 +74,8 @@ public class GetMailTask extends AsyncTask<Void, Void, MailBundle> {
     public GetMailTask(Activity activity, Account account, String token) {
         this.account = account;
         this.activity = activity;
-        this.preferences = PreferenceManager.getDefaultSharedPreferences(activity);//activity.getPreferences(MainActivity.MODE_PRIVATE);
+        this.preferences = PreferenceManager.getDefaultSharedPreferences(
+                activity);//activity.getPreferences(MainActivity.MODE_PRIVATE);
         this.token = token;
     }
 
@@ -90,7 +91,7 @@ public class GetMailTask extends AsyncTask<Void, Void, MailBundle> {
         } else {
             try {
                 Folder folder = getFolder(store);
-                if(folder != null) {
+                if (folder != null) {
                     folder.open(Folder.READ_ONLY);
                     Message[] messages = searchMailbox(folder);
                     fetchMessages(folder, messages);
@@ -125,7 +126,7 @@ public class GetMailTask extends AsyncTask<Void, Void, MailBundle> {
     private Folder getFolder(IMAPStore store) throws MessagingException {
         Folder[] folders = store.getDefaultFolder().list();
         Folder folder = new FolderGetter(activity, folders, preferences).getFolder();
-        if(folder != null) {
+        if (folder != null) {
             Log.d(TAG, MainActivity.FOLDER_KEY + " -> " + folder.getFullName());
             SharedPreferences.Editor editor = preferences.edit();
             editor.putString(MainActivity.FOLDER_KEY, folder.getFullName());
@@ -159,14 +160,15 @@ public class GetMailTask extends AsyncTask<Void, Void, MailBundle> {
      * Get SearchTerm to find relevant emails
      *
      * @param lastParseDate Date of previous parse for ReceivedDateTerm
+     * @param anySource  boolean that decides if the email search terms 'from' are included.
      * @return Search term that will find all portal submission emails
      */
-    private SearchTerm getSearchTerm(Date lastParseDate) {
+    private SearchTerm getSearchTerm(Date lastParseDate, boolean anySource) {
         SearchTerm portalTerm = new SubjectTerm("ingress portal");
         SearchTerm reviewTerm = new SubjectTerm("portal review");
         SearchTerm submissionTerm = new SubjectTerm("portal submission");
         SearchTerm submittedTerm = new SubjectTerm("portal submitted");
-        SearchTerm subjectTerm = new OrTerm(new SearchTerm[] {portalTerm, reviewTerm,
+        SearchTerm subjectTerm = new OrTerm(new SearchTerm[]{portalTerm, reviewTerm,
                 submissionTerm, submittedTerm});
         ReceivedDateTerm minDateTerm = new ReceivedDateTerm(ComparisonTerm.GT, lastParseDate);
         SearchTerm invalidTerm = new NotTerm(new SubjectTerm("invalid"));
@@ -178,9 +180,13 @@ public class GetMailTask extends AsyncTask<Void, Void, MailBundle> {
         SearchTerm iSupportTerm2 = new FromStringTerm("ingress-support@nianticlabs.com");
         SearchTerm fromTerm = new OrTerm(new SearchTerm[]
                 {superOpsTerm, iSupportTerm1, iSupportTerm2});
-        return new AndTerm(new SearchTerm[]
-                {subjectTerm, minDateTerm, invalidTerm, editTerm, editsTerm, photoTerm,
-                         fromTerm});
+        if (anySource)
+            return new AndTerm(new SearchTerm[]
+                    {subjectTerm, minDateTerm, invalidTerm, editTerm, editsTerm, photoTerm});
+        else
+            return new AndTerm(new SearchTerm[]
+                    {subjectTerm, minDateTerm, invalidTerm, editTerm, editsTerm, photoTerm,
+                            fromTerm});
     }
 
     /**
@@ -193,6 +199,6 @@ public class GetMailTask extends AsyncTask<Void, Void, MailBundle> {
     private Message[] searchMailbox(Folder folder) throws MessagingException {
         Date lastParseDate = getLastParseDate(
                 preferences.getString(MainActivity.MOST_RECENT_DATE_KEY, MainActivity.NULL_KEY));
-        return folder.search(getSearchTerm(lastParseDate));
+        return folder.search(getSearchTerm(lastParseDate, false));
     }
 }

@@ -405,8 +405,16 @@ public class MainActivity extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
         case LOGIN_ACTIVITY_CODE:
-            if (resultCode != RESULT_OK)
+            if (resultCode != RESULT_OK) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        findViewById(R.id.progress_view_mainactivity).setVisibility(View.INVISIBLE);
+                        findViewById(R.id.gmail_login_button).setVisibility(View.VISIBLE);
+                    }
+                });
                 return;
+            }
             SharedPreferences.Editor editor = preferences.edit();
             editor.putString(EMAIL_KEY, data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME));
             editor.apply();

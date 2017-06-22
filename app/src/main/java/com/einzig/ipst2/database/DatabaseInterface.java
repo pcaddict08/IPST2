@@ -586,6 +586,8 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         for (P portal : portals) {
             if (portal.getName().equals(portalName))
                 return portal;
+            else
+                return portal;
         }
         return null;
     }
