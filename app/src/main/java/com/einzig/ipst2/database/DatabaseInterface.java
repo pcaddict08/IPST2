@@ -29,13 +29,13 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.einzig.ipst2.portal.PortalAccepted;
 import com.einzig.ipst2.portal.PortalRejected;
 import com.einzig.ipst2.portal.PortalSubmission;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -161,49 +161,19 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     }
 
     /**
-     * Check if the database contains an accepted portal submission
-     *
-     * @param portalPictureURL URL of the portal picture used to uniquely identify the portal
-     * @return true if the database contains the portal, otherwise false
-     */
-    public boolean containsAccepted(String portalPictureURL) {
-        return getAcceptedPortal(portalPictureURL) != null;
-    }
-
-    /**
-     * Check if the database contains a pending portal submission
-     *
-     * @param portalPictureURL URL of the portal picture used to uniquely identify the portal
-     * @return true if the database contains the portal, otherwise false
-     */
-    public boolean containsPending(String portalPictureURL) {
-        return getPendingPortal(portalPictureURL) != null;
-    }
-
-    /**
-     * Check if the database contains a rejected portal submission
-     *
-     * @param portalPictureURL URL of the portal picture used to uniquely identify the portal
-     * @return true if the database contains the portal, otherwise false
-     */
-    public boolean containsRejected(String portalPictureURL) {
-        return getRejectedPortal(portalPictureURL) != null;
-    }
-
-    /**
      * Create a table in the database
      *
      * @param tableName    The name of the table
      * @param optionalKeys Any keys in addition to the 3 default keys in the table
      * @return A MySQL command string that creates a table for storing PortalSubmissions
      */
-    private String createTable(String tableName, String optionalKeys) {
+    private String createTable(@NonNull String tableName, @NonNull String optionalKeys) {
         String createCommand = "CREATE TABLE " + tableName + " ( " + KEY_NAME + " TEXT NOT NULL, " +
                 KEY_DATE_SUBMITTED + " DATETIME NOT NULL, " + KEY_PICTURE_URL +
-                " TEXT NOT NULL UNIQUE";
+                " TEXT NOT NULL";
         if (!optionalKeys.equals(""))
             createCommand = createCommand + ", " + optionalKeys;
-        return createCommand + ", PRIMARY KEY (" + KEY_PICTURE_URL + ") );";
+        return createCommand + ", PRIMARY KEY (" + KEY_DATE_SUBMITTED + ") );";
     }
 
     /**
@@ -368,11 +338,11 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     /**
      * Get an accepted portal submission from the database
      *
-     * @param portalPictureURL URL of the portal picture used to uniquely identify the portal
+     * @param pictureURL URL of the portal picture used to uniquely identify the portal
      * @return a PortalAccepted representation of an accepted portal in the database
      */
-    public PortalAccepted getAcceptedPortal(String portalPictureURL) {
-        return getPortal(TABLE_ACCEPTED, portalPictureURL, new PortalAcceptedBuilder());
+    public PortalAccepted getAcceptedPortal(String pictureURL, String portalName) {
+        return getPortal(TABLE_ACCEPTED, pictureURL, portalName, new PortalAcceptedBuilder());
     }
 
     /**
@@ -594,12 +564,12 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     /**
      * Get a pending portal submission from the database
      *
-     * @param portalPictureURL URL of the portal picture used to uniquely identify the portal
+     * @param pictureURL URL of the portal picture used to uniquely identify the portal
      * @return a PortalSubmission representation of a pending portal in the database
      */
-    public PortalSubmission getPendingPortal(String portalPictureURL) {
+    public PortalSubmission getPendingPortal(String pictureURL, String portalName) {
         Log.d(TAG, "Getting pending portal");
-        return getPortal(TABLE_PENDING, portalPictureURL, new PortalSubmissionBuilder());
+        return getPortal(TABLE_PENDING, pictureURL, portalName, new PortalSubmissionBuilder());
     }
 
     /**
@@ -610,10 +580,14 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      * @return a portal from the database
      */
     private <P extends PortalSubmission> P getPortal(String table, String pictureURL,
-            PortalBuilder<P> builder) {
+            String portalName, PortalBuilder<P> builder) {
         Vector<P> portals = getAll(table, KEY_PICTURE_URL + " = ?", new String[]{pictureURL},
                 builder);
-        return (portals.size() > 0) ? portals.firstElement() : null;
+        for (P portal : portals) {
+            if (portal.getName().equals(portalName))
+                return portal;
+        }
+        return null;
     }
 
     /**
@@ -749,12 +723,12 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     /**
      * Get a rejected portal submission from the database
      *
-     * @param portalPictureURL URL of the portal picture used to uniquely identify the portal
+     * @param pictureURL URL of the portal picture used to uniquely identify the portal
      * @return a PortalRejected representation of a rejected portal in the database
      */
-    public PortalRejected getRejectedPortal(String portalPictureURL) {
+    public PortalRejected getRejectedPortal(String pictureURL, String portalName) {
         Log.d(TAG, "Getting rejected portal");
-        return getPortal(TABLE_REJECTED, portalPictureURL, new PortalRejectedBuilder());
+        return getPortal(TABLE_REJECTED, pictureURL, portalName, new PortalRejectedBuilder());
     }
 
     /**

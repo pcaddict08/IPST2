@@ -120,7 +120,7 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
      * @param portal Instance of PortalAccepted to add to the database
      */
     private void addPortalAccepted(PortalAccepted portal) {
-        PortalSubmission pending = db.getPendingPortal(portal.getPictureURL());
+        PortalSubmission pending = db.getPendingPortal(portal.getPictureURL(), portal.getName());
         if (pending != null) {
             portal.setDateSubmitted(pending.getDateSubmitted());
             db.deletePending(pending);
@@ -134,7 +134,7 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
      * @param portal Instance of PortalRejected to add to the database
      */
     private void addPortalRejected(PortalRejected portal) {
-        PortalSubmission pending = db.getPendingPortal(portal.getPictureURL());
+        PortalSubmission pending = db.getPendingPortal(portal.getPictureURL(), portal.getName());
         if (pending != null) {
             // I don't like this, but it's the best way to do it without completely redoing the
             // database
