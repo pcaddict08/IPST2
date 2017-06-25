@@ -199,6 +199,6 @@ public class GetMailTask extends AsyncTask<Void, Void, MailBundle> {
     private Message[] searchMailbox(Folder folder) throws MessagingException {
         Date lastParseDate = getLastParseDate(
                 preferences.getString(MainActivity.MOST_RECENT_DATE_KEY, MainActivity.NULL_KEY));
-        return folder.search(getSearchTerm(lastParseDate, false));
+        return folder.search(getSearchTerm(lastParseDate, true));
     }
 }

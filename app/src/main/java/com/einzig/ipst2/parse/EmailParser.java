@@ -140,7 +140,7 @@ class EmailParser {
         subject = subject.toLowerCase();
         if (subject.contains("submitted") || subject.contains("submission"))
             return submissionBuilder.build(portalName, receivedDate, message);
-        else if (subject.contains("portal live") ||
+        else if (subject.contains("live") ||
                 subject.contains(" *success!*"))
             return acceptedBuilder.build(portalName, receivedDate, message);
         else if (subject.contains("rejected") || subject.contains("duplicate"))
@@ -159,7 +159,8 @@ class EmailParser {
      */
     private PortalSubmission parseNewFormat(String portalName, String message, Date receivedDate) {
         if (message != null) {
-            if (message.contains("not to accept") || message.contains("duplicate"))
+            if (message.contains("not to accept") || message.contains("duplicate")
+                    || message.contains("not able to bring it online"))
                 return rejectedBuilder.build(portalName, receivedDate, message);
             else if (message.contains("accepted"))
                 return acceptedBuilder.build(portalName, receivedDate, message);

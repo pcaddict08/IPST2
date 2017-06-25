@@ -29,7 +29,6 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.einzig.ipst2.portal.PortalAccepted;
@@ -43,6 +42,9 @@ import java.util.Locale;
 import java.util.Vector;
 
 import static com.einzig.ipst2.activities.MainActivity.TAG;
+import static com.einzig.ipst2.database.AcceptedPortalContract.AcceptedPortalEntry.*;
+import static com.einzig.ipst2.database.PendingPortalContract.PendingPortalEntry.*;
+import static com.einzig.ipst2.database.RejectedPortalContract.RejectedPortalEntry.*;
 
 /**
  * @author Ryan Porterfield
@@ -55,26 +57,6 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     static final private String DATABASE_NAME = "IPSTSubmissionDB";
     /** Database version */
     static final private int DATABASE_VERSION = 1;
-    /** Table key for the date Niantic approved or denied the portal */
-    static final private String KEY_DATE_RESPONDED = "dateResponded";
-    /** Table key for the date the portal was submitted */
-    static final private String KEY_DATE_SUBMITTED = "dateSubmitted";
-    /** Table key for the link to the portal on the intel map */
-    static final private String KEY_INTEL_LINK_URL = "intelLinkURL";
-    /** Table key for address of the portal */
-    static final private String KEY_LIVE_ADDRESS = "liveAddress";
-    /** Table key for portal name */
-    static final private String KEY_NAME = "name";
-    /** Table key for the URL to the submission picture */
-    static final private String KEY_PICTURE_URL = "pictureURL";
-    /** Table key for the reason the portal was rejected */
-    static final private String KEY_REJECTION_REASON = "rejectionReason";
-    /** The name of the table in containing accepted portal submissions */
-    static final private String TABLE_ACCEPTED = "acceptedSubmissions";
-    /** The name of the table in containing pending portal submissions */
-    static final private String TABLE_PENDING = "pendingSubmissions";
-    /** The name of the table in containing rejected portal submissions */
-    static final private String TABLE_REJECTED = "rejectedSubmissions";
 
     static {
         dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
@@ -99,7 +81,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         long result = db.insert(table, null, values);
         if (result == -1)
-            Log.e(TAG, values.get(KEY_PICTURE_URL) + " NOT UNIQUE");
+            Log.e(TAG, values.get(COLUMN_PICTURE_URL) + " NOT UNIQUE");
         db.close();
     }
 
@@ -116,12 +98,12 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         String dateResponded = getDateStringSafe(portal.getDateResponded());
         ContentValues values = new ContentValues();
         // Values put!
-        values.put(KEY_NAME, portal.getName());
-        values.put(KEY_DATE_SUBMITTED, dateSubmitted);
-        values.put(KEY_PICTURE_URL, portal.getPictureURL());
-        values.put(KEY_DATE_RESPONDED, dateResponded);
-        values.put(KEY_LIVE_ADDRESS, portal.getLiveAddress());
-        values.put(KEY_INTEL_LINK_URL, portal.getIntelLinkURL());
+        values.put(COLUMN_NAME, portal.getName());
+        values.put(COLUMN_DATE_SUBMITTED, dateSubmitted);
+        values.put(COLUMN_PICTURE_URL, portal.getPictureURL());
+        values.put(COLUMN_DATE_RESPONDED, dateResponded);
+        values.put(COLUMN_LIVE_ADDRESS, portal.getLiveAddress());
+        values.put(COLUMN_INTEL_LINK_URL, portal.getIntelLinkURL());
         addPortal(TABLE_ACCEPTED, values);
     }
 
@@ -136,11 +118,11 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         String dateResponded = getDateStringSafe(portal.getDateResponded());
         ContentValues values = new ContentValues();
         // Values put!
-        values.put(KEY_NAME, portal.getName());
-        values.put(KEY_DATE_SUBMITTED, dateSubmitted);
-        values.put(KEY_PICTURE_URL, portal.getPictureURL());
-        values.put(KEY_DATE_RESPONDED, dateResponded);
-        values.put(KEY_REJECTION_REASON, portal.getRejectionReason());
+        values.put(COLUMN_NAME, portal.getName());
+        values.put(COLUMN_DATE_SUBMITTED, dateSubmitted);
+        values.put(COLUMN_PICTURE_URL, portal.getPictureURL());
+        values.put(COLUMN_DATE_RESPONDED, dateResponded);
+        values.put(COLUMN_REJECTION_REASON, portal.getRejectionReason());
         addPortal(TABLE_REJECTED, values);
     }
 
@@ -154,45 +136,10 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         String dateSubmitted = dateFormatter.format(portal.getDateSubmitted());
         ContentValues values = new ContentValues();
         // Values put!
-        values.put(KEY_NAME, portal.getName());
-        values.put(KEY_DATE_SUBMITTED, dateSubmitted);
-        values.put(KEY_PICTURE_URL, portal.getPictureURL());
+        values.put(COLUMN_NAME, portal.getName());
+        values.put(COLUMN_DATE_SUBMITTED, dateSubmitted);
+        values.put(COLUMN_PICTURE_URL, portal.getPictureURL());
         addPortal(TABLE_PENDING, values);
-    }
-
-    /**
-     * Create a table in the database
-     *
-     * @param tableName    The name of the table
-     * @param optionalKeys Any keys in addition to the 3 default keys in the table
-     * @return A MySQL command string that creates a table for storing PortalSubmissions
-     */
-    private String createTable(@NonNull String tableName, @NonNull String optionalKeys) {
-        String createCommand = "CREATE TABLE " + tableName + " ( " + KEY_NAME + " TEXT NOT NULL, " +
-                KEY_DATE_SUBMITTED + " DATETIME NOT NULL, " + KEY_PICTURE_URL +
-                " TEXT NOT NULL";
-        if (!optionalKeys.equals(""))
-            createCommand = createCommand + ", " + optionalKeys;
-        return createCommand + ", PRIMARY KEY (" + KEY_DATE_SUBMITTED + ") );";
-    }
-
-    /**
-     * Creates a string containing the additional keys for the table of accepted portals
-     *
-     * @return the additional keys for the table of accepted portals
-     */
-    private String createTableAccepted() {
-        return KEY_DATE_RESPONDED + " DATETIME, " + KEY_LIVE_ADDRESS + " TEXT, " +
-                KEY_INTEL_LINK_URL + " TEXT ";
-    }
-
-    /**
-     * Creates a string containing the additional keys for the table of rejected portals
-     *
-     * @return the additional keys for the table of rejected portals
-     */
-    private String createTableRejected() {
-        return KEY_DATE_RESPONDED + " DATETIME, " + KEY_REJECTION_REASON + " TEXT ";
     }
 
     /**
@@ -203,7 +150,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     public void deleteAccepted(PortalAccepted portal) {
         Log.d(TAG, "Remove accepted portal: " + portal.getName());
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_ACCEPTED, KEY_PICTURE_URL + " = ?", new String[]{portal.getPictureURL()});
+        db.delete(TABLE_ACCEPTED, COLUMN_PICTURE_URL + " = ?", new String[]{portal.getPictureURL()});
         db.close();
     }
 
@@ -226,7 +173,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     public void deletePending(PortalSubmission portal) {
         Log.d(TAG, "Remove portal submission: " + portal.getName());
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_PENDING, KEY_PICTURE_URL + " = ?", new String[]{portal.getPictureURL()});
+        db.delete(TABLE_PENDING, COLUMN_PICTURE_URL + " = ?", new String[]{portal.getPictureURL()});
         db.close();
     }
 
@@ -238,7 +185,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     public void deleteRejected(PortalRejected portal) {
         Log.d(TAG, "Remove rejected portal: " + portal.getName());
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_REJECTED, KEY_PICTURE_URL + " = ?", new String[]{portal.getPictureURL()});
+        db.delete(TABLE_REJECTED, COLUMN_PICTURE_URL + " = ?", new String[]{portal.getPictureURL()});
         db.close();
     }
 
@@ -260,7 +207,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      * @return Vector of all accepted portals which went live in between a range of days
      */
     public Vector<PortalAccepted> getAcceptedByResponseDate(Date fromDate, Date toDate) {
-        return getAllAcceptedByDate(KEY_DATE_RESPONDED, fromDate, toDate);
+        return getAllAcceptedByDate(COLUMN_DATE_RESPONDED, fromDate, toDate);
     }
 
     /**
@@ -281,7 +228,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      * @return Vector of all accepted portals which were submitted in between a range of days
      */
     public Vector<PortalAccepted> getAcceptedBySubmissionDate(Date fromDate, Date toDate) {
-        return getAllAcceptedByDate(KEY_DATE_SUBMITTED, fromDate, toDate);
+        return getAllAcceptedByDate(COLUMN_DATE_SUBMITTED, fromDate, toDate);
     }
 
     /**
@@ -300,7 +247,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      * @return number of portals accepted since fromDate
      */
     public long getAcceptedCountByResponseDate(Date fromDate) {
-        return getCountByDate(TABLE_ACCEPTED, KEY_DATE_RESPONDED, fromDate);
+        return getCountByDate(TABLE_ACCEPTED, COLUMN_DATE_RESPONDED, fromDate);
     }
 
     /**
@@ -311,7 +258,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      * @return number of portals accepted between fromDate and toDate
      */
     public long getAcceptedCountByResponseDate(Date fromDate, Date toDate) {
-        return getCountByDate(TABLE_ACCEPTED, KEY_DATE_RESPONDED, fromDate, toDate);
+        return getCountByDate(TABLE_ACCEPTED, COLUMN_DATE_RESPONDED, fromDate, toDate);
     }
 
     /**
@@ -321,7 +268,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      * @return number of accepted portals submitted since fromDate
      */
     public long getAcceptedCountBySubmissionDate(Date fromDate) {
-        return getCountByDate(TABLE_ACCEPTED, KEY_DATE_SUBMITTED, fromDate);
+        return getCountByDate(TABLE_ACCEPTED, COLUMN_DATE_SUBMITTED, fromDate);
     }
 
     /**
@@ -332,7 +279,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      * @return number of accepted portals submitted between fromDate and toDate
      */
     public long getAcceptedCountBySubmissionDate(Date fromDate, Date toDate) {
-        return getCountByDate(TABLE_ACCEPTED, KEY_DATE_SUBMITTED, fromDate, toDate);
+        return getCountByDate(TABLE_ACCEPTED, COLUMN_DATE_SUBMITTED, fromDate, toDate);
     }
 
     /**
@@ -387,8 +334,8 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     /**
      * Helper function getAcceptedBySubmissionDate and getAllAcceptedBy
      *
-     * @param dateKey  Database key used for searching. Can be either KEY_DATE_SUBMITTED or
-     *                 KEY_DATE_RESPONDED
+     * @param dateKey  Database key used for searching. Can be either COLUMN_DATE_SUBMITTED or
+     *                 COLUMN_DATE_RESPONDED
      * @param fromDate Date to start searching from
      * @param toDate   Date to stop searching at
      * @return Vector of accepted portals which were either submitted or approved from fromDate to
@@ -451,7 +398,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      * Get the number of portals in a table since fromDate
      *
      * @param table    Table in the database
-     * @param dateKey  Either KEY_DATE_SUBMITTED or KEY_DATE_RESPONDED
+     * @param dateKey  Either COLUMN_DATE_SUBMITTED or COLUMN_DATE_RESPONDED
      * @param fromDate Date to start searching from
      * @return number of portals in a table since date
      */
@@ -463,7 +410,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      * Get the number of portals in a table between fromDate and toDate
      *
      * @param table    Table in the database
-     * @param dateKey  Either KEY_DATE_SUBMITTED or KEY_DATE_RESPONDED
+     * @param dateKey  Either COLUMN_DATE_SUBMITTED or COLUMN_DATE_RESPONDED
      * @param fromDate Date to start searching from
      * @param toDate   Date to stop searching at
      * @return number of portals in a table between fromDate and toDate
@@ -517,7 +464,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      */
     public Vector<PortalSubmission> getPendingByDate(Date fromDate, Date toDate) {
         Log.d(TAG, "Getting all pending portals in a date range");
-        return getPortalsByDate(TABLE_PENDING, KEY_DATE_SUBMITTED, fromDate, toDate,
+        return getPortalsByDate(TABLE_PENDING, COLUMN_DATE_SUBMITTED, fromDate, toDate,
                 new PortalSubmissionBuilder());
     }
 
@@ -547,7 +494,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      * @return number of portals that were submitted since fromDate
      */
     public long getPendingCountByDate(Date fromDate) {
-        return getCountByDate(TABLE_PENDING, KEY_DATE_SUBMITTED, fromDate);
+        return getCountByDate(TABLE_PENDING, COLUMN_DATE_SUBMITTED, fromDate);
     }
 
     /**
@@ -558,7 +505,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      * @return number of portals that were submitted between fromDate and toDate
      */
     public long getPendingCountByDate(Date fromDate, Date toDate) {
-        return getCountByDate(TABLE_PENDING, KEY_DATE_SUBMITTED, fromDate, toDate);
+        return getCountByDate(TABLE_PENDING, COLUMN_DATE_SUBMITTED, fromDate, toDate);
     }
 
     /**
@@ -581,7 +528,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      */
     private <P extends PortalSubmission> P getPortal(String table, String pictureURL,
             String portalName, PortalBuilder<P> builder) {
-        Vector<P> portals = getAll(table, KEY_PICTURE_URL + " = ?", new String[]{pictureURL},
+        Vector<P> portals = getAll(table, COLUMN_PICTURE_URL + " = ?", new String[]{pictureURL},
                 builder);
         for (P portal : portals) {
             if (portal.getName().equals(portalName))
@@ -595,14 +542,14 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     /**
      * Get all portals in a range of dates.
      *
-     * @param dateKey  Database key used for searching. Can be either KEY_DATE_SUBMITTED or
-     *                 KEY_DATE_RESPONDED
+     * @param dateKey  Database key used for searching. Can be either COLUMN_DATE_SUBMITTED or
+     *                 COLUMN_DATE_RESPONDED
      * @param fromDate Date to start searching from
      * @param toDate   Date to stop searching at
      * @return Vector of portals which were either submitted or approved from fromDate to
      * toDate.
-     * @see DatabaseInterface#KEY_DATE_RESPONDED
-     * @see DatabaseInterface#KEY_DATE_SUBMITTED
+     * @see PendingPortalContract.PendingPortalEntry#COLUMN_DATE_RESPONDED
+     * @see PendingPortalContract.PendingPortalEntry#COLUMN_DATE_SUBMITTED
      */
     private <P extends PortalSubmission> Vector<P> getPortalsByDate(String table, String dateKey,
             Date fromDate, Date toDate,
@@ -616,8 +563,8 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     /**
      * Helper function getAcceptedBySubmissionDate and getAllAcceptedBy
      *
-     * @param dateKey  Database key used for searching. Can be either KEY_DATE_SUBMITTED or
-     *                 KEY_DATE_RESPONDED
+     * @param dateKey  Database key used for searching. Can be either COLUMN_DATE_SUBMITTED or
+     *                 COLUMN_DATE_RESPONDED
      * @param fromDate Date to start searching from
      * @param toDate   Date to stop searching at
      * @return Vector of rejected portals which were either submitted or approved from fromDate to
@@ -647,7 +594,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      * @return Vector of all rejected portals which went live in between a range of days
      */
     public Vector<PortalRejected> getRejectedByResponseDate(Date fromDate, Date toDate) {
-        return getRejectedByDate(KEY_DATE_RESPONDED, fromDate, toDate);
+        return getRejectedByDate(COLUMN_DATE_RESPONDED, fromDate, toDate);
     }
 
     /**
@@ -668,7 +615,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      * @return Vector of all rejected portals which were submitted in between a range of days
      */
     public Vector<PortalRejected> getRejectedBySubmissionDate(Date fromDate, Date toDate) {
-        return getRejectedByDate(KEY_DATE_SUBMITTED, fromDate, toDate);
+        return getRejectedByDate(COLUMN_DATE_SUBMITTED, fromDate, toDate);
     }
 
     /**
@@ -687,7 +634,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      * @return number of portals that were rejected since fromDate
      */
     public long getRejectedCountByResponseDate(Date fromDate) {
-        return getCountByDate(TABLE_REJECTED, KEY_DATE_RESPONDED, fromDate);
+        return getCountByDate(TABLE_REJECTED, COLUMN_DATE_RESPONDED, fromDate);
     }
 
     /**
@@ -698,7 +645,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      * @return number of portals that were rejected between fromDate and toDate
      */
     public long getRejectedCountByResponseDate(Date fromDate, Date toDate) {
-        return getCountByDate(TABLE_REJECTED, KEY_DATE_RESPONDED, fromDate, toDate);
+        return getCountByDate(TABLE_REJECTED, COLUMN_DATE_RESPONDED, fromDate, toDate);
     }
 
     /**
@@ -708,7 +655,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      * @return number of rejected portals that were submitted since fromDate
      */
     public long getRejectedCountBySubmissionDate(Date fromDate) {
-        return getCountByDate(TABLE_REJECTED, KEY_DATE_SUBMITTED, fromDate);
+        return getCountByDate(TABLE_REJECTED, COLUMN_DATE_SUBMITTED, fromDate);
     }
 
     /**
@@ -719,7 +666,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      * @return number of rejected portals that were submitted between fromDate and toDate
      */
     public long getRejectedCountBySubmissionDate(Date fromDate, Date toDate) {
-        return getCountByDate(TABLE_REJECTED, KEY_DATE_SUBMITTED, fromDate, toDate);
+        return getCountByDate(TABLE_REJECTED, COLUMN_DATE_SUBMITTED, fromDate, toDate);
     }
 
     /**
@@ -740,9 +687,10 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      */
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(createTable(TABLE_PENDING, ""));
-        db.execSQL(createTable(TABLE_ACCEPTED, createTableAccepted()));
-        db.execSQL(createTable(TABLE_REJECTED, createTableRejected()));
+        db.execSQL(PendingPortalContract.SQL_CREATE_ENTRIES);
+        db.execSQL(AcceptedPortalContract.SQL_CREATE_ENTRIES);
+        db.execSQL(RejectedPortalContract.SQL_CREATE_ENTRIES);
+        db.execSQL(LoggingContract.SQL_CREATE_ENTRIES);
     }
 
     /**
@@ -754,7 +702,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      */
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Don't need this yet
+        db.execSQL(LoggingContract.SQL_DELETE_ENTRIES);
     }
 
     /**
@@ -770,14 +718,14 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         String dateSubmitted = dateFormatter.format(portal.getDateSubmitted());
         String dateResponded = dateFormatter.format(portal.getDateResponded());
 
-        values.put(KEY_NAME, portal.getName());
-        values.put(KEY_DATE_SUBMITTED, dateSubmitted);
-        values.put(KEY_PICTURE_URL, portal.getPictureURL());
-        values.put(KEY_DATE_RESPONDED, dateResponded);
-        values.put(KEY_LIVE_ADDRESS, portal.getLiveAddress());
-        values.put(KEY_INTEL_LINK_URL, portal.getIntelLinkURL());
+        values.put(COLUMN_NAME, portal.getName());
+        values.put(COLUMN_DATE_SUBMITTED, dateSubmitted);
+        values.put(COLUMN_PICTURE_URL, portal.getPictureURL());
+        values.put(COLUMN_DATE_RESPONDED, dateResponded);
+        values.put(COLUMN_LIVE_ADDRESS, portal.getLiveAddress());
+        values.put(COLUMN_INTEL_LINK_URL, portal.getIntelLinkURL());
 
-        db.update(TABLE_ACCEPTED, values, KEY_PICTURE_URL + " = ?",
+        db.update(TABLE_ACCEPTED, values, COLUMN_PICTURE_URL + " = ?",
                 new String[]{String.valueOf(oldPortal.getPictureURL())});
 
         db.close();
@@ -794,11 +742,11 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
 
-        values.put(KEY_NAME, portal.getName());
-        values.put(KEY_DATE_SUBMITTED, dateFormatter.format(portal.getDateSubmitted()));
-        values.put(KEY_PICTURE_URL, portal.getPictureURL());
+        values.put(COLUMN_NAME, portal.getName());
+        values.put(COLUMN_DATE_SUBMITTED, dateFormatter.format(portal.getDateSubmitted()));
+        values.put(COLUMN_PICTURE_URL, portal.getPictureURL());
 
-        db.update(TABLE_PENDING, values, KEY_PICTURE_URL + " = ?",
+        db.update(TABLE_PENDING, values, COLUMN_PICTURE_URL + " = ?",
                 new String[]{String.valueOf(oldPortal.getPictureURL())});
         db.close();
     }
@@ -816,13 +764,13 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         String dateSubmitted = dateFormatter.format(portal.getDateSubmitted());
         String dateResponded = dateFormatter.format(portal.getDateResponded());
 
-        values.put(KEY_NAME, portal.getName());
-        values.put(KEY_DATE_SUBMITTED, dateSubmitted);
-        values.put(KEY_PICTURE_URL, portal.getPictureURL());
-        values.put(KEY_DATE_RESPONDED, dateResponded);
-        values.put(KEY_REJECTION_REASON, portal.getRejectionReason());
+        values.put(COLUMN_NAME, portal.getName());
+        values.put(COLUMN_DATE_SUBMITTED, dateSubmitted);
+        values.put(COLUMN_PICTURE_URL, portal.getPictureURL());
+        values.put(COLUMN_DATE_RESPONDED, dateResponded);
+        values.put(COLUMN_REJECTION_REASON, portal.getRejectionReason());
 
-        db.update(TABLE_REJECTED, values, KEY_PICTURE_URL + " = ?",
+        db.update(TABLE_REJECTED, values, COLUMN_PICTURE_URL + " = ?",
                 new String[]{String.valueOf(oldPortal.getPictureURL())});
         db.close();
     }
