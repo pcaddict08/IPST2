@@ -27,8 +27,10 @@ import com.einzig.ipst2.portal.PortalRejected;
 
 import org.joda.time.LocalDate;
 
-import static com.einzig.ipst2.database.DatabaseInterface.DATE_FORMATTER;
-import static com.einzig.ipst2.database.PendingPortalContract.PendingPortalEntry.*;
+import static com.einzig.ipst2.database.PendingPortalContract.PendingPortalEntry.COLUMN_DATE_RESPONDED;
+import static com.einzig.ipst2.database.PendingPortalContract.PendingPortalEntry.COLUMN_DATE_SUBMITTED;
+import static com.einzig.ipst2.database.PendingPortalContract.PendingPortalEntry.COLUMN_NAME;
+import static com.einzig.ipst2.database.PendingPortalContract.PendingPortalEntry.COLUMN_PICTURE_URL;
 import static com.einzig.ipst2.database.RejectedPortalContract.RejectedPortalEntry.COLUMN_REJECTION_REASON;
 
 /**
@@ -53,10 +55,10 @@ public final class PortalRejectedBuilder extends PortalBuilder<PortalRejected> {
         String name, pictureURL, reason;
         LocalDate submitted, responded;
         name = c.getString(c.getColumnIndex(COLUMN_NAME));
-        submitted = DATE_FORMATTER.parseLocalDate(c.getString(
+        submitted = parseDate(c.getString(
                 c.getColumnIndex(COLUMN_DATE_SUBMITTED)));
         pictureURL = c.getString(c.getColumnIndex(COLUMN_PICTURE_URL));
-        responded = DATE_FORMATTER.parseLocalDate(c.getString(c.getColumnIndex(COLUMN_DATE_RESPONDED)));
+        responded = parseDate(c.getString(c.getColumnIndex(COLUMN_DATE_RESPONDED)));
         reason = c.getString(c.getColumnIndex(COLUMN_REJECTION_REASON));
         return new PortalRejected(name, submitted, pictureURL, responded, reason);
     }

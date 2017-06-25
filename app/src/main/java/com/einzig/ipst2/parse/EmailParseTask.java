@@ -123,6 +123,8 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
         if (pending != null) {
             portal.setDateSubmitted(pending.getDateSubmitted());
             db.deletePending(pending);
+        } else {
+            portal.setDateSubmitted(portal.getDateResponded());
         }
         db.addPortalAccepted(portal);
     }
@@ -135,10 +137,10 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
     private void addPortalRejected(PortalRejected portal) {
         PortalSubmission pending = db.getPendingPortal(portal.getPictureURL(), portal.getName());
         if (pending != null) {
-            // I don't like this, but it's the best way to do it without completely redoing the
-            // database
             portal.setDateSubmitted(pending.getDateSubmitted());
             db.deletePending(pending);
+        } else {
+            portal.setDateSubmitted(portal.getDateResponded());
         }
         db.addPortalRejected(portal);
     }

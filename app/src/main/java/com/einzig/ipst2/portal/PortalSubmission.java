@@ -29,26 +29,44 @@ import android.os.Parcelable;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
+import org.joda.time.Period;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 
-public class PortalSubmission implements Parcelable, Serializable {
-    /**
-     * Inflates a PortalSubmission from a Parcel
-     */
-    public static final Creator<PortalSubmission> CREATOR = new Creator<PortalSubmission>() {
-        @Override
-        public PortalSubmission createFromParcel(Parcel in) {
-            return new PortalSubmission(in);
-        }
+import static com.einzig.ipst2.database.DatabaseInterface.DATE_FORMATTER;
 
-        @Override
-        public PortalSubmission[] newArray(int size) {
-            return new PortalSubmission[size];
-        }
-    };
-    private static final long serialVersionUID = -223108874747293680L;
+public class PortalSubmission implements Parcelable, Serializable {
+    /** Inflates a PortalSubmission from a Parcel */
+    public static final Creator<PortalSubmission> CREATOR;
+    /** Version descriptor for serialized PortalSubmissions */
+    private static final long serialVersionUID;
+    /** Date formatter for displaying on the UI */
+    static DateTimeFormatter UI_FORMATTER;
+
+    static {
+        CREATOR = new Creator<PortalSubmission>() {
+            @Override
+            public PortalSubmission createFromParcel(Parcel in) {
+                return new PortalSubmission(in);
+            }
+
+            @Override
+            public PortalSubmission[] newArray(int size) {
+                return new PortalSubmission[size];
+            }
+        };
+
+        serialVersionUID = -223108874747293680L;
+        UI_FORMATTER = ISODateTimeFormat.date();
+    }
+
+    static public void setUIFormatter() {
+
+    }
+
     /**
      * The name of the portal.
      *
@@ -61,8 +79,6 @@ public class PortalSubmission implements Parcelable, Serializable {
      * @serial
      */
     private final String pictureURL;
-    /** Date format for returning string dates */
-    SimpleDateFormat dateFormat;
     /**
      * The date the portal was submitted.
      *
@@ -94,17 +110,9 @@ public class PortalSubmission implements Parcelable, Serializable {
         pictureURL = in.readString();
     }
 
-    public SimpleDateFormat getDateFormat() {
-        return dateFormat;
-    }
-
-    public void setDateFormat(SimpleDateFormat dateFormat) {
-        this.dateFormat = dateFormat;
-    }
-
     /*
-         * No idea what this does
-         */
+     * No idea what this does
+     */
     @Override
     public int describeContents() {
         return 0;
@@ -133,8 +141,7 @@ public class PortalSubmission implements Parcelable, Serializable {
     * Return days since Niantic has responded
     * */
     public int getDaysSinceResponse() {
-        return Days.daysBetween(new DateTime(dateSubmitted).toLocalDate(),
-                new DateTime().toLocalDate()).getDays();
+        return Period.fieldDifference(dateSubmitted, LocalDate.now()).getDays();
     }
 
     /**
@@ -159,7 +166,7 @@ public class PortalSubmission implements Parcelable, Serializable {
     *  Return a formatted submitted date
     * */
     public String getSubmittedDateString() {
-        return dateFormat.format(this.dateSubmitted);
+        return DATE_FORMATTER.print(dateSubmitted);
     }
 
     /**

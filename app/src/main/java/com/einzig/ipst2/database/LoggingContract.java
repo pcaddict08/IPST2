@@ -31,7 +31,7 @@ class LoggingContract {
     static final String SQL_CREATE_ENTRIES =
             "CREATE TABLE " + LoggingEntry.TABLE_LOGGING + " (" +
                     LoggingEntry._ID + " INTEGER PRIMARY KEY," +
-                    LoggingEntry.COLUMN_LOG_LEVEL + " INTEGER NOT NULL," +
+                    LoggingEntry.COLUMN_LOG_LEVEL + " TEXT NOT NULL," +
                     LoggingEntry.COLUMN_LOG_TIME + " DATETEIME NOT NULL," +
                     LoggingEntry.COLUMN_LOG_SCOPE + " TEXT," +
                     LoggingEntry.COLUMN_LOG_MESSAGE + " TEXT NOT NULL)";

@@ -121,12 +121,11 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         String dateResponded = getDateStringSafe(portal.getDateResponded());
         ContentValues values = new ContentValues();
         // Values put!
-        Logger.v("DBI#addPortalAccepted", "Name: " + portal.getName());
+        Logger.v("DBI#addPortalAccepted", "Name: " + portal.getName() + "\tSubmitted: " +
+                dateSubmitted + "\tResponded: " + dateResponded);
         values.put(COLUMN_NAME, portal.getName());
-        Logger.v("DBI#addPortalAccepted", "Submitted: " + dateSubmitted);
         values.put(COLUMN_DATE_SUBMITTED, dateSubmitted);
         values.put(COLUMN_PICTURE_URL, portal.getPictureURL());
-        Logger.v("DBI#addPortalAccepted", "Responded: " + dateResponded);
         values.put(COLUMN_DATE_RESPONDED, dateResponded);
         values.put(COLUMN_LIVE_ADDRESS, portal.getLiveAddress());
         values.put(COLUMN_INTEL_LINK_URL, portal.getIntelLinkURL());
@@ -144,12 +143,11 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         String dateResponded = getDateStringSafe(portal.getDateResponded());
         ContentValues values = new ContentValues();
         // Values put!
-        Logger.v("DBI#addPortalRejected", "Name: " + portal.getName());
+        Logger.v("DBI#addPortalRejected", "Name: " + portal.getName() + "\tSubmitted: " +
+                dateSubmitted + "\tResponded: " + dateResponded);
         values.put(COLUMN_NAME, portal.getName());
-        Logger.v("DBI#addPortalRejected", "Submitted: " + dateSubmitted);
         values.put(COLUMN_DATE_SUBMITTED, dateSubmitted);
         values.put(COLUMN_PICTURE_URL, portal.getPictureURL());
-        Logger.v("DBI#addPortalRejected", "Responded: " + dateResponded);
         values.put(COLUMN_DATE_RESPONDED, dateResponded);
         values.put(COLUMN_REJECTION_REASON, portal.getRejectionReason());
         addPortal(TABLE_REJECTED, values);
@@ -574,7 +572,9 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      */
     private <P extends PortalSubmission> P getPortal(String table, String pictureURL,
             String portalName, PortalBuilder<P> builder) {
-        Vector<P> portals = getAll(table, COLUMN_PICTURE_URL + " = ?", new String[]{pictureURL},
+        Vector<P> portals = getAll(table, COLUMN_PICTURE_URL + " = ? AND " + COLUMN_NAME + " = ?",
+                new
+                        String[]{pictureURL, portalName},
                 builder);
         for (P portal : portals) {
             if (portal.getName().equals(portalName))

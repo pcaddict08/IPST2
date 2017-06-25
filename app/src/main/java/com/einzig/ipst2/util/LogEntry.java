@@ -21,9 +21,8 @@
 
 package com.einzig.ipst2.util;
 
-import org.joda.time.LocalDate;
-
-import static com.einzig.ipst2.database.DatabaseInterface.DATE_FORMATTER;
+import org.joda.time.LocalDateTime;
+import org.joda.time.format.ISODateTimeFormat;
 
 /**
  * @author Ryan Porterfield
@@ -31,19 +30,19 @@ import static com.einzig.ipst2.database.DatabaseInterface.DATE_FORMATTER;
  */
 
 public class LogEntry {
-    final private int level;
+    final private String level;
     final private String message;
-    final private LocalDate time;
+    final private LocalDateTime time;
     final private String scope;
 
-    public LogEntry(int level, LocalDate time, String scope, String message) {
+    public LogEntry(String level, LocalDateTime time, String scope, String message) {
         this.level = level;
         this.message = message;
         this.time = time;
         this.scope = scope;
     }
 
-    public int getLevel() {
+    public String getLevel() {
         return level;
     }
 
@@ -51,7 +50,7 @@ public class LogEntry {
         return message;
     }
 
-    public LocalDate getTime() {
+    public LocalDateTime getTime() {
         return time;
     }
 
@@ -61,9 +60,7 @@ public class LogEntry {
 
     @Override
     public String toString() {
-        return message +
-                "\n\tLevel: " + level +
-                "\n\tTime: " + DATE_FORMATTER.print(time) +
-                "\n\tScope: " + scope;
+        return "[" + ISODateTimeFormat.dateTime().print(time) + "] " + level + "/" + scope + ": " +
+                message + "\n";
     }
 }

@@ -24,11 +24,13 @@ package com.einzig.ipst2.database;
 import android.database.Cursor;
 
 import com.einzig.ipst2.portal.PortalSubmission;
+import com.einzig.ipst2.util.Logger;
 
 import org.joda.time.LocalDate;
 
-import static com.einzig.ipst2.database.DatabaseInterface.DATE_FORMATTER;
-import static com.einzig.ipst2.database.PendingPortalContract.PendingPortalEntry.*;
+import static com.einzig.ipst2.database.PendingPortalContract.PendingPortalEntry.COLUMN_DATE_SUBMITTED;
+import static com.einzig.ipst2.database.PendingPortalContract.PendingPortalEntry.COLUMN_NAME;
+import static com.einzig.ipst2.database.PendingPortalContract.PendingPortalEntry.COLUMN_PICTURE_URL;
 
 /**
  * @author Ryan Porterfield
@@ -52,9 +54,11 @@ public final class PortalSubmissionBuilder extends PortalBuilder<PortalSubmissio
         String name, pictureURL;
         LocalDate dateSubmitted;
         name = c.getString(c.getColumnIndex(COLUMN_NAME));
-        dateSubmitted = DATE_FORMATTER.parseLocalDate(c.getString(c.getColumnIndex
+        dateSubmitted = parseDate(c.getString(c.getColumnIndex
                 (COLUMN_DATE_SUBMITTED)));
         pictureURL = c.getString(c.getColumnIndex(COLUMN_PICTURE_URL));
+        Logger.d("PSBuilder", "Name: " + name + "\tSubmitted: " + dateSubmitted + "\tP-URL: " +
+                pictureURL);
         return new PortalSubmission(name, dateSubmitted, pictureURL);
     }
 

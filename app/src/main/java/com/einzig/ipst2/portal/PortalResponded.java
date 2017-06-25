@@ -30,6 +30,8 @@ import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.joda.time.Period;
 
+import static com.einzig.ipst2.database.DatabaseInterface.DATE_FORMATTER;
+
 /**
  * @author Ryan Porterfield
  * @since 2015-07-24
@@ -78,7 +80,7 @@ public abstract class PortalResponded extends PortalSubmission {
    *  Return a formatted responded date
    * */
     public String getDateRespondedString() {
-        return dateFormat.format(this.dateResponded);
+        return DATE_FORMATTER.print(dateResponded);
     }
 
     /*
@@ -86,12 +88,11 @@ public abstract class PortalResponded extends PortalSubmission {
     * */
     @Override
     public int getDaysSinceResponse() {
-        return Days.daysBetween(new DateTime(this.dateResponded).toLocalDate(),
-                new DateTime().toLocalDate()).getDays();
+        return Period.fieldDifference(dateResponded, LocalDate.now()).getDays();
     }
 
     public int getResponseTime() {
-        return Period.fieldDifference(getDateSubmitted(), getDateResponded()).getDays();
+        return Period.fieldDifference(getDateSubmitted(), dateResponded).getDays();
     }
 
     /*

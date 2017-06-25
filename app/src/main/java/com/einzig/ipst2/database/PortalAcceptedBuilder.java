@@ -32,7 +32,6 @@ import java.util.regex.Pattern;
 
 import static com.einzig.ipst2.database.AcceptedPortalContract.AcceptedPortalEntry.COLUMN_INTEL_LINK_URL;
 import static com.einzig.ipst2.database.AcceptedPortalContract.AcceptedPortalEntry.COLUMN_LIVE_ADDRESS;
-import static com.einzig.ipst2.database.DatabaseInterface.DATE_FORMATTER;
 import static com.einzig.ipst2.database.PendingPortalContract.PendingPortalEntry.COLUMN_DATE_RESPONDED;
 import static com.einzig.ipst2.database.PendingPortalContract.PendingPortalEntry.COLUMN_DATE_SUBMITTED;
 import static com.einzig.ipst2.database.PendingPortalContract.PendingPortalEntry.COLUMN_NAME;
@@ -69,9 +68,9 @@ public final class PortalAcceptedBuilder extends PortalBuilder<PortalAccepted> {
         String name, pictureURL, location, intelLink;
         LocalDate submitted, responded;
         name = c.getString(c.getColumnIndex(COLUMN_NAME));
-        submitted = DATE_FORMATTER.parseLocalDate(c.getString(c.getColumnIndex(COLUMN_DATE_SUBMITTED)));
+        submitted = parseDate(c.getString(c.getColumnIndex(COLUMN_DATE_SUBMITTED)));
         pictureURL = c.getString(c.getColumnIndex(COLUMN_PICTURE_URL));
-        responded = DATE_FORMATTER.parseLocalDate(c.getString(c.getColumnIndex(COLUMN_DATE_RESPONDED)));
+        responded = parseDate(c.getString(c.getColumnIndex(COLUMN_DATE_RESPONDED)));
         location = c.getString(c.getColumnIndex(COLUMN_LIVE_ADDRESS));
         intelLink = c.getString(c.getColumnIndex(COLUMN_INTEL_LINK_URL));
         return new PortalAccepted(name, submitted, pictureURL, responded, location, intelLink);

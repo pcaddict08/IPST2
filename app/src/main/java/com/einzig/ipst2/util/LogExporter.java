@@ -79,7 +79,7 @@ public class LogExporter extends AsyncTask<Void, Void, Void> {
             OutputStreamWriter writer = new OutputStreamWriter(stream);
             Logger.i("LogExporter", "Writing logs");
             for (LogEntry entry : getLogs())
-                writer.write(entry.toString() + "\n\n");
+                writer.write(entry.toString());
             writer.close();
             stream.close();
             Logger.i("LogExporter", "Write finished");

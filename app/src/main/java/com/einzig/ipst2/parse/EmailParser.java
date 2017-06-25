@@ -59,6 +59,13 @@ class EmailParser {
         submissionBuilder = new PortalSubmissionBuilder();
     }
 
+    private String cleanSubject(String subject) {
+        String fwd = "fwd: ";
+        if (subject.toLowerCase().startsWith(fwd))
+            subject = subject.substring(fwd.length());
+        return subject;
+    }
+
     /**
      * Get a portal object from an email
      *
@@ -70,6 +77,7 @@ class EmailParser {
         LocalDate receivedDate;
         try {
             subject = message.getSubject();
+            subject = cleanSubject(subject);
             receivedDate = new LocalDate(message.getReceivedDate());
         } catch (MessagingException e) {
             return null;

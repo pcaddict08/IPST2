@@ -94,7 +94,8 @@ public class PSDetailsActivity extends AppCompatActivity {
     public void buildUI() {
         Logger.d("PS Type: " + portalSubmission.getClass().getName());
         namelabel.setText(portalSubmission.getName());
-        portalSubmission.setDateFormat(PreferencesHelper.getSDF(this));
+        // TODO: Fix this
+        //portalSubmission.setDateFormat(PreferencesHelper.getSDF(this));
         submittedLabel.setText(portalSubmission.getSubmittedDateString());
         Picasso.with(this)
                 .load(portalSubmission.getPictureURL())

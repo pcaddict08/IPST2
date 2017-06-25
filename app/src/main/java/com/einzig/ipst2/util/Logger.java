@@ -26,7 +26,7 @@ import android.util.Log;
 
 import com.einzig.ipst2.database.DatabaseInterface;
 
-import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
 
 /**
  * @author Ryan Porterfield
@@ -34,20 +34,8 @@ import org.joda.time.LocalDate;
  */
 
 public class Logger {
-    /** Debug level */
-    static final private int D = 4;
-    /** Error level */
-    static final private int E = 1;
-    /** Info level */
-    static final private int I = 3;
     /** Tag used for logging for this class */
     static private final String TAG = "IPST";
-    /** Verbose level */
-    static final private int V = 5;
-    /** Warn level */
-    static final private int W = 2;
-    /** What a Terrible Failure level */
-    static final private int WTF = 0;
     /** Save logs to the database */
     static private DatabaseInterface db;
     /** Do we have a database handle yet? */
@@ -83,7 +71,7 @@ public class Logger {
      */
     static public void d(String scope, String message) {
         Log.d(TAG, concatMessage(scope, message));
-        log(D, scope, message);
+        log("D", scope, message);
     }
 
     /**
@@ -101,7 +89,7 @@ public class Logger {
      */
     static public void e(String scope, String message) {
         Log.e(TAG, concatMessage(scope, message));
-        log(E, scope, message);
+        log("E", scope, message);
     }
 
     /**
@@ -119,7 +107,7 @@ public class Logger {
      */
     static public void i(String scope, String message) {
         Log.i(TAG, concatMessage(scope, message));
-        log(I, scope, message);
+        log("I", scope, message);
     }
 
     /**
@@ -140,10 +128,10 @@ public class Logger {
      * @param message Message to be logged
      * @see Logger#initialized
      */
-    static private void log(int level, String scope, String message) {
+    static private void log(String level, String scope, String message) {
         if (!initialized)
             return;
-        LocalDate now = LocalDate.now();
+        LocalDateTime now = LocalDateTime.now();
         LogEntry entry = new LogEntry(level, now, scope, message);
         db.addLog(entry);
     }
@@ -163,7 +151,7 @@ public class Logger {
      */
     static public void v(String scope, String message) {
         Log.v(TAG, concatMessage(scope, message));
-        log(V, scope, message);
+        log("V", scope, message);
     }
 
     /**
@@ -181,7 +169,7 @@ public class Logger {
      */
     static public void w(String scope, String message) {
         Log.w(TAG, concatMessage(scope, message));
-        log(W, scope, message);
+        log("W", scope, message);
     }
 
     /**
@@ -199,6 +187,6 @@ public class Logger {
      */
     static public void wtf(String scope, String message) {
         Log.wtf(TAG, concatMessage(scope, message));
-        log(WTF, scope, message);
+        log("WTF", scope, message);
     }
 }

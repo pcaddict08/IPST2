@@ -30,6 +30,8 @@ import org.joda.time.LocalDate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.einzig.ipst2.database.DatabaseInterface.DATE_FORMATTER;
+
 /**
  * @author Ryan Porterfield
  * @since 2017-05-19
@@ -59,6 +61,13 @@ public abstract class PortalBuilder<P extends PortalSubmission> {
      */
     public abstract P build(String name, LocalDate dateResponded, String message);
 
+    LocalDate parseDate(String dateString) {
+        try {
+            return DATE_FORMATTER.parseLocalDate(dateString);
+        } catch (IllegalArgumentException e) {
+            return LocalDate.now();
+        }
+    }
     /**
      * Parse the URL of the portal picture from the email.
      *
