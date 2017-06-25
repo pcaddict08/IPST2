@@ -82,6 +82,8 @@
     <string name="cleardb_preftitle">Clear Data</string>
     <string name="exportdb_prefsummary">Export local database of portal submissions to a CSV file.</string>
     <string name="exportdb_preftitle">Export</string>
+    <string name="exportlogs_summary">Export logs to a text file</string>
+    <string name="exportlogs_title">Export Logs</string>
     <string name="importdb_prefsummary">Import portal submissions from a CSV you exported from IPST2.  *WARNING* Importing from an IPST(original) CSV is not supported.</string>
     <string name="importdb_preftitle">Import</string>
 

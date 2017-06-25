@@ -36,7 +36,7 @@ import com.einzig.ipst2.portal.PortalRejected;
 import com.einzig.ipst2.portal.PortalSubmission;
 import com.einzig.ipst2.util.Logger;
 
-import org.joda.time.LocalDateTime;
+import org.joda.time.LocalDate;
 
 import javax.activation.CommandMap;
 import javax.activation.MailcapCommandMap;
@@ -155,14 +155,14 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
     @Override
     protected Void doInBackground(Void... voids) {
         Logger.d("Parsing email");
-        LocalDateTime now = LocalDateTime.now();
+        LocalDate now = LocalDate.now();
         for (int i = 0; i < messages.length; i++) {
             PortalSubmission p = parser.getPortal(messages[i]);
             addPortal(p);
             publishProgress(i, messages.length);
             if (isCancelled()) {
                 try {
-                    now = new LocalDateTime(messages[i].getReceivedDate());
+                    now = new LocalDate(messages[i].getReceivedDate());
                 } catch (MessagingException e) {
                     Logger.e(e.toString());
                 }
@@ -190,7 +190,7 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
      *
      * @param parseDate Last time email was parsed
      */
-    private void onEmailParse(LocalDateTime parseDate) {
+    private void onEmailParse(LocalDate parseDate) {
         String dateString = DATE_FORMATTER.print(parseDate);
         Logger.d(MainActivity.MOST_RECENT_DATE_KEY + " -> " + dateString);
         SharedPreferences.Editor editor = preferences.edit();

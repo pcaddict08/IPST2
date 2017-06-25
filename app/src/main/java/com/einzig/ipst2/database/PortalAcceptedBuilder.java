@@ -25,12 +25,18 @@ import android.database.Cursor;
 
 import com.einzig.ipst2.portal.PortalAccepted;
 
-import org.joda.time.LocalDateTime;
+import org.joda.time.LocalDate;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.einzig.ipst2.database.AcceptedPortalContract.AcceptedPortalEntry.COLUMN_INTEL_LINK_URL;
+import static com.einzig.ipst2.database.AcceptedPortalContract.AcceptedPortalEntry.COLUMN_LIVE_ADDRESS;
 import static com.einzig.ipst2.database.DatabaseInterface.DATE_FORMATTER;
+import static com.einzig.ipst2.database.PendingPortalContract.PendingPortalEntry.COLUMN_DATE_RESPONDED;
+import static com.einzig.ipst2.database.PendingPortalContract.PendingPortalEntry.COLUMN_DATE_SUBMITTED;
+import static com.einzig.ipst2.database.PendingPortalContract.PendingPortalEntry.COLUMN_NAME;
+import static com.einzig.ipst2.database.PendingPortalContract.PendingPortalEntry.COLUMN_PICTURE_URL;
 
 /**
  * @author Ryan Porterfield
@@ -44,7 +50,7 @@ public final class PortalAcceptedBuilder extends PortalBuilder<PortalAccepted> {
     }
 
     @Override
-    public PortalAccepted build(String name, LocalDateTime dateResponded, String message) {
+    public PortalAccepted build(String name, LocalDate dateResponded, String message) {
         String pictureURL = parsePictureURL(message, name);
         String address = parseLiveAddress(message);
         String intelLink = parseIntelLink(message);
@@ -55,19 +61,19 @@ public final class PortalAcceptedBuilder extends PortalBuilder<PortalAccepted> {
     /**
      * Create an instance of PortalAccepted from a database entry.
      *
-     * @param cursor Cursor containing the database fields of the portal.
+     * @param c Cursor containing the database fields of the portal.
      * @return a PortalAccepted representation of a portal in the database.
      */
     @Override
-    PortalAccepted build(Cursor cursor) {
+    PortalAccepted build(Cursor c) {
         String name, pictureURL, location, intelLink;
-        LocalDateTime submitted, responded;
-        name = cursor.getString(0);
-        submitted = DATE_FORMATTER.parseLocalDateTime(cursor.getString(1));
-        pictureURL = cursor.getString(2);
-        responded = DATE_FORMATTER.parseLocalDateTime(cursor.getString(3));
-        location = cursor.getString(4);
-        intelLink = cursor.getString(5);
+        LocalDate submitted, responded;
+        name = c.getString(c.getColumnIndex(COLUMN_NAME));
+        submitted = DATE_FORMATTER.parseLocalDate(c.getString(c.getColumnIndex(COLUMN_DATE_SUBMITTED)));
+        pictureURL = c.getString(c.getColumnIndex(COLUMN_PICTURE_URL));
+        responded = DATE_FORMATTER.parseLocalDate(c.getString(c.getColumnIndex(COLUMN_DATE_RESPONDED)));
+        location = c.getString(c.getColumnIndex(COLUMN_LIVE_ADDRESS));
+        intelLink = c.getString(c.getColumnIndex(COLUMN_INTEL_LINK_URL));
         return new PortalAccepted(name, submitted, pictureURL, responded, location, intelLink);
     }
 

@@ -37,7 +37,7 @@ import com.einzig.ipst2.util.DialogHelper;
 import com.einzig.ipst2.util.Logger;
 import com.sun.mail.imap.IMAPStore;
 
-import org.joda.time.LocalDateTime;
+import org.joda.time.LocalDate;
 
 import javax.mail.FetchProfile;
 import javax.mail.Folder;
@@ -137,12 +137,12 @@ public class GetMailTask extends AsyncTask<Void, Void, MailBundle> {
      * @param dateStr String representation of the last parse date
      * @return Date the email was parsed if previously parsed, otherwise the date Ingress launched
      */
-    private LocalDateTime getLastParseDate(String dateStr) {
-        LocalDateTime d;
+    private LocalDate getLastParseDate(String dateStr) {
+        LocalDate d;
         try {
-            d = DATE_FORMATTER.parseLocalDateTime(dateStr);
+            d = DATE_FORMATTER.parseLocalDate(dateStr);
         } catch (IllegalArgumentException e) {
-            d = new LocalDateTime(2013, 11, 15, 0, 0);
+            d = new LocalDate(2013, 11, 15);
         }
         return d;
     }
@@ -154,7 +154,7 @@ public class GetMailTask extends AsyncTask<Void, Void, MailBundle> {
      * @param anySource     boolean that decides if the email search terms 'from' are included.
      * @return Search term that will find all portal submission emails
      */
-    private SearchTerm getSearchTerm(LocalDateTime lastParseDate, boolean anySource) {
+    private SearchTerm getSearchTerm(LocalDate lastParseDate, boolean anySource) {
         SearchTerm portalTerm = new SubjectTerm("ingress portal");
         SearchTerm reviewTerm = new SubjectTerm("portal review");
         SearchTerm submissionTerm = new SubjectTerm("portal submission");
@@ -188,7 +188,7 @@ public class GetMailTask extends AsyncTask<Void, Void, MailBundle> {
      * @throws MessagingException if the library encounters an error
      */
     private Message[] searchMailbox(Folder folder) throws MessagingException {
-        LocalDateTime lastParseDate = getLastParseDate(
+        LocalDate lastParseDate = getLastParseDate(
                 preferences.getString(MainActivity.MOST_RECENT_DATE_KEY, MainActivity.NULL_KEY));
         return folder.search(getSearchTerm(lastParseDate, true));
     }

@@ -25,7 +25,7 @@ import android.database.Cursor;
 
 import com.einzig.ipst2.portal.PortalSubmission;
 
-import org.joda.time.LocalDateTime;
+import org.joda.time.LocalDate;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -57,7 +57,7 @@ public abstract class PortalBuilder<P extends PortalSubmission> {
      * @param dateResponded The date the portal was rejected.
      * @param message       The body of the email as a String for parsing.
      */
-    public abstract P build(String name, LocalDateTime dateResponded, String message);
+    public abstract P build(String name, LocalDate dateResponded, String message);
 
     /**
      * Parse the URL of the portal picture from the email.

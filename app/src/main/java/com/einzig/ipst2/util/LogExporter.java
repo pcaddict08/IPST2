@@ -27,7 +27,7 @@ import android.os.Environment;
 
 import com.einzig.ipst2.database.DatabaseInterface;
 
-import org.joda.time.LocalDateTime;
+import org.joda.time.LocalDate;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -76,7 +76,7 @@ public class LogExporter extends AsyncTask<Void, Void, Void> {
      * @return name of the file to write logs to
      */
     private String getFilename() {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDate now = LocalDate.now();
         return "IPST Logs " + DATE_FORMATTER.print(now) + ".txt";
     }
 

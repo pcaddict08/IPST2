@@ -26,7 +26,7 @@ package com.einzig.ipst2.sort;
 import com.einzig.ipst2.portal.PortalResponded;
 import com.einzig.ipst2.portal.PortalSubmission;
 
-import org.joda.time.LocalDateTime;
+import org.joda.time.LocalDate;
 
 import java.util.Comparator;
 
@@ -37,7 +37,7 @@ import java.util.Comparator;
 public class DateComparator implements Comparator<PortalSubmission> {
     @Override
     public int compare(PortalSubmission p0, PortalSubmission p1) {
-        LocalDateTime recent0, recent1;
+        LocalDate recent0, recent1;
         if (p0 instanceof PortalResponded)
             recent0 = ((PortalResponded) p0).getDateResponded();
         else

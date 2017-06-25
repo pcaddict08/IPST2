@@ -25,9 +25,11 @@ import android.database.Cursor;
 
 import com.einzig.ipst2.portal.PortalRejected;
 
-import org.joda.time.LocalDateTime;
+import org.joda.time.LocalDate;
 
 import static com.einzig.ipst2.database.DatabaseInterface.DATE_FORMATTER;
+import static com.einzig.ipst2.database.PendingPortalContract.PendingPortalEntry.*;
+import static com.einzig.ipst2.database.RejectedPortalContract.RejectedPortalEntry.COLUMN_REJECTION_REASON;
 
 /**
  * @author Ryan Porterfield
@@ -43,23 +45,24 @@ public final class PortalRejectedBuilder extends PortalBuilder<PortalRejected> {
     /**
      * Create an instance of PortalRejected from a database entry.
      *
-     * @param cursor Cursor containing the database fields of the portal.
+     * @param c Cursor containing the database fields of the portal.
      * @return a PortalRejected representation of a portal in the database.
      */
     @Override
-    PortalRejected build(Cursor cursor) {
+    PortalRejected build(Cursor c) {
         String name, pictureURL, reason;
-        LocalDateTime submitted, responded;
-        name = cursor.getString(0);
-        submitted = DATE_FORMATTER.parseLocalDateTime(cursor.getString(1));
-        pictureURL = cursor.getString(2);
-        responded = DATE_FORMATTER.parseLocalDateTime(cursor.getString(3));
-        reason = cursor.getString(4);
+        LocalDate submitted, responded;
+        name = c.getString(c.getColumnIndex(COLUMN_NAME));
+        submitted = DATE_FORMATTER.parseLocalDate(c.getString(
+                c.getColumnIndex(COLUMN_DATE_SUBMITTED)));
+        pictureURL = c.getString(c.getColumnIndex(COLUMN_PICTURE_URL));
+        responded = DATE_FORMATTER.parseLocalDate(c.getString(c.getColumnIndex(COLUMN_DATE_RESPONDED)));
+        reason = c.getString(c.getColumnIndex(COLUMN_REJECTION_REASON));
         return new PortalRejected(name, submitted, pictureURL, responded, reason);
     }
 
     @Override
-    public PortalRejected build(String name, LocalDateTime dateResponded, String message) {
+    public PortalRejected build(String name, LocalDate dateResponded, String message) {
         String pictureURL = parsePictureURL(message, name);
         String rejectionReason = parseRejectionReason(message);
         return new PortalRejected(name, null, pictureURL, dateResponded, rejectionReason);

@@ -26,7 +26,7 @@ import android.util.Log;
 
 import com.einzig.ipst2.database.DatabaseInterface;
 
-import org.joda.time.LocalDateTime;
+import org.joda.time.LocalDate;
 
 /**
  * @author Ryan Porterfield
@@ -143,7 +143,7 @@ public class Logger {
     static private void log(int level, String scope, String message) {
         if (!initialized)
             return;
-        LocalDateTime now = LocalDateTime.now();
+        LocalDate now = LocalDate.now();
         LogEntry entry = new LogEntry(level, now, scope, message);
         db.addLog(entry);
     }

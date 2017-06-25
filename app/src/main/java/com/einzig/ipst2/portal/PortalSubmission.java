@@ -28,7 +28,7 @@ import android.os.Parcelable;
 
 import org.joda.time.DateTime;
 import org.joda.time.Days;
-import org.joda.time.LocalDateTime;
+import org.joda.time.LocalDate;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
@@ -68,7 +68,7 @@ public class PortalSubmission implements Parcelable, Serializable {
      *
      * @serial
      */
-    private LocalDateTime dateSubmitted;
+    private LocalDate dateSubmitted;
 
     /**
      * Create a new PortalSubmission.
@@ -77,7 +77,7 @@ public class PortalSubmission implements Parcelable, Serializable {
      * @param dateSubmitted The date the portal was submitted.
      * @param pictureURL    The URL of the portal submission picture.
      */
-    public PortalSubmission(String name, LocalDateTime dateSubmitted, String pictureURL) {
+    public PortalSubmission(String name, LocalDate dateSubmitted, String pictureURL) {
         this.name = name;
         this.dateSubmitted = dateSubmitted;
         this.pictureURL = pictureURL;
@@ -90,7 +90,7 @@ public class PortalSubmission implements Parcelable, Serializable {
      */
     PortalSubmission(Parcel in) {
         name = in.readString();
-        dateSubmitted = (LocalDateTime) in.readSerializable();
+        dateSubmitted = (LocalDate) in.readSerializable();
         pictureURL = in.readString();
     }
 
@@ -125,7 +125,7 @@ public class PortalSubmission implements Parcelable, Serializable {
      *
      * @return the date that the portal was submitted.
      */
-    public LocalDateTime getDateSubmitted() {
+    public LocalDate getDateSubmitted() {
         return dateSubmitted;
     }
 
@@ -167,7 +167,7 @@ public class PortalSubmission implements Parcelable, Serializable {
      *
      * @param dateSubmitted the modified date the portal was submitted.
      */
-    public void setDateSubmitted(LocalDateTime dateSubmitted) {
+    public void setDateSubmitted(LocalDate dateSubmitted) {
         this.dateSubmitted = dateSubmitted;
     }
 

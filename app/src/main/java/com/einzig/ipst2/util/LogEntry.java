@@ -21,7 +21,7 @@
 
 package com.einzig.ipst2.util;
 
-import org.joda.time.LocalDateTime;
+import org.joda.time.LocalDate;
 
 import static com.einzig.ipst2.database.DatabaseInterface.DATE_FORMATTER;
 
@@ -33,10 +33,10 @@ import static com.einzig.ipst2.database.DatabaseInterface.DATE_FORMATTER;
 public class LogEntry {
     final private int level;
     final private String message;
-    final private LocalDateTime time;
+    final private LocalDate time;
     final private String scope;
 
-    public LogEntry(int level, LocalDateTime time, String scope, String message) {
+    public LogEntry(int level, LocalDate time, String scope, String message) {
         this.level = level;
         this.message = message;
         this.time = time;
@@ -51,7 +51,7 @@ public class LogEntry {
         return message;
     }
 
-    public LocalDateTime getTime() {
+    public LocalDate getTime() {
         return time;
     }
 

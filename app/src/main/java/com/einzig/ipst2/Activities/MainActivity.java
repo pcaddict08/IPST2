@@ -74,7 +74,7 @@ import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
-import org.joda.time.LocalDateTime;
+import org.joda.time.LocalDate;
 
 import java.util.Locale;
 import java.util.Vector;
@@ -182,7 +182,7 @@ public class MainActivity extends AppCompatActivity
     /** Preferences for saving app settings */
     private SharedPreferences preferences;
     /**  */
-    private LocalDateTime viewDate;
+    private LocalDate viewDate;
 
     /**
      * MainActivity constructor, initialize variables.
@@ -531,13 +531,13 @@ public class MainActivity extends AppCompatActivity
             mainList = db.getAllPortals();
         } else if (((Button) view).getText().toString().equals(getString(R.string.viewlistmonth))) {
             Logger.d("Going to Month List");
-            mainList = db.getAllPortalsFromDate(new LocalDateTime().minusDays(30));
+            mainList = db.getAllPortalsFromDate(new LocalDate().minusDays(30));
         } else if (((Button) view).getText().toString().equals(getString(R.string.viewlistweek))) {
             Logger.d("Going to Week List");
-            mainList = db.getAllPortalsFromDate(new LocalDateTime().minusDays(7));
+            mainList = db.getAllPortalsFromDate(new LocalDate().minusDays(7));
         } else if (((Button) view).getText().toString().equals(getString(R.string.viewlisttoday))) {
             Logger.d("Going to Today List");
-            mainList = db.getAllPortalsFromDate(new LocalDateTime().minusDays(1));
+            mainList = db.getAllPortalsFromDate(new LocalDate().minusDays(1));
         }
 
         openList(mainList);
@@ -637,15 +637,15 @@ public class MainActivity extends AppCompatActivity
         Button viewList = (Button) findViewById(R.id.viewlist_mainactivity);
         switch (viewID) {
         case R.id.todaytab_mainactivity:
-            viewDate = new LocalDateTime().minusDays(1);
+            viewDate = new LocalDate().minusDays(1);
             viewList.setText(R.string.viewlisttoday);
             break;
         case R.id.weektab_mainactivity:
-            viewDate = new LocalDateTime().minusDays(7);
+            viewDate = new LocalDate().minusDays(7);
             viewList.setText(R.string.viewlistweek);
             break;
         case R.id.monthtab_mainactivity:
-            viewDate = new LocalDateTime().minusMonths(1);
+            viewDate = new LocalDate().minusMonths(1);
             viewList.setText(R.string.viewlistmonth);
             break;
         case R.id.alltab_mainactivity:

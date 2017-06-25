@@ -26,7 +26,7 @@ package com.einzig.ipst2.portal;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import org.joda.time.LocalDateTime;
+import org.joda.time.LocalDate;
 
 /**
  * @author Ryan Porterfield
@@ -63,8 +63,8 @@ public class PortalRejected extends PortalResponded {
      * @param dateResponded   The date that Niantic denied the portal.
      * @param rejectionReason The reason Niantic gave for rejecting the portal submission.
      */
-    public PortalRejected(String name, LocalDateTime dateSubmitted, String pictureURL,
-            LocalDateTime dateResponded, String rejectionReason) {
+    public PortalRejected(String name, LocalDate dateSubmitted, String pictureURL,
+            LocalDate dateResponded, String rejectionReason) {
         super(name, dateSubmitted, pictureURL, dateResponded);
         this.rejectionReason = rejectionReason;
     }

@@ -27,7 +27,7 @@ import android.os.Parcel;
 
 import org.joda.time.DateTime;
 import org.joda.time.Days;
-import org.joda.time.LocalDateTime;
+import org.joda.time.LocalDate;
 import org.joda.time.Period;
 
 /**
@@ -39,7 +39,7 @@ public abstract class PortalResponded extends PortalSubmission {
     /**
      * The date that Niantic approved or denied the portal.
      */
-    private final LocalDateTime dateResponded;
+    private final LocalDate dateResponded;
 
     /**
      * Create a new PortalResponded.
@@ -49,7 +49,7 @@ public abstract class PortalResponded extends PortalSubmission {
      * @param pictureURL    The URL of the portal submission picture.
      * @param dateResponded The date that Niantic approved or denied the portal.
      */
-    PortalResponded(String name, LocalDateTime dateSubmitted, String pictureURL, LocalDateTime
+    PortalResponded(String name, LocalDate dateSubmitted, String pictureURL, LocalDate
             dateResponded) {
         super(name, dateSubmitted, pictureURL);
         this.dateResponded = dateResponded;
@@ -62,7 +62,7 @@ public abstract class PortalResponded extends PortalSubmission {
      */
     PortalResponded(Parcel in) {
         super(in);
-        dateResponded = (LocalDateTime) in.readSerializable();
+        dateResponded = (LocalDate) in.readSerializable();
     }
 
     /**
@@ -70,7 +70,7 @@ public abstract class PortalResponded extends PortalSubmission {
      *
      * @return The date the portal was approved or rejected.
      */
-    public LocalDateTime getDateResponded() {
+    public LocalDate getDateResponded() {
         return this.dateResponded;
     }
 
