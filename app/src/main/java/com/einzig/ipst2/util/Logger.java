@@ -24,8 +24,9 @@ package com.einzig.ipst2.util;
 import android.content.Context;
 import android.util.Log;
 
-import com.einzig.ipst2.activities.MainActivity;
 import com.einzig.ipst2.database.DatabaseInterface;
+
+import org.joda.time.LocalDateTime;
 
 import static com.einzig.ipst2.activities.MainActivity.TAG;
 
@@ -35,7 +36,21 @@ import static com.einzig.ipst2.activities.MainActivity.TAG;
  */
 
 public class Logger {
+    /** Debug level */
+    static final private int D = 4;
+    /** Error level */
+    static final private int E = 1;
+    /** Info level */
+    static final private int I = 3;
+    /** Verbose level */
+    static final private int V = 5;
+    /** Warn level */
+    static final private int W = 2;
+    /** What a Terrible Failure level */
+    static final private int WTF = 0;
+    /** Save logs to the database */
     static private DatabaseInterface db;
+    /** Do we have a database handle yet? */
     static private boolean initialized;
 
     static {
@@ -43,35 +58,147 @@ public class Logger {
         initialized = false;
     }
 
-    static public void d(String log) {
-        Log.d(TAG, log);
+    /**
+     * Nicely concatenate the scope and message together for writing to console
+     * @param scope Scope the message was written from
+     * @param message Message to be logged
+     * @return scope :: message
+     */
+    static private String concatMessage(String scope, String message) {
+        return (scope == null || scope.equals("")) ? message : scope + " :: " + message;
     }
 
+    /**
+     * Log a debug message
+     * @param message Message to be logged
+     */
+    static public void d(String message) {
+        d("", message);
+    }
+
+    /**
+     * Log a debug message
+     * @param scope Scope the message was written from
+     * @param message Message to be logged
+     */
+    static public void d(String scope, String message) {
+        Log.d(TAG, concatMessage(scope, message));
+        log(D, scope, message);
+    }
+
+    /**
+     * Log an error message
+     * @param message Message to be logged
+     */
+    static public void e(String message) {
+        e("", message);
+    }
+
+    /**
+     * Log an error message
+     * @param scope Scope the message was written from
+     * @param message Message to be logged
+     */
+    static public void e(String scope, String message) {
+        Log.e(TAG, concatMessage(scope, message));
+        log(E, scope, message);
+    }
+
+    /**
+     * Log an info message
+     * @param message Message to be logged
+     */
+    static public void i(String message) {
+        i("", message);
+    }
+
+    /**
+     * Log an info message
+     * @param scope Scope the message was written from
+     * @param message Message to be logged
+     */
+    static public void i(String scope, String message) {
+        Log.i(TAG, concatMessage(scope, message));
+        log(I, scope, message);
+    }
+
+    /**
+     * Give the logger a context to create the DatabaseInterface with
+     * @param context Context for DatabaseInterface
+     */
     static public void initialize(Context context) {
+        if (initialized)
+            return;
         db = new DatabaseInterface(context);
         initialized = true;
     }
 
-    static private void log(String log, LogCallback callback) {
-        callback.log(log);
+    /**
+     * If Logger has been initialized write a log to the database, otherwise do nothing.
+     * @param level Severity of the log
+     * @param scope Scope the message was written from
+     * @param message Message to be logged
+     * @see Logger#initialized
+     */
+    static private void log(int level, String scope, String message) {
         if (!initialized)
             return;
+        LocalDateTime now = LocalDateTime.now();
+        LogEntry entry = new LogEntry(level, now, scope, message);
+        db.addLog(entry);
     }
 
     /**
-     * @author Ryan Porterfield
-     * @since 2017-06-24
+     * Log a verbose message
+     * @param message Message to be logged
      */
-    private interface LogCallback {
-        void log(String log);
+    static public void v(String message) {
+        v("", message);
     }
 
     /**
-     *
+     * Log a verbose message
+     * @param scope Scope the message was written from
+     * @param message Message to be logged
      */
-    static private class DebugCallback implements LogCallback {
-        public void log(String log) {
-            Log.d(TAG, log);
-        }
+    static public void v(String scope, String message) {
+        Log.v(TAG, concatMessage(scope, message));
+        log(V, scope, message);
+    }
+
+    /**
+     * Log a warning message
+     * @param message Message to be logged
+     */
+    static public void w(String message) {
+        w("", message);
+    }
+
+    /**
+     * Log a warning message
+     * @param scope Scope the message was written from
+     * @param message Message to be logged
+     */
+    static public void w(String scope, String message) {
+        Log.w(TAG, concatMessage(scope, message));
+        log(W, scope, message);
+    }
+
+    /**
+     * Log a WTF message
+     * @param message Message to be logged
+     */
+    static public void wtf(String message) {
+        wtf("", message);
+    }
+
+    /**
+     * Log a WTF message
+     * @param scope Scope the message was written from
+     * @param message Message to be logged
+     */
+    static public void wtf(String scope, String message) {
+        Log.wtf(TAG, concatMessage(scope, message));
+        log(WTF, scope, message);
     }
 }
