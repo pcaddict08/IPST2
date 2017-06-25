@@ -754,6 +754,12 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         db.execSQL(LoggingContract.SQL_DELETE_ENTRIES);
     }
 
+    public void resetLogTable() {
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL(LoggingContract.SQL_DELETE_ENTRIES);
+        db.execSQL(LoggingContract.SQL_CREATE_ENTRIES);
+    }
+
     /**
      * Update a database entry for an accepted portal
      *

@@ -90,6 +90,10 @@ import io.fabric.sdk.android.Fabric;
 public class MainActivity extends AppCompatActivity
         implements CompoundButton.OnCheckedChangeListener {
     /**
+     * The key for saving default category preference
+     */
+    static public final String DEFAULTCAT_KEY = "default-category";
+    /**
      * Preferences key used for saving and retrieving the user's email address
      */
     static public final String EMAIL_KEY = "email";
@@ -97,6 +101,10 @@ public class MainActivity extends AppCompatActivity
      * Preferences key for email folder containing portal emails
      */
     static final public String FOLDER_KEY = "mailFolder";
+    /**
+     * The key for saving manual refresh preference
+     */
+    static public final String MANUALREFRESH_KEY = "manual-refresh";
     /**
      * Preferences key for sending date through Bundle
      */
@@ -121,15 +129,6 @@ public class MainActivity extends AppCompatActivity
      * The key for saving portal submission sort preference
      */
     static public final String SORT_KEY = "sort";
-    /**
-     * The key for saving manual refresh preference
-     */
-    static public final String MANUALREFRESH_KEY = "manual-refresh";
-    /**
-     * The key for saving default category preference
-     */
-    static public final String DEFAULTCAT_KEY = "default-category";
-
     /*
     * The key for saving version num
     * */
@@ -149,6 +148,8 @@ public class MainActivity extends AppCompatActivity
     RadioButton alltab;
     @BindView(R.id.gmail_login_button)
     Button gmail_login_button;
+    @BindView(R.id.mainui_mainactivity)
+    LinearLayout mainui_mainactivity;
     @BindView(R.id.monthtab_mainactivity)
     RadioButton monthtab;
     @BindView(R.id.pendinggraph_mainactivity)
@@ -161,6 +162,8 @@ public class MainActivity extends AppCompatActivity
     TextView rejectedgraph;
     @BindView(R.id.rejectedtext_mainactivity)
     TextView rejectedtext;
+    @BindView(R.id.tabs_mainactivity)
+    RadioGroup tabs_mainactivity;
     @BindView(R.id.todaytab_mainactivity)
     RadioButton todaytab;
     /*Butterknife Binds for Views*/
@@ -168,10 +171,6 @@ public class MainActivity extends AppCompatActivity
     Button viewButton;
     @BindView(R.id.weektab_mainactivity)
     RadioButton weektab;
-    @BindView(R.id.mainui_mainactivity)
-    LinearLayout mainui_mainactivity;
-    @BindView(R.id.tabs_mainactivity)
-    RadioGroup tabs_mainactivity;
     /** Database Handle for getting portals and such */
     private DatabaseInterface db;
     /** Preferences for saving app settings */
@@ -206,15 +205,6 @@ public class MainActivity extends AppCompatActivity
         monthtab.setOnCheckedChangeListener(this);
         alltab.setOnCheckedChangeListener(this);
         selectRadioItem();
-    }
-
-    /* RESET ui to show gmail button*/
-    public void resetUI() {
-        gmail_login_button.setVisibility(View.VISIBLE);
-        progress_view_mainactivity.setVisibility(View.INVISIBLE);
-        mainui_mainactivity.setVisibility(View.INVISIBLE);
-        tabs_mainactivity.setVisibility(View.INVISIBLE);
-        viewButton.setVisibility(View.INVISIBLE);
     }
 
     /**
@@ -256,6 +246,38 @@ public class MainActivity extends AppCompatActivity
                 String.format(Locale.getDefault(), "%.1f%%", ((rejected * 100) / (totalnum))));
         pendinggraph.setText(
                 String.format(Locale.getDefault(), "%.1f%%", ((pending * 100) / (totalnum))));
+    }
+
+    public void formatUIFromRadio(int viewID) {
+        Button viewList = (Button) findViewById(R.id.viewlist_mainactivity);
+        switch (viewID) {
+        case R.id.todaytab_mainactivity:
+            viewDate = new LocalDate().minusDays(1);
+            viewList.setText(R.string.viewlisttoday);
+            break;
+        case R.id.weektab_mainactivity:
+            viewDate = new LocalDate().minusDays(7);
+            viewList.setText(R.string.viewlistweek);
+            break;
+        case R.id.monthtab_mainactivity:
+            viewDate = new LocalDate().minusMonths(1);
+            viewList.setText(R.string.viewlistmonth);
+            break;
+        case R.id.alltab_mainactivity:
+            viewDate = null;
+            formatUI(db.getAcceptedCount(), db.getRejectedCount(), db.getPendingCount());
+            viewList.setText(R.string.viewlistall);
+            break;
+        }
+        Logger.d("viewDate -> " + viewDate);
+        if (viewDate == null)
+            formatUI(db.getAcceptedCount(),
+                    db.getRejectedCount(),
+                    db.getPendingCount());
+        else
+            formatUI(db.getAcceptedCountByResponseDate(viewDate),
+                    db.getRejectedCountByResponseDate(viewDate),
+                    db.getPendingCountByDate(viewDate));
     }
 
     /**
@@ -415,34 +437,6 @@ public class MainActivity extends AppCompatActivity
                         : ActivityCompat.getDrawable(this, R.drawable.cell_shape_radio_clear));
     }
 
-    /**
-     * Set radio item active and the rest not
-     */
-    public void selectRadioItem() {
-        int position = R.id.alltab_mainactivity;
-        switch (preferences.getString("default-category", "all"))
-        {
-        case "all":
-            position = R.id.alltab_mainactivity;
-            break;
-        case "month":
-            position = R.id.monthtab_mainactivity;
-            break;
-        case "week":
-            position = R.id.weektab_mainactivity;
-            break;
-        case "today":
-            position = R.id.todaytab_mainactivity;
-            break;
-        default:
-            break;
-        }
-        formatUIFromRadio(position);
-        Logger.d("setting Position to " + position);
-        tabs_mainactivity.check(position);
-    }
-
-
     /*
      * View list of accepted portals
      */
@@ -514,8 +508,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        DatabaseInterface db = new DatabaseInterface(getApplicationContext());
+        db.resetLogTable();
         Logger.initialize(getApplicationContext());
-        Logger.d("onCreate");
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
@@ -550,11 +545,6 @@ public class MainActivity extends AppCompatActivity
         } else {
             buildUIAfterParsing();
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
     }
 
     @Override
@@ -596,39 +586,6 @@ public class MainActivity extends AppCompatActivity
         formatUIFromRadio(view.getId());
     }
 
-    public void formatUIFromRadio(int viewID)
-    {
-        Button viewList = (Button) findViewById(R.id.viewlist_mainactivity);
-        switch (viewID) {
-        case R.id.todaytab_mainactivity:
-            viewDate = new LocalDate().minusDays(1);
-            viewList.setText(R.string.viewlisttoday);
-            break;
-        case R.id.weektab_mainactivity:
-            viewDate = new LocalDate().minusDays(7);
-            viewList.setText(R.string.viewlistweek);
-            break;
-        case R.id.monthtab_mainactivity:
-            viewDate = new LocalDate().minusMonths(1);
-            viewList.setText(R.string.viewlistmonth);
-            break;
-        case R.id.alltab_mainactivity:
-            viewDate = null;
-            formatUI(db.getAcceptedCount(), db.getRejectedCount(), db.getPendingCount());
-            viewList.setText(R.string.viewlistall);
-            break;
-        }
-        Logger.d("viewDate -> " + viewDate);
-        if (viewDate == null)
-            formatUI(db.getAcceptedCount(),
-                    db.getRejectedCount(),
-                    db.getPendingCount());
-        else
-            formatUI(db.getAcceptedCountByResponseDate(viewDate),
-                    db.getRejectedCountByResponseDate(viewDate),
-                    db.getPendingCountByDate(viewDate));
-    }
-
     /*
      * Provides the results of permission requests
      */
@@ -642,6 +599,11 @@ public class MainActivity extends AppCompatActivity
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     /*
@@ -667,7 +629,7 @@ public class MainActivity extends AppCompatActivity
      * @see MainActivity#parseEmailWork(Account, ProgressDialog)
      */
     private void parseEmail() {
-        if(Looper.myLooper() == Looper.getMainLooper()) {
+        if (Looper.myLooper() == Looper.getMainLooper()) {
             Logger.d("IS MAIN THREAD?!");
         }
         final Account account = getAccount();
@@ -678,8 +640,8 @@ public class MainActivity extends AppCompatActivity
             dialog.setTitle("Searching Email");
             dialog.setCanceledOnTouchOutside(false);
             dialog.show();
-            new Thread(){
-                public void run(){
+            new Thread() {
+                public void run() {
                     parseEmailWork(account, dialog);
                 }
             }.start();
@@ -722,6 +684,41 @@ public class MainActivity extends AppCompatActivity
         } catch (InterruptedException | ExecutionException e) {
             Logger.e(e.toString());
         }
+    }
+
+    /* RESET ui to show gmail button*/
+    public void resetUI() {
+        gmail_login_button.setVisibility(View.VISIBLE);
+        progress_view_mainactivity.setVisibility(View.INVISIBLE);
+        mainui_mainactivity.setVisibility(View.INVISIBLE);
+        tabs_mainactivity.setVisibility(View.INVISIBLE);
+        viewButton.setVisibility(View.INVISIBLE);
+    }
+
+    /**
+     * Set radio item active and the rest not
+     */
+    public void selectRadioItem() {
+        int position = R.id.alltab_mainactivity;
+        switch (preferences.getString("default-category", "all")) {
+        case "all":
+            position = R.id.alltab_mainactivity;
+            break;
+        case "month":
+            position = R.id.monthtab_mainactivity;
+            break;
+        case "week":
+            position = R.id.weektab_mainactivity;
+            break;
+        case "today":
+            position = R.id.todaytab_mainactivity;
+            break;
+        default:
+            break;
+        }
+        formatUIFromRadio(position);
+        Logger.d("setting Position to " + position);
+        tabs_mainactivity.check(position);
     }
 
     /*
