@@ -21,50 +21,68 @@
 
 package com.einzig.ipst2.util;
 
-import android.content.Context;
+import android.Manifest;
+import android.app.Activity;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 
 import com.einzig.ipst2.database.DatabaseInterface;
 
-import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.List;
 
-import static com.einzig.ipst2.database.DatabaseInterface.DATE_FORMATTER;
+import static com.einzig.ipst2.activities.SettingsActivity.WRITE_EXTERNAL_REQUEST_CODE;
 
 /**
  * @author Ryan Porterfield
  * @since 2017-06-24
  */
 public class LogExporter extends AsyncTask<Void, Void, Void> {
-    /** Application context */
-    final private Context context;
+    /** Application activity */
+    final private Activity activity;
 
     /**
      * Create a task to export logs from the database
-     * @param context Application context
+     * @param activity Parent activity
      */
-    public LogExporter(Context context) {
-        this.context = context;
+    public LogExporter(Activity activity) {
+        this.activity = activity;
+    }
+
+    private boolean checkPermissions() {
+        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(activity,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_REQUEST_CODE);
+            return false;
+        }
+        return true;
     }
 
     @Override
     protected Void doInBackground(Void... voids) {
-        File logFile = getLogFile();
+        if (!externalMediaWritable() || !checkPermissions())
+            return null;
         try {
-            if (!logFile.createNewFile()) {
-                Logger.e("LogExporter", "Unable to create log file");
-                return null;
-            }
-            OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(logFile));
+            FileOutputStream stream = new FileOutputStream(getLogFile());
+            OutputStreamWriter writer = new OutputStreamWriter(stream);
+            Logger.i("LogExporter", "Writing logs");
             for (LogEntry entry : getLogs())
                 writer.write(entry.toString() + "\n\n");
             writer.close();
+            stream.close();
+            Logger.i("LogExporter", "Write finished");
         } catch (IOException e) {
             Logger.e("LogExporter", e.toString());
         }
@@ -76,17 +94,20 @@ public class LogExporter extends AsyncTask<Void, Void, Void> {
      * @return name of the file to write logs to
      */
     private String getFilename() {
-        LocalDate now = LocalDate.now();
-        return "IPST Logs " + DATE_FORMATTER.print(now) + ".txt";
+        DateTimeFormatter formatter = ISODateTimeFormat.dateHourMinuteSecond();
+        return "IPST_Logs_" + formatter.print(LocalDateTime.now()) + ".txt";
     }
 
     /**
      * Get the File object to write logs to
      * @return File object to write logs to
      */
-    private File getLogFile() {
-        return new File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS),
-                getFilename());
+    private File getLogFile() throws FileNotFoundException {
+        File root = Environment.getExternalStorageDirectory();
+        File dir = new File (root.getAbsolutePath() + "/Download");
+        File logFile = new File(dir, getFilename());
+        Logger.i("LogExporter", "Writing to " + logFile.getAbsolutePath());
+        return logFile;
     }
 
     /**
@@ -94,6 +115,10 @@ public class LogExporter extends AsyncTask<Void, Void, Void> {
      * @return list of logs to export
      */
     private List<LogEntry> getLogs() {
-        return new DatabaseInterface(context).getLogs();
+        return new DatabaseInterface(activity).getLogs();
+    }
+
+    private boolean externalMediaWritable() {
+        return Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
     }
 }

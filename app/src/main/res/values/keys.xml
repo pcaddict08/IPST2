@@ -6,6 +6,7 @@
     <string name="donateKey">donate</string>
     <string name="emailKey">email</string>
     <string name="exportCsvKey">export</string>
+    <string name="exportlogs_pref">exportLogs</string>
     <string name="folderKey">folder</string>
     <string name="frontPageKey">frontPage</string>
     <string name="logoutKey">logout</string>

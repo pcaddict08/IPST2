@@ -25,7 +25,6 @@ package com.einzig.ipst2.activities;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -41,7 +40,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -57,7 +55,6 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.crashlytics.android.Crashlytics;
-import com.einzig.ipst2.util.DialogHelper;
 import com.einzig.ipst2.R;
 import com.einzig.ipst2.database.DatabaseInterface;
 import com.einzig.ipst2.parse.AuthenticatorTask;
@@ -68,10 +65,8 @@ import com.einzig.ipst2.parse.MailBundle;
 import com.einzig.ipst2.portal.PortalAccepted;
 import com.einzig.ipst2.portal.PortalRejected;
 import com.einzig.ipst2.portal.PortalSubmission;
+import com.einzig.ipst2.util.DialogHelper;
 import com.einzig.ipst2.util.Logger;
-import com.google.android.gms.auth.GooglePlayServicesAvailabilityException;
-import com.google.android.gms.auth.UserRecoverableAuthException;
-import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.joda.time.LocalDate;
@@ -340,37 +335,6 @@ public class MainActivity extends AppCompatActivity
                     new String[]{"com.google"}, false, null, null, null, null);
             startActivityForResult(intent, LOGIN_ACTIVITY_CODE);
         }
-    }
-
-    /**
-     * This method is a hook for background threads and async tasks that need to provide the
-     * user a response UI when an exception occurs.
-     */
-    public void handleException(final Exception e) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (e instanceof GooglePlayServicesAvailabilityException) {
-                    // The Google Play services APK is old, disabled, or not present.
-                    // Show a dialog created by Google Play services that allows
-                    // the user to update the APK
-                    GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
-                    int statusCode = ((GooglePlayServicesAvailabilityException) e)
-                            .getConnectionStatusCode();
-                    Dialog dialog = googleAPI.getErrorDialog(MainActivity.this,
-                            statusCode,
-                            REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR);
-                    dialog.show();
-                } else if (e instanceof UserRecoverableAuthException) {
-                    // Unable to authenticate, such as when the user has not yet granted
-                    // the app access to the account, but the user can fix this.
-                    // Forward the user to an activity in Google Play services.
-                    Intent intent = ((UserRecoverableAuthException) e).getIntent();
-                    startActivityForResult(intent,
-                            REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR);
-                }
-            }
-        });
     }
 
     /**
@@ -670,7 +634,7 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
+            @NonNull int[] grantResults) {
         if (requestCode == REQUEST_CODE_EMAIL && grantResults.length > 0) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 gotPermission_accounts();

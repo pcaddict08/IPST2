@@ -44,6 +44,11 @@
         android:entryValues="@array/defaultCategories"
         />
 
+    <Preference
+        android:key="@string/exportlogs_pref"
+        android:summary="@string/exportlogs_summary"
+        android:title="@string/exportlogs_title" />
+
     <!--
     <CheckBoxPreference
         android:defaultValue="false"

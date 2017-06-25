@@ -38,11 +38,13 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.einzig.ipst2.util.LogExporter;
 import com.einzig.ipst2.util.PreferencesHelper;
 import com.einzig.ipst2.R;
 import com.einzig.ipst2.util.SendMessageHelper;
@@ -52,6 +54,8 @@ import com.einzig.ipst2.database.DatabaseInterface;
 import java.util.List;
 
 public class SettingsActivity extends AppCompatPreferenceActivity {
+    /**  */
+    static final public int WRITE_EXTERNAL_REQUEST_CODE = 2;
 
     public static String getVersionNum(Context context) {
         try {
@@ -119,6 +123,16 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+            @NonNull int[] grantResults) {
+        if (requestCode != WRITE_EXTERNAL_REQUEST_CODE)
+            return;
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            new LogExporter(this).execute();
+        }
     }
 
     /**
@@ -332,16 +346,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         }
     }
 
-
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static class ExportLogsFragment extends PreferenceFragment {
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.pref_exportlogs);
-        }
-    }
-
     /**
      * This fragment shows notification preferences only. It is used when the
      * activity is showing a two-pane settings UI.
@@ -385,6 +389,18 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     @Override
                     public boolean onPreferenceClick(Preference preference) {
                         //TODO add theme stuff
+                        return false;
+                    }
+                });
+
+            Preference exportLogs = findPreference(getResources().getString(R.string
+                    .exportlogs_pref));
+            if (exportLogs != null)
+                exportLogs.setOnPreferenceClickListener(new Preference
+                        .OnPreferenceClickListener() {
+                    @Override
+                    public boolean onPreferenceClick(Preference preference) {
+                        new LogExporter(getActivity()).execute();
                         return false;
                     }
                 });
