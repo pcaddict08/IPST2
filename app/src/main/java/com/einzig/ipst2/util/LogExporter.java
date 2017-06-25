@@ -25,13 +25,15 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Environment;
 
+import com.einzig.ipst2.database.DatabaseInterface;
+
 import org.joda.time.LocalDateTime;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.List;
 
 import static com.einzig.ipst2.database.DatabaseInterface.DATE_FORMATTER;
 
@@ -39,16 +41,20 @@ import static com.einzig.ipst2.database.DatabaseInterface.DATE_FORMATTER;
  * @author Ryan Porterfield
  * @since 2017-06-24
  */
-
-public class LogExporter extends AsyncTask<LogEntry, Void, Void> {
+public class LogExporter extends AsyncTask<Void, Void, Void> {
+    /** Application context */
     final private Context context;
 
+    /**
+     * Create a task to export logs from the database
+     * @param context Application context
+     */
     public LogExporter(Context context) {
         this.context = context;
     }
 
     @Override
-    protected Void doInBackground(LogEntry... entries) {
+    protected Void doInBackground(Void... voids) {
         File logFile = getLogFile();
         try {
             if (!logFile.createNewFile()) {
@@ -56,7 +62,7 @@ public class LogExporter extends AsyncTask<LogEntry, Void, Void> {
                 return null;
             }
             OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(logFile));
-            for (LogEntry entry : entries)
+            for (LogEntry entry : getLogs())
                 writer.write(entry.toString() + "\n\n");
             writer.close();
         } catch (IOException e) {
@@ -65,13 +71,29 @@ public class LogExporter extends AsyncTask<LogEntry, Void, Void> {
         return null;
     }
 
+    /**
+     * Get the name of the file to write logs to
+     * @return name of the file to write logs to
+     */
     private String getFilename() {
         LocalDateTime now = LocalDateTime.now();
         return "IPST Logs " + DATE_FORMATTER.print(now) + ".txt";
     }
 
+    /**
+     * Get the File object to write logs to
+     * @return File object to write logs to
+     */
     private File getLogFile() {
         return new File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS),
                 getFilename());
+    }
+
+    /**
+     * Get the list of logs to export
+     * @return list of logs to export
+     */
+    private List<LogEntry> getLogs() {
+        return new DatabaseInterface(context).getLogs();
     }
 }
