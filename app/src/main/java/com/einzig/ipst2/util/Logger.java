@@ -28,8 +28,6 @@ import com.einzig.ipst2.database.DatabaseInterface;
 
 import org.joda.time.LocalDateTime;
 
-import static com.einzig.ipst2.activities.MainActivity.TAG;
-
 /**
  * @author Ryan Porterfield
  * @since 2017-06-24
@@ -42,6 +40,8 @@ public class Logger {
     static final private int E = 1;
     /** Info level */
     static final private int I = 3;
+    /** Tag used for logging for this class */
+    static private final String TAG = "IPST";
     /** Verbose level */
     static final private int V = 5;
     /** Warn level */

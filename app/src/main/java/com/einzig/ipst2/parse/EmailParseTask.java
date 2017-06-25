@@ -27,7 +27,6 @@ import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.WindowManager;
 
 import com.einzig.ipst2.activities.MainActivity;
@@ -35,6 +34,7 @@ import com.einzig.ipst2.database.DatabaseInterface;
 import com.einzig.ipst2.portal.PortalAccepted;
 import com.einzig.ipst2.portal.PortalRejected;
 import com.einzig.ipst2.portal.PortalSubmission;
+import com.einzig.ipst2.util.Logger;
 
 import org.joda.time.LocalDateTime;
 
@@ -43,7 +43,6 @@ import javax.activation.MailcapCommandMap;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 
-import static com.einzig.ipst2.activities.MainActivity.TAG;
 import static com.einzig.ipst2.database.DatabaseInterface.DATE_FORMATTER;
 
 /**
@@ -155,7 +154,7 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
 
     @Override
     protected Void doInBackground(Void... voids) {
-        Log.d(TAG, "Parsing email");
+        Logger.d("Parsing email");
         LocalDateTime now = LocalDateTime.now();
         for (int i = 0; i < messages.length; i++) {
             PortalSubmission p = parser.getPortal(messages[i]);
@@ -165,7 +164,7 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
                 try {
                     now = new LocalDateTime(messages[i].getReceivedDate());
                 } catch (MessagingException e) {
-                    Log.e(TAG, e.toString());
+                    Logger.e(e.toString());
                 }
                 break;
             }
@@ -193,7 +192,7 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
      */
     private void onEmailParse(LocalDateTime parseDate) {
         String dateString = DATE_FORMATTER.print(parseDate);
-        Log.d(TAG, MainActivity.MOST_RECENT_DATE_KEY + " -> " + dateString);
+        Logger.d(MainActivity.MOST_RECENT_DATE_KEY + " -> " + dateString);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(MainActivity.MOST_RECENT_DATE_KEY, dateString);
         editor.apply();
@@ -204,9 +203,9 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
      */
     @Override
     protected void onPostExecute(Void voids) {
-        Log.d(TAG, "Accepted portals: " + db.getAcceptedCount());
-        Log.d(TAG, "Pending portals: " + db.getPendingCount());
-        Log.d(TAG, "Rejected portals: " + db.getRejectedCount());
+        Logger.d("Accepted portals: " + db.getAcceptedCount());
+        Logger.d("Pending portals: " + db.getPendingCount());
+        Logger.d("Rejected portals: " + db.getRejectedCount());
         activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         dialog.dismiss();
         activity.buildUIAfterParsing();
@@ -227,6 +226,6 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
     @Override
     protected void onProgressUpdate(Integer... progress) {
         dialog.setProgress(progress[0] + 1);
-        Log.v(TAG, "Parsing: " + dialog.getProgress() + " / " + dialog.getMax());
+        Logger.v("Parsing: " + dialog.getProgress() + " / " + dialog.getMax());
     }
 }

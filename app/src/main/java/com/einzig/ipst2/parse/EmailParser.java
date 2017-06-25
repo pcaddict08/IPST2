@@ -23,13 +23,12 @@
 
 package com.einzig.ipst2.parse;
 
-import android.util.Log;
-
 import com.einzig.ipst2.database.PortalAcceptedBuilder;
 import com.einzig.ipst2.database.PortalBuilder;
 import com.einzig.ipst2.database.PortalRejectedBuilder;
 import com.einzig.ipst2.database.PortalSubmissionBuilder;
 import com.einzig.ipst2.portal.PortalSubmission;
+import com.einzig.ipst2.util.Logger;
 
 import org.joda.time.LocalDateTime;
 
@@ -39,8 +38,6 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Part;
-
-import static com.einzig.ipst2.activities.MainActivity.TAG;
 
 /**
  * Parses portal submission and review emails
@@ -121,7 +118,7 @@ class EmailParser {
                 return text;
             }
         } catch (MessagingException | IOException e) {
-            Log.e(TAG, e.toString());
+            Logger.e(e.toString());
         }
         return null;
     }
@@ -136,7 +133,7 @@ class EmailParser {
      * @return PortalSubmission or subclass if the email can be parsed, otherwise null
      */
     private PortalSubmission parse(String subject, String message, LocalDateTime receivedDate) {
-        Log.d(TAG, "Parsing: " + subject);
+        Logger.d("Parsing: " + subject);
         String portalName = getPortalName(subject).trim();
         subject = subject.toLowerCase();
         if (subject.contains("submitted") || subject.contains("submission"))

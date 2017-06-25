@@ -29,12 +29,12 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
-import com.einzig.ipst2.util.DialogHelper;
 import com.einzig.ipst2.R;
 import com.einzig.ipst2.activities.MainActivity;
 import com.einzig.ipst2.oauth.OAuth2Authenticator;
+import com.einzig.ipst2.util.DialogHelper;
+import com.einzig.ipst2.util.Logger;
 import com.sun.mail.imap.IMAPStore;
 
 import org.joda.time.LocalDateTime;
@@ -52,7 +52,6 @@ import javax.mail.search.ReceivedDateTerm;
 import javax.mail.search.SearchTerm;
 import javax.mail.search.SubjectTerm;
 
-import static com.einzig.ipst2.activities.MainActivity.TAG;
 import static com.einzig.ipst2.database.DatabaseInterface.DATE_FORMATTER;
 
 /**
@@ -81,7 +80,6 @@ public class GetMailTask extends AsyncTask<Void, Void, MailBundle> {
     protected MailBundle doInBackground(Void... voids) {
         OAuth2Authenticator sender = new OAuth2Authenticator();
         IMAPStore store = sender.getIMAPStore(account.name, token);
-        Log.d(TAG, "store is null? " + (store == null));
         if (store == null) {
             DialogHelper.showSimpleDialog(R.string.invalidtokentitle_getmailtask,
                     R.string.invalidtokenmessage_getmailtask, activity);
@@ -96,7 +94,7 @@ public class GetMailTask extends AsyncTask<Void, Void, MailBundle> {
                     return new MailBundle(folder, messages, store);
                 }
             } catch (MessagingException e) {
-                Log.e(TAG, e.toString());
+                Logger.e(e.toString());
             }
         }
         return null;
@@ -113,11 +111,11 @@ public class GetMailTask extends AsyncTask<Void, Void, MailBundle> {
         FetchProfile fp = new FetchProfile();
         fp.add(FetchProfile.Item.ENVELOPE);
         fp.add(FetchProfile.Item.CONTENT_INFO);
-        Log.d(TAG, "Fetching messages");
+        Logger.d("Fetching messages");
         try {
             folder.fetch(messages, fp);
         } catch (MessagingException e) {
-            Log.e(TAG, e.toString());
+            Logger.e(e.toString());
         }
     }
 
@@ -125,7 +123,7 @@ public class GetMailTask extends AsyncTask<Void, Void, MailBundle> {
         Folder[] folders = store.getDefaultFolder().list();
         Folder folder = new FolderGetter(activity, folders, preferences).getFolder();
         if (folder != null) {
-            Log.d(TAG, MainActivity.FOLDER_KEY + " -> " + folder.getFullName());
+            Logger.d(MainActivity.FOLDER_KEY + " -> " + folder.getFullName());
             SharedPreferences.Editor editor = preferences.edit();
             editor.putString(MainActivity.FOLDER_KEY, folder.getFullName());
             editor.apply();

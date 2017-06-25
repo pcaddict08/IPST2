@@ -23,16 +23,12 @@
 
 package com.einzig.ipst2.parse;
 
-import android.util.Log;
-
-import com.einzig.ipst2.activities.MainActivity;
+import com.einzig.ipst2.util.Logger;
 import com.sun.mail.imap.IMAPStore;
 
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
-
-import static com.einzig.ipst2.activities.MainActivity.TAG;
 
 /**
  * @author Ryan Porterfield
@@ -55,7 +51,7 @@ public class MailBundle {
             folder.close(true);
             store.close();
         } catch (MessagingException e) {
-            Log.e(TAG, e.toString());
+            Logger.e(e.toString());
         }
     }
 

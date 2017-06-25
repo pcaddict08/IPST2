@@ -23,7 +23,6 @@ package com.einzig.ipst2.adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,17 +33,16 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.einzig.ipst2.util.PreferencesHelper;
 import com.einzig.ipst2.R;
 import com.einzig.ipst2.portal.PortalAccepted;
 import com.einzig.ipst2.portal.PortalRejected;
 import com.einzig.ipst2.portal.PortalSubmission;
+import com.einzig.ipst2.util.Logger;
+import com.einzig.ipst2.util.PreferencesHelper;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-
-import static com.einzig.ipst2.activities.MainActivity.TAG;
 
 // Custom list item class for menu items
 public class ListItemAdapter_PS extends BaseAdapter implements Filterable {
@@ -106,7 +104,7 @@ public class ListItemAdapter_PS extends BaseAdapter implements Filterable {
     private class SubmissionFilter extends Filter {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
-            Log.d(TAG, "FILTERED: " + constraint);
+            Logger.d("FILTERED: " + constraint);
             FilterResults results = new FilterResults();
             if (constraint == null || constraint.length() == 0) {
                 results.values = new ArrayList<>(originalItems);
@@ -116,7 +114,7 @@ public class ListItemAdapter_PS extends BaseAdapter implements Filterable {
                 for (PortalSubmission p : originalItems) {
                     if (p.getName().toUpperCase().contains(constraint.toString().toUpperCase()))
                         nList.add(p);
-                    Log.d(TAG, "ADDED TO SEARCH RESULTS: " + p.getName());
+                    Logger.d("ADDED TO SEARCH RESULTS: " + p.getName());
                 }
                 results.values = nList;
                 results.count = nList.size();

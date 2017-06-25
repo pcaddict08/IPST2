@@ -22,14 +22,11 @@
 package com.einzig.ipst2.util;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.einzig.ipst2.activities.MainActivity;
 import com.einzig.ipst2.database.DatabaseInterface;
 import com.einzig.ipst2.portal.PortalAccepted;
 import com.einzig.ipst2.portal.PortalRejected;
@@ -39,11 +36,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -95,7 +89,7 @@ public class SendPortalData extends AsyncTask<Void, Void, Void> {
                                 .getDateResponded()));
                     newJSON = addLatLonToJSON(newJSON, (PortalAccepted) ps);
                 }
-                Log.d(MainActivity.TAG, "JSON OBJ: " + newJSON);
+                Logger.d("JSON OBJ: " + newJSON);
                 objsToSend.put(newJSON);
             } catch (JSONException e) {
                 e.printStackTrace();

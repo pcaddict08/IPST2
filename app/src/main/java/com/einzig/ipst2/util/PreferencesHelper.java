@@ -24,9 +24,6 @@ package com.einzig.ipst2.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.util.Log;
-
-import com.einzig.ipst2.activities.MainActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -35,15 +32,14 @@ import java.util.Map;
 /**
  * Created by Steven Foskett on 6/14/2017.
  */
-
 public class PreferencesHelper {
     public static void printAllPrefs(SharedPreferences prefs) {
         Map<String, ?> keys = prefs.getAll();
 
         if (keys.size() == 0)
-            Log.d(MainActivity.TAG, "NO keys found in prefs");
+            Logger.d("NO keys found in prefs");
         for (Map.Entry<String, ?> entry : keys.entrySet()) {
-            Log.d("map values", entry.getKey() + ": " +
+            Logger.d("map values", entry.getKey() + ": " +
                     entry.getValue().toString());
         }
     }

@@ -27,21 +27,19 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.einzig.ipst2.R;
 import com.einzig.ipst2.activities.MainActivity;
+import com.einzig.ipst2.util.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.mail.Folder;
 import javax.mail.MessagingException;
-
-import static com.einzig.ipst2.activities.MainActivity.TAG;
 
 /**
  * @author Ryan Porterfield
@@ -72,7 +70,7 @@ public class FolderGetter {
                 if (subfolders.length > 0)
                     folderList.addAll(flattenFolders(subfolders));
             } catch (MessagingException e) {
-                Log.e(TAG, e.toString());
+                Logger.e(e.toString());
             }
         }
         return folderList;
@@ -107,7 +105,7 @@ public class FolderGetter {
 
     Folder getFolder() throws MessagingException {
         String folderPref = preferences.getString(MainActivity.FOLDER_KEY, MainActivity.NULL_KEY);
-        Log.d(TAG, "Folder: " + folderPref);
+        Logger.d("Folder: " + folderPref);
         Folder folder = null;
         if (folderPref.equals(MainActivity.NULL_KEY))
             folder = getDefaultFolder();
@@ -117,10 +115,10 @@ public class FolderGetter {
                     folder = f;
             }
         }
-        Log.d(TAG, "Number of folders: " + folders.size());
-        Log.d(TAG, "Folders: ");
+        Logger.d("Number of folders: " + folders.size());
+        Logger.d("Folders: ");
         for (Folder f : folders)
-            Log.d(TAG, "\t" + f.getFullName());
+            Logger.d("\t" + f.getFullName());
 
         if (folder == null)
             folder = noAllMailFolder(folderPref);
@@ -137,9 +135,9 @@ public class FolderGetter {
     private DialogInterface.OnClickListener getListener() {
         return new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                Log.d(TAG, "FOLDER: " + folders.get(which));
+                Logger.d("FOLDER: " + folders.get(which));
                 folder = folders.get(which);
-                Log.d(TAG, MainActivity.FOLDER_KEY + " -> " + folder.getFullName());
+                Logger.d(MainActivity.FOLDER_KEY + " -> " + folder.getFullName());
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putString(MainActivity.FOLDER_KEY, folder.getFullName());
                 editor.apply();
@@ -155,7 +153,7 @@ public class FolderGetter {
      * @see FolderGetter#DEFAULT_FOLDER
      */
     private Folder noAllMailFolder(final String folderPref) {
-        Log.d(TAG, "NO ALL MAIL FOLDER");
+        Logger.d("NO ALL MAIL FOLDER");
         activity.runOnUiThread(new AllMailError(folderPref));
         return folder;
     }
@@ -187,7 +185,7 @@ public class FolderGetter {
          * @param previousFolder Previous folder we checked for mail which doesn't exist.
          */
         AllMailError(String previousFolder) {
-            Log.d(TAG, "Got to all mail error");
+            Logger.d("Got to all mail error");
             title = activity.getResources().getString(R.string.error) + previousFolder;
             title += activity.getResources().getString(R.string.foldermissing);
             positive = activity.getResources().getString(R.string.setcustomfolder);
@@ -229,7 +227,7 @@ public class FolderGetter {
                     }
                 });
             builder.show();
-            Log.d(TAG, "SHOWING THING");
+            Logger.d("SHOWING THING");
 
         }
     }

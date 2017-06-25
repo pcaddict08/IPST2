@@ -29,11 +29,10 @@ import android.accounts.AccountManagerFuture;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
 import android.os.Bundle;
-import android.util.Log;
+
+import com.einzig.ipst2.util.Logger;
 
 import java.io.IOException;
-
-import static com.einzig.ipst2.activities.MainActivity.TAG;
 
 /**
  * @author Ryan Porterfield
@@ -44,7 +43,7 @@ class AuthToken implements AccountManagerCallback<Bundle> {
      * Create an AuthToken container class to get an AuthToken for accessing GMail.
      */
     AuthToken() {
-        Log.d(TAG, "Creating a new AuthToken");
+        Logger.d("Creating a new AuthToken");
     }
 
     /*
@@ -55,16 +54,16 @@ class AuthToken implements AccountManagerCallback<Bundle> {
      */
     @Override
     public void run(AccountManagerFuture<Bundle> result) {
-        Log.d(TAG, "Running AuthToken");
+        Logger.d("Running AuthToken");
         try {
             Bundle bundle = result.getResult();
-            Log.i(TAG, "authToken -> " + bundle.getString(AccountManager.KEY_AUTHTOKEN));
+            Logger.i("authToken -> " + bundle.getString(AccountManager.KEY_AUTHTOKEN));
         } catch (AuthenticatorException e) {
-            Log.e(TAG, "Could not authenticate:\n" + e);
+            Logger.e("Could not authenticate:\n" + e);
         } catch (IOException e) {
-            Log.e(TAG, e.toString());
+            Logger.e(e.toString());
         } catch (OperationCanceledException e) {
-            Log.e(TAG, "Operation cancelled:\n" + e);
+            Logger.e("Operation cancelled:\n" + e);
         }
     }
 }
