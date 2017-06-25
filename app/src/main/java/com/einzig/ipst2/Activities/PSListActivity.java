@@ -28,14 +28,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -47,14 +46,13 @@ import android.widget.SearchView;
 import com.einzig.ipst2.R;
 import com.einzig.ipst2.adapters.ListItemAdapter_PS;
 import com.einzig.ipst2.portal.PortalSubmission;
+import com.einzig.ipst2.util.Logger;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
-import static com.einzig.ipst2.activities.MainActivity.TAG;
 
 public class PSListActivity extends AppCompatActivity {
     @BindView(R.id.listview_pslistactivity)
@@ -72,13 +70,13 @@ public class PSListActivity extends AppCompatActivity {
 
         psList = getIntent().getExtras().getParcelableArrayList("psList");
         if (psList != null) {
-            Log.d(TAG, "PS LIST SIZE: " + psList.size());
+            Logger.d("PS LIST SIZE: " + psList.size());
             sortList(psList);
             listView.setAdapter(new ListItemAdapter_PS(psList, PSListActivity.this));
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    Log.d(TAG, "Item Selected at index: " + i);
+                    Logger.d("Item Selected at index: " + i);
                     try {
                         Intent intent = new Intent(PSListActivity.this, PSDetailsActivity.class);
                         intent.putExtra("ps", (Parcelable) ((ListItemAdapter_PS)listView.getAdapter()).shownItems.get(i));
@@ -118,7 +116,7 @@ public class PSListActivity extends AppCompatActivity {
                 }
             });
         } else
-            Log.d(TAG, "MENU ITEM ACTION VIEW FOR SEARCH IS NULL");
+            Logger.d("MENU ITEM ACTION VIEW FOR SEARCH IS NULL");
 
         return true;
     }

@@ -68,6 +68,7 @@ import com.einzig.ipst2.parse.MailBundle;
 import com.einzig.ipst2.portal.PortalAccepted;
 import com.einzig.ipst2.portal.PortalRejected;
 import com.einzig.ipst2.portal.PortalSubmission;
+import com.einzig.ipst2.util.Logger;
 import com.google.android.gms.auth.GooglePlayServicesAvailabilityException;
 import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -138,10 +139,6 @@ public class MainActivity extends AppCompatActivity
     * The key for saving version num
     * */
     static public final String VERSION_KEY = "version";
-    /**
-     * Tag used for logging for this class
-     */
-    static public final String TAG = "IPST";
     static final int REQUEST_CODE_EMAIL = 1;
     static final int REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR = 1002;
     /**
@@ -232,7 +229,7 @@ public class MainActivity extends AppCompatActivity
      * @param messageText Message for error dialog
      */
     private void errorFoundMessage(final int title, final int messageText) {
-        Log.d(TAG, "Displaying error message");
+        Logger.d("Displaying error message");
         runOnUiThread(new Runnable() {
             public void run() {
                 new AlertDialog.Builder(MainActivity.this).setTitle(title)
@@ -273,16 +270,16 @@ public class MainActivity extends AppCompatActivity
      */
     private Account getAccount() {
         String email = preferences.getString(EMAIL_KEY, NULL_KEY);
-        Log.i(TAG, "Getting account " + email);
+        Logger.i("Getting account " + email);
         AccountManager manager = AccountManager.get(this);
         for (Account account : manager.getAccounts()) {
-            Log.d(TAG, "Has account " + account.name);
-            Log.d(TAG, "account name " + email);
-            Log.d(TAG, "account type " + account.type);
+            Logger.d("Has account " + account.name);
+            Logger.d("account name " + email);
+            Logger.d("account type " + account.type);
             if (account.name.equalsIgnoreCase(email) && account.type.equalsIgnoreCase("com.google"))
                 return account;
         }
-        Log.d(TAG, "returning null account");
+        Logger.d("returning null account");
         return null;
     }
 
@@ -300,12 +297,12 @@ public class MainActivity extends AppCompatActivity
                 (MainActivity.NULL_KEY))
             preferences.edit().putString(MainActivity.FOLDER_KEY, FolderGetter.DEFAULT_FOLDER)
                     .apply();
-        Log.i(TAG, EMAIL_KEY + " -> " + preferences.getString(EMAIL_KEY, NULL_KEY));
-        Log.i(TAG, MOST_RECENT_DATE_KEY + " -> " +
+        Logger.i(EMAIL_KEY + " -> " + preferences.getString(EMAIL_KEY, NULL_KEY));
+        Logger.i(MOST_RECENT_DATE_KEY + " -> " +
                 preferences.getString(MOST_RECENT_DATE_KEY, NULL_KEY));
-        Log.i(TAG, SORT_KEY + " -> " + preferences.getString(SORT_KEY, NULL_KEY));
-        Log.i(TAG, MANUALREFRESH_KEY + " -> " + preferences.getBoolean(MANUALREFRESH_KEY, false));
-        Log.i(TAG, DEFAULTCAT_KEY + " -> " + preferences.getString(DEFAULTCAT_KEY, NULL_KEY));
+        Logger.i(SORT_KEY + " -> " + preferences.getString(SORT_KEY, NULL_KEY));
+        Logger.i(MANUALREFRESH_KEY + " -> " + preferences.getBoolean(MANUALREFRESH_KEY, false));
+        Logger.i(DEFAULTCAT_KEY + " -> " + preferences.getString(DEFAULTCAT_KEY, NULL_KEY));
     }
 
     /**
@@ -400,7 +397,7 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d(TAG, "onActivityResult(" + requestCode + ") -> " + resultCode);
+        Logger.d("onActivityResult(" + requestCode + ") -> " + resultCode);
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
         case LOGIN_ACTIVITY_CODE:
@@ -430,7 +427,7 @@ public class MainActivity extends AppCompatActivity
                 });
                 errorFoundMessage(R.string.accountnotfoundtitle, R.string.accountnotfoundmessage);
             }
-            Log.d(TAG, "Got account name " + data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME));
+            Logger.d("Got account name " + data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME));
             parseEmail();
             break;
         case SETTINGS_ACTIVITY_CODE:
@@ -477,7 +474,7 @@ public class MainActivity extends AppCompatActivity
             break;
         }
         formatUIFromRadio(position);
-        Log.d(TAG, "setting Position to " + position);
+        Logger.d("setting Position to " + position);
         tabs_mainactivity.check(position);
     }
 
@@ -487,7 +484,7 @@ public class MainActivity extends AppCompatActivity
      */
     @OnClick({R.id.acceptedbutton_mainactivity})
     public void onClickAccepted(View view) {
-        Log.d(TAG, "Status list button clicked");
+        Logger.d("Status list button clicked");
         Vector<PortalAccepted> portals;
         if (viewDate == null)
             portals = db.getAllAccepted();
@@ -527,19 +524,19 @@ public class MainActivity extends AppCompatActivity
      */
     @OnClick(R.id.viewlist_mainactivity)
     public void onClickViewList(View view) {
-        Log.d(TAG, "View all button clicked");
+        Logger.d("View all button clicked");
         Vector<PortalSubmission> mainList = new Vector<>();
         if (((Button) view).getText().toString().equals(getString(R.string.viewlistall))) {
-            Log.d(TAG, "Going to All List");
+            Logger.d("Going to All List");
             mainList = db.getAllPortals();
         } else if (((Button) view).getText().toString().equals(getString(R.string.viewlistmonth))) {
-            Log.d(TAG, "Going to Month List");
+            Logger.d("Going to Month List");
             mainList = db.getAllPortalsFromDate(new LocalDateTime().minusDays(30));
         } else if (((Button) view).getText().toString().equals(getString(R.string.viewlistweek))) {
-            Log.d(TAG, "Going to Week List");
+            Logger.d("Going to Week List");
             mainList = db.getAllPortalsFromDate(new LocalDateTime().minusDays(7));
         } else if (((Button) view).getText().toString().equals(getString(R.string.viewlisttoday))) {
-            Log.d(TAG, "Going to Today List");
+            Logger.d("Going to Today List");
             mainList = db.getAllPortalsFromDate(new LocalDateTime().minusDays(1));
         }
 
@@ -553,7 +550,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate");
+        Logger.initialize(getApplicationContext());
+        Logger.d("onCreate");
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
@@ -656,7 +654,7 @@ public class MainActivity extends AppCompatActivity
             viewList.setText(R.string.viewlistall);
             break;
         }
-        Log.d(TAG, "viewDate -> " + viewDate);
+        Logger.d("viewDate -> " + viewDate);
         if (viewDate == null)
             formatUI(db.getAcceptedCount(),
                     db.getRejectedCount(),
@@ -706,7 +704,7 @@ public class MainActivity extends AppCompatActivity
      */
     private void parseEmail() {
         if(Looper.myLooper() == Looper.getMainLooper()) {
-            Log.d(TAG, "IS MAIN THREAD?!");
+            Logger.d("IS MAIN THREAD?!");
         }
         final Account account = getAccount();
         if (account != null) {
@@ -742,7 +740,7 @@ public class MainActivity extends AppCompatActivity
      */
     private void parseEmailWork(Account account, final ProgressDialog dialog) {
         try {
-            Log.d(TAG, "Showing DIALOG");
+            Logger.d("Showing DIALOG");
             String token = new AuthenticatorTask(this, account).execute().get();
             final MailBundle bundle = new GetMailTask(this, account, token).execute().get();
             runOnUiThread(new Runnable() {
@@ -758,7 +756,7 @@ public class MainActivity extends AppCompatActivity
                 }
             });
         } catch (InterruptedException | ExecutionException e) {
-            Log.e(TAG, e.toString());
+            Logger.e(e.toString());
         }
     }
 
@@ -769,7 +767,7 @@ public class MainActivity extends AppCompatActivity
         ViewGroup.LayoutParams params = layout.getLayoutParams();
         params.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, height + 35,
                 getResources().getDisplayMetrics());
-        Log.d(TAG, "HEIGHT: " + params.height);
+        Logger.d("HEIGHT: " + params.height);
         layout.setLayoutParams(params);
     }
 }

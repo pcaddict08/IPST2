@@ -30,6 +30,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -37,9 +38,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -50,13 +49,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.einzig.ipst2.util.DialogHelper;
-import com.einzig.ipst2.util.PreferencesHelper;
 import com.einzig.ipst2.R;
 import com.einzig.ipst2.portal.PortalAccepted;
 import com.einzig.ipst2.portal.PortalRejected;
 import com.einzig.ipst2.portal.PortalResponded;
 import com.einzig.ipst2.portal.PortalSubmission;
+import com.einzig.ipst2.util.DialogHelper;
+import com.einzig.ipst2.util.Logger;
+import com.einzig.ipst2.util.PreferencesHelper;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -71,8 +71,6 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
-import static com.einzig.ipst2.activities.MainActivity.TAG;
 
 public class PSDetailsActivity extends AppCompatActivity {
     static final int WRITE_EXTERNAL_STORAGE = 2;
@@ -94,7 +92,7 @@ public class PSDetailsActivity extends AppCompatActivity {
 
 
     public void buildUI() {
-        Log.d(TAG, "PS Type: " + portalSubmission.getClass().getName());
+        Logger.d("PS Type: " + portalSubmission.getClass().getName());
         namelabel.setText(portalSubmission.getName());
         portalSubmission.setDateFormat(PreferencesHelper.getSDF(this));
         submittedLabel.setText(portalSubmission.getSubmittedDateString());
@@ -159,7 +157,7 @@ public class PSDetailsActivity extends AppCompatActivity {
                     public void run() {
                         final File pictureFile = getOutputMediaFile();
                         if (pictureFile == null) {
-                            Log.d(TAG, "Error creating media file, check storage permissions: ");
+                            Logger.d("Error creating media file, check storage permissions: ");
                             PSDetailsActivity.this.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -188,7 +186,7 @@ public class PSDetailsActivity extends AppCompatActivity {
                                                 Toast.LENGTH_LONG).show();
                                     }
                                 });
-                                Log.d(TAG, "File not found: " + e.getMessage());
+                                Logger.d("File not found: " + e.getMessage());
                             } catch (IOException e) {
                                 PSDetailsActivity.this.runOnUiThread(new Runnable() {
                                     @Override
@@ -197,7 +195,7 @@ public class PSDetailsActivity extends AppCompatActivity {
                                                 Toast.LENGTH_LONG).show();
                                     }
                                 });
-                                Log.d(TAG, "Error accessing file: " + e.getMessage());
+                                Logger.d("Error accessing file: " + e.getMessage());
                             }
                         }
                     }

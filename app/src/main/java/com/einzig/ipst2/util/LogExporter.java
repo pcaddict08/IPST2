@@ -21,7 +21,17 @@
 
 package com.einzig.ipst2.util;
 
+import android.content.Context;
+import android.os.AsyncTask;
+import android.os.Environment;
+
 import org.joda.time.LocalDateTime;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 
 import static com.einzig.ipst2.database.DatabaseInterface.DATE_FORMATTER;
 
@@ -30,40 +40,38 @@ import static com.einzig.ipst2.database.DatabaseInterface.DATE_FORMATTER;
  * @since 2017-06-24
  */
 
-public class LogEntry {
-    final private int level;
-    final private String message;
-    final private LocalDateTime time;
-    final private String scope;
+public class LogExporter extends AsyncTask<LogEntry, Void, Void> {
+    final private Context context;
 
-    public LogEntry(int level, LocalDateTime time, String scope, String message) {
-        this.level = level;
-        this.message = message;
-        this.time = time;
-        this.scope = scope;
-    }
-
-    public int getLevel() {
-        return level;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public LocalDateTime getTime() {
-        return time;
-    }
-
-    public String getScope() {
-        return scope;
+    public LogExporter(Context context) {
+        this.context = context;
     }
 
     @Override
-    public String toString() {
-        return message +
-                "\n\tLevel: " + level +
-                "\n\tTime: " + DATE_FORMATTER.print(time) +
-                "\n\tScope: " + scope;
+    protected Void doInBackground(LogEntry... entries) {
+        File logFile = getLogFile();
+        try {
+            if (!logFile.createNewFile()) {
+                Logger.e("LogExporter", "Unable to create log file");
+                return null;
+            }
+            OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(logFile));
+            for (LogEntry entry : entries)
+                writer.write(entry.toString() + "\n\n");
+            writer.close();
+        } catch (IOException e) {
+            Logger.e("LogExporter", e.toString());
+        }
+        return null;
+    }
+
+    private String getFilename() {
+        LocalDateTime now = LocalDateTime.now();
+        return "IPST Logs " + DATE_FORMATTER.print(now) + ".txt";
+    }
+
+    private File getLogFile() {
+        return new File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS),
+                getFilename());
     }
 }
