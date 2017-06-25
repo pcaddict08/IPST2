@@ -38,16 +38,15 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.provider.Settings;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.einzig.ipst2.PreferencesHelper;
+import com.einzig.ipst2.util.PreferencesHelper;
 import com.einzig.ipst2.R;
-import com.einzig.ipst2.SendMessageHelper;
-import com.einzig.ipst2.SendPortalData;
+import com.einzig.ipst2.util.SendMessageHelper;
+import com.einzig.ipst2.util.SendPortalData;
 import com.einzig.ipst2.database.DatabaseInterface;
 
 import java.util.List;

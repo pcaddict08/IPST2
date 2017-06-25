@@ -34,11 +34,14 @@ import android.util.Log;
 import com.einzig.ipst2.portal.PortalAccepted;
 import com.einzig.ipst2.portal.PortalRejected;
 import com.einzig.ipst2.portal.PortalSubmission;
+import com.einzig.ipst2.util.LogEntry;
 
 import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import static com.einzig.ipst2.activities.MainActivity.TAG;
@@ -46,7 +49,10 @@ import static com.einzig.ipst2.database.AcceptedPortalContract.AcceptedPortalEnt
 import static com.einzig.ipst2.database.AcceptedPortalContract.AcceptedPortalEntry.COLUMN_LIVE_ADDRESS;
 import static com.einzig.ipst2.database.AcceptedPortalContract.AcceptedPortalEntry.TABLE_ACCEPTED;
 import static com.einzig.ipst2.database.LoggingContract.LoggingEntry.COLUMN_LOG_LEVEL;
+import static com.einzig.ipst2.database.LoggingContract.LoggingEntry.COLUMN_LOG_MESSAGE;
+import static com.einzig.ipst2.database.LoggingContract.LoggingEntry.COLUMN_LOG_SCOPE;
 import static com.einzig.ipst2.database.LoggingContract.LoggingEntry.COLUMN_LOG_TIME;
+import static com.einzig.ipst2.database.LoggingContract.LoggingEntry.TABLE_LOGGING;
 import static com.einzig.ipst2.database.PendingPortalContract.PendingPortalEntry.COLUMN_DATE_RESPONDED;
 import static com.einzig.ipst2.database.PendingPortalContract.PendingPortalEntry.COLUMN_DATE_SUBMITTED;
 import static com.einzig.ipst2.database.PendingPortalContract.PendingPortalEntry.COLUMN_NAME;
@@ -82,10 +88,14 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    public void addLog(int level, LocalDateTime time, String scope, String message) {
+    public void addLog(LogEntry log) {
+        SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(COLUMN_LOG_LEVEL, level);
-        values.put(COLUMN_LOG_TIME, DATE_FORMATTER.print(time));
+        values.put(COLUMN_LOG_LEVEL, log.getLevel());
+        values.put(COLUMN_LOG_TIME, DATE_FORMATTER.print(log.getTime()));
+        values.put(COLUMN_LOG_SCOPE, log.getScope());
+        values.put(COLUMN_LOG_MESSAGE, log.getMessage());
+        db.insert(TABLE_LOGGING, null, values);
     }
 
     /**
@@ -97,7 +107,6 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     private void addPortal(String table, ContentValues values) {
         SQLiteDatabase db = getWritableDatabase();
         db.insert(table, null, values);
-        db.close();
     }
 
     /**
@@ -167,7 +176,6 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_ACCEPTED, COLUMN_PICTURE_URL + " = ?",
                 new String[]{portal.getPictureURL()});
-        db.close();
     }
 
     /**
@@ -178,7 +186,6 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         db.delete(TABLE_PENDING, null, null);
         db.delete(TABLE_ACCEPTED, null, null);
         db.delete(TABLE_REJECTED, null, null);
-        db.close();
     }
 
     /**
@@ -190,7 +197,6 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         Log.d(TAG, "Remove portal submission: " + portal.getName());
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_PENDING, COLUMN_PICTURE_URL + " = ?", new String[]{portal.getPictureURL()});
-        db.close();
     }
 
     /**
@@ -203,7 +209,6 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_REJECTED, COLUMN_PICTURE_URL + " = ?",
                 new String[]{portal.getPictureURL()});
-        db.close();
     }
 
     /**
@@ -470,9 +475,23 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      */
     private long getEntryCount(String table, String selection, String[] selectionArgs) {
         SQLiteDatabase db = getReadableDatabase();
-        long count = DatabaseUtils.queryNumEntries(db, table, selection, selectionArgs);
-        db.close();
-        return count;
+        return DatabaseUtils.queryNumEntries(db, table, selection, selectionArgs);
+    }
+
+    public List<LogEntry> getLogs() {
+        SQLiteDatabase db = getReadableDatabase();
+        List<LogEntry> logs = new ArrayList<>();
+        Cursor c = db.query(TABLE_LOGGING, null, null, null, null, null, null);
+        while (c.moveToNext()) {
+            int level = c.getInt(c.getColumnIndex(COLUMN_LOG_LEVEL));
+            LocalDateTime time = DATE_FORMATTER.parseLocalDateTime(
+                    c.getString(c.getColumnIndex(COLUMN_LOG_TIME)));
+            String scope = c.getString(c.getColumnIndex(COLUMN_LOG_SCOPE));
+            String message = c.getString((c.getColumnIndex(COLUMN_LOG_MESSAGE)));
+            logs.add(new LogEntry(level, time, scope, message));
+        }
+        c.close();
+        return logs;
     }
 
     /**
@@ -750,8 +769,6 @@ public class DatabaseInterface extends SQLiteOpenHelper {
 
         db.update(TABLE_ACCEPTED, values, COLUMN_PICTURE_URL + " = ?",
                 new String[]{String.valueOf(oldPortal.getPictureURL())});
-
-        db.close();
     }
 
     /**
@@ -771,7 +788,6 @@ public class DatabaseInterface extends SQLiteOpenHelper {
 
         db.update(TABLE_PENDING, values, COLUMN_PICTURE_URL + " = ?",
                 new String[]{String.valueOf(oldPortal.getPictureURL())});
-        db.close();
     }
 
     /**
@@ -795,6 +811,5 @@ public class DatabaseInterface extends SQLiteOpenHelper {
 
         db.update(TABLE_REJECTED, values, COLUMN_PICTURE_URL + " = ?",
                 new String[]{String.valueOf(oldPortal.getPictureURL())});
-        db.close();
     }
 }

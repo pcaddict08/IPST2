@@ -19,24 +19,60 @@
  * DEALINGS IN THE SOFTWARE.                                                  *
  ******************************************************************************/
 
-package com.einzig.ipst2;
+package com.einzig.ipst2.util;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.util.Log;
+
+import com.einzig.ipst2.activities.MainActivity;
+
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+import java.util.Map;
 
 /**
- * Created by Steven Foskett on 6/20/2017.
+ * Created by Steven Foskett on 6/14/2017.
  */
 
-public class SendMessageHelper {
-    public static void sendMessage(Context context, String subject, String body, String toAddress,
-                            String messagePrompt)
-    {
-        Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
-                "mailto",toAddress, null));
-        emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
-        emailIntent.putExtra(Intent.EXTRA_TEXT, body);
-        context.startActivity(Intent.createChooser(emailIntent, messagePrompt));
+public class PreferencesHelper {
+    public static void printAllPrefs(SharedPreferences prefs) {
+        Map<String, ?> keys = prefs.getAll();
+
+        if (keys.size() == 0)
+            Log.d(MainActivity.TAG, "NO keys found in prefs");
+        for (Map.Entry<String, ?> entry : keys.entrySet()) {
+            Log.d("map values", entry.getKey() + ": " +
+                    entry.getValue().toString());
+        }
+    }
+
+    public static SimpleDateFormat getSDF(Context context) {
+        SimpleDateFormat sdf = null;
+        String formatString =
+                PreferenceManager.getDefaultSharedPreferences(context).getString("date-type", "");
+        switch (formatString) {
+        case "":
+            sdf = new SimpleDateFormat("MM-dd-yyyy", Locale.getDefault());
+            break;
+        case "monthdayyear":
+            sdf = new SimpleDateFormat("MM-dd-yyyy", Locale.getDefault());
+
+            break;
+        case "daymonthyear":
+            sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+
+            break;
+        case "yearmonthday":
+            sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+
+            break;
+        case "yeardaymonth":
+            sdf = new SimpleDateFormat("yyyy-dd-MM", Locale.getDefault());
+
+            break;
+        }
+        return sdf;
     }
 }

@@ -1,5 +1,4 @@
-/*
- ****************************************************************************
+/******************************************************************************
  * Copyright 2017 Steven Foskett, Jimmy Ho, Ryan Porterfield                  *
  * Permission is hereby granted, free of charge, to any person obtaining a    *
  * copy of this software and associated documentation files (the "Software"), *
@@ -20,7 +19,7 @@
  * DEALINGS IN THE SOFTWARE.                                                  *
  ******************************************************************************/
 
-package com.einzig.ipst2;
+package com.einzig.ipst2.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;

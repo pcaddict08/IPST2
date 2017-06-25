@@ -50,8 +50,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.einzig.ipst2.DialogHelper;
-import com.einzig.ipst2.PreferencesHelper;
+import com.einzig.ipst2.util.DialogHelper;
+import com.einzig.ipst2.util.PreferencesHelper;
 import com.einzig.ipst2.R;
 import com.einzig.ipst2.portal.PortalAccepted;
 import com.einzig.ipst2.portal.PortalRejected;

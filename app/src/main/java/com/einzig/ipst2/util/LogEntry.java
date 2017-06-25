@@ -19,37 +19,41 @@
  * DEALINGS IN THE SOFTWARE.                                                  *
  ******************************************************************************/
 
-package com.einzig.ipst2;
+package com.einzig.ipst2.util;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
+import org.joda.time.LocalDateTime;
 
 /**
- * @author Steven Foskett
- * @since 2017-05-26
+ * @author Ryan Porterfield
+ * @since 2017-06-24
  */
-public class DialogHelper {
 
-    public static void showSimpleDialog(final int title, final int message, final Context context) {
-        try {
-            ((Activity) context).runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    new AlertDialog.Builder(context, R.style.dialogtheme)
-                            .setTitle(title)
-                            .setMessage(message)
-                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                }
-                            })
-                            .setIcon(R.drawable.ic_warning)
-                            .show();
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+public class LogEntry {
+    final private int level;
+    final private String message;
+    final private LocalDateTime time;
+    final private String scope;
+
+    public LogEntry(int level, LocalDateTime time, String scope, String message) {
+        this.level = level;
+        this.message = message;
+        this.time = time;
+        this.scope = scope;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public LocalDateTime getTime() {
+        return time;
+    }
+
+    public String getScope() {
+        return scope;
     }
 }

@@ -57,7 +57,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.crashlytics.android.Crashlytics;
-import com.einzig.ipst2.DialogHelper;
+import com.einzig.ipst2.util.DialogHelper;
 import com.einzig.ipst2.R;
 import com.einzig.ipst2.database.DatabaseInterface;
 import com.einzig.ipst2.parse.AuthenticatorTask;

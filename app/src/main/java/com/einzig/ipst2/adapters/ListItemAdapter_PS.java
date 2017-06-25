@@ -34,7 +34,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.einzig.ipst2.PreferencesHelper;
+import com.einzig.ipst2.util.PreferencesHelper;
 import com.einzig.ipst2.R;
 import com.einzig.ipst2.portal.PortalAccepted;
 import com.einzig.ipst2.portal.PortalRejected;

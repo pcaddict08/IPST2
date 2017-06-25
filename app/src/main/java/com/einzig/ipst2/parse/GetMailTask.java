@@ -31,7 +31,7 @@ import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.einzig.ipst2.DialogHelper;
+import com.einzig.ipst2.util.DialogHelper;
 import com.einzig.ipst2.R;
 import com.einzig.ipst2.activities.MainActivity;
 import com.einzig.ipst2.oauth.OAuth2Authenticator;
