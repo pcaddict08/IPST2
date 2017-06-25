@@ -25,12 +25,10 @@ import android.database.Cursor;
 
 import com.einzig.ipst2.portal.PortalSubmission;
 
-import java.text.ParseException;
-import java.util.Date;
+import org.joda.time.LocalDateTime;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static com.einzig.ipst2.database.DatabaseInterface.dateFormatter;
 
 /**
  * @author Ryan Porterfield
@@ -59,23 +57,7 @@ public abstract class PortalBuilder<P extends PortalSubmission> {
      * @param dateResponded The date the portal was rejected.
      * @param message       The body of the email as a String for parsing.
      */
-    public abstract P build(String name, Date dateResponded, String message);
-
-    /**
-     * Parse a String to a Date.
-     *
-     * @param dateString The date in ISO format yyyy-MM-dd HH:mm:ss
-     * @return a Date object representing the date that dateString contained.
-     */
-    Date parseDate(final String dateString) {
-        Date parse;
-        try {
-            parse = dateFormatter.parse(dateString);
-        } catch (ParseException e) {
-            parse = new Date();
-        }
-        return parse;
-    }
+    public abstract P build(String name, LocalDateTime dateResponded, String message);
 
     /**
      * Parse the URL of the portal picture from the email.

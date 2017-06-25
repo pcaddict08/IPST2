@@ -27,9 +27,8 @@ import android.os.Parcel;
 
 import org.joda.time.DateTime;
 import org.joda.time.Days;
-
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
+import org.joda.time.LocalDateTime;
+import org.joda.time.Period;
 
 /**
  * @author Ryan Porterfield
@@ -40,7 +39,7 @@ public abstract class PortalResponded extends PortalSubmission {
     /**
      * The date that Niantic approved or denied the portal.
      */
-    private final Date dateResponded;
+    private final LocalDateTime dateResponded;
 
     /**
      * Create a new PortalResponded.
@@ -50,7 +49,8 @@ public abstract class PortalResponded extends PortalSubmission {
      * @param pictureURL    The URL of the portal submission picture.
      * @param dateResponded The date that Niantic approved or denied the portal.
      */
-    PortalResponded(String name, Date dateSubmitted, String pictureURL, Date dateResponded) {
+    PortalResponded(String name, LocalDateTime dateSubmitted, String pictureURL, LocalDateTime
+            dateResponded) {
         super(name, dateSubmitted, pictureURL);
         this.dateResponded = dateResponded;
     }
@@ -62,7 +62,7 @@ public abstract class PortalResponded extends PortalSubmission {
      */
     PortalResponded(Parcel in) {
         super(in);
-        dateResponded = (Date) in.readSerializable();
+        dateResponded = (LocalDateTime) in.readSerializable();
     }
 
     /**
@@ -70,7 +70,7 @@ public abstract class PortalResponded extends PortalSubmission {
      *
      * @return The date the portal was approved or rejected.
      */
-    public Date getDateResponded() {
+    public LocalDateTime getDateResponded() {
         return this.dateResponded;
     }
 
@@ -90,9 +90,8 @@ public abstract class PortalResponded extends PortalSubmission {
                 new DateTime().toLocalDate()).getDays();
     }
 
-    public long getResponseTime() {
-        long diff = dateResponded.getTime() - getDateSubmitted().getTime();
-        return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+    public int getResponseTime() {
+        return Period.fieldDifference(getDateSubmitted(), getDateResponded()).getDays();
     }
 
     /*

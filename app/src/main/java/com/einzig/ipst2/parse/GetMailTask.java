@@ -37,9 +37,7 @@ import com.einzig.ipst2.activities.MainActivity;
 import com.einzig.ipst2.oauth.OAuth2Authenticator;
 import com.sun.mail.imap.IMAPStore;
 
-import java.text.ParseException;
-import java.util.Calendar;
-import java.util.Date;
+import org.joda.time.LocalDateTime;
 
 import javax.mail.FetchProfile;
 import javax.mail.Folder;
@@ -55,7 +53,7 @@ import javax.mail.search.SearchTerm;
 import javax.mail.search.SubjectTerm;
 
 import static com.einzig.ipst2.activities.MainActivity.TAG;
-import static com.einzig.ipst2.database.DatabaseInterface.dateFormatter;
+import static com.einzig.ipst2.database.DatabaseInterface.DATE_FORMATTER;
 
 /**
  * @author Ryan Porterfield
@@ -141,17 +139,12 @@ public class GetMailTask extends AsyncTask<Void, Void, MailBundle> {
      * @param dateStr String representation of the last parse date
      * @return Date the email was parsed if previously parsed, otherwise the date Ingress launched
      */
-    private Date getLastParseDate(String dateStr) {
-        Date d;
+    private LocalDateTime getLastParseDate(String dateStr) {
+        LocalDateTime d;
         try {
-            d = dateFormatter.parse(dateStr);
-        } catch (ParseException e) {
-            Calendar c = Calendar.getInstance();
-            // Remember the first day of Ingress? Pepperidge Farm remembers.
-            c.set(Calendar.MONTH, Calendar.NOVEMBER);
-            c.set(Calendar.DAY_OF_MONTH, 15);
-            c.set(Calendar.YEAR, 2012);
-            d = c.getTime();
+            d = DATE_FORMATTER.parseLocalDateTime(dateStr);
+        } catch (IllegalArgumentException e) {
+            d = new LocalDateTime(2013, 11, 15, 0, 0);
         }
         return d;
     }
@@ -160,17 +153,17 @@ public class GetMailTask extends AsyncTask<Void, Void, MailBundle> {
      * Get SearchTerm to find relevant emails
      *
      * @param lastParseDate Date of previous parse for ReceivedDateTerm
-     * @param anySource  boolean that decides if the email search terms 'from' are included.
+     * @param anySource     boolean that decides if the email search terms 'from' are included.
      * @return Search term that will find all portal submission emails
      */
-    private SearchTerm getSearchTerm(Date lastParseDate, boolean anySource) {
+    private SearchTerm getSearchTerm(LocalDateTime lastParseDate, boolean anySource) {
         SearchTerm portalTerm = new SubjectTerm("ingress portal");
         SearchTerm reviewTerm = new SubjectTerm("portal review");
         SearchTerm submissionTerm = new SubjectTerm("portal submission");
         SearchTerm submittedTerm = new SubjectTerm("portal submitted");
         SearchTerm subjectTerm = new OrTerm(new SearchTerm[]{portalTerm, reviewTerm,
                 submissionTerm, submittedTerm});
-        ReceivedDateTerm minDateTerm = new ReceivedDateTerm(ComparisonTerm.GT, lastParseDate);
+        ReceivedDateTerm minDateTerm = new ReceivedDateTerm(ComparisonTerm.GT, lastParseDate.toDate());
         SearchTerm invalidTerm = new NotTerm(new SubjectTerm("invalid"));
         SearchTerm editTerm = new NotTerm(new SubjectTerm("edit"));
         SearchTerm editsTerm = new NotTerm(new SubjectTerm("edits"));
@@ -197,7 +190,7 @@ public class GetMailTask extends AsyncTask<Void, Void, MailBundle> {
      * @throws MessagingException if the library encounters an error
      */
     private Message[] searchMailbox(Folder folder) throws MessagingException {
-        Date lastParseDate = getLastParseDate(
+        LocalDateTime lastParseDate = getLastParseDate(
                 preferences.getString(MainActivity.MOST_RECENT_DATE_KEY, MainActivity.NULL_KEY));
         return folder.search(getSearchTerm(lastParseDate, true));
     }

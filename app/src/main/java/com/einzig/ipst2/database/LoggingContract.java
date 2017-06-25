@@ -42,7 +42,7 @@ class LoggingContract {
     private LoggingContract() {
     }
 
-    static private class LoggingEntry implements BaseColumns {
+    static class LoggingEntry implements BaseColumns {
         static final String COLUMN_LOG_LEVEL = "logLevel";
         static final String COLUMN_LOG_MESSAGE = "logMessage";
         static final String COLUMN_LOG_SCOPE = "logScope";

@@ -60,12 +60,13 @@ import com.einzig.ipst2.portal.PortalSubmission;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
+import org.joda.time.LocalDateTime;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Locale;
 
 import butterknife.BindView;
@@ -120,7 +121,7 @@ public class PSDetailsActivity extends AppCompatActivity {
             }
         }
         String timeStamp =
-                new SimpleDateFormat("ddMMyyyy_HHmm", Locale.getDefault()).format(new Date());
+                new SimpleDateFormat("ddMMyyyy_HHmm", Locale.getDefault()).format(new LocalDateTime());
         File mediaFile;
         String mImageName = "MI_" + timeStamp + ".jpg";
         mediaFile = new File(mediaStorageDir.getPath() + File.separator + mImageName);

@@ -36,8 +36,7 @@ import com.einzig.ipst2.portal.PortalAccepted;
 import com.einzig.ipst2.portal.PortalRejected;
 import com.einzig.ipst2.portal.PortalSubmission;
 
-import java.util.Calendar;
-import java.util.Date;
+import org.joda.time.LocalDateTime;
 
 import javax.activation.CommandMap;
 import javax.activation.MailcapCommandMap;
@@ -45,7 +44,7 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 
 import static com.einzig.ipst2.activities.MainActivity.TAG;
-import static com.einzig.ipst2.database.DatabaseInterface.dateFormatter;
+import static com.einzig.ipst2.database.DatabaseInterface.DATE_FORMATTER;
 
 /**
  * Asynchronously parses the user's emails to update portal submission activity.
@@ -80,7 +79,8 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
         this.db = new DatabaseInterface(activity);
         this.messages = bundle.getMessages();
         this.parser = new EmailParser();
-        this.preferences = PreferenceManager.getDefaultSharedPreferences(activity);//activity.getPreferences(MainActivity.MODE_PRIVATE);
+        this.preferences = PreferenceManager.getDefaultSharedPreferences(
+                activity);//activity.getPreferences(MainActivity.MODE_PRIVATE);
         addMailcaps();
         initProgressDialog();
         System.getProperties().setProperty("mail.store.protocol", "imaps");
@@ -156,21 +156,21 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
     @Override
     protected Void doInBackground(Void... voids) {
         Log.d(TAG, "Parsing email");
-        Date parseDate = Calendar.getInstance().getTime();
+        LocalDateTime now = LocalDateTime.now();
         for (int i = 0; i < messages.length; i++) {
             PortalSubmission p = parser.getPortal(messages[i]);
             addPortal(p);
             publishProgress(i, messages.length);
             if (isCancelled()) {
                 try {
-                    parseDate = messages[i].getReceivedDate();
+                    now = new LocalDateTime(messages[i].getReceivedDate());
                 } catch (MessagingException e) {
                     Log.e(TAG, e.toString());
                 }
                 break;
             }
         }
-        onEmailParse(parseDate);
+        onEmailParse(now);
         bundle.cleanup();
         return null;
     }
@@ -191,8 +191,8 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
      *
      * @param parseDate Last time email was parsed
      */
-    private void onEmailParse(Date parseDate) {
-        String dateString = dateFormatter.format(parseDate.getTime());
+    private void onEmailParse(LocalDateTime parseDate) {
+        String dateString = DATE_FORMATTER.print(parseDate);
         Log.d(TAG, MainActivity.MOST_RECENT_DATE_KEY + " -> " + dateString);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(MainActivity.MOST_RECENT_DATE_KEY, dateString);

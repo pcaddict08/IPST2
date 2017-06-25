@@ -26,7 +26,7 @@ package com.einzig.ipst2.portal;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.Date;
+import org.joda.time.LocalDateTime;
 
 /**
  * @author Ryan Porterfield
@@ -62,8 +62,8 @@ public class PortalAccepted extends PortalResponded {
      * @param pictureURL    The URL of the portal submission picture.
      * @param dateResponded The date that Niantic approved the portal.
      */
-    public PortalAccepted(String name, Date dateSubmitted, String pictureURL, Date dateResponded,
-                          String liveAddress, String intelLinkURL) {
+    public PortalAccepted(String name, LocalDateTime dateSubmitted, String pictureURL,
+            LocalDateTime dateResponded, String liveAddress, String intelLinkURL) {
         super(name, dateSubmitted, pictureURL, dateResponded);
         this.intelLinkURL = intelLinkURL;
         this.liveAddress = liveAddress;

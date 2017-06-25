@@ -28,11 +28,10 @@ import android.os.Parcelable;
 
 import org.joda.time.DateTime;
 import org.joda.time.Days;
+import org.joda.time.LocalDateTime;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 
 public class PortalSubmission implements Parcelable, Serializable {
     /**
@@ -69,7 +68,7 @@ public class PortalSubmission implements Parcelable, Serializable {
      *
      * @serial
      */
-    private Date dateSubmitted;
+    private LocalDateTime dateSubmitted;
 
     /**
      * Create a new PortalSubmission.
@@ -78,7 +77,7 @@ public class PortalSubmission implements Parcelable, Serializable {
      * @param dateSubmitted The date the portal was submitted.
      * @param pictureURL    The URL of the portal submission picture.
      */
-    public PortalSubmission(String name, Date dateSubmitted, String pictureURL) {
+    public PortalSubmission(String name, LocalDateTime dateSubmitted, String pictureURL) {
         this.name = name;
         this.dateSubmitted = dateSubmitted;
         this.pictureURL = pictureURL;
@@ -91,7 +90,7 @@ public class PortalSubmission implements Parcelable, Serializable {
      */
     PortalSubmission(Parcel in) {
         name = in.readString();
-        dateSubmitted = (Date) in.readSerializable();
+        dateSubmitted = (LocalDateTime) in.readSerializable();
         pictureURL = in.readString();
     }
 
@@ -126,7 +125,7 @@ public class PortalSubmission implements Parcelable, Serializable {
      *
      * @return the date that the portal was submitted.
      */
-    public Date getDateSubmitted() {
+    public LocalDateTime getDateSubmitted() {
         return dateSubmitted;
     }
 
@@ -168,7 +167,7 @@ public class PortalSubmission implements Parcelable, Serializable {
      *
      * @param dateSubmitted the modified date the portal was submitted.
      */
-    public void setDateSubmitted(Date dateSubmitted) {
+    public void setDateSubmitted(LocalDateTime dateSubmitted) {
         this.dateSubmitted = dateSubmitted;
     }
 

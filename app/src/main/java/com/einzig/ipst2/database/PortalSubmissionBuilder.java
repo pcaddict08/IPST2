@@ -25,7 +25,9 @@ import android.database.Cursor;
 
 import com.einzig.ipst2.portal.PortalSubmission;
 
-import java.util.Date;
+import org.joda.time.LocalDateTime;
+
+import static com.einzig.ipst2.database.DatabaseInterface.DATE_FORMATTER;
 
 /**
  * @author Ryan Porterfield
@@ -47,15 +49,15 @@ public final class PortalSubmissionBuilder extends PortalBuilder<PortalSubmissio
     @Override
     PortalSubmission build(Cursor cursor) {
         String name, pictureURL;
-        Date dateSubmitted;
+        LocalDateTime dateSubmitted;
         name = cursor.getString(0);
-        dateSubmitted = parseDate(cursor.getString(1));
+        dateSubmitted = DATE_FORMATTER.parseLocalDateTime(cursor.getString(1));
         pictureURL = cursor.getString(2);
         return new PortalSubmission(name, dateSubmitted, pictureURL);
     }
 
     @Override
-    public PortalSubmission build(String name, Date dateResponded, String message) {
+    public PortalSubmission build(String name, LocalDateTime dateResponded, String message) {
         String pictureURL = parsePictureURL(message, name);
         return new PortalSubmission(name, dateResponded, pictureURL);
     }

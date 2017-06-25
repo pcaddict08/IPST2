@@ -31,8 +31,9 @@ import com.einzig.ipst2.database.PortalRejectedBuilder;
 import com.einzig.ipst2.database.PortalSubmissionBuilder;
 import com.einzig.ipst2.portal.PortalSubmission;
 
+import org.joda.time.LocalDateTime;
+
 import java.io.IOException;
-import java.util.Date;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -69,10 +70,10 @@ class EmailParser {
      */
     PortalSubmission getPortal(Message message) {
         String messageString, subject;
-        Date receivedDate;
+        LocalDateTime receivedDate;
         try {
             subject = message.getSubject();
-            receivedDate = message.getReceivedDate();
+            receivedDate = new LocalDateTime(message.getReceivedDate());
         } catch (MessagingException e) {
             return null;
         }
@@ -134,7 +135,7 @@ class EmailParser {
      * @param receivedDate Date the email was delivered
      * @return PortalSubmission or subclass if the email can be parsed, otherwise null
      */
-    private PortalSubmission parse(String subject, String message, Date receivedDate) {
+    private PortalSubmission parse(String subject, String message, LocalDateTime receivedDate) {
         Log.d(TAG, "Parsing: " + subject);
         String portalName = getPortalName(subject).trim();
         subject = subject.toLowerCase();
@@ -157,7 +158,7 @@ class EmailParser {
      * @param receivedDate Date the email was delivered
      * @return PortalSubmission or subclass if the email can be parsed, otherwise null
      */
-    private PortalSubmission parseNewFormat(String portalName, String message, Date receivedDate) {
+    private PortalSubmission parseNewFormat(String portalName, String message, LocalDateTime receivedDate) {
         if (message != null) {
             if (message.contains("not to accept") || message.contains("duplicate")
                     || message.contains("not able to bring it online"))

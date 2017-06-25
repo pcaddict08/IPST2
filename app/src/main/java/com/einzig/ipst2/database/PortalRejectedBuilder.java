@@ -25,7 +25,9 @@ import android.database.Cursor;
 
 import com.einzig.ipst2.portal.PortalRejected;
 
-import java.util.Date;
+import org.joda.time.LocalDateTime;
+
+import static com.einzig.ipst2.database.DatabaseInterface.DATE_FORMATTER;
 
 /**
  * @author Ryan Porterfield
@@ -47,17 +49,17 @@ public final class PortalRejectedBuilder extends PortalBuilder<PortalRejected> {
     @Override
     PortalRejected build(Cursor cursor) {
         String name, pictureURL, reason;
-        Date submitted, responded;
+        LocalDateTime submitted, responded;
         name = cursor.getString(0);
-        submitted = parseDate(cursor.getString(1));
+        submitted = DATE_FORMATTER.parseLocalDateTime(cursor.getString(1));
         pictureURL = cursor.getString(2);
-        responded = parseDate(cursor.getString(3));
+        responded = DATE_FORMATTER.parseLocalDateTime(cursor.getString(3));
         reason = cursor.getString(4);
         return new PortalRejected(name, submitted, pictureURL, responded, reason);
     }
 
     @Override
-    public PortalRejected build(String name, Date dateResponded, String message) {
+    public PortalRejected build(String name, LocalDateTime dateResponded, String message) {
         String pictureURL = parsePictureURL(message, name);
         String rejectionReason = parseRejectionReason(message);
         return new PortalRejected(name, null, pictureURL, dateResponded, rejectionReason);
