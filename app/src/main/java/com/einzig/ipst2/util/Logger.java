@@ -131,9 +131,9 @@ public class Logger {
     static private void log(String level, String scope, String message) {
         if (!initialized)
             return;
-        /*LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now();
         LogEntry entry = new LogEntry(level, now, scope, message);
-        db.addLog(entry);*/
+        db.addLog(entry);
     }
 
     /**
