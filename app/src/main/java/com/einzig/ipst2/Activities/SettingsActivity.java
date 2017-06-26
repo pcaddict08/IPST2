@@ -188,7 +188,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 contactdev.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                     @Override
                     public boolean onPreferenceClick(Preference preference) {
-                        SendMessageHelper.sendMessage(getActivity(), "Contactt IPST2 Dev - In App",
+                        SendMessageHelper.sendMessage(getActivity(), "Contact IPST2 Dev - In App",
                                 "App Version - " + getVersionNum(getActivity()) + "\n",
                                 "portalsubmissiontracker2@gmail.com",
                                 "Contacting Dev...");

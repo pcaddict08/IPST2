@@ -40,17 +40,22 @@ import com.einzig.ipst2.portal.PortalSubmission;
 import com.einzig.ipst2.util.Logger;
 import com.einzig.ipst2.util.PreferencesHelper;
 
+import org.joda.time.format.DateTimeFormatter;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
 // Custom list item class for menu items
 public class ListItemAdapter_PS extends BaseAdapter implements Filterable {
-    private SubmissionFilter submissionFilter;
-
-    private ArrayList<PortalSubmission> originalItems;
+    /**  */
     public ArrayList<PortalSubmission> shownItems;
+    /** Application context */
     private Context context;
+    /**  */
+    private ArrayList<PortalSubmission> originalItems;
+    /**  */
+    private SubmissionFilter submissionFilter;
 
     public ListItemAdapter_PS(final ArrayList<PortalSubmission> items, Context context) {
         this.context = context;
@@ -62,43 +67,99 @@ public class ListItemAdapter_PS extends BaseAdapter implements Filterable {
         return this.shownItems.size();
     }
 
+    @Override
+    public Filter getFilter() {
+        if (submissionFilter == null)
+            submissionFilter = new SubmissionFilter();
+        return submissionFilter;
+    }
+
     public PortalSubmission getItem(int position) {
         return this.shownItems.get(position);
     }
-
 
     public long getItemId(int position) {
         return this.shownItems.get(position).hashCode();
     }
 
-
     public View getView(int position, View convertView, ViewGroup parent) {
         final PortalSubmission item = this.shownItems.get(position);
-        @SuppressLint("ViewHolder") LinearLayout itemLayout = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.row_pslist, parent, false);
+        @SuppressLint("ViewHolder") LinearLayout itemLayout =
+                (LinearLayout) LayoutInflater.from(context)
+                        .inflate(R.layout.row_pslist, parent, false);
         ImageView iconView = (ImageView) itemLayout.findViewById(R.id.status_icon);
         if (iconView != null) {
             if (item instanceof PortalAccepted) {
                 iconView.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_check));
                 iconView.setBackgroundColor(context.getResources().getColor(R.color.accepted));
             } else if (item instanceof PortalRejected) {
-                iconView.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_rejected));
+                iconView.setImageDrawable(
+                        context.getResources().getDrawable(R.drawable.ic_rejected));
                 iconView.setBackgroundColor(context.getResources().getColor(R.color.rejected));
             } else {
-                iconView.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_pending));
+                iconView.setImageDrawable(
+                        context.getResources().getDrawable(R.drawable.ic_pending));
             }
         }
 
         TextView pstimelabel = (TextView) itemLayout.findViewById(R.id.psdate_rowpslist);
         // TODO Fix this
         if (pstimelabel != null) {
-            pstimelabel.setText(item.getSubmittedDateString() + " - " + item.getDaysSinceResponse() + " day(s) ago");
+            DateTimeFormatter formatter = new PreferencesHelper(context).getUIFormatter();
+            pstimelabel.setText(
+                    formatter.print(item.getDateSubmitted()) + " - " + item
+                            .getDaysSinceResponse() +
+                            " day(s) ago");
         }
         TextView psnamelabel = (TextView) itemLayout.findViewById(R.id.psname_rowpslist);
         if (psnamelabel != null)
             psnamelabel.setText(item.getName());
 
-
         return itemLayout;
+    }
+
+    public void resetData() {
+        this.shownItems = new ArrayList<>(originalItems);
+        notifyDataSetChanged();
+    }
+
+    /*
+     * Simple Sort class to sort ps by name
+     * */
+    public static class SortPortalSubmissions_alph implements Comparator<PortalSubmission> {
+        @Override
+        public int compare(PortalSubmission o1, PortalSubmission o2) {
+            return o1.getName().compareTo(o2.getName());
+        }
+    }
+
+    /*
+   * Simple Sort class to sort ps by date responded
+   * */
+    public static class SortPortalSubmissions_dateresp implements Comparator<PortalSubmission> {
+        @Override
+        public int compare(PortalSubmission o1, PortalSubmission o2) {
+            int portal1int = o1.getDaysSinceResponse();
+            int portal2int = o2.getDaysSinceResponse();
+
+            if (portal1int > portal2int) {
+                return 1;
+            } else if (portal1int < portal2int) {
+                return -1;
+            } else {
+                return 0;
+            }
+        }
+    }
+
+    /*
+     * Simple Sort class to sort ps by date submitted
+     * */
+    public static class SortPortalSubmissions_datesub implements Comparator<PortalSubmission> {
+        @Override
+        public int compare(PortalSubmission o1, PortalSubmission o2) {
+            return o1.getDateSubmitted().compareTo(o2.getDateSubmitted());
+        }
     }
 
     private class SubmissionFilter extends Filter {
@@ -130,58 +191,6 @@ public class ListItemAdapter_PS extends BaseAdapter implements Filterable {
                 notifyDataSetChanged();
             } catch (Exception e) {
                 e.printStackTrace();
-            }
-        }
-    }
-
-    @Override
-    public Filter getFilter() {
-        if (submissionFilter == null)
-            submissionFilter = new SubmissionFilter();
-        return submissionFilter;
-    }
-
-    public void resetData() {
-        this.shownItems = new ArrayList<>(originalItems);
-        notifyDataSetChanged();
-    }
-
-
-    /*
-     * Simple Sort class to sort ps by name
-     * */
-    public static class SortPortalSubmissions_alph implements Comparator<PortalSubmission> {
-        @Override
-        public int compare(PortalSubmission o1, PortalSubmission o2) {
-            return o1.getName().compareTo(o2.getName());
-        }
-    }
-
-    /*
-     * Simple Sort class to sort ps by date submitted
-     * */
-    public static class SortPortalSubmissions_datesub implements Comparator<PortalSubmission> {
-        @Override
-        public int compare(PortalSubmission o1, PortalSubmission o2) {
-            return o1.getDateSubmitted().compareTo(o2.getDateSubmitted());
-        }
-    }
-
-    /*
-   * Simple Sort class to sort ps by date responded
-   * */
-    public static class SortPortalSubmissions_dateresp implements Comparator<PortalSubmission> {
-        @Override
-        public int compare(PortalSubmission o1, PortalSubmission o2) {
-            int portal1int = o1.getDaysSinceResponse();
-            int portal2int = o2.getDaysSinceResponse();
-
-            if (portal1int > portal2int) {
-                return 1;
-            } else if (portal1int < portal2int) {
-                return -1;
-            } else {
-                return 0;
             }
         }
     }
