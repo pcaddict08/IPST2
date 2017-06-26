@@ -26,13 +26,14 @@
 
 <resources>
     <string-array name="sortTypes">
-        <item>respond-date</item>
-        <item>respond-date-desc</item>
-        <item>sub-date</item>
-        <item>sub-date-desc</item>
-        <item>alph</item>
-        <item>alph-desc</item>
+        <item>@string/responseDateSort</item>
+        <item>@string/responseDateDescSort</item>
+        <item>@string/submissionDateSort</item>
+        <item>@string/submissionDateDescSort</item>
+        <item>@string/alphaNumSort</item>
+        <item>@string/alphaNumDescSort</item>
     </string-array>
+
     <string-array name="sortTypesValues">
         <item>Respond Date</item>
         <item>Respond Date Descending</item>
@@ -44,33 +45,25 @@
 
 
     <string-array name="dateTypes">
-        <item>monthdayyear</item>
-        <item>daymonthyear</item>
-        <item>yearmonthday</item>
-        <item>yeardaymonth</item>
+        <item>@string/mdyFormat</item>
+        <item>@string/dmyFormat</item>
+        <item>@string/ymdFormat</item>
+        <item>@string/ydmFormat</item>
 
     </string-array>
     <string-array name="dateTypesValues">
         <item>MM/DD/YYYY</item>
         <item>DD/MM/YYYY</item>
-        <item>YYYY/MM/DD</item>
-        <item>YYYY/DD/MM</item>
-
+        <item>YYYY-MM-DD</item>
+        <item>YYYY-DD-MM</item>
     </string-array>
 
 
-    <string-array name="defaultCategories">
-        <item>all</item>
-        <item>month</item>
-        <item>week</item>
-        <item>today</item>
-
-    </string-array>
-    <string-array name="defaultCategoryValues">
-        <item>All</item>
-        <item>Month</item>
-        <item>Week</item>
-        <item>Today</item>
+    <string-array name="defaultTabs">
+        <item>@string/all</item>
+        <item>@string/month</item>
+        <item>@string/week</item>
+        <item>@string/today</item>
 
     </string-array>
 </resources>

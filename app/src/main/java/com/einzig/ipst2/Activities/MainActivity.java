@@ -28,12 +28,10 @@ import android.accounts.AccountManager;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Looper;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -59,7 +57,6 @@ import com.einzig.ipst2.R;
 import com.einzig.ipst2.database.DatabaseInterface;
 import com.einzig.ipst2.parse.AuthenticatorTask;
 import com.einzig.ipst2.parse.EmailParseTask;
-import com.einzig.ipst2.parse.FolderGetter;
 import com.einzig.ipst2.parse.GetMailTask;
 import com.einzig.ipst2.parse.MailBundle;
 import com.einzig.ipst2.portal.PortalAccepted;
@@ -67,6 +64,7 @@ import com.einzig.ipst2.portal.PortalRejected;
 import com.einzig.ipst2.portal.PortalSubmission;
 import com.einzig.ipst2.util.DialogHelper;
 import com.einzig.ipst2.util.Logger;
+import com.einzig.ipst2.util.PreferencesHelper;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.joda.time.LocalDate;
@@ -80,7 +78,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.fabric.sdk.android.Fabric;
 
-import static com.einzig.ipst2.util.PreferencesHelper.*;
+import static com.einzig.ipst2.util.PreferencesHelper.DEFAULT_TAB_KEY;
+import static com.einzig.ipst2.util.PreferencesHelper.EMAIL_KEY;
 
 /**
  * Main activity class which launches the app.
@@ -104,7 +103,7 @@ public class MainActivity extends AppCompatActivity
     static final int REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR = 1002;
     /** Used to get the result of LoginActivity */
     static private final int LOGIN_ACTIVITY_CODE = 0;
-    /** Seems to be redundant with PreferencesHelper#MANUAL_REFRESH_KEY */
+    /** Seems to be redundant with PreferencesHelper#REFRESH_KEY */
     static final private String REFRESH_KEY = "refresh";
     static private final int SETTINGS_ACTIVITY_CODE = 101;
 
@@ -143,8 +142,6 @@ public class MainActivity extends AppCompatActivity
 
     /** Database Handle for getting portals and such */
     private DatabaseInterface db;
-    /** Preferences for saving app settings */
-    private SharedPreferences preferences;
     /**  */
     private LocalDate viewDate;
 
@@ -153,7 +150,6 @@ public class MainActivity extends AppCompatActivity
      */
     public MainActivity() {
         db = new DatabaseInterface(this);
-        preferences = null;
         viewDate = null;
     }
 
@@ -256,7 +252,7 @@ public class MainActivity extends AppCompatActivity
      * @return Account user logged in on.
      */
     private Account getAccount() {
-        String email = preferences.getString(EMAIL_KEY, NULL_KEY);
+        String email = new PreferencesHelper(getApplicationContext()).get(EMAIL_KEY);
         Logger.i("Getting account " + email);
         AccountManager manager = AccountManager.get(this);
         for (Account account : manager.getAccounts()) {
@@ -271,31 +267,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * Get saved user preferences.
-     */
-    private void getPreferences() {
-        preferences =
-                PreferenceManager.getDefaultSharedPreferences(this);//getPreferences(MODE_PRIVATE);
-        if (preferences.getString("date-type", "").equalsIgnoreCase(""))
-            preferences.edit().putString("date-type", "monthdayyear").apply();
-        if (preferences.getString("sort-type", "").equalsIgnoreCase(""))
-            preferences.edit().putString("sort-type", "respond-date").apply();
-        if (preferences.getString(FOLDER_KEY, NULL_KEY).equalsIgnoreCase
-                (NULL_KEY))
-            preferences.edit().putString(FOLDER_KEY, FolderGetter.DEFAULT_FOLDER)
-                    .apply();
-        Logger.i(EMAIL_KEY + " -> " + preferences.getString(EMAIL_KEY, NULL_KEY));
-        Logger.i(LAST_PARSE_DATE_KEY + " -> " +
-                preferences.getString(LAST_PARSE_DATE_KEY, NULL_KEY));
-        Logger.i(SORT_KEY + " -> " + preferences.getString(SORT_KEY, NULL_KEY));
-        Logger.i(MANUAL_REFRESH_KEY + " -> " + preferences.getBoolean(MANUAL_REFRESH_KEY, false));
-        Logger.i(DEFAULT_CAT_KEY + " -> " + preferences.getString(DEFAULT_CAT_KEY, NULL_KEY));
-    }
-
-    /**
      * Search through accounts on the user's device now that we have permission to do so.
      */
-    public void gotPermission_accounts() {
+    public void gotAccountsPermission() {
         AccountManager manager = AccountManager.get(MainActivity.this);
         int numGoogAcct = 0;
         Account[] accountList = manager.getAccounts();
@@ -332,13 +306,13 @@ public class MainActivity extends AppCompatActivity
     /**
      * Login if we have permission or get permission if we don't.
      *
-     * @see MainActivity#gotPermission_accounts()
+     * @see MainActivity#gotAccountsPermission()
      */
     public void loginHitMethod() {
         try {
             if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.GET_ACCOUNTS)
                     == PackageManager.PERMISSION_GRANTED) {
-                gotPermission_accounts();
+                gotAccountsPermission();
             } else {
                 ActivityCompat.requestPermissions(this,
                         new String[]{android.Manifest.permission.GET_ACCOUNTS}, REQUEST_CODE_EMAIL);
@@ -353,42 +327,16 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Logger.d("onActivityResult(" + requestCode + ") -> " + resultCode);
         super.onActivityResult(requestCode, resultCode, data);
+        Logger.d("onActivityResult(" + requestCode + ") -> " + resultCode);
+
         switch (requestCode) {
         case LOGIN_ACTIVITY_CODE:
-            if (resultCode != RESULT_OK) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        findViewById(R.id.progress_view_mainactivity).setVisibility(View.INVISIBLE);
-                        findViewById(R.id.gmail_login_button).setVisibility(View.VISIBLE);
-                    }
-                });
-                return;
-            }
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putString(EMAIL_KEY, data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME));
-            editor.apply();
-            Account me = getAccount();
-            if (me != null) {
-                getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-            } else {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        findViewById(R.id.progress_view_mainactivity).setVisibility(View.INVISIBLE);
-                        findViewById(R.id.gmail_login_button).setVisibility(View.VISIBLE);
-                    }
-                });
-                errorFoundMessage(R.string.accountnotfoundtitle, R.string.accountnotfoundmessage);
-            }
-            Logger.d("Got account name " + data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME));
-            parseEmail();
+            onLoginResult(resultCode, data);
             break;
         case SETTINGS_ACTIVITY_CODE:
-            if (preferences != null &&
-                    preferences.getString(EMAIL_KEY, NULL_KEY).equalsIgnoreCase(NULL_KEY))
+            PreferencesHelper helper = new PreferencesHelper(getApplicationContext());
+            if (!helper.isInitialized(EMAIL_KEY))
                 resetUI();
             break;
         }
@@ -471,7 +419,7 @@ public class MainActivity extends AppCompatActivity
         openList(mainList);
     }
 
-    /*
+    /* TODO Refactor into smaller functions
      * Called on startup by Android after the app starts and resources are available.
      * Used for more advanced initializations.
      */
@@ -492,7 +440,9 @@ public class MainActivity extends AppCompatActivity
             ab.setDisplayUseLogoEnabled(true);
             ab.setDisplayShowHomeEnabled(true);
         }
-        getPreferences();
+        PreferencesHelper helper = new PreferencesHelper(getApplicationContext());
+        helper.initPreferences();
+        helper.printAllPreferences();
         boolean shouldRefresh = getIntent().getBooleanExtra(REFRESH_KEY, false);
         gmail_login_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -500,8 +450,8 @@ public class MainActivity extends AppCompatActivity
                 loginHitMethod();
             }
         });
-        if (!preferences.getBoolean(MANUAL_REFRESH_KEY, false) || shouldRefresh) {
-            if (!preferences.getString(EMAIL_KEY, NULL_KEY).equalsIgnoreCase(NULL_KEY)) {
+        if (!helper.getManualRefresh() || shouldRefresh) {
+            if (!helper.isInitialized(EMAIL_KEY)) {
                 parseEmail();
             } else {
                 runOnUiThread(new Runnable() {
@@ -522,6 +472,36 @@ public class MainActivity extends AppCompatActivity
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_mainactivity, menu);
         return true;
+    }
+
+    private void onLoginResult(int resultCode, Intent data) {
+        PreferencesHelper helper = new PreferencesHelper(getApplicationContext());
+        if (resultCode != RESULT_OK) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    findViewById(R.id.progress_view_mainactivity).setVisibility(View.INVISIBLE);
+                    findViewById(R.id.gmail_login_button).setVisibility(View.VISIBLE);
+                }
+            });
+            return;
+        }
+        helper.set(EMAIL_KEY, data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME));
+        Account me = getAccount();
+        if (me != null) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        } else {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    findViewById(R.id.progress_view_mainactivity).setVisibility(View.INVISIBLE);
+                    findViewById(R.id.gmail_login_button).setVisibility(View.VISIBLE);
+                }
+            });
+            errorFoundMessage(R.string.accountnotfoundtitle, R.string.accountnotfoundmessage);
+        }
+        Logger.d("Got account name " + data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME));
+        parseEmail();
     }
 
     @Override
@@ -564,7 +544,7 @@ public class MainActivity extends AppCompatActivity
             @NonNull int[] grantResults) {
         if (requestCode == REQUEST_CODE_EMAIL && grantResults.length > 0) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                gotPermission_accounts();
+                gotAccountsPermission();
             }
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -672,7 +652,9 @@ public class MainActivity extends AppCompatActivity
      */
     public void selectRadioItem() {
         int position = R.id.alltab_mainactivity;
-        switch (preferences.getString("default-category", "all")) {
+        // TODO Store default tab as integer instead of string
+        String defaultTab = new PreferencesHelper(getApplicationContext()).get(DEFAULT_TAB_KEY);
+        switch (defaultTab) {
         case "all":
             position = R.id.alltab_mainactivity;
             break;
@@ -689,7 +671,8 @@ public class MainActivity extends AppCompatActivity
             break;
         }
         formatUIFromRadio(position);
-        Logger.d("setting Position to " + position);
+        Logger.d("MainActivity#selectRadioItem", "Default Tab[" + position + "]: " +
+                defaultTab);
         tabs_mainactivity.check(position);
     }
 

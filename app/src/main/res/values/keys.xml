@@ -1,23 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="alphaNumDescSort">alphaDesc</string>
+    <string name="alphaNumSort">alpha</string>
     <string name="contactKey">contact</string>
     <string name="dateFormatKey">dateFormat</string>
+    <string name="defaultTabKey">defaultTab</string>
     <string name="donateKey">donate</string>
+    <string name="dmyFormat">dd/MM/yyyy</string>
     <string name="emailKey">email</string>
-    <string name="exportCsvKey">export</string>
-    <string name="exportlogs_pref">exportLogs</string>
+    <string name="exportCSVKey">export</string>
+    <string name="exportLogsPref">exportLogs</string>
     <string name="folderKey">folder</string>
     <string name="frontPageKey">frontPage</string>
     <string name="hardResetKey">hardReset</string>
     <string name="logoutKey">logout</string>
     <string name="nullKey">uninitialized</string>
+    <string name="mdyFormat">MM/dd/yyyy</string>
+    <string name="parseDateKey">parseDate</string>
     <string name="portalKey">portal</string>
     <string name="portalListKey">portalList</string>
     <string name="portalRespondedKey">portalResponded</string>
     <string name="portalSubmissionKey">portalSubmission</string>
     <string name="privacyKey">privacy</string>
-    <string name="recentDateKey">recentDate</string>
+    <string name="refreshKey">refresh</string>
+    <string name="responseDateDescSort">responseDateDesc</string>
+    <string name="responseDateSort">responseDate</string>
     <string name="softResetKey">softReset</string>
     <string name="sortKey">sort</string>
+    <string name="submissionDateDescSort">subDateDesc</string>
+    <string name="submissionDateSort">subDate</string>
     <string name="versionKey">version</string>
+    <string name="ydmFormat">yyyy-dd-MM</string>
+    <string name="ymdFormat">yyyy-MM-dd</string>
 </resources>

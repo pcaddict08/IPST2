@@ -22,7 +22,7 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <ListPreference
-        android:key="sort-type"
+        android:key="@string/sortKey"
         android:title="@string/listsorttypes_preftitle"
         android:summary="@string/listsorttypes_prefmessage"
         android:entries="@array/sortTypesValues"
@@ -30,7 +30,7 @@
         />
 
     <ListPreference
-        android:key="date-type"
+        android:key="@string/dateFormatKey"
         android:title="@string/datetype_preftitle"
         android:summary="@string/datetype_prefmessage"
         android:entries="@array/dateTypesValues"

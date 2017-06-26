@@ -23,7 +23,7 @@
 
     <CheckBoxPreference
         android:defaultValue="false"
-        android:key="manual-refresh"
+        android:key="@string/refreshKey"
         android:summary="@string/manualrefresh_prefmessage"
         android:title="@string/manualrefresh_preftitle"
         />
@@ -36,16 +36,16 @@
         />
 
     <ListPreference
-        android:key="default-category"
+        android:key="@string/defaultTabKey"
         android:title="@string/defaultcategory_preftitle"
         android:summary="@string/defaultcategory_prefmessage"
-        android:entries="@array/defaultCategoryValues"
+        android:entries="@array/defaultTabs"
         android:defaultValue="@string/defaultcategory_default"
-        android:entryValues="@array/defaultCategories"
+        android:entryValues="@array/defaultTabs"
         />
 
     <Preference
-        android:key="@string/exportlogs_pref"
+        android:key="@string/exportLogsPref"
         android:summary="@string/exportlogs_summary"
         android:title="@string/exportlogs_title" />
 

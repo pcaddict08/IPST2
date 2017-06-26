@@ -54,9 +54,22 @@ import com.einzig.ipst2.database.DatabaseInterface;
 import java.util.List;
 
 import static com.einzig.ipst2.activities.MainActivity.REQUEST_CODE_WRITE_EXTERNAL;
+import static com.einzig.ipst2.util.PreferencesHelper.DATE_FORMAT_KEY;
+import static com.einzig.ipst2.util.PreferencesHelper.MM_DD_YYYY_FORMAT;
+import static com.einzig.ipst2.util.PreferencesHelper.RESPONSE_DATE_SORT;
+import static com.einzig.ipst2.util.PreferencesHelper.SORT_KEY;
 
+/**
+ * @author Steven Foskett
+ */
 public class SettingsActivity extends AppCompatPreferenceActivity {
+    // TODO Remove all string literal preference strings
 
+    /**
+     *
+     * @param context
+     * @return
+     */
     public static String getVersionNum(Context context) {
         try {
             return context.getPackageManager()
@@ -252,10 +265,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         public void clearAllData() {
             DatabaseInterface db = new DatabaseInterface(getActivity());
             db.deleteAll();
-            SharedPreferences sharedPreferences =
-                    PreferenceManager.getDefaultSharedPreferences(getActivity());
-            sharedPreferences.edit().clear().apply();
-            PreferencesHelper.printAllPrefs(sharedPreferences);
+            PreferencesHelper helper = new PreferencesHelper(getActivity());
+            helper.clearAll();
+            helper.printAllPreferences();
             ((SettingsActivity) getActivity()).clearedData();
         }
 
@@ -295,12 +307,11 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_dbsheet);
             setHasOptionsMenu(true);
-            SharedPreferences preferences =
-                    PreferenceManager.getDefaultSharedPreferences(getActivity());//getPreferences
-            if (preferences.getString("date-type", "").equalsIgnoreCase(""))
-                preferences.edit().putString("date-type", "monthdayyear").apply();
-            if (preferences.getString("sort-type", "").equalsIgnoreCase(""))
-                preferences.edit().putString("sort-type", "respond-date").apply();
+            PreferencesHelper helper = new PreferencesHelper(getActivity());
+            if (!helper.isInitialized(DATE_FORMAT_KEY))
+                helper.set(DATE_FORMAT_KEY, MM_DD_YYYY_FORMAT);
+            if (!helper.isInitialized(SORT_KEY))
+                helper.set(SORT_KEY, RESPONSE_DATE_SORT);
             DBPreferenceFragment.this.findPreference(getResources()
                     .getString(R.string.hardResetKey))
                     .setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -310,7 +321,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                             return false;
                         }
                     });
-
+            // TODO remove hardcoded pref string
             Preference exportDBPref = DBPreferenceFragment.this.findPreference("exportdb_pref");
             if (exportDBPref != null)
                 exportDBPref.setOnPreferenceClickListener(new Preference
@@ -395,7 +406,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 });
 
             Preference exportLogs = findPreference(getResources().getString(R.string
-                    .exportlogs_pref));
+                    .exportLogsPref));
             if (exportLogs != null)
                 exportLogs.setOnPreferenceClickListener(new Preference
                         .OnPreferenceClickListener() {
