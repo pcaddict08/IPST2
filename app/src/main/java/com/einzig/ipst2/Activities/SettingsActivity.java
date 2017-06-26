@@ -44,20 +44,16 @@ import android.support.v7.app.AlertDialog;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.einzig.ipst2.R;
+import com.einzig.ipst2.database.DatabaseInterface;
 import com.einzig.ipst2.util.LogExporter;
 import com.einzig.ipst2.util.PreferencesHelper;
-import com.einzig.ipst2.R;
 import com.einzig.ipst2.util.SendMessageHelper;
 import com.einzig.ipst2.util.SendPortalData;
-import com.einzig.ipst2.database.DatabaseInterface;
 
 import java.util.List;
 
 import static com.einzig.ipst2.activities.MainActivity.REQUEST_CODE_WRITE_EXTERNAL;
-import static com.einzig.ipst2.util.PreferencesHelper.DATE_FORMAT_KEY;
-import static com.einzig.ipst2.util.PreferencesHelper.MM_DD_YYYY_FORMAT;
-import static com.einzig.ipst2.util.PreferencesHelper.RESPONSE_DATE_SORT;
-import static com.einzig.ipst2.util.PreferencesHelper.SORT_KEY;
 
 /**
  * @author Steven Foskett
@@ -308,10 +304,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             addPreferencesFromResource(R.xml.pref_dbsheet);
             setHasOptionsMenu(true);
             PreferencesHelper helper = new PreferencesHelper(getActivity());
-            if (!helper.isInitialized(DATE_FORMAT_KEY))
-                helper.set(DATE_FORMAT_KEY, MM_DD_YYYY_FORMAT);
-            if (!helper.isInitialized(SORT_KEY))
-                helper.set(SORT_KEY, RESPONSE_DATE_SORT);
+            if (!helper.isInitialized(helper.dateFormatKey()))
+                helper.set(helper.dateFormatKey(), helper.mdyFormat());
+            if (!helper.isInitialized(helper.sortKey()))
+                helper.set(helper.sortKey(), helper.responseDateSort());
             DBPreferenceFragment.this.findPreference(getResources()
                     .getString(R.string.hardResetKey))
                     .setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {

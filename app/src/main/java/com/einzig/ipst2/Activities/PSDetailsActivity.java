@@ -101,7 +101,7 @@ public class PSDetailsActivity extends AppCompatActivity {
      *
      */
     public PSDetailsActivity() {
-        uiFormatter = PreferencesHelper.getUIFormatter(this);
+        uiFormatter = new PreferencesHelper(getApplicationContext()).getUIFormatter();
     }
 
     /**

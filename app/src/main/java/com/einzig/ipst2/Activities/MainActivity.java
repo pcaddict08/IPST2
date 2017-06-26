@@ -78,9 +78,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.fabric.sdk.android.Fabric;
 
-import static com.einzig.ipst2.util.PreferencesHelper.DEFAULT_TAB_KEY;
-import static com.einzig.ipst2.util.PreferencesHelper.EMAIL_KEY;
-
 /**
  * Main activity class which launches the app.
  * Contains all startup and initialization code.
@@ -252,7 +249,8 @@ public class MainActivity extends AppCompatActivity
      * @return Account user logged in on.
      */
     private Account getAccount() {
-        String email = new PreferencesHelper(getApplicationContext()).get(EMAIL_KEY);
+        PreferencesHelper helper = new PreferencesHelper(getApplicationContext());
+        String email = helper.get(helper.emailKey());
         Logger.i("Getting account " + email);
         AccountManager manager = AccountManager.get(this);
         for (Account account : manager.getAccounts()) {
@@ -336,7 +334,7 @@ public class MainActivity extends AppCompatActivity
             break;
         case SETTINGS_ACTIVITY_CODE:
             PreferencesHelper helper = new PreferencesHelper(getApplicationContext());
-            if (!helper.isInitialized(EMAIL_KEY))
+            if (!helper.isInitialized(helper.emailKey()))
                 resetUI();
             break;
         }
@@ -451,7 +449,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
         if (!helper.getManualRefresh() || shouldRefresh) {
-            if (!helper.isInitialized(EMAIL_KEY)) {
+            if (!helper.isInitialized(helper.emailKey())) {
                 parseEmail();
             } else {
                 runOnUiThread(new Runnable() {
@@ -486,7 +484,7 @@ public class MainActivity extends AppCompatActivity
             });
             return;
         }
-        helper.set(EMAIL_KEY, data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME));
+        helper.set(helper.emailKey(), data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME));
         Account me = getAccount();
         if (me != null) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -562,7 +560,6 @@ public class MainActivity extends AppCompatActivity
     public void openList(Vector<? extends PortalSubmission> list) {
         if (list.size() > 0) {
             Intent intent = new Intent(MainActivity.this, PSListActivity.class);
-            // TODO: Removed hardcoded intent key
             Logger.i("MainActivity", "Starting list activity with " + list.size() + "portals");
             intent.putExtra(PORTAL_LIST_KEY, list);
             startActivity(intent);
@@ -653,7 +650,8 @@ public class MainActivity extends AppCompatActivity
     public void selectRadioItem() {
         int position = R.id.alltab_mainactivity;
         // TODO Store default tab as integer instead of string
-        String defaultTab = new PreferencesHelper(getApplicationContext()).get(DEFAULT_TAB_KEY);
+        PreferencesHelper helper = new PreferencesHelper(getApplicationContext());
+        String defaultTab = helper.get(helper.defaultTabKey());
         switch (defaultTab) {
         case "all":
             position = R.id.alltab_mainactivity;

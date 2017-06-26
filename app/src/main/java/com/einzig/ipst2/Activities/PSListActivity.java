@@ -27,10 +27,8 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -47,6 +45,7 @@ import com.einzig.ipst2.R;
 import com.einzig.ipst2.adapters.ListItemAdapter_PS;
 import com.einzig.ipst2.portal.PortalSubmission;
 import com.einzig.ipst2.util.Logger;
+import com.einzig.ipst2.util.PreferencesHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -142,19 +141,19 @@ public class PSListActivity extends AppCompatActivity {
 
     /* Method to sort the list based on settings the user has saved */
     public void sortList(ArrayList<PortalSubmission> psList) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String sortOptionValue = sharedPreferences.getString("sort-type", "");
-
-        if (sortOptionValue.equalsIgnoreCase("respond-date-desc")) {
+        PreferencesHelper helper = new PreferencesHelper(getApplicationContext());
+        String sortOptionValue = helper.get(helper.sortKey());
+        // TODO Use sort package sorters or clean up this code
+        if (sortOptionValue.equals(helper.responseDateDescSort())) {
             Collections.sort(psList, new ListItemAdapter_PS.SortPortalSubmissions_dateresp());
-        } else if (sortOptionValue.equalsIgnoreCase("sub-date")) {
+        } else if (sortOptionValue.equals(helper.submissionDateSort())) {
             Collections.sort(psList, new ListItemAdapter_PS.SortPortalSubmissions_datesub());
-        } else if (sortOptionValue.equalsIgnoreCase("sub-date-desc")) {
+        } else if (sortOptionValue.equals(helper.submissionDateDescSort())) {
             Collections.sort(psList, new ListItemAdapter_PS.SortPortalSubmissions_datesub());
             Collections.reverse(psList);
-        } else if (sortOptionValue.equalsIgnoreCase("alph")) {
+        } else if (sortOptionValue.equals(helper.alphaNumericSort())) {
             Collections.sort(psList, new ListItemAdapter_PS.SortPortalSubmissions_alph());
-        } else if (sortOptionValue.equalsIgnoreCase("alph-desc")) {
+        } else if (sortOptionValue.equals(helper.alphaNumericDescSort())) {
             Collections.sort(psList, new ListItemAdapter_PS.SortPortalSubmissions_alph());
             Collections.reverse(psList);
         } else {
@@ -164,8 +163,8 @@ public class PSListActivity extends AppCompatActivity {
     }
 
     /*
-    * Sort Option menu option clicked method
-    * */
+     * Sort Option menu option clicked method
+     */
     public void sortMenuOptionSelected() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Set Sort Criteria")
@@ -173,11 +172,8 @@ public class PSListActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         String[] some_array = getResources().getStringArray(R.array.sortTypes);
                         System.out.println("SELECTED: " + some_array[which]);
-                        SharedPreferences.Editor editor =
-                                PreferenceManager.getDefaultSharedPreferences(PSListActivity.this)
-                                        .edit();
-                        editor.putString("sort-type", some_array[which].toLowerCase());
-                        editor.apply();
+                        PreferencesHelper helper = new PreferencesHelper(getApplicationContext());
+                        helper.set(helper.sortKey(), some_array[which]);
                         Intent i = getIntent();
                         i.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                         i.putExtra(PORTAL_LIST_KEY, PSListActivity.this.psList);

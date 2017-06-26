@@ -31,10 +31,10 @@ import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 
 import com.einzig.ipst2.R;
-import com.einzig.ipst2.activities.MainActivity;
 import com.einzig.ipst2.oauth.OAuth2Authenticator;
 import com.einzig.ipst2.util.DialogHelper;
 import com.einzig.ipst2.util.Logger;
+import com.einzig.ipst2.util.PreferencesHelper;
 import com.sun.mail.imap.IMAPStore;
 
 import org.joda.time.LocalDate;
@@ -123,10 +123,9 @@ public class GetMailTask extends AsyncTask<Void, Void, MailBundle> {
         Folder[] folders = store.getDefaultFolder().list();
         Folder folder = new FolderGetter(activity, folders, preferences).getFolder();
         if (folder != null) {
-            Logger.d(MainActivity.FOLDER_KEY + " -> " + folder.getFullName());
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putString(MainActivity.FOLDER_KEY, folder.getFullName());
-            editor.apply();
+            PreferencesHelper helper = new PreferencesHelper(activity.getApplicationContext());
+            Logger.d(helper.folderKey() + " -> " + folder.getFullName());
+            helper.set(helper.folderKey(), folder.getFullName());
         }
         return folder;
     }
@@ -188,8 +187,8 @@ public class GetMailTask extends AsyncTask<Void, Void, MailBundle> {
      * @throws MessagingException if the library encounters an error
      */
     private Message[] searchMailbox(Folder folder) throws MessagingException {
-        LocalDate lastParseDate = getLastParseDate(
-                preferences.getString(MainActivity.MOST_RECENT_DATE_KEY, MainActivity.NULL_KEY));
+        PreferencesHelper helper = new PreferencesHelper(activity.getApplicationContext());
+        LocalDate lastParseDate = getLastParseDate(helper.get(helper.parseDateKey()));
         return folder.search(getSearchTerm(lastParseDate, true));
     }
 }

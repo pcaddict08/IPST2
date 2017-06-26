@@ -32,8 +32,8 @@ import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.einzig.ipst2.R;
-import com.einzig.ipst2.activities.MainActivity;
 import com.einzig.ipst2.util.Logger;
+import com.einzig.ipst2.util.PreferencesHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -104,22 +104,18 @@ public class FolderGetter {
     }
 
     Folder getFolder() throws MessagingException {
-        String folderPref = preferences.getString(MainActivity.FOLDER_KEY, MainActivity.NULL_KEY);
+        PreferencesHelper helper = new PreferencesHelper(activity.getApplicationContext());
+        String folderPref = helper.get(helper.folderKey());
         Logger.d("Folder: " + folderPref);
         Folder folder = null;
-        if (folderPref.equals(MainActivity.NULL_KEY))
+        if (helper.isInitialized(helper.folderKey())) {
             folder = getDefaultFolder();
-        else {
+        } else {
             for (Folder f : folders) {
                 if (f.getFullName().equalsIgnoreCase(folderPref))
                     folder = f;
             }
         }
-        Logger.d("Number of folders: " + folders.size());
-        Logger.d("Folders: ");
-        for (Folder f : folders)
-            Logger.d("\t" + f.getFullName());
-
         if (folder == null)
             folder = noAllMailFolder(folderPref);
         return folder;
@@ -135,12 +131,11 @@ public class FolderGetter {
     private DialogInterface.OnClickListener getListener() {
         return new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
+                PreferencesHelper helper = new PreferencesHelper(activity.getApplicationContext());
                 Logger.d("FOLDER: " + folders.get(which));
                 folder = folders.get(which);
-                Logger.d(MainActivity.FOLDER_KEY + " -> " + folder.getFullName());
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putString(MainActivity.FOLDER_KEY, folder.getFullName());
-                editor.apply();
+                Logger.d(helper.folderKey() + " -> " + folder.getFullName());
+                helper.set(helper.folderKey(), folder.getFullName());
             }
         };
     }

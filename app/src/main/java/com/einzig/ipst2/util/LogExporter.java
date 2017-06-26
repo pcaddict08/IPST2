@@ -42,7 +42,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.List;
 
-import static com.einzig.ipst2.activities.SettingsActivity.WRITE_EXTERNAL_REQUEST_CODE;
+import static com.einzig.ipst2.activities.MainActivity.REQUEST_CODE_WRITE_EXTERNAL;
 
 /**
  * @author Ryan Porterfield
@@ -64,7 +64,7 @@ public class LogExporter extends AsyncTask<Void, Void, Void> {
         if (ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(activity,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_REQUEST_CODE);
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_WRITE_EXTERNAL);
             return false;
         }
         return true;

@@ -44,7 +44,7 @@ public class PreferencesHelper {
     final private SharedPreferences preferences;
 
     /**
-     * @param context
+     * @param context Application context
      */
     public PreferencesHelper(Context context) {
         this.context = context;

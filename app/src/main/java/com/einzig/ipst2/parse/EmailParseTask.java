@@ -24,9 +24,7 @@
 package com.einzig.ipst2.parse;
 
 import android.app.ProgressDialog;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.preference.PreferenceManager;
 import android.view.WindowManager;
 
 import com.einzig.ipst2.activities.MainActivity;
@@ -35,6 +33,7 @@ import com.einzig.ipst2.portal.PortalAccepted;
 import com.einzig.ipst2.portal.PortalRejected;
 import com.einzig.ipst2.portal.PortalSubmission;
 import com.einzig.ipst2.util.Logger;
+import com.einzig.ipst2.util.PreferencesHelper;
 
 import org.joda.time.LocalDate;
 
@@ -63,7 +62,7 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
     /** Does the actual parsing of emails */
     final private EmailParser parser;
     /** App preferences */
-    final private SharedPreferences preferences;
+    final private PreferencesHelper helper;
     /** Display parsing progress */
     private ProgressDialog dialog;
 
@@ -78,8 +77,7 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
         this.db = new DatabaseInterface(activity);
         this.messages = bundle.getMessages();
         this.parser = new EmailParser();
-        this.preferences = PreferenceManager.getDefaultSharedPreferences(
-                activity);//activity.getPreferences(MainActivity.MODE_PRIVATE);
+        this.helper = new PreferencesHelper(activity);
         addMailcaps();
         initProgressDialog();
         System.getProperties().setProperty("mail.store.protocol", "imaps");
@@ -194,10 +192,8 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
      */
     private void onEmailParse(LocalDate parseDate) {
         String dateString = DATE_FORMATTER.print(parseDate);
-        Logger.d(MainActivity.MOST_RECENT_DATE_KEY + " -> " + dateString);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(MainActivity.MOST_RECENT_DATE_KEY, dateString);
-        editor.apply();
+        Logger.d(helper.parseDateKey() + " -> " + dateString);
+        helper.set(helper.parseDateKey(), dateString);
     }
 
     /*

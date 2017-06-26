@@ -26,9 +26,9 @@ import android.content.Intent;
 import android.net.Uri;
 
 /**
- * Created by Steven Foskett on 6/20/2017.
+ * @author Steven Foskett
+ * @since 2017-06-20
  */
-
 public class SendMessageHelper {
     public static void sendMessage(Context context, String subject, String body, String toAddress,
                             String messagePrompt)
