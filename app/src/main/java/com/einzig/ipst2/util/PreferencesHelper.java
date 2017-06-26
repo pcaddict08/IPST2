@@ -116,10 +116,6 @@ public class PreferencesHelper {
         return preferences.getString(key, nullKey());
     }
 
-    public int getDefaultTab() {
-        return preferences.getInt(defaultTabKey(), R.id.alltab_mainactivity);
-    }
-
     /**
      * Get the value of manual refresh preference
      * @return value of manual refresh preference

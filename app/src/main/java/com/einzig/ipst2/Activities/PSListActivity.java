@@ -168,9 +168,9 @@ public class PSListActivity extends AppCompatActivity {
     public void sortMenuOptionSelected() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Set Sort Criteria")
-                .setItems(R.array.sortTypesValues, new DialogInterface.OnClickListener() {
+                .setItems(R.array.sortTypesEntries, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        String[] some_array = getResources().getStringArray(R.array.sortTypes);
+                        String[] some_array = getResources().getStringArray(R.array.sortTypesValues);
                         System.out.println("SELECTED: " + some_array[which]);
                         PreferencesHelper helper = new PreferencesHelper(getApplicationContext());
                         helper.set(helper.sortKey(), some_array[which]);

@@ -68,7 +68,6 @@
         app.</string>
 
     <string name="defaultcategory_preftitle">Default Main Category</string>
-    <string name="defaultcategory_default">all</string>
     <string name="defaultcategory_prefmessage">This sets which tab is opened by default in the
         app\'s main page.</string>
 

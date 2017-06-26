@@ -25,16 +25,28 @@
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
 <resources>
-    <string-array name="sortTypes">
-        <item>@string/responseDateSort</item>
-        <item>@string/responseDateDescSort</item>
-        <item>@string/submissionDateSort</item>
-        <item>@string/submissionDateDescSort</item>
-        <item>@string/alphaNumSort</item>
-        <item>@string/alphaNumDescSort</item>
+    <string-array name="dateTypesEntries">
+        <item>MM/DD/YYYY</item>
+        <item>DD/MM/YYYY</item>
+        <item>YYYY-MM-DD</item>
+        <item>YYYY-DD-MM</item>
     </string-array>
 
-    <string-array name="sortTypesValues">
+    <string-array name="dateTypesValues">
+        <item>@string/mdyFormat</item>
+        <item>@string/dmyFormat</item>
+        <item>@string/ymdFormat</item>
+        <item>@string/ydmFormat</item>
+    </string-array>
+
+    <string-array name="defaultTabsEntries">
+        <item>@string/all</item>
+        <item>@string/month</item>
+        <item>@string/week</item>
+        <item>@string/today</item>
+    </string-array>
+
+    <string-array name="sortTypesEntries">
         <item>Respond Date</item>
         <item>Respond Date Descending</item>
         <item>Submit Date</item>
@@ -43,33 +55,12 @@
         <item>Alphabetical Descending</item>
     </string-array>
 
-
-    <string-array name="dateTypes">
-        <item>@string/mdyFormat</item>
-        <item>@string/dmyFormat</item>
-        <item>@string/ymdFormat</item>
-        <item>@string/ydmFormat</item>
-
+    <string-array name="sortTypesValues">
+        <item>@string/responseDateSort</item>
+        <item>@string/responseDateDescSort</item>
+        <item>@string/submissionDateSort</item>
+        <item>@string/submissionDateDescSort</item>
+        <item>@string/alphaNumSort</item>
+        <item>@string/alphaNumDescSort</item>
     </string-array>
-    <string-array name="dateTypesValues">
-        <item>MM/DD/YYYY</item>
-        <item>DD/MM/YYYY</item>
-        <item>YYYY-MM-DD</item>
-        <item>YYYY-DD-MM</item>
-    </string-array>
-
-
-    <string-array name="defaultTabs">
-        <item>@string/all</item>
-        <item>@string/month</item>
-        <item>@string/week</item>
-        <item>@string/today</item>
-    </string-array>
-
-    <integer-array name="defaultTabsEntries">
-        <item>@id/alltab_mainactivity</item>
-        <item>@id/monthtab_mainactivity</item>
-        <item>@id/weektab_mainactivity</item>
-        <item>@id/todaytab_mainactivity</item>
-    </integer-array>
 </resources>

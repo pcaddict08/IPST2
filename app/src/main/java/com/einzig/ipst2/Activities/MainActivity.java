@@ -449,7 +449,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
         if (!helper.getManualRefresh() || shouldRefresh) {
-            if (!helper.isInitialized(helper.emailKey())) {
+            if (helper.isInitialized(helper.emailKey())) {
                 parseEmail();
             } else {
                 runOnUiThread(new Runnable() {
@@ -648,29 +648,20 @@ public class MainActivity extends AppCompatActivity
      * Set radio item active and the rest not
      */
     public void selectRadioItem() {
-        int position = R.id.alltab_mainactivity;
-        // TODO Store default tab as integer instead of string
         PreferencesHelper helper = new PreferencesHelper(getApplicationContext());
         String defaultTab = helper.get(helper.defaultTabKey());
-        switch (defaultTab) {
-        case "all":
-            position = R.id.alltab_mainactivity;
-            break;
-        case "month":
+        int position;
+        if (defaultTab.equals(getString(R.string.month)))
             position = R.id.monthtab_mainactivity;
-            break;
-        case "week":
-            position = R.id.weektab_mainactivity;
-            break;
-        case "today":
+        else if (defaultTab.equals(getString(R.string.today)))
             position = R.id.todaytab_mainactivity;
-            break;
-        default:
-            break;
-        }
+        else if (defaultTab.equals(getString(R.string.week)))
+            position = R.id.weektab_mainactivity;
+        else
+            position = R.id.alltab_mainactivity;
+
         formatUIFromRadio(position);
-        Logger.d("MainActivity#selectRadioItem", "Default Tab[" + position + "]: " +
-                defaultTab);
+        Logger.d("MainActivity#selectRadioItem", "Default Tab: " + position);
         tabs_mainactivity.check(position);
     }
 

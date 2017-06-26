@@ -30,7 +30,7 @@
 
     <EditTextPreference
         android:defaultValue="@string/folderdefault_pref"
-        android:key="mailFolder"
+        android:key="@string/folderKey"
         android:title="@string/folderdefault_preftitle"
         android:summary="@string/folderdefault_prefmessage"
         />
@@ -40,8 +40,8 @@
         android:title="@string/defaultcategory_preftitle"
         android:summary="@string/defaultcategory_prefmessage"
         android:entries="@array/defaultTabsEntries"
-        android:defaultValue="@string/defaultcategory_default"
-        android:entryValues="@array/defaultTabs"
+        android:defaultValue="@string/all"
+        android:entryValues="@array/defaultTabsEntries"
         />
 
     <Preference

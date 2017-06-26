@@ -25,16 +25,16 @@
         android:key="@string/sortKey"
         android:title="@string/listsorttypes_preftitle"
         android:summary="@string/listsorttypes_prefmessage"
-        android:entries="@array/sortTypesValues"
-        android:entryValues="@array/sortTypes"
+        android:entries="@array/sortTypesEntries"
+        android:entryValues="@array/sortTypesValues"
         />
 
     <ListPreference
         android:key="@string/dateFormatKey"
         android:title="@string/datetype_preftitle"
         android:summary="@string/datetype_prefmessage"
-        android:entries="@array/dateTypesValues"
-        android:entryValues="@array/dateTypes"
+        android:entries="@array/dateTypesEntries"
+        android:entryValues="@array/dateTypesValues"
         />
 
 </PreferenceScreen>

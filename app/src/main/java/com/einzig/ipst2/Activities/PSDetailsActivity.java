@@ -101,7 +101,7 @@ public class PSDetailsActivity extends AppCompatActivity {
      *
      */
     public PSDetailsActivity() {
-        uiFormatter = new PreferencesHelper(getApplicationContext()).getUIFormatter();
+        uiFormatter = null;
     }
 
     /**
@@ -297,6 +297,7 @@ public class PSDetailsActivity extends AppCompatActivity {
         ActionBar supportActionBar = getSupportActionBar();
         if (supportActionBar != null)
             supportActionBar.setDisplayHomeAsUpEnabled(true);
+        uiFormatter = new PreferencesHelper(getApplicationContext()).getUIFormatter();
         portal = getIntent().getExtras().getParcelable(PORTAL_KEY);
         if (portal != null) {
             buildUI();
