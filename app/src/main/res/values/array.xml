@@ -64,6 +64,12 @@
         <item>@string/month</item>
         <item>@string/week</item>
         <item>@string/today</item>
-
     </string-array>
+
+    <integer-array name="defaultTabsEntries">
+        <item>@id/alltab_mainactivity</item>
+        <item>@id/monthtab_mainactivity</item>
+        <item>@id/weektab_mainactivity</item>
+        <item>@id/todaytab_mainactivity</item>
+    </integer-array>
 </resources>

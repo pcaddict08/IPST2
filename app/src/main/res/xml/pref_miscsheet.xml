@@ -39,7 +39,7 @@
         android:key="@string/defaultTabKey"
         android:title="@string/defaultcategory_preftitle"
         android:summary="@string/defaultcategory_prefmessage"
-        android:entries="@array/defaultTabs"
+        android:entries="@array/defaultTabsEntries"
         android:defaultValue="@string/defaultcategory_default"
         android:entryValues="@array/defaultTabs"
         />

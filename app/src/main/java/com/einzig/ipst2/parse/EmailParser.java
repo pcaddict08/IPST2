@@ -132,7 +132,6 @@ class EmailParser {
     }
 
     /**
-     * TODO: Speed up parsing
      * Parse a portal submission email
      *
      * @param subject      Email subject line

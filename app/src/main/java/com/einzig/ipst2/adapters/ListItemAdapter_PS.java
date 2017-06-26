@@ -103,7 +103,6 @@ public class ListItemAdapter_PS extends BaseAdapter implements Filterable {
         }
 
         TextView pstimelabel = (TextView) itemLayout.findViewById(R.id.psdate_rowpslist);
-        // TODO Fix this
         if (pstimelabel != null) {
             DateTimeFormatter formatter = new PreferencesHelper(context).getUIFormatter();
             pstimelabel.setText(
