@@ -43,8 +43,6 @@ public class PortalSubmission implements Parcelable, Serializable {
     public static final Creator<PortalSubmission> CREATOR;
     /** Version descriptor for serialized PortalSubmissions */
     private static final long serialVersionUID;
-    /** Date formatter for displaying on the UI */
-    static DateTimeFormatter UI_FORMATTER;
 
     static {
         CREATOR = new Creator<PortalSubmission>() {
@@ -60,11 +58,6 @@ public class PortalSubmission implements Parcelable, Serializable {
         };
 
         serialVersionUID = -223108874747293680L;
-        UI_FORMATTER = ISODateTimeFormat.date();
-    }
-
-    static public void setUIFormatter() {
-
     }
 
     /**
@@ -125,7 +118,7 @@ public class PortalSubmission implements Parcelable, Serializable {
      * @return @c true if the two portal submissions are the same, otherwise false.
      */
     public boolean equals(PortalSubmission submission) {
-        return pictureURL.equalsIgnoreCase(submission.pictureURL);
+        return pictureURL.equalsIgnoreCase(submission.pictureURL) && name.equals(submission.name);
     }
 
     /**
@@ -160,13 +153,6 @@ public class PortalSubmission implements Parcelable, Serializable {
      */
     public String getPictureURL() {
         return pictureURL;
-    }
-
-    /*
-    *  Return a formatted submitted date
-    * */
-    public String getSubmittedDateString() {
-        return DATE_FORMATTER.print(dateSubmitted);
     }
 
     /**

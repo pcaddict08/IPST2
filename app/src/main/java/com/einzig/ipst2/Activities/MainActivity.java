@@ -80,6 +80,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.fabric.sdk.android.Fabric;
 
+import static com.einzig.ipst2.util.PreferencesHelper.*;
+
 /**
  * Main activity class which launches the app.
  * Contains all startup and initialization code.
@@ -89,57 +91,24 @@ import io.fabric.sdk.android.Fabric;
  */
 public class MainActivity extends AppCompatActivity
         implements CompoundButton.OnCheckedChangeListener {
-    /**
-     * The key for saving default category preference
-     */
-    static public final String DEFAULTCAT_KEY = "default-category";
-    /**
-     * Preferences key used for saving and retrieving the user's email address
-     */
-    static public final String EMAIL_KEY = "email";
-    /**
-     * Preferences key for email folder containing portal emails
-     */
-    static final public String FOLDER_KEY = "mailFolder";
-    /**
-     * The key for saving manual refresh preference
-     */
-    static public final String MANUALREFRESH_KEY = "manual-refresh";
-    /**
-     * Preferences key for sending date through Bundle
-     */
-    static public final String MOST_RECENT_DATE_KEY = "recentDate";
-    /**
-     * Used for the default key when something is uninitialized
-     */
-    static public final String NULL_KEY = "uninitialized";
-    /**
-     * Preferences key for sending a portal through a bundle
-     */
+    /** Preferences key for sending a portal through a bundle */
     static public final String PORTAL_KEY = "portal";
-    /**
-     * Preferences key for sending a portal list through Bundle
-     */
+    /** Preferences key for sending a portal list through Bundle */
     static public final String PORTAL_LIST_KEY = "portalList";
-    /**
-     * The PortalSubmission being combined with a PortalResponded
-     */
-    static public final String PORTAL_SUBMISSION_KEY = "portalSubmission";
-    /**
-     * The key for saving portal submission sort preference
-     */
-    static public final String SORT_KEY = "sort";
-    /*
-    * The key for saving version num
-    * */
-    static public final String VERSION_KEY = "version";
+    /** Activity-for-result code to request write-to-external-storage permissions */
+    static final public int REQUEST_CODE_WRITE_EXTERNAL = 2;
+    /** The key for saving version num */
+    static final public String VERSION_KEY = "version";
+    /** Activity-for-result code to request email permissions */
     static final int REQUEST_CODE_EMAIL = 1;
     static final int REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR = 1002;
-    /**
-     * Used to get the result of LoginActivity
-     */
+    /** Used to get the result of LoginActivity */
     static private final int LOGIN_ACTIVITY_CODE = 0;
+    /** Seems to be redundant with PreferencesHelper#MANUAL_REFRESH_KEY */
+    static final private String REFRESH_KEY = "refresh";
     static private final int SETTINGS_ACTIVITY_CODE = 101;
+
+    /* Butterknife UI code */
     @BindView(R.id.acceptedgraph_mainactivity)
     TextView acceptedgraph;
     @BindView(R.id.acceptedtext_mainactivity)
@@ -171,6 +140,7 @@ public class MainActivity extends AppCompatActivity
     Button viewButton;
     @BindView(R.id.weektab_mainactivity)
     RadioButton weektab;
+
     /** Database Handle for getting portals and such */
     private DatabaseInterface db;
     /** Preferences for saving app settings */
@@ -310,16 +280,16 @@ public class MainActivity extends AppCompatActivity
             preferences.edit().putString("date-type", "monthdayyear").apply();
         if (preferences.getString("sort-type", "").equalsIgnoreCase(""))
             preferences.edit().putString("sort-type", "respond-date").apply();
-        if (preferences.getString(MainActivity.FOLDER_KEY, MainActivity.NULL_KEY).equalsIgnoreCase
-                (MainActivity.NULL_KEY))
-            preferences.edit().putString(MainActivity.FOLDER_KEY, FolderGetter.DEFAULT_FOLDER)
+        if (preferences.getString(FOLDER_KEY, NULL_KEY).equalsIgnoreCase
+                (NULL_KEY))
+            preferences.edit().putString(FOLDER_KEY, FolderGetter.DEFAULT_FOLDER)
                     .apply();
         Logger.i(EMAIL_KEY + " -> " + preferences.getString(EMAIL_KEY, NULL_KEY));
-        Logger.i(MOST_RECENT_DATE_KEY + " -> " +
-                preferences.getString(MOST_RECENT_DATE_KEY, NULL_KEY));
+        Logger.i(LAST_PARSE_DATE_KEY + " -> " +
+                preferences.getString(LAST_PARSE_DATE_KEY, NULL_KEY));
         Logger.i(SORT_KEY + " -> " + preferences.getString(SORT_KEY, NULL_KEY));
-        Logger.i(MANUALREFRESH_KEY + " -> " + preferences.getBoolean(MANUALREFRESH_KEY, false));
-        Logger.i(DEFAULTCAT_KEY + " -> " + preferences.getString(DEFAULTCAT_KEY, NULL_KEY));
+        Logger.i(MANUAL_REFRESH_KEY + " -> " + preferences.getBoolean(MANUAL_REFRESH_KEY, false));
+        Logger.i(DEFAULT_CAT_KEY + " -> " + preferences.getString(DEFAULT_CAT_KEY, NULL_KEY));
     }
 
     /**
@@ -523,14 +493,14 @@ public class MainActivity extends AppCompatActivity
             ab.setDisplayShowHomeEnabled(true);
         }
         getPreferences();
-        boolean shouldRefresh = getIntent().getBooleanExtra("shouldRefresh", false);
+        boolean shouldRefresh = getIntent().getBooleanExtra(REFRESH_KEY, false);
         gmail_login_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 loginHitMethod();
             }
         });
-        if (!preferences.getBoolean(MANUALREFRESH_KEY, false) || shouldRefresh) {
+        if (!preferences.getBoolean(MANUAL_REFRESH_KEY, false) || shouldRefresh) {
             if (!preferences.getString(EMAIL_KEY, NULL_KEY).equalsIgnoreCase(NULL_KEY)) {
                 parseEmail();
             } else {
@@ -566,7 +536,7 @@ public class MainActivity extends AppCompatActivity
         case R.id.refresh_mainactivity:
             finish();
             Intent nextIntent = getIntent();
-            nextIntent.putExtra("shouldRefresh", true);
+            nextIntent.putExtra(REFRESH_KEY, true);
             startActivity(getIntent());
             break;
         }
@@ -612,7 +582,9 @@ public class MainActivity extends AppCompatActivity
     public void openList(Vector<? extends PortalSubmission> list) {
         if (list.size() > 0) {
             Intent intent = new Intent(MainActivity.this, PSListActivity.class);
-            intent.putExtra("psList", list);
+            // TODO: Removed hardcoded intent key
+            Logger.i("MainActivity", "Starting list activity with " + list.size() + "portals");
+            intent.putExtra(PORTAL_LIST_KEY, list);
             startActivity(intent);
         } else {
             DialogHelper.showSimpleDialog(R.string.noportalwarning, R.string.noportalmessage,

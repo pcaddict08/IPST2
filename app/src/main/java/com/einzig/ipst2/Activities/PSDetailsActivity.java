@@ -61,6 +61,7 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
 import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormatter;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -72,36 +73,111 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.einzig.ipst2.activities.MainActivity.PORTAL_KEY;
+import static com.einzig.ipst2.activities.MainActivity.REQUEST_CODE_WRITE_EXTERNAL;
+
 public class PSDetailsActivity extends AppCompatActivity {
-    static final int WRITE_EXTERNAL_STORAGE = 2;
+    /* Butterknife UI code */
     @BindView(R.id.daysinqueue_psdetailsactivity)
-    TextView daysinqueueLabel;
+    TextView daysInQueueLabel;
     @BindView(R.id.extralayout_psdetailsactivity)
-    LinearLayout extralayout;
+    LinearLayout extraLayout;
     @BindView(R.id.name_psdetailsactivity)
     TextView namelabel;
-    PortalSubmission portalSubmission;
+    /** Portal */
+    PortalSubmission portal;
     @BindView(R.id.psimage_psdetailsactivity)
-    ImageView psimage;
+    ImageView portalImage;
     @BindView(R.id.psstatusimage_psdetailsactivity)
-    ImageView psstatusimage;
+    ImageView portalStatusImage;
     @BindView(R.id.saveportalimage_psdetailsactivity)
-    Button saveportalimage;
+    Button savePortalImageButton;
     @BindView(R.id.submitted_psdetailsactivity)
     TextView submittedLabel;
+    /** Date Formatter for displaying dates on the UI */
+    DateTimeFormatter uiFormatter;
 
+    /**
+     *
+     */
+    public PSDetailsActivity() {
+        uiFormatter = PreferencesHelper.getUIFormatter(this);
+    }
 
-    public void buildUI() {
-        Logger.d("PS Type: " + portalSubmission.getClass().getName());
-        namelabel.setText(portalSubmission.getName());
-        // TODO: Fix this
-        //portalSubmission.setDateFormat(PreferencesHelper.getSDF(this));
-        submittedLabel.setText(portalSubmission.getSubmittedDateString());
+    /**
+     * Add additional UI components for an accepted portal submission
+     * @param portal Portal being viewed cast to a PortalAccepted for convenience
+     */
+    private void buildAcceptedUI(PortalAccepted portal) {
+        buildRespondedUI(portal);
+        portalStatusImage.setBackgroundColor(getResources().getColor(R.color.accepted));
+        portalStatusImage.setImageDrawable(getResources().getDrawable(R.drawable.ic_check));
+        LinearLayout acceptedLayout = (LinearLayout) LayoutInflater.from(this)
+                .inflate(R.layout.row_psdetails_accepted, extraLayout, false);
+        ((TextView) acceptedLayout.findViewById(R.id.liveaddress_acceptedrow)).setText(
+                portal.getLiveAddress());
+        acceptedLayout.findViewById(R.id.viewonintelmapbutton_acceptedrow)
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        goToIntel();
+                    }
+                });
+        extraLayout.addView(acceptedLayout);
+    }
+
+    /**
+     * Add additional UI components for portal details
+     */
+    private void buildExtraUI() {
+        if (portal instanceof PortalAccepted)
+            buildAcceptedUI((PortalAccepted) portal);
+        else if (portal instanceof PortalRejected)
+            buildRejectedUI((PortalRejected) portal);
+        else
+            daysInQueueLabel.setText(String.valueOf(portal.getDaysSinceResponse()));
+    }
+
+    /**
+     * Add additional UI components for a portal submission that is no longer pending
+     * @param portal Portal being viewed cast to a PortalResponded for convenience
+     */
+    private void buildRespondedUI(PortalResponded portal) {
+        daysInQueueLabel.setText(String.valueOf(portal.getResponseTime()));
+        LinearLayout respondedLayout = (LinearLayout) LayoutInflater.from(this)
+                .inflate(R.layout.row_psdetails_responded, extraLayout, false);
+        ((TextView) respondedLayout.findViewById(R.id.dateresponded_respondedrow)).setText(
+                uiFormatter.print(portal.getDateResponded()));
+        extraLayout.addView(respondedLayout);
+    }
+
+    /**
+     * Add additional UI components for a rejected portal submission
+     * @param portal Portal being viewed cast to a PortalRejected for convenience
+     */
+    private void buildRejectedUI(PortalRejected portal) {
+        buildRespondedUI(portal);
+        portalStatusImage.setBackgroundColor(getResources().getColor(R.color.rejected));
+        portalStatusImage.setImageDrawable(getResources().getDrawable(R.drawable.ic_rejected));
+        LinearLayout rejectedLayout = (LinearLayout) LayoutInflater.from(this)
+                .inflate(R.layout.row_psdetails_rejected, extraLayout, false);
+        ((TextView) rejectedLayout.findViewById(R.id.rejectionreason_rejectedrow)).setText(
+                portal.getRejectionReason());
+        extraLayout.addView(rejectedLayout);
+    }
+
+    /**
+     * Initialize default UI components
+     */
+    private void buildUI() {
+        Logger.d("PSDetailsActivity", "Portal Type: " + portal.getClass().getName());
+        namelabel.setText(portal.getName());
+        submittedLabel.setText(uiFormatter.print(portal.getDateSubmitted()));
         Picasso.with(this)
-                .load(portalSubmission.getPictureURL())
+                .load(portal.getPictureURL())
                 .error(R.drawable.ic_warning_white)
-                .into(psimage);
-        setUpExtraUI();
+                .into(portalImage);
+        buildExtraUI();
         setUpImageDownloadButton();
         setUpImageDetailsView();
     }
@@ -129,7 +205,7 @@ public class PSDetailsActivity extends AppCompatActivity {
 
     public void goToIntel() {
         try {
-            Uri uri = Uri.parse(((PortalAccepted) portalSubmission).getIntelLinkURL());
+            Uri uri = Uri.parse(((PortalAccepted) portal).getIntelLinkURL());
             Intent intent = new Intent(Intent.ACTION_VIEW, uri);
             startActivity(intent);
         } catch (Exception e) {
@@ -221,8 +297,8 @@ public class PSDetailsActivity extends AppCompatActivity {
         ActionBar supportActionBar = getSupportActionBar();
         if (supportActionBar != null)
             supportActionBar.setDisplayHomeAsUpEnabled(true);
-        portalSubmission = getIntent().getExtras().getParcelable("ps");
-        if (portalSubmission != null) {
+        portal = getIntent().getExtras().getParcelable(PORTAL_KEY);
+        if (portal != null) {
             buildUI();
         }
     }
@@ -239,68 +315,32 @@ public class PSDetailsActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        if (requestCode == WRITE_EXTERNAL_STORAGE && grantResults.length > 0) {
+            @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_CODE_WRITE_EXTERNAL && grantResults.length > 0) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                imageDownload(PSDetailsActivity.this, portalSubmission.getPictureURL());
+                imageDownload(PSDetailsActivity.this, portal.getPictureURL());
             }
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
 
-    public void setUpExtraUI() {
-        if (portalSubmission instanceof PortalResponded) {
-            daysinqueueLabel.setText(
-                    String.valueOf(((PortalResponded) portalSubmission).getResponseTime()));
-            LinearLayout respondedLayout = (LinearLayout) LayoutInflater.from(this)
-                    .inflate(R.layout.row_psdetails_responded, extralayout, false);
-            ((TextView) respondedLayout.findViewById(R.id.dateresponded_respondedrow)).setText(
-                    ((PortalResponded) portalSubmission).getDateRespondedString());
-            extralayout.addView(respondedLayout);
-            if (portalSubmission instanceof PortalRejected) {
-                psstatusimage.setBackgroundColor(getResources().getColor(R.color.rejected));
-                psstatusimage.setImageDrawable(getResources().getDrawable(R.drawable.ic_rejected));
-                LinearLayout rejectedLayout = (LinearLayout) LayoutInflater.from(this)
-                        .inflate(R.layout.row_psdetails_rejected, extralayout, false);
-                ((TextView) rejectedLayout.findViewById(R.id.rejectionreason_rejectedrow)).setText(
-                        ((PortalRejected) portalSubmission).getRejectionReason());
-                extralayout.addView(rejectedLayout);
-            } else if (portalSubmission instanceof PortalAccepted) {
-                psstatusimage.setBackgroundColor(getResources().getColor(R.color.accepted));
-                psstatusimage.setImageDrawable(getResources().getDrawable(R.drawable.ic_check));
-                LinearLayout acceptedLayout = (LinearLayout) LayoutInflater.from(this)
-                        .inflate(R.layout.row_psdetails_accepted, extralayout, false);
-                ((TextView) acceptedLayout.findViewById(R.id.liveaddress_acceptedrow)).setText(
-                        ((PortalAccepted) portalSubmission).getLiveAddress());
-                acceptedLayout.findViewById(R.id.viewonintelmapbutton_acceptedrow)
-                        .setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                goToIntel();
-                            }
-                        });
-                extralayout.addView(acceptedLayout);
-            }
-        } else
-            daysinqueueLabel.setText(String.valueOf(portalSubmission.getDaysSinceResponse()));
-    }
-
     public void setUpImageDetailsView() {
         final DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        psimage.setOnClickListener(new View.OnClickListener() {
+        portalImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 try {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(PSDetailsActivity.this);
+                    AlertDialog.Builder builder =
+                            new AlertDialog.Builder(PSDetailsActivity.this);
                     RelativeLayout itemLayout =
                             (RelativeLayout) LayoutInflater.from(PSDetailsActivity.this)
                                     .inflate(R.layout.image_details, null);
                     builder.setView(itemLayout);
                     final AlertDialog d = builder.show();
                     Picasso.with(PSDetailsActivity.this)
-                            .load(portalSubmission.getPictureURL())
+                            .load(portal.getPictureURL())
                             .error(R.drawable.ic_warning_white)
                             .resize(displayMetrics.widthPixels, displayMetrics.heightPixels)
                             .centerInside()
@@ -320,17 +360,17 @@ public class PSDetailsActivity extends AppCompatActivity {
     }
 
     public void setUpImageDownloadButton() {
-        saveportalimage.setOnClickListener(new View.OnClickListener() {
+        savePortalImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (ContextCompat.checkSelfPermission(PSDetailsActivity.this,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         == PackageManager.PERMISSION_GRANTED) {
-                    imageDownload(PSDetailsActivity.this, portalSubmission.getPictureURL());
+                    imageDownload(PSDetailsActivity.this, portal.getPictureURL());
                 } else {
                     ActivityCompat.requestPermissions(PSDetailsActivity.this,
                             new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                            WRITE_EXTERNAL_STORAGE);
+                            REQUEST_CODE_WRITE_EXTERNAL);
                 }
             }
         });

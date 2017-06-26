@@ -20,13 +20,17 @@
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <Preference
+        android:defaultValue="true"
+        android:key="@string/hardResetKey"
+        android:summary="@string/cleardb_prefsummary"
+        android:title="@string/cleardb_preftitle" />
 
     <Preference
         android:defaultValue="true"
         android:key="cleardb_pref"
-        android:summary="@string/cleardb_prefsummary"
-        android:title="@string/cleardb_preftitle" />
-
+        android:summary="@string/softResetSummary"
+        android:title="@string/softResetTitle" />
     <!--
     <Preference
         android:defaultValue="true"

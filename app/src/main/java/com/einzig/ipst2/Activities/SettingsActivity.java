@@ -53,9 +53,9 @@ import com.einzig.ipst2.database.DatabaseInterface;
 
 import java.util.List;
 
+import static com.einzig.ipst2.activities.MainActivity.REQUEST_CODE_WRITE_EXTERNAL;
+
 public class SettingsActivity extends AppCompatPreferenceActivity {
-    /**  */
-    static final public int WRITE_EXTERNAL_REQUEST_CODE = 2;
 
     public static String getVersionNum(Context context) {
         try {
@@ -128,7 +128,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
             @NonNull int[] grantResults) {
-        if (requestCode != WRITE_EXTERNAL_REQUEST_CODE)
+        if (requestCode != REQUEST_CODE_WRITE_EXTERNAL)
             return;
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             new LogExporter(this).execute();
@@ -301,7 +301,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 preferences.edit().putString("date-type", "monthdayyear").apply();
             if (preferences.getString("sort-type", "").equalsIgnoreCase(""))
                 preferences.edit().putString("sort-type", "respond-date").apply();
-            DBPreferenceFragment.this.findPreference("cleardb_pref")
+            DBPreferenceFragment.this.findPreference(getResources()
+                    .getString(R.string.hardResetKey))
                     .setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                         @Override
                         public boolean onPreferenceClick(Preference preference) {

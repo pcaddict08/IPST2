@@ -79,13 +79,16 @@
     <string name="aboutcontact_prefheader">About &amp; Contact</string>
 
     <string name="cleardb_prefsummary">Clear all local data and make the app as if you just installed it.</string>
-    <string name="cleardb_preftitle">Clear Data</string>
+    <string name="cleardb_preftitle">Hard Reset</string>
     <string name="exportdb_prefsummary">Export local database of portal submissions to a CSV file.</string>
     <string name="exportdb_preftitle">Export</string>
     <string name="exportlogs_summary">Export logs to a text file</string>
     <string name="exportlogs_title">Export Logs</string>
     <string name="importdb_prefsummary">Import portal submissions from a CSV you exported from IPST2.  *WARNING* Importing from an IPST(original) CSV is not supported.</string>
     <string name="importdb_preftitle">Import</string>
+    <string name="softResetTitle">Soft Reset</string>
+    <string name="softResetSummary">Clear portal data and re-parse emails without resetting
+        preferences</string>
 
     <string name="manualrefresh_preftitle">Manual Refresh</string>
     <string name="manualrefresh_prefmessage">If checked, IPST will only refresh when the

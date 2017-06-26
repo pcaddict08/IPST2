@@ -25,12 +25,8 @@ package com.einzig.ipst2.portal;
 
 import android.os.Parcel;
 
-import org.joda.time.DateTime;
-import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.joda.time.Period;
-
-import static com.einzig.ipst2.database.DatabaseInterface.DATE_FORMATTER;
 
 /**
  * @author Ryan Porterfield
@@ -77,15 +73,8 @@ public abstract class PortalResponded extends PortalSubmission {
     }
 
     /*
-   *  Return a formatted responded date
-   * */
-    public String getDateRespondedString() {
-        return DATE_FORMATTER.print(dateResponded);
-    }
-
-    /*
-    * Return days since Niantic has responded
-    * */
+     * Return days since Niantic has responded
+     */
     @Override
     public int getDaysSinceResponse() {
         return Period.fieldDifference(dateResponded, LocalDate.now()).getDays();

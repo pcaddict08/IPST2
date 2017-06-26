@@ -25,50 +25,80 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import java.text.SimpleDateFormat;
-import java.util.Locale;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 import java.util.Map;
 
 /**
- * Created by Steven Foskett on 6/14/2017.
+ * @author Steven Foskett
+ * @since 2017-06-14
  */
 public class PreferencesHelper {
+    /**  */
+    static public final String DATE_FORMAT_KEY;
+    /** Day-month-year format */
+    static public final String DD_MM_YYYY_FORMAT;
+    /** The key for saving default category preference */
+    static public final String DEFAULT_CAT_KEY;
+    /** Preferences key used for saving and retrieving the user's email address */
+    static public final String EMAIL_KEY;
+    /** Preferences key for email folder containing portal emails */
+    static final public String FOLDER_KEY;
+    /** Preferences key for the most recent parse date */
+    static public final String LAST_PARSE_DATE_KEY;
+    /** The key for saving manual refresh preference */
+    static public final String MANUAL_REFRESH_KEY;
+    /** Standard American date format */
+    static public final String MM_DD_YYYY_FORMAT;
+    /** Used for the default key when something is uninitialized */
+    static public final String NULL_KEY;
+    /** The key for saving portal submission sort preference */
+    static public final String SORT_KEY;
+    /** Year-day-month format */
+    static public final String YYYY_DD_MM_FORMAT;
+    /** ISO/International year-month-day format */
+    static public final String YYYY_MM_DD_FORMAT;
+
+    static {
+        DATE_FORMAT_KEY = "dateFormat";
+        DD_MM_YYYY_FORMAT = "dd-MM-yyyy";
+        DEFAULT_CAT_KEY = "default-category";
+        EMAIL_KEY = "email";
+        FOLDER_KEY = "mailFolder";
+        LAST_PARSE_DATE_KEY = "parseDate";
+        MANUAL_REFRESH_KEY = "manualRefresh";
+        MM_DD_YYYY_FORMAT = "MM-dd-yyyy";
+        NULL_KEY = "uninitialized";
+        SORT_KEY = "sort";
+        YYYY_DD_MM_FORMAT = "yyyy-dd-MM";
+        YYYY_MM_DD_FORMAT = "yyyy-MM-dd";
+    }
+
+    /**
+     * @param context
+     * @return
+     */
+    public static DateTimeFormatter getUIFormatter(Context context) {
+        String formatString =
+                PreferenceManager.getDefaultSharedPreferences(context)
+                        .getString(DATE_FORMAT_KEY, NULL_KEY);
+        return DateTimeFormat.forPattern(formatString);
+    }
+
+    /**
+     * Log all preferences
+     *
+     * @param prefs App preferences
+     */
     public static void printAllPrefs(SharedPreferences prefs) {
         Map<String, ?> keys = prefs.getAll();
 
         if (keys.size() == 0)
-            Logger.d("NO keys found in prefs");
+            Logger.d("PreferencesHelper#printAllprefs", "NO keys found in prefs");
         for (Map.Entry<String, ?> entry : keys.entrySet()) {
-            Logger.d("map values", entry.getKey() + ": " +
+            Logger.d("PreferencesHelper#printAllprefs", entry.getKey() + ": " +
                     entry.getValue().toString());
         }
-    }
-
-    public static SimpleDateFormat getSDF(Context context) {
-        SimpleDateFormat sdf = null;
-        String formatString =
-                PreferenceManager.getDefaultSharedPreferences(context).getString("date-type", "");
-        switch (formatString) {
-        case "":
-            sdf = new SimpleDateFormat("MM-dd-yyyy", Locale.getDefault());
-            break;
-        case "monthdayyear":
-            sdf = new SimpleDateFormat("MM-dd-yyyy", Locale.getDefault());
-
-            break;
-        case "daymonthyear":
-            sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
-
-            break;
-        case "yearmonthday":
-            sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-
-            break;
-        case "yeardaymonth":
-            sdf = new SimpleDateFormat("yyyy-dd-MM", Locale.getDefault());
-
-            break;
-        }
-        return sdf;
     }
 }

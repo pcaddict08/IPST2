@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="clearDatabaseKey">clear</string>
     <string name="contactKey">contact</string>
     <string name="dateFormatKey">dateFormat</string>
     <string name="donateKey">donate</string>
@@ -9,6 +8,7 @@
     <string name="exportlogs_pref">exportLogs</string>
     <string name="folderKey">folder</string>
     <string name="frontPageKey">frontPage</string>
+    <string name="hardResetKey">hardReset</string>
     <string name="logoutKey">logout</string>
     <string name="nullKey">uninitialized</string>
     <string name="portalKey">portal</string>
@@ -17,6 +17,7 @@
     <string name="portalSubmissionKey">portalSubmission</string>
     <string name="privacyKey">privacy</string>
     <string name="recentDateKey">recentDate</string>
+    <string name="softResetKey">softReset</string>
     <string name="sortKey">sort</string>
     <string name="versionKey">version</string>
 </resources>

@@ -54,6 +54,9 @@ import java.util.Collections;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.einzig.ipst2.activities.MainActivity.PORTAL_KEY;
+import static com.einzig.ipst2.activities.MainActivity.PORTAL_LIST_KEY;
+
 public class PSListActivity extends AppCompatActivity {
     @BindView(R.id.listview_pslistactivity)
     ListView listView;
@@ -68,7 +71,7 @@ public class PSListActivity extends AppCompatActivity {
         if (ab != null)
             ab.setDisplayHomeAsUpEnabled(true);
 
-        psList = getIntent().getExtras().getParcelableArrayList("psList");
+        psList = getIntent().getExtras().getParcelableArrayList(PORTAL_LIST_KEY);
         if (psList != null) {
             Logger.d("PS LIST SIZE: " + psList.size());
             sortList(psList);
@@ -78,8 +81,11 @@ public class PSListActivity extends AppCompatActivity {
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                     Logger.d("Item Selected at index: " + i);
                     try {
-                        Intent intent = new Intent(PSListActivity.this, PSDetailsActivity.class);
-                        intent.putExtra("ps", (Parcelable) ((ListItemAdapter_PS)listView.getAdapter()).shownItems.get(i));
+                        PortalSubmission portal = ((ListItemAdapter_PS)listView.getAdapter())
+                                .shownItems.get(i);
+                        Intent intent = new Intent(PSListActivity.this,
+                                PSDetailsActivity.class);
+                        intent.putExtra(PORTAL_KEY, (Parcelable) portal);
                         startActivity(intent);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -174,7 +180,7 @@ public class PSListActivity extends AppCompatActivity {
                         editor.apply();
                         Intent i = getIntent();
                         i.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                        i.putExtra("psList", PSListActivity.this.psList);
+                        i.putExtra(PORTAL_LIST_KEY, PSListActivity.this.psList);
                         startActivity(i);
                         finish();
                         overridePendingTransition(0, 0);
