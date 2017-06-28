@@ -263,6 +263,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             db.deleteAll();
             PreferencesHelper helper = new PreferencesHelper(getActivity());
             helper.clearAll();
+            helper.initPreferences();
             helper.printAllPreferences();
             ((SettingsActivity) getActivity()).clearedData();
         }

@@ -439,7 +439,12 @@ public class MainActivity extends AppCompatActivity
             ab.setDisplayShowHomeEnabled(true);
         }
         PreferencesHelper helper = new PreferencesHelper(getApplicationContext());
+        if (!helper.isInitialized(helper.resetKey())) {
+            db.deleteAll();
+            helper.clearAll();
+        }
         helper.initPreferences();
+
         helper.printAllPreferences();
         boolean shouldRefresh = getIntent().getBooleanExtra(REFRESH_KEY, false);
         gmail_login_button.setOnClickListener(new View.OnClickListener() {
