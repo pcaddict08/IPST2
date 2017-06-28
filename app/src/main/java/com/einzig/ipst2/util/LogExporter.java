@@ -28,6 +28,7 @@ import android.os.AsyncTask;
 import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.widget.Toast;
 
 import com.einzig.ipst2.database.DatabaseInterface;
 
@@ -48,10 +49,12 @@ import static com.einzig.ipst2.activities.MainActivity.REQUEST_CODE_WRITE_EXTERN
  * @author Ryan Porterfield
  * @since 2017-06-24
  */
-public class LogExporter extends AsyncTask<Void, Void, Void> {
+public class LogExporter extends AsyncTask<Void, Void, String> {
     /** Application activity */
     final private Activity activity;
 
+    /* Filename to show */
+    String filename;
     /**
      * Create a task to export logs from the database
      * @param activity Parent activity
@@ -71,7 +74,13 @@ public class LogExporter extends AsyncTask<Void, Void, Void> {
     }
 
     @Override
-    protected Void doInBackground(Void... voids) {
+    protected void onPostExecute(String filename) {
+        if(filename != null)
+            Toast.makeText(activity, "Log Exported: " + filename, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    protected String doInBackground(Void... voids) {
         if (!externalMediaWritable() || !checkPermissions())
             return null;
         try {
@@ -86,7 +95,7 @@ public class LogExporter extends AsyncTask<Void, Void, Void> {
         } catch (IOException e) {
             Logger.e("LogExporter", e.toString());
         }
-        return null;
+        return filename;
     }
 
     /**
@@ -105,7 +114,8 @@ public class LogExporter extends AsyncTask<Void, Void, Void> {
     private File getLogFile() throws FileNotFoundException {
         File root = Environment.getExternalStorageDirectory();
         File dir = new File (root.getAbsolutePath() + "/Download");
-        File logFile = new File(dir, getFilename());
+        this.filename = getFilename();
+        File logFile = new File(dir, filename);
         Logger.i("LogExporter", "Writing to " + logFile.getAbsolutePath());
         return logFile;
     }
