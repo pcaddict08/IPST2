@@ -97,7 +97,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         values.put(COLUMN_LOG_SCOPE, log.getScope());
         values.put(COLUMN_LOG_MESSAGE, log.getMessage());
         db.insert(TABLE_LOGGING, null, values);
-		db.close();
+        db.close();
     }
 
     /**
@@ -109,7 +109,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     private void addPortal(String table, ContentValues values) {
         SQLiteDatabase db = getWritableDatabase();
         db.insert(table, null, values);
-		db.close();
+        db.close();
     }
 
     /**
@@ -197,6 +197,22 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         db.delete(TABLE_ACCEPTED, null, null);
         db.delete(TABLE_REJECTED, null, null);
         db.close();
+    }
+
+    /*
+    * NUKE the database
+    * */
+    public void nukeAll() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor c = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table'", null);
+        if (c.moveToFirst()) {
+
+            while ( !c.isAfterLast() ) {
+                db.execSQL("DROP TABLE '"+c.getString( c.getColumnIndex("name"))+"'");
+                c.moveToNext();
+            }
+        }
+        c.close();
     }
 
     /**
@@ -771,7 +787,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL(LoggingContract.SQL_DELETE_ENTRIES);
         db.execSQL(LoggingContract.SQL_CREATE_ENTRIES);
-		db.close();
+        db.close();
     }
 
     /**

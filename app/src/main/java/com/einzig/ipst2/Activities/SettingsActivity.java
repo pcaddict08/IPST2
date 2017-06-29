@@ -260,7 +260,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     public static class DBPreferenceFragment extends PreferenceFragment {
         public void clearAllData() {
             DatabaseInterface db = new DatabaseInterface(getActivity());
-            db.deleteAll();
+            db.nukeAll();
+            db.onCreate(db.getWritableDatabase());
+            //db.deleteAll();
             PreferencesHelper helper = new PreferencesHelper(getActivity());
             helper.clearAll();
             helper.initPreferences();

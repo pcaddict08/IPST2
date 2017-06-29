@@ -422,7 +422,7 @@ public class MainActivity extends AppCompatActivity
         }
         PreferencesHelper helper = new PreferencesHelper(getApplicationContext());
         if (!helper.isInitialized(helper.resetKey())) {
-            db.deleteAll();
+            db.nukeAll();
             helper.clearAll();
         }
         helper.initPreferences();
