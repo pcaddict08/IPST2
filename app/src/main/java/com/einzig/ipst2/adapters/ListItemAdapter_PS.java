@@ -50,7 +50,7 @@ import java.util.Vector;
 // Custom list item class for menu items
 public class ListItemAdapter_PS extends BaseAdapter implements Filterable {
     /**  */
-    public Vector<? extends PortalSubmission> shownItems;
+    public ArrayList<? extends PortalSubmission> shownItems;
     /** Application context */
     private Context context;
     /**  */
@@ -61,11 +61,14 @@ public class ListItemAdapter_PS extends BaseAdapter implements Filterable {
     public ListItemAdapter_PS(final Vector<? extends PortalSubmission> items, Context context) {
         this.context = context;
         this.originalItems = items;
-        this.shownItems = new Vector<>(items);
+        this.shownItems = new ArrayList<>(items);
     }
 
     public int getCount() {
-        return this.shownItems.size();
+        if (shownItems != null)
+            return this.shownItems.size();
+        else
+            return 0;
     }
 
     @Override
@@ -119,7 +122,7 @@ public class ListItemAdapter_PS extends BaseAdapter implements Filterable {
     }
 
     public void resetData() {
-        this.shownItems = new Vector<>(originalItems);
+        this.shownItems = new ArrayList<>(originalItems);
         notifyDataSetChanged();
     }
 
@@ -175,7 +178,7 @@ public class ListItemAdapter_PS extends BaseAdapter implements Filterable {
                 for (PortalSubmission p : originalItems) {
                     if (p.getName().toUpperCase().contains(constraint.toString().toUpperCase()))
                         nList.add(p);
-                    Logger.d("ADDED TO SEARCH RESULTS: " + p.getName());
+                    //Logger.d("ADDED TO SEARCH RESULTS: " + p.getName());
                 }
                 results.values = nList;
                 results.count = nList.size();
@@ -186,8 +189,7 @@ public class ListItemAdapter_PS extends BaseAdapter implements Filterable {
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             try {
-                ListItemAdapter_PS.this.shownItems = (Vector<? extends PortalSubmission>) results
-                        .values;
+                ListItemAdapter_PS.this.shownItems = (ArrayList<? extends PortalSubmission>)results.values;
                 System.out.println("PUBLISHED: " + ListItemAdapter_PS.this.shownItems.size());
                 notifyDataSetChanged();
             } catch (Exception e) {

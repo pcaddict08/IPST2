@@ -24,6 +24,7 @@ package com.einzig.ipst2.util;
 import android.content.Context;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.einzig.ipst2.database.DatabaseInterface;
 
 import org.joda.time.LocalDateTime;
@@ -131,6 +132,7 @@ public class Logger {
     static private void log(String level, String scope, String message) {
         if (!initialized)
             return;
+        Crashlytics.log(level + "-" + scope + "-" + message);
         LocalDateTime now = LocalDateTime.now();
         LogEntry entry = new LogEntry(level, now, scope, message);
         db.addLog(entry);
