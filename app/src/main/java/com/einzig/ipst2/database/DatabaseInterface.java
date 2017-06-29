@@ -96,8 +96,10 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         values.put(COLUMN_LOG_TIME, DATE_FORMATTER.print(log.getTime()));
         values.put(COLUMN_LOG_SCOPE, log.getScope());
         values.put(COLUMN_LOG_MESSAGE, log.getMessage());
-        db.insert(TABLE_LOGGING, null, values);
-        db.close();
+        if(db.isOpen()) {
+            db.insert(TABLE_LOGGING, null, values);
+            db.close();
+        }
     }
 
     /**
@@ -213,6 +215,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
             }
         }
         c.close();
+        onCreate(db);
     }
 
     /**

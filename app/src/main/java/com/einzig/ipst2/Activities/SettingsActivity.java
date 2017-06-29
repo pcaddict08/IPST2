@@ -261,7 +261,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         public void clearAllData() {
             DatabaseInterface db = new DatabaseInterface(getActivity());
             db.nukeAll();
-            db.onCreate(db.getWritableDatabase());
             //db.deleteAll();
             PreferencesHelper helper = new PreferencesHelper(getActivity());
             helper.clearAll();
