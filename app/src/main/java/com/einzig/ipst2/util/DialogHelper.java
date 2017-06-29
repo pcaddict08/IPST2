@@ -25,6 +25,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.support.v4.app.ActivityCompat;
 
 import com.einzig.ipst2.R;
 
@@ -44,6 +45,33 @@ public class DialogHelper {
                             .setMessage(message)
                             .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
+                                }
+                            })
+                            .setIcon(R.drawable.ic_warning)
+                            .show();
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void showSimpleDismissingDialog(final int title, final int message,
+            final Context context) {
+        try {
+            ((Activity) context).runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    new AlertDialog.Builder(context, R.style.dialogtheme)
+                            .setTitle(title)
+                            .setMessage(message)
+                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    try {
+                                        ((Activity)context).finish();
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
                                 }
                             })
                             .setIcon(R.drawable.ic_warning)

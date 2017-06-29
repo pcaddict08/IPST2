@@ -90,7 +90,8 @@ public class MainActivity extends AppCompatActivity
     /** Preferences key for sending a portal through a bundle */
     static public final String PORTAL_KEY = "portal";
     /** Preferences key for sending a portal list through Bundle */
-    static public final String PORTAL_LIST_KEY = "portalList";
+    static public final String PORTAL_LIST_KEY_RANGE = "portalList";
+    static public final String PORTAL_LIST_KEY_TYPE = "portalListType";
     /** Activity-for-result code to request write-to-external-storage permissions */
     static final public int REQUEST_CODE_WRITE_EXTERNAL = 2;
     /** The key for saving version num */
@@ -358,13 +359,7 @@ public class MainActivity extends AppCompatActivity
      */
     @OnClick({R.id.acceptedbutton_mainactivity})
     public void onClickAccepted(View view) {
-        Logger.d("Status list button clicked");
-        Vector<PortalAccepted> portals;
-        if (viewDate == null)
-            portals = db.getAllAccepted();
-        else
-            portals = db.getAcceptedByResponseDate(viewDate);
-        openList(portals);
+        openList(viewDate, "accepted");
     }
 
     /*
@@ -372,12 +367,7 @@ public class MainActivity extends AppCompatActivity
      */
     @OnClick({R.id.pendingbutton_mainactivity})
     public void onClickPending(View view) {
-        Vector<PortalSubmission> portals;
-        if (viewDate == null)
-            portals = db.getAllPending();
-        else
-            portals = db.getPendingByDate(viewDate);
-        openList(portals);
+        openList(viewDate, "pending");
     }
 
     /*
@@ -385,12 +375,7 @@ public class MainActivity extends AppCompatActivity
      */
     @OnClick({R.id.rejectedbutton_mainactivity})
     public void onClickRejected(View view) {
-        Vector<PortalRejected> portals;
-        if (viewDate == null)
-            portals = db.getAllRejected();
-        else
-            portals = db.getRejectedByResponseDate(viewDate);
-        openList(portals);
+        openList(viewDate, "rejected");
     }
 
     /*
@@ -399,22 +384,19 @@ public class MainActivity extends AppCompatActivity
     @OnClick(R.id.viewlist_mainactivity)
     public void onClickViewList(View view) {
         Logger.d("View all button clicked");
-        Vector<PortalSubmission> mainList = new Vector<>();
         if (((Button) view).getText().toString().equals(getString(R.string.viewlistall))) {
             Logger.d("Going to All List");
-            mainList = db.getAllPortals();
+            openList(null, "all");
         } else if (((Button) view).getText().toString().equals(getString(R.string.viewlistmonth))) {
             Logger.d("Going to Month List");
-            mainList = db.getAllPortalsFromDate(new LocalDate().minusDays(30));
+            openList(new LocalDate().minusDays(30), "all");
         } else if (((Button) view).getText().toString().equals(getString(R.string.viewlistweek))) {
             Logger.d("Going to Week List");
-            mainList = db.getAllPortalsFromDate(new LocalDate().minusDays(7));
+            openList(new LocalDate().minusDays(7), "all");
         } else if (((Button) view).getText().toString().equals(getString(R.string.viewlisttoday))) {
             Logger.d("Going to Today List");
-            mainList = db.getAllPortalsFromDate(new LocalDate().minusDays(1));
+            openList(new LocalDate().minusDays(1), "all");
         }
-
-        openList(mainList);
     }
 
     /* TODO Refactor into smaller functions
@@ -562,16 +544,16 @@ public class MainActivity extends AppCompatActivity
     /*
      * Method to open listview once list has been created
      */
-    public void openList(Vector<? extends PortalSubmission> list) {
-        if (list.size() > 0) {
-            Intent intent = new Intent(MainActivity.this, PSListActivity.class);
-            Logger.i("MainActivity", "Starting list activity with " + list.size() + "portals");
-            intent.putExtra(PORTAL_LIST_KEY, list);
-            startActivity(intent);
-        } else {
-            DialogHelper.showSimpleDialog(R.string.noportalwarning, R.string.noportalmessage,
-                    MainActivity.this);
-        }
+    public void openList(LocalDate dateForList, String listType) {
+        Intent intent = new Intent(MainActivity.this, PSListActivity.class);
+        String stringForLog = "";
+        if(dateForList != null)
+            stringForLog = dateForList.toString();
+        Logger.i("MainActivity", "Starting list activity with " + listType + " type " +
+                stringForLog + "");
+        intent.putExtra(PORTAL_LIST_KEY_TYPE, listType);
+        intent.putExtra(PORTAL_LIST_KEY_RANGE, stringForLog);
+        startActivity(intent);
     }
 
     /**
@@ -626,12 +608,16 @@ public class MainActivity extends AppCompatActivity
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    dialog.dismiss();
-                    if (bundle != null)
-                        new EmailParseTask(MainActivity.this, bundle).execute();
-                    else {
-                        gmail_login_button.setVisibility(View.VISIBLE);
-                        progress_view_mainactivity.setVisibility(View.INVISIBLE);
+                    try {
+                        dialog.dismiss();
+                        if (bundle != null)
+                            new EmailParseTask(MainActivity.this, bundle).execute();
+                        else {
+                            gmail_login_button.setVisibility(View.VISIBLE);
+                            progress_view_mainactivity.setVisibility(View.INVISIBLE);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 }
             });

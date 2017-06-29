@@ -45,22 +45,23 @@ import org.joda.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Vector;
 
 // Custom list item class for menu items
 public class ListItemAdapter_PS extends BaseAdapter implements Filterable {
     /**  */
-    public ArrayList<PortalSubmission> shownItems;
+    public Vector<? extends PortalSubmission> shownItems;
     /** Application context */
     private Context context;
     /**  */
-    private ArrayList<PortalSubmission> originalItems;
+    private Vector<? extends PortalSubmission> originalItems;
     /**  */
     private SubmissionFilter submissionFilter;
 
-    public ListItemAdapter_PS(final ArrayList<PortalSubmission> items, Context context) {
+    public ListItemAdapter_PS(final Vector<? extends PortalSubmission> items, Context context) {
         this.context = context;
         this.originalItems = items;
-        this.shownItems = new ArrayList<>(items);
+        this.shownItems = new Vector<>(items);
     }
 
     public int getCount() {
@@ -118,7 +119,7 @@ public class ListItemAdapter_PS extends BaseAdapter implements Filterable {
     }
 
     public void resetData() {
-        this.shownItems = new ArrayList<>(originalItems);
+        this.shownItems = new Vector<>(originalItems);
         notifyDataSetChanged();
     }
 
@@ -185,7 +186,8 @@ public class ListItemAdapter_PS extends BaseAdapter implements Filterable {
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             try {
-                ListItemAdapter_PS.this.shownItems = (ArrayList<PortalSubmission>) results.values;
+                ListItemAdapter_PS.this.shownItems = (Vector<? extends PortalSubmission>) results
+                        .values;
                 System.out.println("PUBLISHED: " + ListItemAdapter_PS.this.shownItems.size());
                 notifyDataSetChanged();
             } catch (Exception e) {

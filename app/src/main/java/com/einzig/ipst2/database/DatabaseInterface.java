@@ -23,6 +23,7 @@
 
 package com.einzig.ipst2.database;
 
+import android.accounts.AccountManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -195,7 +196,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         db.delete(TABLE_PENDING, null, null);
         db.delete(TABLE_ACCEPTED, null, null);
         db.delete(TABLE_REJECTED, null, null);
-		db.close();
+        db.close();
     }
 
     /**
