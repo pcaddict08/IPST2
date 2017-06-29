@@ -159,6 +159,7 @@ public class PreferencesHelper {
      * @return true if the preference exists, otherwise false
      */
     public boolean isInitialized(String key) {
+        Logger.d("CHECKING IF " + key + " IS INITIALIZED: " + preferences.getString(key, nullKey()));
         return !preferences.getString(key, nullKey()).equals(nullKey());
     }
 
