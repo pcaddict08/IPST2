@@ -85,11 +85,16 @@ public final class PortalAcceptedBuilder extends PortalBuilder<PortalAccepted> {
     private String parseIntelLink(String messageString) {
         String intelLinkURL;
         Pattern p = Pattern.compile("href=\"(.*?)\"");
-        Matcher m = p.matcher(messageString);
-        if (m.find()) {
-            intelLinkURL = m.group(1);
-        } else
+        try {
+            Matcher m = p.matcher(messageString);
+            if (m.find()) {
+                intelLinkURL = m.group(1);
+            } else
+                intelLinkURL = "N/A";
+        } catch (Exception e) {
             intelLinkURL = "N/A";
+            e.printStackTrace();
+        }
         return intelLinkURL;
     }
 

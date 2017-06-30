@@ -133,9 +133,9 @@ public class Logger {
         if (!initialized)
             return;
         Crashlytics.log(level + "-" + scope + "-" + message);
-        LocalDateTime now = LocalDateTime.now();
-        LogEntry entry = new LogEntry(level, now, scope, message);
-        db.addLog(entry);
+       // LocalDateTime now = LocalDateTime.now();
+       // LogEntry entry = new LogEntry(level, now, scope, message);
+       // db.addLog(entry);
     }
 
     /**
