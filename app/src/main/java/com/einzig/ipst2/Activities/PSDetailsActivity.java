@@ -38,6 +38,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatDrawableManager;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -112,7 +113,8 @@ public class PSDetailsActivity extends AppCompatActivity {
     private void buildAcceptedUI(PortalAccepted portal) {
         buildRespondedUI(portal);
         portalStatusImage.setBackgroundColor(getResources().getColor(R.color.accepted));
-        portalStatusImage.setImageDrawable(getResources().getDrawable(R.drawable.ic_check));
+        portalStatusImage.setImageDrawable(AppCompatDrawableManager.get().getDrawable(this, R
+                .drawable.ic_check));
         LinearLayout acceptedLayout = (LinearLayout) LayoutInflater.from(this)
                 .inflate(R.layout.row_psdetails_accepted, extraLayout, false);
         ((TextView) acceptedLayout.findViewById(R.id.liveaddress_acceptedrow)).setText(
