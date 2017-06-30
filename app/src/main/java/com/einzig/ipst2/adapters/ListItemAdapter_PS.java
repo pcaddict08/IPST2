@@ -23,6 +23,7 @@ package com.einzig.ipst2.adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.support.v7.widget.AppCompatDrawableManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -94,15 +95,16 @@ public class ListItemAdapter_PS extends BaseAdapter implements Filterable {
         ImageView iconView = (ImageView) itemLayout.findViewById(R.id.status_icon);
         if (iconView != null) {
             if (item instanceof PortalAccepted) {
-                iconView.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_check));
+                iconView.setImageDrawable(AppCompatDrawableManager.get().getDrawable(context, R
+                        .drawable.ic_check));
                 iconView.setBackgroundColor(context.getResources().getColor(R.color.accepted));
             } else if (item instanceof PortalRejected) {
-                iconView.setImageDrawable(
-                        context.getResources().getDrawable(R.drawable.ic_rejected));
+                iconView.setImageDrawable(AppCompatDrawableManager.get().getDrawable(context, R
+                        .drawable.ic_rejected));
                 iconView.setBackgroundColor(context.getResources().getColor(R.color.rejected));
             } else {
-                iconView.setImageDrawable(
-                        context.getResources().getDrawable(R.drawable.ic_pending));
+                iconView.setImageDrawable(AppCompatDrawableManager.get().getDrawable(context, R
+                        .drawable.ic_pending));
             }
         }
 
@@ -178,7 +180,6 @@ public class ListItemAdapter_PS extends BaseAdapter implements Filterable {
                 for (PortalSubmission p : originalItems) {
                     if (p.getName().toUpperCase().contains(constraint.toString().toUpperCase()))
                         nList.add(p);
-                    //Logger.d("ADDED TO SEARCH RESULTS: " + p.getName());
                 }
                 results.values = nList;
                 results.count = nList.size();
@@ -189,7 +190,8 @@ public class ListItemAdapter_PS extends BaseAdapter implements Filterable {
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             try {
-                ListItemAdapter_PS.this.shownItems = (ArrayList<? extends PortalSubmission>)results.values;
+                ListItemAdapter_PS.this.shownItems =
+                        (ArrayList<? extends PortalSubmission>) results.values;
                 System.out.println("PUBLISHED: " + ListItemAdapter_PS.this.shownItems.size());
                 notifyDataSetChanged();
             } catch (Exception e) {
