@@ -96,7 +96,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         values.put(COLUMN_LOG_TIME, DATE_FORMATTER.print(log.getTime()));
         values.put(COLUMN_LOG_SCOPE, log.getScope());
         values.put(COLUMN_LOG_MESSAGE, log.getMessage());
-        if(db.isOpen()) {
+        if (db.isOpen()) {
             db.insert(TABLE_LOGGING, null, values);
             db.close();
         }
@@ -209,8 +209,8 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         Cursor c = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table'", null);
         if (c.moveToFirst()) {
 
-            while ( !c.isAfterLast() ) {
-                db.execSQL("DROP TABLE '"+c.getString( c.getColumnIndex("name"))+"'");
+            while (!c.isAfterLast()) {
+                db.execSQL("DROP TABLE '" + c.getString(c.getColumnIndex("name")) + "'");
                 c.moveToNext();
             }
         }
@@ -635,6 +635,22 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         String fromDateStr = DATE_FORMATTER.print(fromDate);
         String toDateStr = DATE_FORMATTER.print(toDate);
         return getAll(table, dateKey + " BETWEEN ? AND ?", new String[]{fromDateStr, toDateStr},
+                builder);
+    }
+
+    /* Method to check if a portal url is in the db
+    *
+     * @param dateKey  Database key used for searching. Can be either COLUMN_DATE_SUBMITTED or
+     *                 COLUMN_DATE_RESPONDED
+     * @param fromDate Date to start searching from
+     * @param toDate   Date to stop searching at
+     * @return Vector of portals which were either submitted or approved from fromDate to
+     * toDate.
+    * */
+    public <P extends PortalSubmission> Vector<P> getPortalByURL(String table, String urlKey,
+            String url,
+            PortalBuilder<P> builder) {
+        return getAll(table, urlKey + "=?", new String[]{url},
                 builder);
     }
 

@@ -28,7 +28,7 @@ import android.provider.BaseColumns;
  * @since 2017-06-24
  */
 
-class PendingPortalContract {
+public class PendingPortalContract {
     static final String SQL_CREATE_ENTRIES =
             "CREATE TABLE " + PendingPortalEntry.TABLE_PENDING + " (" +
                     PendingPortalEntry.COLUMN_NAME + " TEXT NOT NULL, " +
@@ -41,7 +41,7 @@ class PendingPortalContract {
     private PendingPortalContract() {
     }
 
-    static class PendingPortalEntry implements BaseColumns {
+    public static class PendingPortalEntry implements BaseColumns {
         /** Table key for the date Niantic approved or denied the portal */
         static final String COLUMN_DATE_RESPONDED = "dateResponded";
         /** Table key for the date the portal was submitted */
@@ -49,7 +49,7 @@ class PendingPortalContract {
         /** Table key for portal name */
         static final String COLUMN_NAME = "name";
         /** Table key for the URL to the submission picture */
-        static final String COLUMN_PICTURE_URL = "pictureURL";
+        public static final String COLUMN_PICTURE_URL = "pictureURL";
         /** The name of the table in containing pending portal submissions */
         static final String TABLE_PENDING = "pendingSubmissions";
     }

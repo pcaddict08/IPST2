@@ -30,7 +30,7 @@ import static com.einzig.ipst2.database.PendingPortalContract.PendingPortalEntry
  * @since 2017-06-24
  */
 
-class AcceptedPortalContract {
+public class AcceptedPortalContract {
     static final String SQL_CREATE_ENTRIES =
             "CREATE TABLE " + AcceptedPortalEntry.TABLE_ACCEPTED + " (" +
                     PendingPortalEntry.COLUMN_NAME + " TEXT NOT NULL, " +
@@ -46,12 +46,12 @@ class AcceptedPortalContract {
     private AcceptedPortalContract() {
     }
 
-    static class AcceptedPortalEntry implements BaseColumns {
+    public static class AcceptedPortalEntry implements BaseColumns {
         /** Table key for the link to the portal on the intel map */
-        static final String COLUMN_INTEL_LINK_URL = "intelLinkURL";
+        public static final String COLUMN_INTEL_LINK_URL = "intelLinkURL";
         /** Table key for address of the portal */
         static final String COLUMN_LIVE_ADDRESS = "liveAddress";
         /** The name of the table in containing accepted portal submissions */
-        static final String TABLE_ACCEPTED = "acceptedSubmissions";
+        public static final String TABLE_ACCEPTED = "acceptedSubmissions";
     }
 }
