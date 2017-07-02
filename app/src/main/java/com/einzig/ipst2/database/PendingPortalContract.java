@@ -33,7 +33,9 @@ public class PendingPortalContract {
             "CREATE TABLE " + PendingPortalEntry.TABLE_PENDING + " (" +
                     PendingPortalEntry.COLUMN_NAME + " TEXT NOT NULL, " +
                     PendingPortalEntry.COLUMN_DATE_SUBMITTED + " DATETIME NOT NULL, " +
-                    PendingPortalEntry.COLUMN_PICTURE_URL + " TEXT)";
+                    PendingPortalEntry.COLUMN_PICTURE_URL + " TEXT, PRIMARY KEY (" +
+                    PendingPortalEntry.COLUMN_PICTURE_URL + ", " + PendingPortalEntry.COLUMN_NAME
+                    + "))";
 
     static final String SQL_DELETE_ENTRIES =
             "DROP TABLE IF EXISTS " + PendingPortalEntry.TABLE_PENDING;

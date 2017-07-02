@@ -37,7 +37,9 @@ public class RejectedPortalContract {
                     PendingPortalEntry.COLUMN_DATE_SUBMITTED + " DATETIME NOT NULL, " +
                     PendingPortalEntry.COLUMN_PICTURE_URL + " TEXT, " +
                     PendingPortalEntry.COLUMN_DATE_RESPONDED + " DATETIME NOT NULL, " +
-                    RejectedPortalEntry.COLUMN_REJECTION_REASON + " TEXT)";
+                    RejectedPortalEntry.COLUMN_REJECTION_REASON + " TEXT, PRIMARY KEY (" +
+                    PendingPortalEntry.COLUMN_PICTURE_URL + ", " + PendingPortalEntry.COLUMN_NAME
+                    + "))";
 
     static final String SQL_DELETE_ENTRIES =
             "DROP TABLE IF EXISTS " + RejectedPortalEntry.TABLE_REJECTED;

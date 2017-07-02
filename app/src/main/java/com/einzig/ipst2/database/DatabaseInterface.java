@@ -23,7 +23,6 @@
 
 package com.einzig.ipst2.database;
 
-import android.accounts.AccountManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -156,6 +155,33 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     }
 
     /**
+     * Check if the database contains an accepted portal submission
+     * @param pictureURL URL of the portal picture used to uniquely identify the portal
+     * @return true if the database contains the portal, otherwise false
+     */
+    public boolean containsAccepted(String pictureURL, String pictureName) {
+        return getAcceptedPortal(pictureURL, pictureName) != null;
+    }
+
+    /**
+     * Check if the database contains a pending portal submission
+     * @param pictureURL URL of the portal picture used to uniquely identify the portal
+     * @return true if the database contains the portal, otherwise false
+     */
+    public boolean containsPending(String pictureURL, String pictureName) {
+        return getPendingPortal(pictureURL, pictureName) != null;
+    }
+
+    /**
+     * Check if the database contains a rejected portal submission
+     * @param pictureURL URL of the portal picture used to uniquely identify the portal
+     * @return true if the database contains the portal, otherwise false
+     */
+    public boolean containsRejected(String pictureURL, String pictureName) {
+        return getRejectedPortal(pictureURL, pictureName) != null;
+    }
+
+    /**
      * Remove an accepted portal submission
      *
      * @param portal The accepted submission being removed from the database
@@ -174,7 +200,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     public void deleteAll() {
         SQLiteDatabase db = this.getWritableDatabase();
         onUpgrade(db, 0, 0);
-		db.close();
+        db.close();
     }
 
     /**
@@ -546,14 +572,10 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      */
     private <P extends PortalSubmission> P getPortal(String table, String pictureURL,
             String portalName, PortalBuilder<P> builder) {
-        Vector<P> portals = getAll(table, COLUMN_PICTURE_URL + " = ? AND " + COLUMN_NAME + " = ?",
-                new
-                        String[]{pictureURL, portalName},
+        Vector<P> portals = getAll(table, COLUMN_PICTURE_URL + " = ? ", new String[]{pictureURL},
                 builder);
         for (P portal : portals) {
             if (portal.getName().equals(portalName))
-                return portal;
-            else
                 return portal;
         }
         return null;
@@ -577,22 +599,6 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         String fromDateStr = DATE_FORMATTER.print(fromDate);
         String toDateStr = DATE_FORMATTER.print(toDate);
         return getAll(table, dateKey + " BETWEEN ? AND ?", new String[]{fromDateStr, toDateStr},
-                builder);
-    }
-
-    /* Method to check if a portal url is in the db
-    *
-     * @param dateKey  Database key used for searching. Can be either COLUMN_DATE_SUBMITTED or
-     *                 COLUMN_DATE_RESPONDED
-     * @param fromDate Date to start searching from
-     * @param toDate   Date to stop searching at
-     * @return Vector of portals which were either submitted or approved from fromDate to
-     * toDate.
-    * */
-    public <P extends PortalSubmission> Vector<P> getPortalByURL(String table, String urlKey,
-            String url,
-            PortalBuilder<P> builder) {
-        return getAll(table, urlKey + "=?", new String[]{url},
                 builder);
     }
 

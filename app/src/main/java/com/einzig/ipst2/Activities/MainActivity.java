@@ -272,9 +272,6 @@ public class MainActivity extends AppCompatActivity
         Logger.i("Getting account " + email);
         AccountManager manager = AccountManager.get(this);
         for (Account account : manager.getAccounts()) {
-            Logger.d("Has account " + account.name);
-            Logger.d("account name " + email);
-            Logger.d("account type " + account.type);
             if (account.name.equalsIgnoreCase(email) && account.type.equalsIgnoreCase("com.google"))
                 return account;
         }
@@ -465,7 +462,7 @@ public class MainActivity extends AppCompatActivity
     private void onHavePermissions(boolean shouldRefresh) {
         PreferencesHelper helper = new PreferencesHelper(getApplicationContext());
         if (!helper.isInitialized(helper.resetKey())) {
-            db.nukeAll();
+            db.deleteAll();
             helper.clearAll();
         }
         helper.initPreferences();

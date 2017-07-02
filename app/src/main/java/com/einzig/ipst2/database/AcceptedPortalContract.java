@@ -38,7 +38,9 @@ public class AcceptedPortalContract {
                     PendingPortalEntry.COLUMN_PICTURE_URL + " TEXT, " +
                     PendingPortalEntry.COLUMN_DATE_RESPONDED + " DATETIME NOT NULL, " +
                     AcceptedPortalEntry.COLUMN_LIVE_ADDRESS + " TEXT, " +
-                    AcceptedPortalEntry.COLUMN_INTEL_LINK_URL + " TEXT)";
+                    AcceptedPortalEntry.COLUMN_INTEL_LINK_URL + " TEXT, PRIMARY KEY (" +
+                    PendingPortalEntry.COLUMN_PICTURE_URL + ", " + PendingPortalEntry.COLUMN_NAME
+                    + "))";
 
     static final String SQL_DELETE_ENTRIES =
             "DROP TABLE IF EXISTS " + AcceptedPortalEntry.TABLE_ACCEPTED;
