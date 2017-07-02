@@ -575,6 +575,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         Vector<P> portals = getAll(table, COLUMN_PICTURE_URL + " = ? ", new String[]{pictureURL},
                 builder);
         for (P portal : portals) {
+            Logger.v("DBI", "Looking for: " + portalName + " found " + portal.getName());
             if (portal.getName().equals(portalName))
                 return portal;
         }
