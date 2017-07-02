@@ -108,7 +108,7 @@ public class FolderGetter {
         String folderPref = helper.get(helper.folderKey());
         Logger.d("Folder: " + folderPref);
         Folder folder = null;
-        if (helper.isInitialized(helper.folderKey())) {
+        if (!helper.isInitialized(helper.folderKey())) {
             folder = getDefaultFolder();
         } else {
             for (Folder f : folders) {

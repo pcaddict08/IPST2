@@ -23,6 +23,7 @@ package com.einzig.ipst2.adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.support.v7.widget.AppCompatDrawableManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,26 +46,30 @@ import org.joda.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Vector;
 
 // Custom list item class for menu items
 public class ListItemAdapter_PS extends BaseAdapter implements Filterable {
     /**  */
-    public ArrayList<PortalSubmission> shownItems;
+    public ArrayList<? extends PortalSubmission> shownItems;
     /** Application context */
     private Context context;
     /**  */
-    private ArrayList<PortalSubmission> originalItems;
+    private Vector<? extends PortalSubmission> originalItems;
     /**  */
     private SubmissionFilter submissionFilter;
 
-    public ListItemAdapter_PS(final ArrayList<PortalSubmission> items, Context context) {
+    public ListItemAdapter_PS(final Vector<? extends PortalSubmission> items, Context context) {
         this.context = context;
         this.originalItems = items;
         this.shownItems = new ArrayList<>(items);
     }
 
     public int getCount() {
-        return this.shownItems.size();
+        if (shownItems != null)
+            return this.shownItems.size();
+        else
+            return 0;
     }
 
     @Override
@@ -90,15 +95,16 @@ public class ListItemAdapter_PS extends BaseAdapter implements Filterable {
         ImageView iconView = (ImageView) itemLayout.findViewById(R.id.status_icon);
         if (iconView != null) {
             if (item instanceof PortalAccepted) {
-                iconView.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_check));
+                iconView.setImageDrawable(AppCompatDrawableManager.get().getDrawable(context, R
+                        .drawable.ic_check));
                 iconView.setBackgroundColor(context.getResources().getColor(R.color.accepted));
             } else if (item instanceof PortalRejected) {
-                iconView.setImageDrawable(
-                        context.getResources().getDrawable(R.drawable.ic_rejected));
+                iconView.setImageDrawable(AppCompatDrawableManager.get().getDrawable(context, R
+                        .drawable.ic_rejected));
                 iconView.setBackgroundColor(context.getResources().getColor(R.color.rejected));
             } else {
-                iconView.setImageDrawable(
-                        context.getResources().getDrawable(R.drawable.ic_pending));
+                iconView.setImageDrawable(AppCompatDrawableManager.get().getDrawable(context, R
+                        .drawable.ic_pending));
             }
         }
 
@@ -174,7 +180,6 @@ public class ListItemAdapter_PS extends BaseAdapter implements Filterable {
                 for (PortalSubmission p : originalItems) {
                     if (p.getName().toUpperCase().contains(constraint.toString().toUpperCase()))
                         nList.add(p);
-                    Logger.d("ADDED TO SEARCH RESULTS: " + p.getName());
                 }
                 results.values = nList;
                 results.count = nList.size();
@@ -185,7 +190,8 @@ public class ListItemAdapter_PS extends BaseAdapter implements Filterable {
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             try {
-                ListItemAdapter_PS.this.shownItems = (ArrayList<PortalSubmission>) results.values;
+                ListItemAdapter_PS.this.shownItems =
+                        (ArrayList<? extends PortalSubmission>) results.values;
                 System.out.println("PUBLISHED: " + ListItemAdapter_PS.this.shownItems.size());
                 notifyDataSetChanged();
             } catch (Exception e) {

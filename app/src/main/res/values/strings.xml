@@ -122,4 +122,6 @@
     <string name="viewipststats_preftitle">Go to IPST Stats</string>
     <string name="gototg_prefmessage">Open telegram and join the IPST Announcements Channel.</string>
     <string name="gototg_preftitle">Announcements Channel</string>
+    <string name="clear_dbsoft_pref">cleardb_pref</string>
+    <string name="resetkey_prefs">reset-13</string>
 </resources>

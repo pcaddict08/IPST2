@@ -107,6 +107,13 @@ public class PreferencesHelper {
         return context.getString(R.string.folderKey);
     }
 
+    /*
+    * @return Preferences key for reset thing
+    * */
+    public String resetKey() {
+        return context.getString(R.string.resetkey_prefs);
+    }
+
     /**
      * Get a preference value
      * @param key Preference key
@@ -142,6 +149,8 @@ public class PreferencesHelper {
             set(sortKey(), responseDateSort());
         if (!isInitialized(folderKey()))
             set(folderKey(), FolderGetter.DEFAULT_FOLDER);
+        if (!isInitialized(resetKey()))
+            set(resetKey(), "done");
     }
 
     /**
@@ -150,6 +159,7 @@ public class PreferencesHelper {
      * @return true if the preference exists, otherwise false
      */
     public boolean isInitialized(String key) {
+        Logger.d("CHECKING IF " + key + " IS INITIALIZED: " + preferences.getString(key, nullKey()));
         return !preferences.getString(key, nullKey()).equals(nullKey());
     }
 

@@ -134,7 +134,7 @@ public class PortalSubmission implements Parcelable, Serializable {
     * Return days since Niantic has responded
     * */
     public int getDaysSinceResponse() {
-        return Period.fieldDifference(dateSubmitted, LocalDate.now()).getDays();
+        return Days.daysBetween(dateSubmitted, LocalDate.now()).getDays();
     }
 
     /**

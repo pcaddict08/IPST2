@@ -25,6 +25,7 @@ package com.einzig.ipst2.portal;
 
 import android.os.Parcel;
 
+import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.joda.time.Period;
 
@@ -77,11 +78,11 @@ public abstract class PortalResponded extends PortalSubmission {
      */
     @Override
     public int getDaysSinceResponse() {
-        return Period.fieldDifference(dateResponded, LocalDate.now()).getDays();
+        return Days.daysBetween(dateResponded, LocalDate.now()).getDays();
     }
 
     public int getResponseTime() {
-        return Period.fieldDifference(getDateSubmitted(), dateResponded).getDays();
+        return Days.daysBetween(getDateSubmitted(), dateResponded).getDays();
     }
 
     /*

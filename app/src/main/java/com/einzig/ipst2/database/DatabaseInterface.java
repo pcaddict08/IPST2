@@ -23,6 +23,7 @@
 
 package com.einzig.ipst2.database;
 
+import android.accounts.AccountManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -88,7 +89,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
     private void addPortal(String table, ContentValues values) {
         SQLiteDatabase db = getWritableDatabase();
         db.insert(table, null, values);
-		db.close();
+        db.close();
     }
 
     /**
@@ -576,6 +577,22 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         String fromDateStr = DATE_FORMATTER.print(fromDate);
         String toDateStr = DATE_FORMATTER.print(toDate);
         return getAll(table, dateKey + " BETWEEN ? AND ?", new String[]{fromDateStr, toDateStr},
+                builder);
+    }
+
+    /* Method to check if a portal url is in the db
+    *
+     * @param dateKey  Database key used for searching. Can be either COLUMN_DATE_SUBMITTED or
+     *                 COLUMN_DATE_RESPONDED
+     * @param fromDate Date to start searching from
+     * @param toDate   Date to stop searching at
+     * @return Vector of portals which were either submitted or approved from fromDate to
+     * toDate.
+    * */
+    public <P extends PortalSubmission> Vector<P> getPortalByURL(String table, String urlKey,
+            String url,
+            PortalBuilder<P> builder) {
+        return getAll(table, urlKey + "=?", new String[]{url},
                 builder);
     }
 

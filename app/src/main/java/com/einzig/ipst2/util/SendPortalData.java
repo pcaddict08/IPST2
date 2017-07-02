@@ -73,12 +73,12 @@ public class SendPortalData extends AsyncTask<Void, Void, Void> {
             JSONObject newJSON = new JSONObject();
             try {
                 if (ps.getDateSubmitted() != null)
-                    newJSON.put("Date Submitted", sdf.format(ps.getDateSubmitted()));
+                    newJSON.put("Date Submitted", sdf.format(ps.getDateSubmitted().toDate()));
                 newJSON.put("Picture URL", ps.getPictureURL());
                 if (ps instanceof PortalRejected) {
                     if (((PortalRejected) ps).getDateResponded() != null)
                         newJSON.put("Date Rejected", sdf.format(((PortalRejected) ps)
-                                .getDateResponded()));
+                                .getDateResponded().toDate()));
                     String rejecReason = "";
                     if(((PortalRejected) ps).getRejectionReason()!= null)
                         rejecReason = ((PortalRejected) ps).getRejectionReason();
@@ -86,7 +86,7 @@ public class SendPortalData extends AsyncTask<Void, Void, Void> {
                 } else if (ps instanceof PortalAccepted) {
                     if (((PortalAccepted) ps).getDateResponded() != null)
                         newJSON.put("Date Accepted", sdf.format(((PortalAccepted) ps)
-                                .getDateResponded()));
+                                .getDateResponded().toDate()));
                     newJSON = addLatLonToJSON(newJSON, (PortalAccepted) ps);
                 }
                 Logger.d("JSON OBJ: " + newJSON);

@@ -28,7 +28,12 @@ import android.os.AsyncTask;
 import android.view.WindowManager;
 
 import com.einzig.ipst2.activities.MainActivity;
+import com.einzig.ipst2.database.AcceptedPortalContract;
 import com.einzig.ipst2.database.DatabaseInterface;
+import com.einzig.ipst2.database.PendingPortalContract;
+import com.einzig.ipst2.database.PortalAcceptedBuilder;
+import com.einzig.ipst2.database.PortalRejectedBuilder;
+import com.einzig.ipst2.database.RejectedPortalContract;
 import com.einzig.ipst2.portal.PortalAccepted;
 import com.einzig.ipst2.portal.PortalRejected;
 import com.einzig.ipst2.portal.PortalSubmission;
@@ -103,11 +108,17 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
      * @param p Instance of PortalSubmission or subclass to add to the database
      */
     private void addPortal(PortalSubmission p) {
-        if (p instanceof PortalAccepted)
-            addPortalAccepted((PortalAccepted) p);
-        else if (p instanceof PortalRejected)
-            addPortalRejected((PortalRejected) p);
-        else if (p != null)
+        if (p instanceof PortalAccepted) {
+            if (db.getPortalByURL(AcceptedPortalContract.AcceptedPortalEntry.TABLE_ACCEPTED,
+                    PendingPortalContract.PendingPortalEntry.COLUMN_PICTURE_URL,
+                    p.getPictureURL(), new PortalAcceptedBuilder()).size() == 0)
+                addPortalAccepted((PortalAccepted) p);
+        } else if (p instanceof PortalRejected) {
+            if (db.getPortalByURL(RejectedPortalContract.RejectedPortalEntry.TABLE_REJECTED,
+                    PendingPortalContract.PendingPortalEntry.COLUMN_PICTURE_URL,
+                    p.getPictureURL(), new PortalRejectedBuilder()).size() == 0)
+                addPortalRejected((PortalRejected) p);
+        } else if (p != null)
             addPortalSubmission(p);
     }
 

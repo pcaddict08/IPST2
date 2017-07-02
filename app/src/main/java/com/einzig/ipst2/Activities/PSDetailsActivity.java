@@ -38,6 +38,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatDrawableManager;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -106,12 +107,14 @@ public class PSDetailsActivity extends AppCompatActivity {
 
     /**
      * Add additional UI components for an accepted portal submission
+     *
      * @param portal Portal being viewed cast to a PortalAccepted for convenience
      */
     private void buildAcceptedUI(PortalAccepted portal) {
         buildRespondedUI(portal);
         portalStatusImage.setBackgroundColor(getResources().getColor(R.color.accepted));
-        portalStatusImage.setImageDrawable(getResources().getDrawable(R.drawable.ic_check));
+        portalStatusImage.setImageDrawable(AppCompatDrawableManager.get().getDrawable(this, R
+                .drawable.ic_check));
         LinearLayout acceptedLayout = (LinearLayout) LayoutInflater.from(this)
                 .inflate(R.layout.row_psdetails_accepted, extraLayout, false);
         ((TextView) acceptedLayout.findViewById(R.id.liveaddress_acceptedrow)).setText(
@@ -140,6 +143,7 @@ public class PSDetailsActivity extends AppCompatActivity {
 
     /**
      * Add additional UI components for a portal submission that is no longer pending
+     *
      * @param portal Portal being viewed cast to a PortalResponded for convenience
      */
     private void buildRespondedUI(PortalResponded portal) {
@@ -153,6 +157,7 @@ public class PSDetailsActivity extends AppCompatActivity {
 
     /**
      * Add additional UI components for a rejected portal submission
+     *
      * @param portal Portal being viewed cast to a PortalRejected for convenience
      */
     private void buildRejectedUI(PortalRejected portal) {
@@ -173,10 +178,11 @@ public class PSDetailsActivity extends AppCompatActivity {
         Logger.d("PSDetailsActivity", "Portal Type: " + portal.getClass().getName());
         namelabel.setText(portal.getName());
         submittedLabel.setText(uiFormatter.print(portal.getDateSubmitted()));
-        Picasso.with(this)
-                .load(portal.getPictureURL())
-                .error(R.drawable.ic_warning_white)
-                .into(portalImage);
+        if (portal.getPictureURL() != null && !portal.getPictureURL().equalsIgnoreCase(""))
+            Picasso.with(this)
+                    .load(portal.getPictureURL())
+                    .error(R.drawable.ic_warning_white)
+                    .into(portalImage);
         buildExtraUI();
         setUpImageDownloadButton();
         setUpImageDetailsView();
@@ -196,7 +202,7 @@ public class PSDetailsActivity extends AppCompatActivity {
             }
         }
         String timeStamp =
-                new SimpleDateFormat("ddMMyyyy_HHmm", Locale.getDefault()).format(new LocalDate());
+                new SimpleDateFormat("ddMMyyyy_HHmm", Locale.getDefault()).format(new LocalDate().toDate());
         File mediaFile;
         String mImageName = "MI_" + timeStamp + ".jpg";
         mediaFile = new File(mediaStorageDir.getPath() + File.separator + mImageName);

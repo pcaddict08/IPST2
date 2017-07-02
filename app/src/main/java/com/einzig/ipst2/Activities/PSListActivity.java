@@ -1,4 +1,5 @@
-/******************************************************************************
+/*
+ ****************************************************************************
  *                                                                            *
  * Copyright 2017 Steven Foskett, Jimmy Ho, Ryan Porterfield                  *
  * Permission is hereby granted, free of charge, to any person obtaining a    *
@@ -23,6 +24,7 @@
 
 package com.einzig.ipst2.activities;
 
+import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -43,23 +45,37 @@ import android.widget.SearchView;
 
 import com.einzig.ipst2.R;
 import com.einzig.ipst2.adapters.ListItemAdapter_PS;
+import com.einzig.ipst2.database.DatabaseInterface;
+import com.einzig.ipst2.database.PortalGrabber;
 import com.einzig.ipst2.portal.PortalSubmission;
+import com.einzig.ipst2.util.DialogHelper;
 import com.einzig.ipst2.util.Logger;
 import com.einzig.ipst2.util.PreferencesHelper;
 
-import java.util.ArrayList;
+import org.joda.time.LocalDate;
+
 import java.util.Collections;
+import java.util.Vector;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.einzig.ipst2.activities.MainActivity.PORTAL_KEY;
-import static com.einzig.ipst2.activities.MainActivity.PORTAL_LIST_KEY;
+import static com.einzig.ipst2.activities.MainActivity.PORTAL_LIST_KEY_RANGE;
+import static com.einzig.ipst2.activities.MainActivity.PORTAL_LIST_KEY_TYPE;
 
 public class PSListActivity extends AppCompatActivity {
     @BindView(R.id.listview_pslistactivity)
     ListView listView;
-    ArrayList<PortalSubmission> psList = new ArrayList<>();
+    String RANGE;
+    String TYPE;
+    ProgressDialog dialog;
+    Vector<? extends PortalSubmission> psList = new Vector<>();
+    private DatabaseInterface db;
+
+    public PSListActivity() {
+        db = new DatabaseInterface(this);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,28 +85,54 @@ public class PSListActivity extends AppCompatActivity {
         ActionBar ab = getSupportActionBar();
         if (ab != null)
             ab.setDisplayHomeAsUpEnabled(true);
+        dialog = new ProgressDialog(this);
+        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        dialog.setIndeterminate(true);
+        dialog.setTitle("Getting Results...");
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
 
-        psList = getIntent().getExtras().getParcelableArrayList(PORTAL_LIST_KEY);
-        if (psList != null) {
-            Logger.d("PS LIST SIZE: " + psList.size());
-            sortList(psList);
-            listView.setAdapter(new ListItemAdapter_PS(psList, PSListActivity.this));
-            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    Logger.d("Item Selected at index: " + i);
-                    try {
-                        PortalSubmission portal = ((ListItemAdapter_PS)listView.getAdapter())
-                                .shownItems.get(i);
-                        Intent intent = new Intent(PSListActivity.this,
-                                PSDetailsActivity.class);
-                        intent.putExtra(PORTAL_KEY, (Parcelable) portal);
-                        startActivity(intent);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+        RANGE = getIntent().getExtras().getString(PORTAL_LIST_KEY_RANGE);
+        TYPE = getIntent().getExtras().getString(PORTAL_LIST_KEY_TYPE);
+
+        new PortalGrabber(this, RANGE, TYPE, db).execute();
+    }
+
+    public void AfterParse(Vector<? extends PortalSubmission> _psList) {
+        try {
+            dialog.dismiss();
+            this.psList = _psList;
+            if (psList != null) {
+                if (psList.size() > 0) {
+                    Logger.d("PS LIST SIZE: " + psList.size());
+                    sortList(psList);
+                    listView.setAdapter(new ListItemAdapter_PS(psList, PSListActivity.this));
+                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> adapterView, View view, int i,
+                                long l) {
+                            Logger.d("Item Selected at index: " + i);
+                            try {
+                                PortalSubmission portal =
+                                        ((ListItemAdapter_PS) listView.getAdapter())
+                                                .shownItems.get(i);
+                                Intent intent = new Intent(PSListActivity.this,
+                                        PSDetailsActivity.class);
+                                intent.putExtra(PORTAL_KEY, (Parcelable) portal);
+                                startActivity(intent);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                } else {
+                    DialogHelper.showSimpleDismissingDialog(R.string.noportalwarning,
+                            R.string.noportalmessage,
+                            PSListActivity.this);
                 }
-            });
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -140,7 +182,7 @@ public class PSListActivity extends AppCompatActivity {
     }
 
     /* Method to sort the list based on settings the user has saved */
-    public void sortList(ArrayList<PortalSubmission> psList) {
+    public void sortList(Vector<? extends PortalSubmission> psList) {
         PreferencesHelper helper = new PreferencesHelper(getApplicationContext());
         String sortOptionValue = helper.get(helper.sortKey());
         // TODO Use sort package sorters or clean up this code
@@ -170,13 +212,15 @@ public class PSListActivity extends AppCompatActivity {
         builder.setTitle("Set Sort Criteria")
                 .setItems(R.array.sortTypesEntries, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        String[] some_array = getResources().getStringArray(R.array.sortTypesValues);
+                        String[] some_array =
+                                getResources().getStringArray(R.array.sortTypesValues);
                         System.out.println("SELECTED: " + some_array[which]);
                         PreferencesHelper helper = new PreferencesHelper(getApplicationContext());
                         helper.set(helper.sortKey(), some_array[which]);
                         Intent i = getIntent();
                         i.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                        i.putExtra(PORTAL_LIST_KEY, PSListActivity.this.psList);
+                        i.putExtra(PORTAL_LIST_KEY_TYPE, TYPE);
+                        i.putExtra(PORTAL_LIST_KEY_RANGE, RANGE);
                         startActivity(i);
                         finish();
                         overridePendingTransition(0, 0);

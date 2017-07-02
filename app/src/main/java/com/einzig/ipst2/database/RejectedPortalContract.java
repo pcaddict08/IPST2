@@ -30,7 +30,7 @@ import static com.einzig.ipst2.database.PendingPortalContract.PendingPortalEntry
  * @since 2017-06-24
  */
 
-class RejectedPortalContract {
+public class RejectedPortalContract {
     static final String SQL_CREATE_ENTRIES =
             "CREATE TABLE " + RejectedPortalEntry.TABLE_REJECTED + " (" +
                     PendingPortalEntry.COLUMN_NAME + " TEXT NOT NULL, " +
@@ -45,10 +45,10 @@ class RejectedPortalContract {
     private RejectedPortalContract() {
     }
 
-    static class RejectedPortalEntry implements BaseColumns {
+    public static class RejectedPortalEntry implements BaseColumns {
         /** Table key for the reason the portal was rejected */
         static final String COLUMN_REJECTION_REASON = "rejectionReason";
         /** The name of the table in containing rejected portal submissions */
-        static final String TABLE_REJECTED = "rejectedSubmissions";
+        public static final String TABLE_REJECTED = "rejectedSubmissions";
     }
 }
