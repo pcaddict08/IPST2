@@ -21,137 +21,86 @@
 
 package com.einzig.ipst2.util;
 
-import android.content.Context;
-import android.util.Log;
-
-import com.einzig.ipst2.database.DatabaseInterface;
-
-import org.joda.time.LocalDateTime;
-
 /**
  * @author Ryan Porterfield
  * @since 2017-06-24
  */
 
 public class Logger {
-    /** Tag used for logging for this class */
-    static private final String TAG = "IPST";
-    /** Save logs to the database */
-    static private DatabaseInterface db;
-    /** Do we have a database handle yet? */
-    static private boolean initialized;
+    /**  */
+    static final private AsyncLogger logger;
 
     static {
-        db = null;
-        initialized = false;
+        logger = new AsyncLogger();
+        logger.start();
     }
 
     /**
-     * Nicely concatenate the scope and message together for writing to console
-     * @param scope Scope the message was written from
-     * @param message Message to be logged
-     * @return scope :: message
-     */
-    static private String concatMessage(String scope, String message) {
-        return (scope == null || scope.equals("")) ? message : scope + " :: " + message;
-    }
-
-    /**
-     * Log a debug message
+     * Log a d message
      * @param message Message to be logged
      */
     static public void d(String message) {
-        d("", message);
+        logger.dAsync("", message);
     }
 
     /**
-     * Log a debug message
+     * Log a d message
      * @param scope Scope the message was written from
      * @param message Message to be logged
      */
     static public void d(String scope, String message) {
-        Log.d(TAG, concatMessage(scope, message));
-        log("D", scope, message);
+        logger.dAsync(scope, message);
     }
 
     /**
-     * Log an error message
+     * Log an e message
      * @param message Message to be logged
      */
     static public void e(String message) {
-        e("", message);
+        logger.e("", message);
     }
 
     /**
-     * Log an error message
+     * Log an e message
      * @param scope Scope the message was written from
      * @param message Message to be logged
      */
     static public void e(String scope, String message) {
-        Log.e(TAG, concatMessage(scope, message));
-        log("E", scope, message);
+        logger.e(scope, message);
     }
 
     /**
-     * Log an info message
+     * Log an i message
      * @param message Message to be logged
      */
     static public void i(String message) {
-        i("", message);
+        logger.i("", message);
     }
 
     /**
-     * Log an info message
+     * Log an i message
      * @param scope Scope the message was written from
      * @param message Message to be logged
      */
     static public void i(String scope, String message) {
-        Log.i(TAG, concatMessage(scope, message));
-        log("I", scope, message);
+        logger.i(scope, message);
     }
 
     /**
-     * Give the logger a context to create the DatabaseInterface with
-     * @param context Context for DatabaseInterface
-     */
-    static public void initialize(Context context) {
-        if (initialized)
-            return;
-        db = new DatabaseInterface(context);
-        initialized = true;
-    }
-
-    /**
-     * If Logger has been initialized write a log to the database, otherwise do nothing.
-     * @param level Severity of the log
-     * @param scope Scope the message was written from
-     * @param message Message to be logged
-     * @see Logger#initialized
-     */
-    static private void log(String level, String scope, String message) {
-        if (!initialized)
-            return;
-        LocalDateTime now = LocalDateTime.now();
-        LogEntry entry = new LogEntry(level, now, scope, message);
-        db.addLog(entry);
-    }
-
-    /**
-     * Log a verbose message
+     * Log a v message
      * @param message Message to be logged
      */
     static public void v(String message) {
-        v("", message);
+        logger.vAsync("", message);
     }
 
     /**
-     * Log a verbose message
+     * Log a v message
      * @param scope Scope the message was written from
      * @param message Message to be logged
      */
     static public void v(String scope, String message) {
-        Log.v(TAG, concatMessage(scope, message));
-        log("V", scope, message);
+        logger.vAsync(scope, message);
     }
 
     /**
@@ -159,7 +108,7 @@ public class Logger {
      * @param message Message to be logged
      */
     static public void w(String message) {
-        w("", message);
+        logger.w("", message);
     }
 
     /**
@@ -168,8 +117,7 @@ public class Logger {
      * @param message Message to be logged
      */
     static public void w(String scope, String message) {
-        Log.w(TAG, concatMessage(scope, message));
-        log("W", scope, message);
+        logger.w(scope, message);
     }
 
     /**
@@ -177,7 +125,7 @@ public class Logger {
      * @param message Message to be logged
      */
     static public void wtf(String message) {
-        wtf("", message);
+        logger.wtf("", message);
     }
 
     /**
@@ -186,7 +134,6 @@ public class Logger {
      * @param message Message to be logged
      */
     static public void wtf(String scope, String message) {
-        Log.wtf(TAG, concatMessage(scope, message));
-        log("WTF", scope, message);
+        logger.wtf(scope, message);
     }
 }

@@ -28,7 +28,6 @@ import android.accounts.AccountManager;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Looper;
@@ -78,6 +77,10 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.fabric.sdk.android.Fabric;
 
+import static android.Manifest.permission.GET_ACCOUNTS;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+import static android.content.pm.PackageManager.PERMISSION_GRANTED;
+
 /**
  * Main activity class which launches the app.
  * Contains all startup and initialization code.
@@ -92,16 +95,18 @@ public class MainActivity extends AppCompatActivity
     /** Preferences key for sending a portal list through Bundle */
     static public final String PORTAL_LIST_KEY = "portalList";
     /** Activity-for-result code to request write-to-external-storage permissions */
-    static final public int REQUEST_CODE_WRITE_EXTERNAL = 2;
+    static final public int REQUEST_CODE_WRITE_EXTERNAL = 1 << 1;
     /** The key for saving version num */
     static final public String VERSION_KEY = "version";
-    /** Activity-for-result code to request email permissions */
-    static final int REQUEST_CODE_EMAIL = 1;
     static final int REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR = 1002;
     /** Used to get the result of LoginActivity */
     static private final int LOGIN_ACTIVITY_CODE = 0;
     /** Seems to be redundant with PreferencesHelper#REFRESH_KEY */
     static final private String REFRESH_KEY = "refresh";
+    /** Activity-for-result code to request email permissions */
+    static final private int REQUEST_CODE_EMAIL = 1;
+    /**  */
+    static final private int REQUEST_CODE_ALL = REQUEST_CODE_EMAIL & REQUEST_CODE_WRITE_EXTERNAL;
     static private final int SETTINGS_ACTIVITY_CODE = 101;
 
     /* Butterknife UI code */
@@ -168,6 +173,18 @@ public class MainActivity extends AppCompatActivity
         monthtab.setOnCheckedChangeListener(this);
         alltab.setOnCheckedChangeListener(this);
         selectRadioItem();
+    }
+
+    /** TODO Save a user preference if they deny us WRITE_EXTERNAL_STORAGE so we don't ask for it
+     * Request permissions if we don't have them
+     * @return true if we have all permissions, otherwise false
+     */
+    private boolean checkPermissions() {
+        boolean hasPermissions = hasAccountsPermission() && hasWritePermission();
+        String[] permissions = {GET_ACCOUNTS, WRITE_EXTERNAL_STORAGE};
+        if (!hasPermissions)
+            ActivityCompat.requestPermissions(this, permissions, REQUEST_CODE_ALL);
+        return hasPermissions;
     }
 
     /**
@@ -264,6 +281,13 @@ public class MainActivity extends AppCompatActivity
         return null;
     }
 
+    public boolean getAccountsPermission() {
+        boolean hasPermission = hasAccountsPermission();
+        if (!hasPermission)
+            ActivityCompat.requestPermissions(this, new String[]{GET_ACCOUNTS}, REQUEST_CODE_EMAIL);
+        return hasPermission;
+    }
+
     /**
      * Search through accounts on the user's device now that we have permission to do so.
      */
@@ -276,6 +300,7 @@ public class MainActivity extends AppCompatActivity
                 numGoogAcct++;
             }
         }
+
         if (numGoogAcct == 0) {
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
             builder.setTitle(R.string.noaccountstitle);
@@ -302,22 +327,37 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * Login if we have permission or get permission if we don't.
-     *
-     * @see MainActivity#gotAccountsPermission()
+     * @return true if we have permission to access user accounts, otherwise false
      */
-    public void loginHitMethod() {
-        try {
-            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.GET_ACCOUNTS)
-                    == PackageManager.PERMISSION_GRANTED) {
-                gotAccountsPermission();
-            } else {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{android.Manifest.permission.GET_ACCOUNTS}, REQUEST_CODE_EMAIL);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    public boolean hasAccountsPermission() {
+        return ContextCompat.checkSelfPermission(this, GET_ACCOUNTS) == PERMISSION_GRANTED;
+    }
+
+    /**
+     * @return true if we have permission to write to external storage, otherwise false
+     */
+    public boolean hasWritePermission() {
+        return ContextCompat.checkSelfPermission(this, WRITE_EXTERNAL_STORAGE) ==
+                PERMISSION_GRANTED;
+    }
+
+    private void initActionBar() {
+        ActionBar ab = getSupportActionBar();
+        if (ab != null) {
+            ab.setLogo(R.mipmap.ic_launcher);
+            ab.setDisplayUseLogoEnabled(true);
+            ab.setDisplayShowHomeEnabled(true);
         }
+    }
+
+    private void initLoginButton() {
+        gmail_login_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (getAccountsPermission())
+                    gotAccountsPermission();
+            }
+        });
     }
 
     /*
@@ -417,6 +457,15 @@ public class MainActivity extends AppCompatActivity
         openList(mainList);
     }
 
+    private void initUI() {
+        setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
+        FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        mFirebaseAnalytics.setAnalyticsCollectionEnabled(true);
+        Fabric.with(this, new Crashlytics());
+        initActionBar();
+    }
+
     /* TODO Refactor into smaller functions
      * Called on startup by Android after the app starts and resources are available.
      * Used for more advanced initializations.
@@ -424,30 +473,17 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        DatabaseInterface db = new DatabaseInterface(getApplicationContext());
-        db.resetLogTable();
-        Logger.initialize(getApplicationContext());
-        setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
-        FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
-        mFirebaseAnalytics.setAnalyticsCollectionEnabled(true);
-        Fabric.with(this, new Crashlytics());
-        ActionBar ab = getSupportActionBar();
-        if (ab != null) {
-            ab.setLogo(R.mipmap.ic_launcher);
-            ab.setDisplayUseLogoEnabled(true);
-            ab.setDisplayShowHomeEnabled(true);
-        }
+        initUI();
+        initLoginButton();
+        boolean shouldRefresh = getIntent().getBooleanExtra(REFRESH_KEY, false);
+        if (checkPermissions())
+            onHavePermissions(shouldRefresh);
+    }
+
+    private void onHavePermissions(boolean shouldRefresh) {
         PreferencesHelper helper = new PreferencesHelper(getApplicationContext());
         helper.initPreferences();
         helper.printAllPreferences();
-        boolean shouldRefresh = getIntent().getBooleanExtra(REFRESH_KEY, false);
-        gmail_login_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                loginHitMethod();
-            }
-        });
         if (!helper.getManualRefresh() || shouldRefresh) {
             if (helper.isInitialized(helper.emailKey())) {
                 parseEmail();
@@ -540,12 +576,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
             @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_CODE_EMAIL && grantResults.length > 0) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                gotAccountsPermission();
-            }
-        } else {
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_CODE_ALL) {
+            onHavePermissions(false);
         }
     }
 

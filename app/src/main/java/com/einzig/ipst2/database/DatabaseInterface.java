@@ -33,26 +33,17 @@ import android.database.sqlite.SQLiteOpenHelper;
 import com.einzig.ipst2.portal.PortalAccepted;
 import com.einzig.ipst2.portal.PortalRejected;
 import com.einzig.ipst2.portal.PortalSubmission;
-import com.einzig.ipst2.util.LogEntry;
 import com.einzig.ipst2.util.Logger;
 
 import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Vector;
 
 import static com.einzig.ipst2.database.AcceptedPortalContract.AcceptedPortalEntry.COLUMN_INTEL_LINK_URL;
 import static com.einzig.ipst2.database.AcceptedPortalContract.AcceptedPortalEntry.COLUMN_LIVE_ADDRESS;
 import static com.einzig.ipst2.database.AcceptedPortalContract.AcceptedPortalEntry.TABLE_ACCEPTED;
-import static com.einzig.ipst2.database.LoggingContract.LoggingEntry.COLUMN_LOG_LEVEL;
-import static com.einzig.ipst2.database.LoggingContract.LoggingEntry.COLUMN_LOG_MESSAGE;
-import static com.einzig.ipst2.database.LoggingContract.LoggingEntry.COLUMN_LOG_SCOPE;
-import static com.einzig.ipst2.database.LoggingContract.LoggingEntry.COLUMN_LOG_TIME;
-import static com.einzig.ipst2.database.LoggingContract.LoggingEntry.TABLE_LOGGING;
 import static com.einzig.ipst2.database.PendingPortalContract.PendingPortalEntry.COLUMN_DATE_RESPONDED;
 import static com.einzig.ipst2.database.PendingPortalContract.PendingPortalEntry.COLUMN_DATE_SUBMITTED;
 import static com.einzig.ipst2.database.PendingPortalContract.PendingPortalEntry.COLUMN_NAME;
@@ -86,17 +77,6 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      */
     public DatabaseInterface(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-    }
-
-    public void addLog(LogEntry log) {
-        SQLiteDatabase db = getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_LOG_LEVEL, log.getLevel());
-        values.put(COLUMN_LOG_TIME, DATE_FORMATTER.print(log.getTime()));
-        values.put(COLUMN_LOG_SCOPE, log.getScope());
-        values.put(COLUMN_LOG_MESSAGE, log.getMessage());
-        db.insert(TABLE_LOGGING, null, values);
-		db.close();
     }
 
     /**
@@ -192,9 +172,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      */
     public void deleteAll() {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_PENDING, null, null);
-        db.delete(TABLE_ACCEPTED, null, null);
-        db.delete(TABLE_REJECTED, null, null);
+        onUpgrade(db, 0, 0);
 		db.close();
     }
 
@@ -494,23 +472,6 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         return count;
     }
 
-    public List<LogEntry> getLogs() {
-        SQLiteDatabase db = getReadableDatabase();
-        List<LogEntry> logs = new ArrayList<>();
-        Cursor c = db.query(TABLE_LOGGING, null, null, null, null, null, null);
-        while (c.moveToNext()) {
-            String level = c.getString(c.getColumnIndex(COLUMN_LOG_LEVEL));
-            LocalDateTime time = DATE_FORMATTER.parseLocalDateTime(
-                    c.getString(c.getColumnIndex(COLUMN_LOG_TIME)));
-            String scope = c.getString(c.getColumnIndex(COLUMN_LOG_SCOPE));
-            String message = c.getString((c.getColumnIndex(COLUMN_LOG_MESSAGE)));
-            logs.add(new LogEntry(level, time, scope, message));
-        }
-        c.close();
-        db.close();
-        return logs;
-    }
-
     /**
      * Get all pending portal submissions which were submitted between fromDate and toDate
      *
@@ -751,7 +712,6 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         db.execSQL(PendingPortalContract.SQL_CREATE_ENTRIES);
         db.execSQL(AcceptedPortalContract.SQL_CREATE_ENTRIES);
         db.execSQL(RejectedPortalContract.SQL_CREATE_ENTRIES);
-        db.execSQL(LoggingContract.SQL_CREATE_ENTRIES);
     }
 
     /**
@@ -763,14 +723,14 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      */
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL(LoggingContract.SQL_DELETE_ENTRIES);
-    }
-
-    public void resetLogTable() {
-        SQLiteDatabase db = getWritableDatabase();
-        db.execSQL(LoggingContract.SQL_DELETE_ENTRIES);
-        db.execSQL(LoggingContract.SQL_CREATE_ENTRIES);
-		db.close();
+        // Drop tables
+        db.execSQL(AcceptedPortalContract.SQL_DELETE_ENTRIES);
+        db.execSQL(PendingPortalContract.SQL_DELETE_ENTRIES);
+        db.execSQL(RejectedPortalContract.SQL_DELETE_ENTRIES);
+        // Create tables
+        db.execSQL(PendingPortalContract.SQL_CREATE_ENTRIES);
+        db.execSQL(AcceptedPortalContract.SQL_CREATE_ENTRIES);
+        db.execSQL(RejectedPortalContract.SQL_CREATE_ENTRIES);
     }
 
     /**

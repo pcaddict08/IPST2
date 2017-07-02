@@ -38,7 +38,6 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.view.MenuItem;
@@ -46,14 +45,11 @@ import android.widget.Toast;
 
 import com.einzig.ipst2.R;
 import com.einzig.ipst2.database.DatabaseInterface;
-import com.einzig.ipst2.util.LogExporter;
 import com.einzig.ipst2.util.PreferencesHelper;
 import com.einzig.ipst2.util.SendMessageHelper;
 import com.einzig.ipst2.util.SendPortalData;
 
 import java.util.List;
-
-import static com.einzig.ipst2.activities.MainActivity.REQUEST_CODE_WRITE_EXTERNAL;
 
 /**
  * @author Steven Foskett
@@ -132,16 +128,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-            @NonNull int[] grantResults) {
-        if (requestCode != REQUEST_CODE_WRITE_EXTERNAL)
-            return;
-        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            new LogExporter(this).execute();
-        }
     }
 
     /**
@@ -397,18 +383,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     @Override
                     public boolean onPreferenceClick(Preference preference) {
                         //TODO add theme stuff
-                        return false;
-                    }
-                });
-
-            Preference exportLogs = findPreference(getResources().getString(R.string
-                    .exportLogsPref));
-            if (exportLogs != null)
-                exportLogs.setOnPreferenceClickListener(new Preference
-                        .OnPreferenceClickListener() {
-                    @Override
-                    public boolean onPreferenceClick(Preference preference) {
-                        new LogExporter(getActivity()).execute();
                         return false;
                     }
                 });
