@@ -143,6 +143,8 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      */
     public void addPortalSubmission(PortalSubmission portal) {
         Logger.d("Add portal submission: " + portal.getName());
+        if(portal.getDateSubmitted() == null)
+            portal.setDateSubmitted(new LocalDate());
         String dateSubmitted = DATE_FORMATTER.print(portal.getDateSubmitted());
         ContentValues values = new ContentValues();
         // Values put!

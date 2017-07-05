@@ -145,7 +145,7 @@ class EmailParser {
         subject = subject.toLowerCase();
         if (subject.contains("submitted") || subject.contains("submission"))
             return submissionBuilder.build(portalName, receivedDate, message);
-        else if (subject.contains("live") ||
+        else if (subject.contains(" live") ||
                 subject.contains(" *success!*"))
             return acceptedBuilder.build(portalName, receivedDate, message);
         else if (subject.contains("rejected") || subject.contains("duplicate"))
@@ -163,12 +163,16 @@ class EmailParser {
      * @return PortalSubmission or subclass if the email can be parsed, otherwise null
      */
     private PortalSubmission parseNewFormat(String portalName, String message, LocalDate receivedDate) {
+        Logger.d("Parsing NEW FORMAT: " + portalName);
         if (message != null) {
             if (message.contains("not to accept") || message.contains("duplicate")
-                    || message.contains("not able to bring it online"))
+                    || message.contains("not able to bring it online")) {
+                Logger.d("Parsing NEW FORMAT REJECTED: " + portalName);
                 return rejectedBuilder.build(portalName, receivedDate, message);
-            else if (message.contains("accepted"))
+            } else if (message.contains("accepted")) {
+                Logger.d("Parsing NEW FORMAT ACCEPTED: " + portalName);
                 return acceptedBuilder.build(portalName, receivedDate, message);
+            }
         }
         return null;
     }

@@ -202,7 +202,8 @@ public class PSDetailsActivity extends AppCompatActivity {
             }
         }
         String timeStamp =
-                new SimpleDateFormat("ddMMyyyy_HHmm", Locale.getDefault()).format(new LocalDate().toDate());
+                new SimpleDateFormat("ddMMyyyy_HHmm", Locale.getDefault()).format(
+                        new LocalDate().toDate());
         File mediaFile;
         String mImageName = "MI_" + timeStamp + ".jpg";
         mediaFile = new File(mediaStorageDir.getPath() + File.separator + mImageName);
@@ -289,9 +290,10 @@ public class PSDetailsActivity extends AppCompatActivity {
             public void onPrepareLoad(Drawable placeHolderDrawable) {
             }
         };
-        Picasso.with(context)
-                .load(url)
-                .into(target);
+        if (!url.equalsIgnoreCase(""))
+            Picasso.with(context)
+                    .load(url)
+                    .into(target);
     }
 
     @Override
