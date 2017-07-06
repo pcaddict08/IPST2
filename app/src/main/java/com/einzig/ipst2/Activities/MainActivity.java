@@ -37,6 +37,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -454,6 +455,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         initUI();
         initLoginButton();
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
         boolean shouldRefresh = getIntent().getBooleanExtra(REFRESH_KEY, false);
         if (checkPermissions())
             onHavePermissions(shouldRefresh);

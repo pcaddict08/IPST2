@@ -34,6 +34,7 @@ import android.os.Parcelable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -82,6 +83,7 @@ public class PSListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pslist);
         ButterKnife.bind(this);
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
         ActionBar ab = getSupportActionBar();
         if (ab != null)
             ab.setDisplayHomeAsUpEnabled(true);

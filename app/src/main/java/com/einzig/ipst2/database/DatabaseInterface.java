@@ -143,7 +143,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
      */
     public void addPortalSubmission(PortalSubmission portal) {
         Logger.d("Add portal submission: " + portal.getName());
-        if(portal.getDateSubmitted() == null)
+        if (portal.getDateSubmitted() == null)
             portal.setDateSubmitted(new LocalDate());
         String dateSubmitted = DATE_FORMATTER.print(portal.getDateSubmitted());
         ContentValues values = new ContentValues();
@@ -158,6 +158,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
 
     /**
      * Check if the database contains an accepted portal submission
+     *
      * @param pictureURL URL of the portal picture used to uniquely identify the portal
      * @return true if the database contains the portal, otherwise false
      */
@@ -167,6 +168,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
 
     /**
      * Check if the database contains a pending portal submission
+     *
      * @param pictureURL URL of the portal picture used to uniquely identify the portal
      * @return true if the database contains the portal, otherwise false
      */
@@ -176,6 +178,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
 
     /**
      * Check if the database contains a rejected portal submission
+     *
      * @param pictureURL URL of the portal picture used to uniquely identify the portal
      * @return true if the database contains the portal, otherwise false
      */
@@ -576,11 +579,15 @@ public class DatabaseInterface extends SQLiteOpenHelper {
             String portalName, PortalBuilder<P> builder) {
         Vector<P> portals = getAll(table, COLUMN_PICTURE_URL + " = ? ", new String[]{pictureURL},
                 builder);
-        for (P portal : portals) {
-            Logger.v("DBI", "Looking for: " + portalName + " found " + portal.getName());
-            if (portal.getName().equals(portalName))
-                return portal;
-        }
+
+        if (pictureURL == null || pictureURL.equalsIgnoreCase(""))
+            for (P portal : portals) {
+                Logger.v("DBI", "Looking for: " + portalName + " found " + portal.getName());
+                if (portal.getName().equals(portalName))
+                    return portal;
+            }
+        else if (portals.size() > 0)
+            return portals.get(0);
         return null;
     }
 

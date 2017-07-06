@@ -1,4 +1,5 @@
-/******************************************************************************
+/*
+ *****************************************************************************
  *                                                                            *
  * Copyright 2017 Steven Foskett, Jimmy Ho, Ryan Porterfield                  *
  * Permission is hereby granted, free of charge, to any person obtaining a    *
@@ -38,7 +39,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.AppCompatDrawableManager;
+import android.support.v7.app.AppCompatDelegate;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -112,8 +113,8 @@ public class PSDetailsActivity extends AppCompatActivity {
      */
     private void buildAcceptedUI(PortalAccepted portal) {
         buildRespondedUI(portal);
-        portalStatusImage.setBackgroundColor(getResources().getColor(R.color.accepted));
-        portalStatusImage.setImageDrawable(AppCompatDrawableManager.get().getDrawable(this, R
+        portalStatusImage.setBackgroundColor(ContextCompat.getColor(this, R.color.accepted));
+        portalStatusImage.setImageDrawable(ContextCompat.getDrawable(this, R
                 .drawable.ic_check));
         LinearLayout acceptedLayout = (LinearLayout) LayoutInflater.from(this)
                 .inflate(R.layout.row_psdetails_accepted, extraLayout, false);
@@ -162,8 +163,9 @@ public class PSDetailsActivity extends AppCompatActivity {
      */
     private void buildRejectedUI(PortalRejected portal) {
         buildRespondedUI(portal);
-        portalStatusImage.setBackgroundColor(getResources().getColor(R.color.rejected));
-        portalStatusImage.setImageDrawable(getResources().getDrawable(R.drawable.ic_rejected));
+        portalStatusImage.setBackgroundColor(ContextCompat.getColor(this, R.color.rejected));
+        portalStatusImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable
+                .ic_rejected));
         LinearLayout rejectedLayout = (LinearLayout) LayoutInflater.from(this)
                 .inflate(R.layout.row_psdetails_rejected, extraLayout, false);
         ((TextView) rejectedLayout.findViewById(R.id.rejectionreason_rejectedrow)).setText(
@@ -301,7 +303,7 @@ public class PSDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_psdetails);
         ButterKnife.bind(this);
-
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
         ActionBar supportActionBar = getSupportActionBar();
         if (supportActionBar != null)
             supportActionBar.setDisplayHomeAsUpEnabled(true);
