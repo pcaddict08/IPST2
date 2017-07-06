@@ -141,7 +141,7 @@ public class GetMailTask extends AsyncTask<Void, Void, MailBundle> {
         try {
             d = DATE_FORMATTER.parseLocalDate(dateStr);
         } catch (IllegalArgumentException e) {
-            d = new LocalDate(2013, 11, 15);
+            d = new LocalDate(2012, 10, 15);
         }
         return d;
     }
@@ -168,6 +168,7 @@ public class GetMailTask extends AsyncTask<Void, Void, MailBundle> {
         SearchTerm superOpsTerm = new FromStringTerm("super-ops@google.com");
         SearchTerm iSupportTerm1 = new FromStringTerm("ingress-support@google.com");
         SearchTerm iSupportTerm2 = new FromStringTerm("ingress-support@nianticlabs.com");
+        Logger.d("Last Parse Date: " + lastParseDate.toString());
         SearchTerm fromTerm = new OrTerm(new SearchTerm[]
                 {superOpsTerm, iSupportTerm1, iSupportTerm2});
         if (anySource)
