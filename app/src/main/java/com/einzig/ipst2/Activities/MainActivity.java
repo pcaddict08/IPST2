@@ -1,4 +1,5 @@
-/******************************************************************************
+/*
+ ****************************************************************************
  *                                                                            *
  * Copyright 2017 Steven Foskett, Jimmy Ho, Ryan Porterfield                  *
  * Permission is hereby granted, free of charge, to any person obtaining a    *
@@ -70,7 +71,6 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import org.joda.time.LocalDate;
 
 import java.util.Locale;
-import java.util.Vector;
 import java.util.concurrent.ExecutionException;
 
 import butterknife.BindView;

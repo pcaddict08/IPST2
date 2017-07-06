@@ -53,8 +53,6 @@ import com.einzig.ipst2.util.DialogHelper;
 import com.einzig.ipst2.util.Logger;
 import com.einzig.ipst2.util.PreferencesHelper;
 
-import org.joda.time.LocalDate;
-
 import java.util.Collections;
 import java.util.Vector;
 

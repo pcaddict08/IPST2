@@ -588,6 +588,7 @@ public class DatabaseInterface extends SQLiteOpenHelper {
             }
         else if (portals.size() > 0)
             return portals.get(0);
+        Logger.d("Returning null for url: " + pictureURL + " - " + portalName);
         return null;
     }
 

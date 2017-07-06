@@ -112,7 +112,9 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
             addPortalAccepted((PortalAccepted) p);
         } else if (p instanceof PortalRejected && !db.containsRejected(p.getPictureURL(), p.getName())) {
             addPortalRejected((PortalRejected) p);
-        } else if (p != null && !db.containsPending(p.getPictureURL(), p.getName()))
+        } else if (p != null && !db.containsPending(p.getPictureURL(), p.getName())
+                && !db.containsRejected(p.getPictureURL(), p.getName())
+                && !db.containsAccepted(p.getPictureURL(), p.getName()))
             addPortalSubmission(p);
     }
 
