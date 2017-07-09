@@ -94,7 +94,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 || SettingsActivity.DBPreferenceFragment.class.getName().equals(fragmentName)
                 || SettingsActivity.ListSettingsFragment.class.getName().equals(fragmentName)
                 || SettingsActivity.MiscSettingsFragment.class.getName().equals(fragmentName)
-                || SettingsActivity.AboutSettingsFragment.class.getName().equals(fragmentName);
+                || SettingsActivity.AboutSettingsFragment.class.getName().equals(fragmentName)
+                || SettingsActivity.DeluxeSettingsFragment.class.getName().equals(fragmentName);
     }
 
     /**
@@ -145,10 +146,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         }
     }
 
-    /**
-     * This fragment shows notification preferences only. It is used when the
-     * activity is showing a two-pane settings UI.
-     */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 
     public static class AboutSettingsFragment extends PreferenceFragment {
@@ -238,10 +235,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         }
     }
 
-    /**
-     * This fragment shows data and sync preferences only. It is used when the
-     * activity is showing a two-pane settings UI.
-     */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class DBPreferenceFragment extends PreferenceFragment {
         public void clearAllData() {
@@ -341,10 +334,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         }
     }
 
-    /**
-     * This fragment shows notification preferences only. It is used when the
-     * activity is showing a two-pane settings UI.
-     */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class ListSettingsFragment extends PreferenceFragment {
         @Override
@@ -365,16 +354,33 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         }
     }
 
-    /**
-     * This fragment shows data and sync preferences only. It is used when the
-     * activity is showing a two-pane settings UI.
-     */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class MiscSettingsFragment extends PreferenceFragment {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_miscsheet);
+            setHasOptionsMenu(true);
+
+        }
+
+        @Override
+        public boolean onOptionsItemSelected(MenuItem item) {
+            int id = item.getItemId();
+            if (id == android.R.id.home) {
+                startActivity(new Intent(getActivity(), SettingsActivity.class));
+                return true;
+            }
+            return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public static class DeluxeSettingsFragment extends PreferenceFragment {
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            addPreferencesFromResource(R.xml.pref_deluxesheet);
             setHasOptionsMenu(true);
 
             Preference darktheme = findPreference("dark-theme");
@@ -399,6 +405,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             return super.onOptionsItemSelected(item);
         }
     }
+
 }
 
 

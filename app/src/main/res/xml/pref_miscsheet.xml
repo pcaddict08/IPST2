@@ -49,13 +49,4 @@
         android:summary="@string/exportlogs_summary"
         android:title="@string/exportlogs_title" />
 
-    <!--
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="dark-theme"
-        android:summary="@string/darktheme_prefmessage"
-        android:title="@string/darktheme_preftitle"
-        />
-        -->
-
 </PreferenceScreen>

@@ -52,6 +52,7 @@ import com.einzig.ipst2.portal.PortalSubmission;
 import com.einzig.ipst2.util.DialogHelper;
 import com.einzig.ipst2.util.Logger;
 import com.einzig.ipst2.util.PreferencesHelper;
+import com.einzig.ipst2.util.ThemeHelper;
 
 import java.util.Collections;
 import java.util.Vector;
@@ -78,6 +79,7 @@ public class PSListActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ThemeHelper.setSettingsTheme(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pslist);
         ButterKnife.bind(this);

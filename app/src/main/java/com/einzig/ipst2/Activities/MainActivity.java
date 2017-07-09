@@ -29,6 +29,7 @@ import android.accounts.AccountManager;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Looper;
@@ -66,6 +67,7 @@ import com.einzig.ipst2.portal.PortalSubmission;
 import com.einzig.ipst2.util.DialogHelper;
 import com.einzig.ipst2.util.Logger;
 import com.einzig.ipst2.util.PreferencesHelper;
+import com.einzig.ipst2.util.ThemeHelper;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.joda.time.LocalDate;
@@ -174,6 +176,10 @@ public class MainActivity extends AppCompatActivity
         weektab.setOnCheckedChangeListener(this);
         monthtab.setOnCheckedChangeListener(this);
         alltab.setOnCheckedChangeListener(this);
+        ThemeHelper.styleRadioButton(alltab, this, alltab.isSelected());
+        ThemeHelper.styleRadioButton(monthtab, this, monthtab.isSelected());
+        ThemeHelper.styleRadioButton(weektab, this, weektab.isSelected());
+        ThemeHelper.styleRadioButton(todaytab, this, todaytab.isSelected());
         selectRadioItem();
     }
 
@@ -385,11 +391,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         buttonView.setTypeface(isChecked ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
-        buttonView.setTextColor(isChecked ? ActivityCompat.getColor(this, R.color.white)
-                : ActivityCompat.getColor(this, R.color.colorPrimaryDark));
-        buttonView.setBackground(
-                isChecked ? ActivityCompat.getDrawable(this, R.drawable.cell_shape_radio)
-                        : ActivityCompat.getDrawable(this, R.drawable.cell_shape_radio_clear));
+        Logger.d("Check Changed : " + buttonView.getText().toString() + " - " + isChecked);
+        ThemeHelper.styleRadioButton(buttonView, this, isChecked);
     }
 
     /*
@@ -444,6 +447,7 @@ public class MainActivity extends AppCompatActivity
         mFirebaseAnalytics.setAnalyticsCollectionEnabled(true);
         Fabric.with(this, new Crashlytics());
         initActionBar();
+        styleButtons();
     }
 
     /* TODO Refactor into smaller functions
@@ -452,6 +456,7 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ThemeHelper.setSettingsTheme(this);
         super.onCreate(savedInstanceState);
         initUI();
         initLoginButton();
@@ -664,6 +669,13 @@ public class MainActivity extends AppCompatActivity
         mainui_mainactivity.setVisibility(View.INVISIBLE);
         tabs_mainactivity.setVisibility(View.INVISIBLE);
         viewButton.setVisibility(View.INVISIBLE);
+    }
+
+    /* Style buttons */
+    public void styleButtons()
+    {
+        ThemeHelper.styleButton(gmail_login_button, this);
+        ThemeHelper.styleButton(viewButton, this);
     }
 
     /**

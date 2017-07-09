@@ -19,31 +19,13 @@
   ~ DEALINGS IN THE SOFTWARE.                                                 ~
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
-<preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <header
-        android:fragment="com.einzig.ipst2.activities.SettingsActivity$DBPreferenceFragment"
-        android:icon="@drawable/ic_database"
-        android:title="@string/dbsettings_prefheader" />
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="@string/theme_key"
+        android:summary="@string/darktheme_prefmessage"
+        android:title="@string/darktheme_preftitle"
+        />
 
-    <header
-        android:fragment="com.einzig.ipst2.activities.SettingsActivity$ListSettingsFragment"
-        android:icon="@drawable/ic_view_list_black_24dp"
-        android:title="@string/listsettings_prefheader" />
-
-    <header
-        android:fragment="com.einzig.ipst2.activities.SettingsActivity$MiscSettingsFragment"
-        android:icon="@drawable/ic_settings_applications_black_24dp"
-        android:title="@string/miscsettings_prefheader" />
-
-    <header
-        android:fragment="com.einzig.ipst2.activities.SettingsActivity$AboutSettingsFragment"
-        android:icon="@drawable/ic_info_black_24dp"
-        android:title="@string/aboutcontact_prefheader" />
-
-    <header
-        android:fragment="com.einzig.ipst2.activities.SettingsActivity$DeluxeSettingsFragment"
-        android:icon="@drawable/ic_monetization_on_black_24dp"
-        android:title="@string/delux_prefheader" />
-
-</preference-headers>
+</PreferenceScreen>

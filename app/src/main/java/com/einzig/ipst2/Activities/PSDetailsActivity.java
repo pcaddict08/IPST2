@@ -59,6 +59,7 @@ import com.einzig.ipst2.portal.PortalSubmission;
 import com.einzig.ipst2.util.DialogHelper;
 import com.einzig.ipst2.util.Logger;
 import com.einzig.ipst2.util.PreferencesHelper;
+import com.einzig.ipst2.util.ThemeHelper;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -300,6 +301,7 @@ public class PSDetailsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ThemeHelper.setSettingsTheme(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_psdetails);
         ButterKnife.bind(this);

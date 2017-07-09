@@ -56,7 +56,6 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:paddingStart="10dp"
-            android:textColor="@color/colorPrimary"
             android:textSize="22sp" />
 
         <TextView
@@ -67,7 +66,6 @@
             android:layout_below="@id/psname_rowpslist"
             android:maxLines="1"
             android:paddingStart="10dp"
-            android:textColor="@color/colorPrimary"
             android:textSize="18sp" />
     </RelativeLayout>
 

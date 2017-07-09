@@ -124,4 +124,6 @@
     <string name="gototg_preftitle">Announcements Channel</string>
     <string name="clear_dbsoft_pref">cleardb_pref</string>
     <string name="resetkey_prefs">reset-23</string>
+    <string name="delux_prefheader">Deluxe Settings</string>
+    <string name="theme_key">dark-theme</string>
 </resources>

@@ -123,6 +123,16 @@ public class PreferencesHelper {
         return preferences.getString(key, nullKey());
     }
 
+    /*
+    *  Get a boolean preference value
+    *  @param key Preference key
+    *  @return value of key
+    * */
+    public boolean getBool(String key)
+    {
+        return preferences.getBoolean(key, false);
+    }
+
     /**
      * Get the value of manual refresh preference
      * @return value of manual refresh preference
@@ -183,6 +193,11 @@ public class PreferencesHelper {
     public String parseDateKey() {
         return context.getString(R.string.parseDateKey);
     }
+
+    /**
+     * @return Preferences key for the theme setting
+     */
+    public String themeKey() { return context.getString(R.string.theme_key); }
 
     /**
      * Log all preferences
