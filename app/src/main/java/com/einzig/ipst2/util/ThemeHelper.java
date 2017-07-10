@@ -48,7 +48,7 @@ public class ThemeHelper {
             activity.setTheme(R.style.AppTheme);
     }
 
-    private static boolean isDarkTheme(Context context) {
+    public static boolean isDarkTheme(Context context) {
         PreferencesHelper preferencesHelper = new PreferencesHelper(context);
         return preferencesHelper.getBool(preferencesHelper.themeKey());
     }
@@ -80,5 +80,13 @@ public class ThemeHelper {
                 rb.setTextColor(ContextCompat.getColor(context, R.color.colorPrimary));
             }
         }
+    }
+
+    public static int getDialogTheme(Context context) {
+        PreferencesHelper preferencesHelper = new PreferencesHelper(context);
+        if(preferencesHelper.getBool(preferencesHelper.themeKey()))
+            return R.style.AboutDialog_dark;
+        else
+            return R.style.AboutDialog;
     }
 }

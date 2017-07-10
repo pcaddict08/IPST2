@@ -36,6 +36,7 @@ import com.einzig.ipst2.portal.PortalRejected;
 import com.einzig.ipst2.portal.PortalSubmission;
 import com.einzig.ipst2.util.Logger;
 import com.einzig.ipst2.util.PreferencesHelper;
+import com.einzig.ipst2.util.ThemeHelper;
 
 import org.joda.time.LocalDate;
 
@@ -185,7 +186,7 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
      * Initialize the progress dialog
      */
     private void initProgressDialog() {
-        dialog = new ProgressDialog(activity);
+        dialog = new ProgressDialog(activity, ThemeHelper.getDialogTheme(activity));
         dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         dialog.setTitle("Parsing email");
         dialog.setCanceledOnTouchOutside(false);

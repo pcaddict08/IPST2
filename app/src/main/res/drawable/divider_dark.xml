@@ -19,32 +19,7 @@
   ~ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER       ~
   ~ DEALINGS IN THE SOFTWARE.                                                 ~
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-
-<item >
-    <shape android:shape="rectangle">
-
-        <padding android:left="3.5px"
-            android:top="3.5px"
-            android:right="3.5px"
-            android:bottom="3.5px"/>
-
-        <solid android:color="@android:color/transparent"/>
-        <stroke android:width="2dp"  android:color="@color/white"/>
-
-    </shape>
-</item>
-<item >
-<shape android:shape="rectangle">
-
-    <padding android:left="14.5px"
-        android:top="14.5px"
-        android:right="14.5px"
-        android:bottom="14.5px"/>
-    <stroke android:width="4dp"  android:color="@android:color/transparent"/>
-
-    <solid android:color="@color/colorPrimary"/>
-
+<shape
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <gradient android:startColor="@color/white" android:endColor="@color/white" android:angle="270.0" />
 </shape>
-</item>
-    </layer-list>

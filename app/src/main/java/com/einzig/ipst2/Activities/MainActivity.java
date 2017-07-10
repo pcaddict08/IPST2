@@ -30,6 +30,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Looper;
@@ -52,6 +53,7 @@ import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.crashlytics.android.Crashlytics;
@@ -69,6 +71,7 @@ import com.einzig.ipst2.util.Logger;
 import com.einzig.ipst2.util.PreferencesHelper;
 import com.einzig.ipst2.util.ThemeHelper;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.singh.daman.proprogressviews.DoubleArcProgress;
 
 import org.joda.time.LocalDate;
 
@@ -114,6 +117,8 @@ public class MainActivity extends AppCompatActivity
     static private final int SETTINGS_ACTIVITY_CODE = 101;
 
     /* Butterknife UI code */
+    @BindView(R.id.baseui_mainactivity)
+    RelativeLayout baseui_mainactivity;
     @BindView(R.id.acceptedgraph_mainactivity)
     TextView acceptedgraph;
     @BindView(R.id.acceptedtext_mainactivity)
@@ -145,6 +150,8 @@ public class MainActivity extends AppCompatActivity
     Button viewButton;
     @BindView(R.id.weektab_mainactivity)
     RadioButton weektab;
+    @BindView(R.id.arcprogress_mainactivity)
+    DoubleArcProgress arcprogress_mainactivity;
 
     /** Database Handle for getting portals and such */
     private DatabaseInterface db;
@@ -180,6 +187,11 @@ public class MainActivity extends AppCompatActivity
         ThemeHelper.styleRadioButton(monthtab, this, monthtab.isSelected());
         ThemeHelper.styleRadioButton(weektab, this, weektab.isSelected());
         ThemeHelper.styleRadioButton(todaytab, this, todaytab.isSelected());
+        if(ThemeHelper.isDarkTheme(this)) {
+            baseui_mainactivity.setBackgroundColor(ContextCompat.getColor(this, R.color
+                    .colorLighterPrimary_dark));
+            arcprogress_mainactivity.setBackgroundColor(Color.WHITE);
+        }
         selectRadioItem();
     }
 
@@ -307,7 +319,8 @@ public class MainActivity extends AppCompatActivity
         }
 
         if (numGoogAcct == 0) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this, ThemeHelper
+                    .getDialogTheme(this));
             builder.setTitle(R.string.noaccountstitle);
             builder.setMessage(R.string.noaccountsmessage);//.  Would you like to log in manually?")
             builder.setCancelable(true);
@@ -606,10 +619,11 @@ public class MainActivity extends AppCompatActivity
         }
         final Account account = getAccount();
         if (account != null) {
-            final ProgressDialog dialog = new ProgressDialog(this);
+            final ProgressDialog dialog = new ProgressDialog(this, ThemeHelper
+                    .getDialogTheme(this));
             dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             dialog.setIndeterminate(true);
-            dialog.setTitle("Searching Email");
+            dialog.setTitle(getString(R.string.searching_email));
             dialog.setCanceledOnTouchOutside(false);
             dialog.show();
             new Thread() {

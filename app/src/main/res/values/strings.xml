@@ -126,4 +126,5 @@
     <string name="resetkey_prefs">reset-23</string>
     <string name="delux_prefheader">Deluxe Settings</string>
     <string name="theme_key">dark-theme</string>
+    <string name="searching_email">Searching Email</string>
 </resources>
