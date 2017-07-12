@@ -27,6 +27,7 @@ import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.einzig.ipst2.activities.PSExportActivity;
 import com.einzig.ipst2.database.DatabaseInterface;
 import com.einzig.ipst2.portal.PortalAccepted;
 import com.einzig.ipst2.portal.PortalRejected;
@@ -79,114 +80,113 @@ public class CSVExportHelper extends AsyncTask<String, String, String> {
         } else {
             try {
                 Logger.d(file.getAbsolutePath());
-                    CSVWriter mWriter = new CSVWriter(new FileWriter(file));
-                    Vector<? extends PortalSubmission> subList =
-                            db.getAllPortals(helper.isSeerOnly());
-                    SortHelper.sortList(subList, activity);
+                CSVWriter mWriter = new CSVWriter(new FileWriter(file));
+                Vector<? extends PortalSubmission> subList =
+                        db.getAllPortals(helper.isSeerOnly());
+                SortHelper.sortList(subList, activity);
 
-                    String[] mExportChartHeaders = {
-                            "Portal Name",
-                            "Date Submitted",
-                            "Date Accepted",
-                            "Date Rejected",
-                            "Status",
-                            "Live Address",
-                            "Intel Link URL",
-                            "Picture URL",
-                            "Rejection Reason",
-                            "Lat/Lon",
-                            "Date Pattern"
-                    };
+                String[] mExportChartHeaders = {
+                        "Portal Name",
+                        "Date Submitted",
+                        "Date Accepted",
+                        "Date Rejected",
+                        "Status",
+                        "Live Address",
+                        "Intel Link URL",
+                        "Picture URL",
+                        "Rejection Reason",
+                        "Lat/Lon",
+                        "Date Pattern"
+                };
 
-                    mWriter.writeNext(mExportChartHeaders);
+                mWriter.writeNext(mExportChartHeaders);
 
-                    for (PortalSubmission submission : subList) {
-                        Logger.d("PORTAL SUBMISSION ADDED TO CSV: " + submission.getName());
-                        String name = submission.getName();
-                        String dateSubmitted = "N/A";
-                        if (submission.getDateSubmitted() != null)
-                            dateSubmitted = uiFormatter.print(submission.getDateSubmitted());
+                for (PortalSubmission submission : subList) {
+                    Logger.d("PORTAL SUBMISSION ADDED TO CSV: " + submission.getName());
+                    String name = submission.getName();
+                    String dateSubmitted = "N/A";
+                    if (submission.getDateSubmitted() != null)
+                        dateSubmitted = uiFormatter.print(submission.getDateSubmitted());
 
-                        String dateAccepted = "N/A";
-                        String dateRejected = "N/A";
-                        if (submission instanceof PortalAccepted ||
-                                submission instanceof PortalRejected) {
-                            if (((PortalResponded) submission).getDateResponded() != null) {
-                                if (submission instanceof PortalAccepted)
-                                    dateAccepted = uiFormatter.print(((PortalResponded) submission)
-                                            .getDateResponded());
-                                else
-                                    dateRejected = uiFormatter.print(((PortalResponded) submission)
-                                            .getDateResponded());
-                            }
+                    String dateAccepted = "N/A";
+                    String dateRejected = "N/A";
+                    if (submission instanceof PortalAccepted ||
+                            submission instanceof PortalRejected) {
+                        if (((PortalResponded) submission).getDateResponded() != null) {
+                            if (submission instanceof PortalAccepted)
+                                dateAccepted = uiFormatter.print(((PortalResponded) submission)
+                                        .getDateResponded());
+                            else
+                                dateRejected = uiFormatter.print(((PortalResponded) submission)
+                                        .getDateResponded());
                         }
-
-                        String status = "Pending";
-                        if (submission instanceof PortalAccepted)
-                            status = "Accepted";
-                        else if (submission instanceof PortalRejected)
-                            status = "Rejected";
-
-                        String liveAddress = "N/A";
-                        String intelLink = "N/A";
-                        String pictureURL = "N/A";
-                        String rejectionReason = "N/A";
-                        String latLonString = "N/A";
-
-                        if (submission.getPictureURL() != null)
-                            pictureURL = submission.getPictureURL();
-
-                        if (submission instanceof PortalResponded) {
-                            if (submission instanceof PortalAccepted) {
-                                liveAddress = ((PortalAccepted) submission).getLiveAddress();
-                                intelLink = ((PortalAccepted) submission).getIntelLinkURL();
-                                try {
-                                    latLonString = intelLink.substring(intelLink.indexOf("=") + 1,
-                                            intelLink.indexOf("&"));
-                                } catch (java.lang.StringIndexOutOfBoundsException e) {
-                                    latLonString = "String Index was Out of Bounds";
-                                }
-                            } else if (submission instanceof PortalRejected) {
-                                rejectionReason = ((PortalRejected) submission)
-                                        .getRejectionReason();
-                            }
-                        }
-
-                        if (name != null)
-                            name = name.replaceAll(",", "");
-
-                        status = status.replaceAll(",", "");
-
-                        if (liveAddress != null) {
-                            liveAddress = liveAddress.replaceAll(",", "");
-                        }
-
-                        if (intelLink != null)
-                            intelLink = intelLink.replaceAll(",", ",");
-
-                        if (rejectionReason != null)
-                            rejectionReason = rejectionReason.replaceAll(",", "");
-
-
-                        String[] lineOfCSV =
-                                {name, dateSubmitted, dateAccepted, dateRejected, status,
-                                        liveAddress, intelLink, pictureURL, rejectionReason,
-                                        latLonString, helper.getUIFormatterPattern()};
-
-                        if (exportType.equalsIgnoreCase("all"))
-                            mWriter.writeNext(lineOfCSV);
-                        else if (exportType.equalsIgnoreCase("accepted"))
-                            if (status.equalsIgnoreCase("Accepted"))
-                                mWriter.writeNext(lineOfCSV);
                     }
-                    mWriter.close();
 
-                    pathTofile = file.getAbsolutePath();
+                    String status = "Pending";
+                    if (submission instanceof PortalAccepted)
+                        status = "Accepted";
+                    else if (submission instanceof PortalRejected)
+                        status = "Rejected";
 
-                    //Intent sendIntent = new Intent(Intent.ACTION_SEND);
-                    //sendIntent.setType("application/csv");
-                    //sendIntent.putExtra(Intent.EXTRA_STREAM, u1);
-                    //startActivity(sendIntent);
+                    String liveAddress = "N/A";
+                    String intelLink = "N/A";
+                    String pictureURL = "N/A";
+                    String rejectionReason = "N/A";
+                    String latLonString = "N/A";
+
+                    if (submission.getPictureURL() != null)
+                        pictureURL = submission.getPictureURL();
+
+                    if (submission instanceof PortalResponded) {
+                        if (submission instanceof PortalAccepted) {
+                            liveAddress = ((PortalAccepted) submission).getLiveAddress();
+                            intelLink = ((PortalAccepted) submission).getIntelLinkURL();
+                            try {
+                                latLonString = intelLink.substring(intelLink.indexOf("=") + 1,
+                                        intelLink.indexOf("&"));
+                            } catch (java.lang.StringIndexOutOfBoundsException e) {
+                                latLonString = "String Index was Out of Bounds";
+                            }
+                        } else if (submission instanceof PortalRejected) {
+                            rejectionReason = ((PortalRejected) submission)
+                                    .getRejectionReason();
+                        }
+                    }
+
+                    if (name != null)
+                        name = name.replaceAll(",", "");
+
+                    status = status.replaceAll(",", "");
+
+                    if (liveAddress != null) {
+                        liveAddress = liveAddress.replaceAll(",", "");
+                    }
+
+                    if (intelLink != null)
+                        intelLink = intelLink.replaceAll(",", ",");
+
+                    if (rejectionReason != null)
+                        rejectionReason = rejectionReason.replaceAll(",", "");
+
+                    String[] lineOfCSV =
+                            {name, dateSubmitted, dateAccepted, dateRejected, status,
+                                    liveAddress, intelLink, pictureURL, rejectionReason,
+                                    latLonString, helper.getUIFormatterPattern()};
+
+                    if (exportType.equalsIgnoreCase("all"))
+                        mWriter.writeNext(lineOfCSV);
+                    else if (exportType.equalsIgnoreCase("accepted"))
+                        if (status.equalsIgnoreCase("Accepted"))
+                            mWriter.writeNext(lineOfCSV);
+                }
+                mWriter.close();
+
+                pathTofile = file.getAbsolutePath();
+
+                //Intent sendIntent = new Intent(Intent.ACTION_SEND);
+                //sendIntent.setType("application/csv");
+                //sendIntent.putExtra(Intent.EXTRA_STREAM, u1);
+                //startActivity(sendIntent);
             } catch (Exception e) {
                 e.printStackTrace();
                 errorThatHappened = e.toString();
@@ -200,11 +200,14 @@ public class CSVExportHelper extends AsyncTask<String, String, String> {
 
     protected void onPostExecute(String result) {
         if (!errorHappened) {
-            Toast.makeText(activity, "The CSV file has been successfully exported to this location on your external storage: \n\n" +
-                    pathTofile, Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity,
+                    "The CSV file has been successfully exported to this location on your external storage: \n\n" +
+                            pathTofile, Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(activity, "CSV Export FAILED: " + errorThatHappened, Toast.LENGTH_SHORT)
                     .show();
         }
+        if (activity instanceof PSExportActivity)
+            ((PSExportActivity) activity).loadingDone();
     }
 }

@@ -26,7 +26,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatDelegate;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 
 import com.einzig.ipst2.R;
 import com.einzig.ipst2.util.CSVExportHelper;
@@ -39,6 +41,8 @@ import butterknife.OnClick;
 public class PSExportActivity extends AppCompatActivity {
     @BindView(R.id.exportportaldata_psexportactivity)
     Button exportportaldata_psexportactivity;
+    @BindView(R.id.exportprogress_psexportactivity)
+    ProgressBar exportprogress_psexportactivity;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -67,6 +71,17 @@ public class PSExportActivity extends AppCompatActivity {
 
     @OnClick(R.id.exportportaldata_psexportactivity)
     public void exportData() {
+        startLoading();
         new CSVExportHelper(this, "all").execute();
+    }
+
+    public void loadingDone() {
+        exportportaldata_psexportactivity.setVisibility(View.VISIBLE);
+        exportprogress_psexportactivity.setVisibility(View.INVISIBLE);
+    }
+
+    public void startLoading() {
+        exportportaldata_psexportactivity.setVisibility(View.INVISIBLE);
+        exportprogress_psexportactivity.setVisibility(View.VISIBLE);
     }
 }
