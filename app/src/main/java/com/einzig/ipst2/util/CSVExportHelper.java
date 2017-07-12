@@ -70,7 +70,7 @@ public class CSVExportHelper extends AsyncTask<String, String, String> {
         DateTimeFormatter uiFormatter = helper.getUIFormatter();
         DateTimeFormatter fileFormatter = ISODateTimeFormat.basicDate();
         String date = fileFormatter.print(LocalDateTime.now());
-        String fileName = "/IPST2-backup-" + date + ".csv";
+        String fileName = "/IPST2-backup-" + exportType + "-" + date + ".csv";
         File root = Environment.getExternalStorageDirectory();
         File dir = new File(root.getAbsolutePath() + "/Download");
         File file = new File(dir, fileName);
@@ -202,7 +202,7 @@ public class CSVExportHelper extends AsyncTask<String, String, String> {
         if (!errorHappened) {
             Toast.makeText(activity,
                     "The CSV file has been successfully exported to this location on your external storage: \n\n" +
-                            pathTofile, Toast.LENGTH_SHORT).show();
+                            pathTofile, Toast.LENGTH_LONG).show();
         } else {
             Toast.makeText(activity, "CSV Export FAILED: " + errorThatHappened, Toast.LENGTH_SHORT)
                     .show();

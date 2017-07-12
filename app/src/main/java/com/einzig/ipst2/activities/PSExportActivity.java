@@ -41,6 +41,8 @@ import butterknife.OnClick;
 public class PSExportActivity extends AppCompatActivity {
     @BindView(R.id.exportportaldata_psexportactivity)
     Button exportportaldata_psexportactivity;
+    @BindView(R.id.exportportaldataaccepted_psexportactivity)
+    Button exportportaldataaccepted_psexportactivity;
     @BindView(R.id.exportprogress_psexportactivity)
     ProgressBar exportprogress_psexportactivity;
 
@@ -75,13 +77,21 @@ public class PSExportActivity extends AppCompatActivity {
         new CSVExportHelper(this, "all").execute();
     }
 
+    @OnClick(R.id.exportportaldataaccepted_psexportactivity)
+    public void exportDataAccepted() {
+        startLoading();
+        new CSVExportHelper(this, "accepted").execute();
+    }
+
     public void loadingDone() {
         exportportaldata_psexportactivity.setVisibility(View.VISIBLE);
+        exportportaldataaccepted_psexportactivity.setVisibility(View.VISIBLE);
         exportprogress_psexportactivity.setVisibility(View.INVISIBLE);
     }
 
     public void startLoading() {
         exportportaldata_psexportactivity.setVisibility(View.INVISIBLE);
+        exportportaldataaccepted_psexportactivity.setVisibility(View.INVISIBLE);
         exportprogress_psexportactivity.setVisibility(View.VISIBLE);
     }
 }

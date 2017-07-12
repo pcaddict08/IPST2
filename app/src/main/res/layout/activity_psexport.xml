@@ -27,12 +27,26 @@
     android:layout_height="match_parent"
     tools:context="com.einzig.ipst2.activities.PSExportActivity">
 
-    <Button
-        android:id="@+id/exportportaldata_psexportactivity"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="@string/export_portal_data"/>
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/exportportaldata_psexportactivity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dip"
+            android:text="@string/export_portal_data"/>
+
+        <Button
+            android:id="@+id/exportportaldataaccepted_psexportactivity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/export_accepted_portal_data"/>
+    </LinearLayout>
 
     <ProgressBar
         android:id="@+id/exportprogress_psexportactivity"
