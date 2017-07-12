@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   ~ Copyright 2017 Steven Foskett, Jimmy Ho, Ryan Porterfield                 ~
   ~ Permission is hereby granted, free of charge, to any person obtaining a   ~
@@ -19,32 +20,9 @@
   ~ DEALINGS IN THE SOFTWARE.                                                 ~
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
-<preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <header
-        android:fragment="com.einzig.ipst2.activities.SettingsActivity$DBPreferenceFragment"
-        android:icon="@drawable/ic_database"
-        android:title="@string/dbsettings_prefheader" />
-
-    <header
-        android:fragment="com.einzig.ipst2.activities.SettingsActivity$ListSettingsFragment"
-        android:icon="@drawable/ic_view_list_black_24dp"
-        android:title="@string/listsettings_prefheader" />
-
-    <header
-        android:fragment="com.einzig.ipst2.activities.SettingsActivity$MiscSettingsFragment"
-        android:icon="@drawable/ic_settings_applications_black_24dp"
-        android:title="@string/miscsettings_prefheader" />
-
-    <header
-        android:fragment="com.einzig.ipst2.activities.SettingsActivity$AboutSettingsFragment"
-        android:icon="@drawable/ic_info_black_24dp"
-        android:title="@string/aboutcontact_prefheader" />
-
-    <!--
-    <header
-        android:fragment="com.einzig.ipst2.activities.SettingsActivity$DeluxeSettingsFragment"
-        android:icon="@drawable/ic_monetization_on_black_24dp"
-        android:title="@string/delux_prefheader" />
--->
-</preference-headers>
+<shape
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape= "rectangle"  >
+    <solid android:color="@android:color/transparent"/>
+    <stroke android:width="2dp"  android:color="@color/white"/>
+</shape>

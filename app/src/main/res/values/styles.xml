@@ -10,22 +10,13 @@
     </style>
 
     <style name="AppTheme_Dark" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
-        <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary_dark</item>
         <item name="android:listDivider">@color/white</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark_dark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:dialogTheme">@style/AboutDialog</item>
-        <item name="android:listViewStyle">@style/listStyle_dark</item>
-
+        <item name="android:dialogTheme">@style/AboutDialog_dark</item>
     </style>
 
-    <style name="listStyle_dark" parent="@android:style/Widget.ListView">
-        <item name="android:fadingEdge">none</item>
-        <item name="android:background">@color/colorLighterPrimary_dark</item>
-        <item name="android:divider">@drawable/divider_dark</item>
-        <item name="android:dividerHeight">10dip</item>
-    </style>
 
     <style name="RadioButtonStyle" parent="@android:style/Widget.CompoundButton">
     <item name="android:button">@null</item></style>
@@ -45,4 +36,7 @@
         <item name="android:textColor">@color/white</item>
         <item name="colorAccent">@color/white</item>
     </style>
+
+
+
 </resources>

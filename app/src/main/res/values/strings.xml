@@ -105,7 +105,7 @@
     <string name="versionnum_prefmessage">0.0.0</string>
 
     <string name="darktheme_preftitle">Dark Theme</string>
-    <string name="darktheme_prefmessage">If checked, IPST use a dark theme next time the app is
+    <string name="darktheme_prefmessage">If checked, IPST use a dark theme next time a view is
         opened
         .</string>
 
@@ -127,4 +127,8 @@
     <string name="delux_prefheader">Deluxe Settings</string>
     <string name="theme_key">dark-theme</string>
     <string name="searching_email">Searching Email</string>
+    <string name="status_icon">Status Icon</string>
+    <string name="seer_key">seerKey</string>
+    <string name="seer_prefmessage">Only show portals in IPST for portals submitted before the seer badge stopped tracking.</string>
+    <string name="seer_preftitle">Seer Stats Only</string>
 </resources>

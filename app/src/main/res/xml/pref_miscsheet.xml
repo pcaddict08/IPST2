@@ -49,4 +49,18 @@
         android:summary="@string/exportlogs_summary"
         android:title="@string/exportlogs_title" />
 
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="@string/theme_key"
+        android:summary="@string/darktheme_prefmessage"
+        android:title="@string/darktheme_preftitle"
+        />
+
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="@string/seer_key"
+        android:summary="@string/seer_prefmessage"
+        android:title="@string/seer_preftitle"
+        />
+
 </PreferenceScreen>

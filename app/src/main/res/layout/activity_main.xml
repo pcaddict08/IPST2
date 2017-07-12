@@ -95,25 +95,38 @@
                 android:layout_margin="5dip"
                 android:orientation="vertical">
 
-                <ImageView
-                    android:layout_width="75dip"
-                    android:layout_height="75dip"
-                    android:background="@color/pending"
-                    android:contentDescription="@string/pendingbuttondescrip"
-                    android:scaleType="centerInside"
-                    android:visibility="visible"
-                    app:srcCompat="@drawable/ic_pending"/>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/cell_shape_whiteoutline"
+                    android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/pendinggraph_mainactivity"
-                    android:layout_width="75dip"
-                    android:layout_height="25dip"
-                    android:background="@color/pending"
-                    android:gravity="bottom|center_horizontal"
-                    android:paddingBottom="10dip"
-                    android:text="@string/notavailable"
-                    android:textAppearance="?android:textAppearanceLarge"
-                    android:textColor="@android:color/white"/>
+                    <ImageView
+                        android:layout_marginLeft="2dip"
+                        android:layout_marginRight="2dip"
+                        android:layout_marginTop="2dip"
+                        android:layout_width="75dip"
+                        android:layout_height="75dip"
+                        android:background="@color/pending"
+                        android:contentDescription="@string/pendingbuttondescrip"
+                        android:scaleType="centerInside"
+                        android:visibility="visible"
+                        app:srcCompat="@drawable/ic_pending"/>
+
+                    <TextView
+                        android:id="@+id/pendinggraph_mainactivity"
+                        android:layout_width="75dip"
+                        android:layout_height="25dip"
+                        android:background="@color/pending"
+                        android:gravity="bottom|center_horizontal"
+                        android:paddingBottom="10dip"
+                        android:text="@string/notavailable"
+                        android:layout_marginLeft="2dip"
+                        android:layout_marginRight="2dip"
+                        android:layout_marginBottom="2dip"
+                        android:textAppearance="?android:textAppearanceLarge"
+                        android:textColor="@android:color/white"/>
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/pendingtext_mainactivity"
@@ -133,26 +146,39 @@
                 android:layout_margin="5dip"
                 android:orientation="vertical">
 
-                <ImageView
-                    android:layout_width="75dip"
-                    android:layout_height="75dip"
-                    android:background="@color/accepted"
-                    android:contentDescription="@string/acceptedbuttondescrip"
-                    android:scaleType="centerInside"
-                    android:visibility="visible"
-                    app:srcCompat="@drawable/ic_check"/>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/cell_shape_whiteoutline"
+                    android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/acceptedgraph_mainactivity"
-                    android:layout_width="75dip"
-                    android:layout_height="25dip"
-                    android:layout_gravity="top"
-                    android:background="@color/accepted"
-                    android:gravity="bottom|center_horizontal"
-                    android:paddingBottom="10dip"
-                    android:text="@string/notavailable"
-                    android:textAppearance="?android:textAppearanceLarge"
-                    android:textColor="@android:color/white"/>
+                    <ImageView
+                        android:layout_marginLeft="2dip"
+                        android:layout_marginRight="2dip"
+                        android:layout_marginTop="2dip"
+                        android:layout_width="75dip"
+                        android:layout_height="75dip"
+                        android:background="@color/accepted"
+                        android:contentDescription="@string/acceptedbuttondescrip"
+                        android:scaleType="centerInside"
+                        android:visibility="visible"
+                        app:srcCompat="@drawable/ic_check"/>
+
+                    <TextView
+                        android:id="@+id/acceptedgraph_mainactivity"
+                        android:layout_width="75dip"
+                        android:layout_height="25dip"
+                        android:layout_gravity="top"
+                        android:background="@color/accepted"
+                        android:gravity="bottom|center_horizontal"
+                        android:paddingBottom="10dip"
+                        android:text="@string/notavailable"
+                        android:layout_marginLeft="2dip"
+                        android:layout_marginRight="2dip"
+                        android:layout_marginBottom="2dip"
+                        android:textAppearance="?android:textAppearanceLarge"
+                        android:textColor="@android:color/white"/>
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/acceptedtext_mainactivity"
@@ -172,26 +198,39 @@
                 android:layout_margin="5dip"
                 android:orientation="vertical">
 
-                <ImageView
-                    android:layout_width="75dip"
-                    android:layout_height="75dip"
-                    android:background="@color/rejected"
-                    android:contentDescription="@string/rejectedbuttondescrip"
-                    android:scaleType="centerInside"
-                    android:visibility="visible"
-                    app:srcCompat="@drawable/ic_rejected"/>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/cell_shape_whiteoutline"
+                    android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/rejectedgraph_mainactivity"
-                    android:layout_width="75dip"
-                    android:layout_height="25dip"
-                    android:layout_gravity="top"
-                    android:background="@color/rejected"
-                    android:gravity="bottom|center_horizontal"
-                    android:paddingBottom="10dip"
-                    android:text="@string/notavailable"
-                    android:textAppearance="?android:textAppearanceLarge"
-                    android:textColor="@android:color/white"/>
+                    <ImageView
+                        android:layout_marginLeft="2dip"
+                        android:layout_marginRight="2dip"
+                        android:layout_marginTop="2dip"
+                        android:layout_width="75dip"
+                        android:layout_height="75dip"
+                        android:background="@color/rejected"
+                        android:contentDescription="@string/rejectedbuttondescrip"
+                        android:scaleType="centerInside"
+                        android:visibility="visible"
+                        app:srcCompat="@drawable/ic_rejected"/>
+
+                    <TextView
+                        android:id="@+id/rejectedgraph_mainactivity"
+                        android:layout_width="75dip"
+                        android:layout_height="25dip"
+                        android:layout_gravity="top"
+                        android:background="@color/rejected"
+                        android:gravity="bottom|center_horizontal"
+                        android:paddingBottom="10dip"
+                        android:text="@string/notavailable"
+                        android:layout_marginLeft="2dip"
+                        android:layout_marginRight="2dip"
+                        android:layout_marginBottom="2dip"
+                        android:textAppearance="?android:textAppearanceLarge"
+                        android:textColor="@android:color/white"/>
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/rejectedtext_mainactivity"
@@ -230,10 +269,10 @@
         android:visibility="visible">
 
         <com.singh.daman.proprogressviews.DoubleArcProgress
+            android:id="@+id/arcprogress_mainactivity"
             android:layout_width="140dip"
             android:layout_height="140dip"
             app:arcRadius="30dp"
-            android:id="@+id/arcprogress_mainactivity"
             app:colorofArc="@color/colorPrimaryDark"/>
 
         <TextView

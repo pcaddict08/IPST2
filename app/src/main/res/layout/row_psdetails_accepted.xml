@@ -32,7 +32,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dip"
-        android:background="@drawable/cell_shape"
+        android:id="@+id/liveaddresslayout_acceptedrow"
         android:orientation="vertical">
 
         <TextView

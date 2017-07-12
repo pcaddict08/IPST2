@@ -45,6 +45,7 @@ import android.widget.Toast;
 
 import com.einzig.ipst2.R;
 import com.einzig.ipst2.database.DatabaseInterface;
+import com.einzig.ipst2.util.Logger;
 import com.einzig.ipst2.util.PreferencesHelper;
 import com.einzig.ipst2.util.SendMessageHelper;
 import com.einzig.ipst2.util.SendPortalData;
@@ -55,12 +56,10 @@ import java.util.List;
  * @author Steven Foskett
  */
 public class SettingsActivity extends AppCompatPreferenceActivity {
-    // TODO Remove all string literal preference strings
-
     /**
      *
-     * @param context
-     * @return
+     * @param context context of the application
+     * @return returns a string of the version
      */
     public static String getVersionNum(Context context) {
         try {
@@ -361,7 +360,17 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_miscsheet);
             setHasOptionsMenu(true);
-
+            Preference darktheme = findPreference("dark-theme");
+            if (darktheme != null)
+                darktheme.setOnPreferenceClickListener(new Preference
+                        .OnPreferenceClickListener() {
+                    @Override
+                    public boolean onPreferenceClick(Preference preference) {
+                        //TODO add theme stuff
+                        //Logger.d("Toggled Dark Theme: " + preference.getKey());
+                        return false;
+                    }
+                });
         }
 
         @Override
@@ -382,17 +391,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_deluxesheet);
             setHasOptionsMenu(true);
-
-            Preference darktheme = findPreference("dark-theme");
-            if (darktheme != null)
-                darktheme.setOnPreferenceClickListener(new Preference
-                        .OnPreferenceClickListener() {
-                    @Override
-                    public boolean onPreferenceClick(Preference preference) {
-                        //TODO add theme stuff
-                        return false;
-                    }
-                });
         }
 
         @Override

@@ -24,11 +24,11 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_margin="5dip"
-    android:background="@drawable/cell_shape"
-    android:orientation="vertical">
+              android:id="@+id/daterespondedlayout_respondedrow"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:layout_margin="5dip"
+              android:orientation="vertical">
 
     <TextView
         android:layout_width="wrap_content"
@@ -37,7 +37,7 @@
         android:layout_marginRight="10dip"
         android:layout_marginTop="10dip"
         android:text="@string/dateresponded_psdetailsactivity"
-        android:textAppearance="?android:textAppearanceLarge" />
+        android:textAppearance="?android:textAppearanceLarge"/>
 
     <TextView
         android:id="@+id/dateresponded_respondedrow"

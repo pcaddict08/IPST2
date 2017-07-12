@@ -27,7 +27,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="5dip"
-    android:background="@drawable/cell_shape"
+    android:id="@+id/rejectionreasonlayout_rejectedrow"
     android:orientation="vertical">
 
     <TextView

@@ -7,7 +7,6 @@
     <ListView
         android:layout_width="match_parent"
         android:id="@+id/listview_pslistactivity"
-        android:divider="@color/colorPrimaryDark"
         android:dividerHeight="2dip"
         android:layout_height="match_parent"/>
 </RelativeLayout>

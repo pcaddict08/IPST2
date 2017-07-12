@@ -252,7 +252,7 @@ public class MainActivity extends AppCompatActivity
         Button viewList = (Button) findViewById(R.id.viewlist_mainactivity);
         switch (viewID) {
         case R.id.todaytab_mainactivity:
-            viewDate = new LocalDate().minusDays(1);
+            viewDate = new LocalDate();
             viewList.setText(R.string.viewlisttoday);
             break;
         case R.id.weektab_mainactivity:
@@ -449,7 +449,7 @@ public class MainActivity extends AppCompatActivity
             openList(new LocalDate().minusDays(7), "all");
         } else if (((Button) view).getText().toString().equals(getString(R.string.viewlisttoday))) {
             Logger.d("Going to Today List");
-            openList(new LocalDate().minusDays(1), "all");
+            openList(new LocalDate(), "all");
         }
     }
 

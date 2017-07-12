@@ -29,8 +29,10 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -109,6 +111,8 @@ public class PSListActivity extends AppCompatActivity {
                     Logger.d("PS LIST SIZE: " + psList.size());
                     sortList(psList);
                     listView.setAdapter(new ListItemAdapter_PS(psList, PSListActivity.this));
+                    if(ThemeHelper.isDarkTheme(this))
+                        listView.setSelector(android.R.color.transparent);
                     listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> adapterView, View view, int i,

@@ -28,6 +28,7 @@ import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.CompoundButtonCompat;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
@@ -53,10 +54,19 @@ public class ThemeHelper {
         return preferencesHelper.getBool(preferencesHelper.themeKey());
     }
 
+    public static void styleView(View view, Context context)
+    {
+        if(isDarkTheme(context))
+            view.setBackground(ContextCompat.getDrawable(context, R.drawable.button_bg_dark));
+        else
+            view.setBackground(ContextCompat.getDrawable(context, R.drawable.cell_shape));
+    }
+
     public static void styleButton(Button button, Context context) {
         if (isDarkTheme(context)) {
-            button.setBackground(ContextCompat.getDrawable(context, R.drawable.button_bg_dark));
+            button.setBackground(ContextCompat.getDrawable(context, R.drawable.cell_shape_whiteoutline));
         } else {
+            button.setTextColor(ContextCompat.getColor(context, R.color.white));
             button.setBackground(ContextCompat.getDrawable(context, R.drawable.button_bg));
         }
     }

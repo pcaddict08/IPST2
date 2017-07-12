@@ -94,9 +94,13 @@ public class PSDetailsActivity extends AppCompatActivity {
     @BindView(R.id.psstatusimage_psdetailsactivity)
     ImageView portalStatusImage;
     @BindView(R.id.saveportalimage_psdetailsactivity)
-    Button savePortalImageButton;
+    Button saveportalimage_psdetailsactivity;
     @BindView(R.id.submitted_psdetailsactivity)
     TextView submittedLabel;
+    @BindView(R.id.toppanel_psdetailsactivity)
+    LinearLayout toppanel_psdetailsactivity;
+    @BindView(R.id.dayslayout_psdetailsactivity)
+    LinearLayout dayslayout_psdetailsactivity;
     /** Date Formatter for displaying dates on the UI */
     DateTimeFormatter uiFormatter;
 
@@ -119,6 +123,11 @@ public class PSDetailsActivity extends AppCompatActivity {
                 .drawable.ic_check));
         LinearLayout acceptedLayout = (LinearLayout) LayoutInflater.from(this)
                 .inflate(R.layout.row_psdetails_accepted, extraLayout, false);
+        ThemeHelper.styleView(acceptedLayout.findViewById(R.id.liveaddresslayout_acceptedrow),
+                this);
+        ThemeHelper.styleButton((Button) acceptedLayout.findViewById(R.id
+                .viewonintelmapbutton_acceptedrow), this);
+
         ((TextView) acceptedLayout.findViewById(R.id.liveaddress_acceptedrow)).setText(
                 portal.getLiveAddress());
         acceptedLayout.findViewById(R.id.viewonintelmapbutton_acceptedrow)
@@ -152,6 +161,8 @@ public class PSDetailsActivity extends AppCompatActivity {
         daysInQueueLabel.setText(String.valueOf(portal.getResponseTime()));
         LinearLayout respondedLayout = (LinearLayout) LayoutInflater.from(this)
                 .inflate(R.layout.row_psdetails_responded, extraLayout, false);
+        ThemeHelper.styleView(respondedLayout.findViewById(R.id.daterespondedlayout_respondedrow),
+                this);
         ((TextView) respondedLayout.findViewById(R.id.dateresponded_respondedrow)).setText(
                 uiFormatter.print(portal.getDateResponded()));
         extraLayout.addView(respondedLayout);
@@ -169,6 +180,8 @@ public class PSDetailsActivity extends AppCompatActivity {
                 .ic_rejected));
         LinearLayout rejectedLayout = (LinearLayout) LayoutInflater.from(this)
                 .inflate(R.layout.row_psdetails_rejected, extraLayout, false);
+        ThemeHelper.styleView(rejectedLayout.findViewById(R.id.rejectionreasonlayout_rejectedrow),
+                this);
         ((TextView) rejectedLayout.findViewById(R.id.rejectionreason_rejectedrow)).setText(
                 portal.getRejectionReason());
         extraLayout.addView(rejectedLayout);
@@ -179,6 +192,9 @@ public class PSDetailsActivity extends AppCompatActivity {
      */
     private void buildUI() {
         Logger.d("PSDetailsActivity", "Portal Type: " + portal.getClass().getName());
+        ThemeHelper.styleView(toppanel_psdetailsactivity, this);
+        ThemeHelper.styleView(dayslayout_psdetailsactivity, this);
+        ThemeHelper.styleButton(saveportalimage_psdetailsactivity, this);
         namelabel.setText(portal.getName());
         submittedLabel.setText(uiFormatter.print(portal.getDateSubmitted()));
         if (portal.getPictureURL() != null && !portal.getPictureURL().equalsIgnoreCase(""))
@@ -313,7 +329,8 @@ public class PSDetailsActivity extends AppCompatActivity {
         portal = getIntent().getExtras().getParcelable(PORTAL_KEY);
         if (portal != null) {
             buildUI();
-        }
+        } else
+            finish();
     }
 
     @Override
@@ -373,7 +390,7 @@ public class PSDetailsActivity extends AppCompatActivity {
     }
 
     public void setUpImageDownloadButton() {
-        savePortalImageButton.setOnClickListener(new View.OnClickListener() {
+        saveportalimage_psdetailsactivity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (ContextCompat.checkSelfPermission(PSDetailsActivity.this,
