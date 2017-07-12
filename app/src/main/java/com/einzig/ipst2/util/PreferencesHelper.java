@@ -128,7 +128,7 @@ public class PreferencesHelper {
     *  @param key Preference key
     *  @return value of key
     * */
-    public boolean getBool(String key)
+    boolean getBool(String key)
     {
         return preferences.getBoolean(key, false);
     }
@@ -183,7 +183,7 @@ public class PreferencesHelper {
     /**
      * @return default key when something is uninitialized
      */
-    public String nullKey() {
+    private String nullKey() {
         return context.getString(R.string.nullKey);
     }
 
@@ -197,7 +197,19 @@ public class PreferencesHelper {
     /**
      * @return Preferences key for the theme setting
      */
-    public String themeKey() { return context.getString(R.string.theme_key); }
+    String themeKey() { return context.getString(R.string.theme_key); }
+
+
+    /*
+     * @return Preferences key for the seer setting
+     */
+    private String seerKey() {return context.getString(R.string.seer_key);}
+
+    /* Seer setting status for showing only portals with a submission date(or accepted date)
+        before 1-1-2015*/
+    public boolean isSeerOnly() {
+        return getBool(seerKey());
+    }
 
     /**
      * Log all preferences

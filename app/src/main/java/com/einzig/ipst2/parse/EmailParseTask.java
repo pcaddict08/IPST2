@@ -125,7 +125,8 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
      * @param portal Instance of PortalAccepted to add to the database
      */
     private void addPortalAccepted(PortalAccepted portal) {
-        PortalSubmission pending = db.getPendingPortal(portal.getPictureURL(), portal.getName());
+        PortalSubmission pending = db.getPendingPortal(portal.getPictureURL(), portal.getName(),
+                helper.isSeerOnly());
         if (pending != null) {
             portal.setDateSubmitted(pending.getDateSubmitted());
             db.deletePending(pending);
@@ -141,7 +142,8 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
      * @param portal Instance of PortalRejected to add to the database
      */
     private void addPortalRejected(PortalRejected portal) {
-        PortalSubmission pending = db.getPendingPortal(portal.getPictureURL(), portal.getName());
+        PortalSubmission pending = db.getPendingPortal(portal.getPictureURL(), portal.getName(),
+                helper.isSeerOnly());
         if (pending != null) {
             portal.setDateSubmitted(pending.getDateSubmitted());
             db.deletePending(pending);
@@ -209,9 +211,9 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
      */
     @Override
     protected void onPostExecute(Void voids) {
-        Logger.d("Accepted portals: " + db.getAcceptedCount());
-        Logger.d("Pending portals: " + db.getPendingCount());
-        Logger.d("Rejected portals: " + db.getRejectedCount());
+        Logger.d("Accepted portals: " + db.getAcceptedCount(helper.isSeerOnly()));
+        Logger.d("Pending portals: " + db.getPendingCount(helper.isSeerOnly()));
+        Logger.d("Rejected portals: " + db.getRejectedCount(helper.isSeerOnly()));
         activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         dialog.dismiss();
         activity.buildUIAfterParsing();

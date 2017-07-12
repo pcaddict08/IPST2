@@ -67,7 +67,8 @@ public class SendPortalData extends AsyncTask<Void, Void, Void> {
         JSONArray objsToSend = new JSONArray();
         JSONObject finalObj = new JSONObject();
         DatabaseInterface db = new DatabaseInterface(context);
-        Vector<PortalSubmission> portalList = db.getAllPortals();
+        PreferencesHelper helper = new PreferencesHelper(context);
+        Vector<PortalSubmission> portalList = db.getAllPortals(helper.isSeerOnly());
         SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy", Locale.getDefault());
         for (PortalSubmission ps : portalList) {
             JSONObject newJSON = new JSONObject();

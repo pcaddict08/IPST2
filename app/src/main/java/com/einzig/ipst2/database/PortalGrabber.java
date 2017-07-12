@@ -27,6 +27,7 @@ import android.os.AsyncTask;
 import com.einzig.ipst2.activities.PSListActivity;
 import com.einzig.ipst2.portal.PortalSubmission;
 import com.einzig.ipst2.util.Logger;
+import com.einzig.ipst2.util.PreferencesHelper;
 
 import org.joda.time.LocalDate;
 
@@ -62,6 +63,7 @@ public class PortalGrabber extends AsyncTask<Void, Void, Vector<? extends Portal
         Logger.d("RANGE: " + RANGE);
         Logger.d("TYPE: " + TYPE);
         LocalDate viewDate = null;
+        PreferencesHelper helper = new PreferencesHelper(fromAct);
         try {
             if (RANGE != null)
                 if (!RANGE.equalsIgnoreCase(""))
@@ -70,27 +72,27 @@ public class PortalGrabber extends AsyncTask<Void, Void, Vector<? extends Portal
                 switch (TYPE) {
                 case "all":
                     if (viewDate == null)
-                        psList = db.getAllPortals();
+                        psList = db.getAllPortals(helper.isSeerOnly());
                     else
-                        psList = db.getAllPortalsFromDate(viewDate);
+                        psList = db.getAllPortalsFromDate(viewDate, helper.isSeerOnly());
                     break;
                 case "accepted":
                     if (viewDate == null)
-                        psList = db.getAllAccepted();
+                        psList = db.getAllAccepted(helper.isSeerOnly());
                     else
-                        psList = db.getAcceptedByResponseDate(viewDate);
+                        psList = db.getAcceptedByResponseDate(viewDate, helper.isSeerOnly());
                     break;
                 case "pending":
                     if (viewDate == null)
-                        psList = db.getAllPending();
+                        psList = db.getAllPending(helper.isSeerOnly());
                     else
-                        psList = db.getPendingByDate(viewDate);
+                        psList = db.getPendingByDate(viewDate, helper.isSeerOnly());
                     break;
                 case "rejected":
                     if (viewDate == null)
-                        psList = db.getAllRejected();
+                        psList = db.getAllRejected(helper.isSeerOnly());
                     else
-                        psList = db.getRejectedByResponseDate(viewDate);
+                        psList = db.getRejectedByResponseDate(viewDate, helper.isSeerOnly());
                     break;
                 }
         } catch (Exception e) {

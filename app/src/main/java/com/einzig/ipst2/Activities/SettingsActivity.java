@@ -360,17 +360,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_miscsheet);
             setHasOptionsMenu(true);
-            Preference darktheme = findPreference("dark-theme");
-            if (darktheme != null)
-                darktheme.setOnPreferenceClickListener(new Preference
-                        .OnPreferenceClickListener() {
-                    @Override
-                    public boolean onPreferenceClick(Preference preference) {
-                        //TODO add theme stuff
-                        //Logger.d("Toggled Dark Theme: " + preference.getKey());
-                        return false;
-                    }
-                });
         }
 
         @Override

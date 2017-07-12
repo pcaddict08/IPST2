@@ -55,6 +55,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.einzig.ipst2.R;
@@ -171,9 +172,10 @@ public class MainActivity extends AppCompatActivity
      */
     public void buildUIAfterParsing() {
         DatabaseInterface db = new DatabaseInterface(this);
-        long accepted = db.getAcceptedCount();
-        long pending = db.getPendingCount();
-        long rejected = db.getRejectedCount();
+        PreferencesHelper helper = new PreferencesHelper(this);
+        long accepted = db.getAcceptedCount(helper.isSeerOnly());
+        long pending = db.getPendingCount(helper.isSeerOnly());
+        long rejected = db.getRejectedCount(helper.isSeerOnly());
         progress_view_mainactivity.setVisibility(View.INVISIBLE);
         mainui_mainactivity.setVisibility(View.VISIBLE);
         tabs_mainactivity.setVisibility(View.VISIBLE);
@@ -187,16 +189,21 @@ public class MainActivity extends AppCompatActivity
         ThemeHelper.styleRadioButton(monthtab, this, monthtab.isSelected());
         ThemeHelper.styleRadioButton(weektab, this, weektab.isSelected());
         ThemeHelper.styleRadioButton(todaytab, this, todaytab.isSelected());
-        if(ThemeHelper.isDarkTheme(this)) {
+        if (ThemeHelper.isDarkTheme(this)) {
             baseui_mainactivity.setBackgroundColor(ContextCompat.getColor(this, R.color
                     .colorLighterPrimary_dark));
             arcprogress_mainactivity.setBackgroundColor(Color.WHITE);
         }
         selectRadioItem();
+        if (helper.isSeerOnly()) {
+            Toast.makeText(this, "Showing ONLY Seer Portals...", Toast.LENGTH_SHORT).show();
+        }
     }
 
-    /** TODO Save a user preference if they deny us WRITE_EXTERNAL_STORAGE so we don't ask for it
+    /**
+     * TODO Save a user preference if they deny us WRITE_EXTERNAL_STORAGE so we don't ask for it
      * Request permissions if we don't have them
+     *
      * @return true if we have all permissions, otherwise false
      */
     private boolean checkPermissions() {
@@ -249,6 +256,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void formatUIFromRadio(int viewID) {
+        PreferencesHelper helper = new PreferencesHelper(this);
         Button viewList = (Button) findViewById(R.id.viewlist_mainactivity);
         switch (viewID) {
         case R.id.todaytab_mainactivity:
@@ -265,19 +273,19 @@ public class MainActivity extends AppCompatActivity
             break;
         case R.id.alltab_mainactivity:
             viewDate = null;
-            formatUI(db.getAcceptedCount(), db.getRejectedCount(), db.getPendingCount());
+            formatUI(db.getAcceptedCount(helper.isSeerOnly()), db.getRejectedCount(helper.isSeerOnly()), db.getPendingCount(helper.isSeerOnly()));
             viewList.setText(R.string.viewlistall);
             break;
         }
         Logger.d("viewDate -> " + viewDate);
         if (viewDate == null)
-            formatUI(db.getAcceptedCount(),
-                    db.getRejectedCount(),
-                    db.getPendingCount());
+            formatUI(db.getAcceptedCount(helper.isSeerOnly()),
+                    db.getRejectedCount(helper.isSeerOnly()),
+                    db.getPendingCount(helper.isSeerOnly()));
         else
-            formatUI(db.getAcceptedCountByResponseDate(viewDate),
-                    db.getRejectedCountByResponseDate(viewDate),
-                    db.getPendingCountByDate(viewDate));
+            formatUI(db.getAcceptedCountByResponseDate(viewDate, helper.isSeerOnly()),
+                    db.getRejectedCountByResponseDate(viewDate, helper.isSeerOnly()),
+                    db.getPendingCountByDate(viewDate, helper.isSeerOnly()));
     }
 
     /**
@@ -596,7 +604,7 @@ public class MainActivity extends AppCompatActivity
     public void openList(LocalDate dateForList, String listType) {
         Intent intent = new Intent(MainActivity.this, PSListActivity.class);
         String stringForLog = "";
-        if(dateForList != null)
+        if (dateForList != null)
             stringForLog = dateForList.toString();
         Logger.i("MainActivity", "Starting list activity with " + listType + " type " +
                 stringForLog + "");
@@ -686,8 +694,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     /* Style buttons */
-    public void styleButtons()
-    {
+    public void styleButtons() {
         ThemeHelper.styleButton(gmail_login_button, this);
         ThemeHelper.styleButton(viewButton, this);
     }
