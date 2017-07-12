@@ -51,6 +51,7 @@ import com.einzig.ipst2.adapters.ListItemAdapter_PS;
 import com.einzig.ipst2.database.DatabaseInterface;
 import com.einzig.ipst2.database.PortalGrabber;
 import com.einzig.ipst2.portal.PortalSubmission;
+import com.einzig.ipst2.sort.SortHelper;
 import com.einzig.ipst2.util.DialogHelper;
 import com.einzig.ipst2.util.Logger;
 import com.einzig.ipst2.util.PreferencesHelper;
@@ -89,6 +90,7 @@ public class PSListActivity extends AppCompatActivity {
         ActionBar ab = getSupportActionBar();
         if (ab != null)
             ab.setDisplayHomeAsUpEnabled(true);
+        ThemeHelper.initActionBar(getSupportActionBar());
         dialog = new ProgressDialog(this);
         dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         dialog.setIndeterminate(true);
@@ -109,7 +111,7 @@ public class PSListActivity extends AppCompatActivity {
             if (psList != null) {
                 if (psList.size() > 0) {
                     Logger.d("PS LIST SIZE: " + psList.size());
-                    sortList(psList);
+                    SortHelper.sortList(psList, this);
                     listView.setAdapter(new ListItemAdapter_PS(psList, PSListActivity.this));
                     if(ThemeHelper.isDarkTheme(this))
                         listView.setSelector(android.R.color.transparent);
@@ -185,29 +187,6 @@ public class PSListActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    /* Method to sort the list based on settings the user has saved */
-    public void sortList(Vector<? extends PortalSubmission> psList) {
-        PreferencesHelper helper = new PreferencesHelper(getApplicationContext());
-        String sortOptionValue = helper.get(helper.sortKey());
-        // TODO Use sort package sorters or clean up this code
-        if (sortOptionValue.equals(helper.responseDateDescSort())) {
-            Collections.sort(psList, new ListItemAdapter_PS.SortPortalSubmissions_dateresp());
-        } else if (sortOptionValue.equals(helper.submissionDateSort())) {
-            Collections.sort(psList, new ListItemAdapter_PS.SortPortalSubmissions_datesub());
-        } else if (sortOptionValue.equals(helper.submissionDateDescSort())) {
-            Collections.sort(psList, new ListItemAdapter_PS.SortPortalSubmissions_datesub());
-            Collections.reverse(psList);
-        } else if (sortOptionValue.equals(helper.alphaNumericSort())) {
-            Collections.sort(psList, new ListItemAdapter_PS.SortPortalSubmissions_alph());
-        } else if (sortOptionValue.equals(helper.alphaNumericDescSort())) {
-            Collections.sort(psList, new ListItemAdapter_PS.SortPortalSubmissions_alph());
-            Collections.reverse(psList);
-        } else {
-            Collections.sort(psList, new ListItemAdapter_PS.SortPortalSubmissions_dateresp());
-            Collections.reverse(psList);
-        }
     }
 
     /*

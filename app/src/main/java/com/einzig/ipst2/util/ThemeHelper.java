@@ -27,6 +27,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.CompoundButtonCompat;
+import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -52,6 +53,14 @@ public class ThemeHelper {
     public static boolean isDarkTheme(Context context) {
         PreferencesHelper preferencesHelper = new PreferencesHelper(context);
         return preferencesHelper.getBool(preferencesHelper.themeKey());
+    }
+
+    public static void initActionBar(ActionBar ab) {
+        if (ab != null) {
+            ab.setLogo(R.mipmap.ic_launcher);
+            ab.setDisplayUseLogoEnabled(true);
+            ab.setDisplayShowHomeEnabled(true);
+        }
     }
 
     public static void styleView(View view, Context context)

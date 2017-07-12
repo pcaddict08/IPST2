@@ -18,13 +18,11 @@
         android:theme="@style/AppTheme">
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="71abaa2cb163e1ffb7de603f7a2f7496af03a935"
-            />
+            android:value="71abaa2cb163e1ffb7de603f7a2f7496af03a935"/>
 
         <activity
             android:name=".activities.MainActivity"
-            android:screenOrientation="portrait"
-            >
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -43,6 +41,10 @@
             android:name=".activities.PSDetailsActivity"
             android:label="@string/psdetailstitle_activity"
             android:screenOrientation="portrait"/>
+        <activity android:name=".activities.PSExportActivity">
+        </activity>
+        <activity android:name=".activities.PSImportActivity">
+        </activity>
     </application>
 
 </manifest>

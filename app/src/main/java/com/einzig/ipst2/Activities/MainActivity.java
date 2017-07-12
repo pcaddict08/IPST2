@@ -367,15 +367,6 @@ public class MainActivity extends AppCompatActivity
                 PERMISSION_GRANTED;
     }
 
-    private void initActionBar() {
-        ActionBar ab = getSupportActionBar();
-        if (ab != null) {
-            ab.setLogo(R.mipmap.ic_launcher);
-            ab.setDisplayUseLogoEnabled(true);
-            ab.setDisplayShowHomeEnabled(true);
-        }
-    }
-
     private void initLoginButton() {
         gmail_login_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -467,7 +458,7 @@ public class MainActivity extends AppCompatActivity
         FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         mFirebaseAnalytics.setAnalyticsCollectionEnabled(true);
         Fabric.with(this, new Crashlytics());
-        initActionBar();
+        ThemeHelper.initActionBar(getSupportActionBar());
         styleButtons();
     }
 

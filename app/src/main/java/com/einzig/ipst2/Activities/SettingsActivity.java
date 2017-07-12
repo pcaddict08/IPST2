@@ -49,6 +49,7 @@ import com.einzig.ipst2.util.Logger;
 import com.einzig.ipst2.util.PreferencesHelper;
 import com.einzig.ipst2.util.SendMessageHelper;
 import com.einzig.ipst2.util.SendPortalData;
+import com.einzig.ipst2.util.ThemeHelper;
 
 import java.util.List;
 
@@ -109,7 +110,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setupActionBar();
+        ThemeHelper.initActionBar(getSupportActionBar());
     }
 
     /**
@@ -134,17 +135,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      * This method stops fragment injection in malicious applications.
      * Make sure to deny any unknown fragments here.
      */
-
-    private void setupActionBar() {
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setLogo(R.mipmap.ic_launcher);
-            actionBar.setDisplayUseLogoEnabled(true);
-            actionBar.setDisplayShowHomeEnabled(true);
-        }
-    }
-
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 
     public static class AboutSettingsFragment extends PreferenceFragment {
@@ -303,8 +293,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                         .OnPreferenceClickListener() {
                     @Override
                     public boolean onPreferenceClick(Preference preference) {
-                        //TODO add confirm export dialog and go to export db method
-                        //TODO add export db method, show toast when start and finish
+                        startActivity(new Intent(getActivity(), PSExportActivity.class));
                         return false;
                     }
                 });
@@ -315,8 +304,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                         new Preference.OnPreferenceClickListener() {
                             @Override
                             public boolean onPreferenceClick(Preference preference) {
-                                //TODO add confirm import dialog and go to export db method
-                                //TODO add import db method, show toast when start and finish
+                                startActivity(new Intent(getActivity(), PSImportActivity.class));
                                 return false;
                             }
                         });

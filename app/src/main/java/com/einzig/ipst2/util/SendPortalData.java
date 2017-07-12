@@ -81,14 +81,16 @@ public class SendPortalData extends AsyncTask<Void, Void, Void> {
                         newJSON.put("Date Rejected", sdf.format(((PortalRejected) ps)
                                 .getDateResponded().toDate()));
                     String rejecReason = "";
-                    if(((PortalRejected) ps).getRejectionReason()!= null)
+                    if (((PortalRejected) ps).getRejectionReason() != null)
                         rejecReason = ((PortalRejected) ps).getRejectionReason();
-                    newJSON.put("Rejection Reason", rejecReason);
+                    if (ps.getDateSubmitted() != null)
+                        newJSON.put("Rejection Reason", rejecReason);
                 } else if (ps instanceof PortalAccepted) {
                     if (((PortalAccepted) ps).getDateResponded() != null)
                         newJSON.put("Date Accepted", sdf.format(((PortalAccepted) ps)
                                 .getDateResponded().toDate()));
-                    newJSON = addLatLonToJSON(newJSON, (PortalAccepted) ps);
+                    if (ps.getDateSubmitted() != null)
+                        newJSON = addLatLonToJSON(newJSON, (PortalAccepted) ps);
                 }
                 Logger.d("JSON OBJ: " + newJSON);
                 objsToSend.put(newJSON);
@@ -118,18 +120,18 @@ public class SendPortalData extends AsyncTask<Void, Void, Void> {
 
             if (responseCode == HttpsURLConnection.HTTP_OK) {
                 String line;
-                BufferedReader br=new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                while ((line=br.readLine()) != null) {
-                    resultToDisplay+=line;
+                BufferedReader br =
+                        new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                while ((line = br.readLine()) != null) {
+                    resultToDisplay += line;
                 }
-            }
-            else {
+            } else {
                 resultToDisplay = "fail";
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-         Log.d(TAG, "doInBackground: " + resultToDisplay);
+        Log.d(TAG, "doInBackground: " + resultToDisplay);
 
         return null;
     }

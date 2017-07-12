@@ -131,4 +131,5 @@
     <string name="seer_key">seerKey</string>
     <string name="seer_prefmessage">Only show portals in IPST for portals submitted before the seer badge stopped tracking.</string>
     <string name="seer_preftitle">Seer Stats Only</string>
+    <string name="export_portal_data">Export Portal Data</string>
 </resources>

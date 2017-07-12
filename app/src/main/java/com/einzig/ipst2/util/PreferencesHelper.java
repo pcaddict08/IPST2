@@ -116,6 +116,7 @@ public class PreferencesHelper {
 
     /**
      * Get a preference value
+     *
      * @param key Preference key
      * @return value of key
      */
@@ -128,13 +129,13 @@ public class PreferencesHelper {
     *  @param key Preference key
     *  @return value of key
     * */
-    boolean getBool(String key)
-    {
+    boolean getBool(String key) {
         return preferences.getBoolean(key, false);
     }
 
     /**
      * Get the value of manual refresh preference
+     *
      * @return value of manual refresh preference
      */
     public boolean getManualRefresh() {
@@ -147,6 +148,13 @@ public class PreferencesHelper {
     public DateTimeFormatter getUIFormatter() {
         String formatString = preferences.getString(dateFormatKey(), nullKey());
         return DateTimeFormat.forPattern(formatString);
+    }
+
+    /**
+     * @return string pattern for date formatting
+     */
+    public String getUIFormatterPattern() {
+        return preferences.getString(dateFormatKey(), nullKey());
     }
 
     /**
@@ -165,11 +173,13 @@ public class PreferencesHelper {
 
     /**
      * Check if a preference exists
+     *
      * @param key Preference key
      * @return true if the preference exists, otherwise false
      */
     public boolean isInitialized(String key) {
-        Logger.d("CHECKING IF " + key + " IS INITIALIZED: " + preferences.getString(key, nullKey()));
+        Logger.d(
+                "CHECKING IF " + key + " IS INITIALIZED: " + preferences.getString(key, nullKey()));
         return !preferences.getString(key, nullKey()).equals(nullKey());
     }
 
@@ -197,13 +207,16 @@ public class PreferencesHelper {
     /**
      * @return Preferences key for the theme setting
      */
-    String themeKey() { return context.getString(R.string.theme_key); }
-
+    String themeKey() {
+        return context.getString(R.string.theme_key);
+    }
 
     /*
      * @return Preferences key for the seer setting
      */
-    private String seerKey() {return context.getString(R.string.seer_key);}
+    private String seerKey() {
+        return context.getString(R.string.seer_key);
+    }
 
     /* Seer setting status for showing only portals with a submission date(or accepted date)
         before 1-1-2015*/
@@ -247,7 +260,8 @@ public class PreferencesHelper {
 
     /**
      * Set a preference
-     * @param key Preference key
+     *
+     * @param key   Preference key
      * @param value Preference value
      */
     public void set(String key, String value) {

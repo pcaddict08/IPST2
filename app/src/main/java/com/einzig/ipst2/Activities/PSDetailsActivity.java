@@ -325,6 +325,7 @@ public class PSDetailsActivity extends AppCompatActivity {
         ActionBar supportActionBar = getSupportActionBar();
         if (supportActionBar != null)
             supportActionBar.setDisplayHomeAsUpEnabled(true);
+        ThemeHelper.initActionBar(getSupportActionBar());
         uiFormatter = new PreferencesHelper(getApplicationContext()).getUIFormatter();
         portal = getIntent().getExtras().getParcelable(PORTAL_KEY);
         if (portal != null) {

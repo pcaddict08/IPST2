@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   ~ Copyright 2017 Steven Foskett, Jimmy Ho, Ryan Porterfield                 ~
   ~ Permission is hereby granted, free of charge, to any person obtaining a   ~
@@ -19,49 +20,12 @@
   ~ DEALINGS IN THE SOFTWARE.                                                 ~
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.einzig.ipst2.activities.PSImportActivity">
 
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="@string/refreshKey"
-        android:summary="@string/manualrefresh_prefmessage"
-        android:title="@string/manualrefresh_preftitle"
-        />
-
-    <EditTextPreference
-        android:defaultValue="@string/folderdefault_pref"
-        android:key="@string/folderKey"
-        android:title="@string/folderdefault_preftitle"
-        android:summary="@string/folderdefault_prefmessage"
-        />
-
-    <ListPreference
-        android:key="@string/defaultTabKey"
-        android:title="@string/defaultcategory_preftitle"
-        android:summary="@string/defaultcategory_prefmessage"
-        android:entries="@array/defaultTabsEntries"
-        android:defaultValue="@string/all"
-        android:entryValues="@array/defaultTabsEntries"
-        />
-
-    <Preference
-        android:key="@string/exportLogsPref"
-        android:summary="@string/exportlogs_summary"
-        android:title="@string/exportlogs_title" />
-
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="@string/theme_key"
-        android:summary="@string/darktheme_prefmessage"
-        android:title="@string/darktheme_preftitle"
-        />
-
-    <!--
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="@string/seer_key"
-        android:summary="@string/seer_prefmessage"
-        android:title="@string/seer_preftitle"
-        />
--->
-</PreferenceScreen>
+</android.support.constraint.ConstraintLayout>
