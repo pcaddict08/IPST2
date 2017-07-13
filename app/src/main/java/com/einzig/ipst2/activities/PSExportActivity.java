@@ -21,6 +21,8 @@
 
 package com.einzig.ipst2.activities;
 
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -32,11 +34,16 @@ import android.widget.ProgressBar;
 
 import com.einzig.ipst2.R;
 import com.einzig.ipst2.util.CSVExportHelper;
+import com.einzig.ipst2.util.PermissionsHelper;
 import com.einzig.ipst2.util.ThemeHelper;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static android.Manifest.permission.GET_ACCOUNTS;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+import static com.einzig.ipst2.activities.MainActivity.REQUEST_CODE_ALL;
 
 public class PSExportActivity extends AppCompatActivity {
     @BindView(R.id.exportportaldata_psexportactivity)
@@ -46,6 +53,7 @@ public class PSExportActivity extends AppCompatActivity {
     @BindView(R.id.exportprogress_psexportactivity)
     ProgressBar exportprogress_psexportactivity;
 
+    String exportType = "all";
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -73,14 +81,18 @@ public class PSExportActivity extends AppCompatActivity {
 
     @OnClick(R.id.exportportaldata_psexportactivity)
     public void exportData() {
-        startLoading();
-        new CSVExportHelper(this, "all").execute();
+        exportType = "all";
+        if (PermissionsHelper.checkPermissions(this)) {
+            startLoading();
+        }
     }
 
     @OnClick(R.id.exportportaldataaccepted_psexportactivity)
     public void exportDataAccepted() {
-        startLoading();
-        new CSVExportHelper(this, "accepted").execute();
+        exportType = "accepted";
+        if (PermissionsHelper.hasWritePermission(this)) {
+            startLoading();
+        }
     }
 
     public void loadingDone() {
@@ -93,5 +105,17 @@ public class PSExportActivity extends AppCompatActivity {
         exportportaldata_psexportactivity.setVisibility(View.INVISIBLE);
         exportportaldataaccepted_psexportactivity.setVisibility(View.INVISIBLE);
         exportprogress_psexportactivity.setVisibility(View.VISIBLE);
+        new CSVExportHelper(this, exportType).execute();
+    }
+
+    /*
+     * Provides the results of permission requests
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+            @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_CODE_ALL) {
+            startLoading();
+        }
     }
 }

@@ -69,6 +69,7 @@ import com.einzig.ipst2.portal.PortalRejected;
 import com.einzig.ipst2.portal.PortalSubmission;
 import com.einzig.ipst2.util.DialogHelper;
 import com.einzig.ipst2.util.Logger;
+import com.einzig.ipst2.util.PermissionsHelper;
 import com.einzig.ipst2.util.PreferencesHelper;
 import com.einzig.ipst2.util.ThemeHelper;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -83,10 +84,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.fabric.sdk.android.Fabric;
-
-import static android.Manifest.permission.GET_ACCOUNTS;
-import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
-import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 
 /**
  * Main activity class which launches the app.
@@ -112,9 +109,9 @@ public class MainActivity extends AppCompatActivity
     /** Seems to be redundant with PreferencesHelper#REFRESH_KEY */
     static final private String REFRESH_KEY = "refresh";
     /** Activity-for-result code to request email permissions */
-    static final private int REQUEST_CODE_EMAIL = 1;
+    public static final int REQUEST_CODE_EMAIL = 1;
     /**  */
-    static final private int REQUEST_CODE_ALL = REQUEST_CODE_EMAIL & REQUEST_CODE_WRITE_EXTERNAL;
+    public static final int REQUEST_CODE_ALL = REQUEST_CODE_EMAIL & REQUEST_CODE_WRITE_EXTERNAL;
     static private final int SETTINGS_ACTIVITY_CODE = 101;
 
     /* Butterknife UI code */
@@ -198,20 +195,6 @@ public class MainActivity extends AppCompatActivity
         if (helper.isSeerOnly()) {
             Toast.makeText(this, "Showing ONLY Seer Portals...", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    /**
-     * TODO Save a user preference if they deny us WRITE_EXTERNAL_STORAGE so we don't ask for it
-     * Request permissions if we don't have them
-     *
-     * @return true if we have all permissions, otherwise false
-     */
-    private boolean checkPermissions() {
-        boolean hasPermissions = hasAccountsPermission() && hasWritePermission();
-        String[] permissions = {GET_ACCOUNTS, WRITE_EXTERNAL_STORAGE};
-        if (!hasPermissions)
-            ActivityCompat.requestPermissions(this, permissions, REQUEST_CODE_ALL);
-        return hasPermissions;
     }
 
     /**
@@ -306,13 +289,6 @@ public class MainActivity extends AppCompatActivity
         return null;
     }
 
-    public boolean getAccountsPermission() {
-        boolean hasPermission = hasAccountsPermission();
-        if (!hasPermission)
-            ActivityCompat.requestPermissions(this, new String[]{GET_ACCOUNTS}, REQUEST_CODE_EMAIL);
-        return hasPermission;
-    }
-
     /**
      * Search through accounts on the user's device now that we have permission to do so.
      */
@@ -352,26 +328,12 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    /**
-     * @return true if we have permission to access user accounts, otherwise false
-     */
-    public boolean hasAccountsPermission() {
-        return ContextCompat.checkSelfPermission(this, GET_ACCOUNTS) == PERMISSION_GRANTED;
-    }
-
-    /**
-     * @return true if we have permission to write to external storage, otherwise false
-     */
-    public boolean hasWritePermission() {
-        return ContextCompat.checkSelfPermission(this, WRITE_EXTERNAL_STORAGE) ==
-                PERMISSION_GRANTED;
-    }
 
     private void initLoginButton() {
         gmail_login_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (getAccountsPermission())
+                if (PermissionsHelper.getAccountsPermission(MainActivity.this))
                     gotAccountsPermission();
             }
         });
@@ -474,7 +436,7 @@ public class MainActivity extends AppCompatActivity
         initLoginButton();
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
         boolean shouldRefresh = getIntent().getBooleanExtra(REFRESH_KEY, false);
-        if (checkPermissions())
+        if (PermissionsHelper.checkPermissions(this))
             onHavePermissions(shouldRefresh);
     }
 
