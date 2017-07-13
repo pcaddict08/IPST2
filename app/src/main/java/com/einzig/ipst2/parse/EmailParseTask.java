@@ -27,6 +27,7 @@ import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.view.WindowManager;
 
+import com.einzig.ipst2.R;
 import com.einzig.ipst2.activities.MainActivity;
 import com.einzig.ipst2.database.DatabaseInterface;
 import com.einzig.ipst2.database.PortalAcceptedBuilder;
@@ -190,7 +191,7 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
     private void initProgressDialog() {
         dialog = new ProgressDialog(activity, ThemeHelper.getDialogTheme(activity));
         dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        dialog.setTitle("Parsing email");
+        dialog.setTitle(activity.getString(R.string.parsing_email));
         dialog.setCanceledOnTouchOutside(false);
         dialog.setMax(messages.length);
     }

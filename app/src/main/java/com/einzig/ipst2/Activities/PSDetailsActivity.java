@@ -42,6 +42,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -260,11 +262,11 @@ public class PSDetailsActivity extends AppCompatActivity {
                     public void run() {
                         final File pictureFile = getOutputMediaFile();
                         if (pictureFile == null) {
-                            Logger.d("Error creating media file, check storage permissions: ");
+                            Logger.d(getString(R.string.error_creating_media));
                             PSDetailsActivity.this.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Toast.makeText(context, "Image Save Failed", Toast.LENGTH_LONG)
+                                    Toast.makeText(context, R.string.image_save_failed, Toast.LENGTH_LONG)
                                             .show();
                                 }
                             });
@@ -277,7 +279,7 @@ public class PSDetailsActivity extends AppCompatActivity {
                                     @Override
                                     public void run() {
                                         Toast.makeText(context,
-                                                "Image Saved - " + pictureFile.getPath(),
+                                                getString(R.string.image_saved) + pictureFile.getPath(),
                                                 Toast.LENGTH_LONG).show();
                                     }
                                 });
@@ -285,7 +287,7 @@ public class PSDetailsActivity extends AppCompatActivity {
                                 PSDetailsActivity.this.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        Toast.makeText(context, "Image Save Failed",
+                                        Toast.makeText(context, getString(R.string.image_save_failed),
                                                 Toast.LENGTH_LONG).show();
                                     }
                                 });
@@ -294,7 +296,7 @@ public class PSDetailsActivity extends AppCompatActivity {
                                 PSDetailsActivity.this.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        Toast.makeText(context, "Image Save Failed",
+                                        Toast.makeText(context, getString(R.string.image_save_failed),
                                                 Toast.LENGTH_LONG).show();
                                     }
                                 });
@@ -340,8 +342,18 @@ public class PSDetailsActivity extends AppCompatActivity {
         if (id == android.R.id.home) {
             finish();
             return true;
+        } else if(id == R.id.edit_psdetailsactivity)
+        {
+            startActivity(new Intent(this, PSEditActivity.class));
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_psdetailsactivity, menu);
+        return true;
     }
 
     @Override

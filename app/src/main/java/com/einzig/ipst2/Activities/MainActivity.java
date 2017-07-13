@@ -29,15 +29,12 @@ import android.accounts.AccountManager;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Looper;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
@@ -64,10 +61,6 @@ import com.einzig.ipst2.parse.AuthenticatorTask;
 import com.einzig.ipst2.parse.EmailParseTask;
 import com.einzig.ipst2.parse.GetMailTask;
 import com.einzig.ipst2.parse.MailBundle;
-import com.einzig.ipst2.portal.PortalAccepted;
-import com.einzig.ipst2.portal.PortalRejected;
-import com.einzig.ipst2.portal.PortalSubmission;
-import com.einzig.ipst2.util.DialogHelper;
 import com.einzig.ipst2.util.Logger;
 import com.einzig.ipst2.util.PermissionsHelper;
 import com.einzig.ipst2.util.PreferencesHelper;
@@ -193,7 +186,7 @@ public class MainActivity extends AppCompatActivity
         }
         selectRadioItem();
         if (helper.isSeerOnly()) {
-            Toast.makeText(this, "Showing ONLY Seer Portals...", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.toast_seer_only, Toast.LENGTH_SHORT).show();
         }
     }
 

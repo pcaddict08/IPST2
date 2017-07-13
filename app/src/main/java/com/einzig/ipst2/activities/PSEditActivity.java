@@ -21,6 +21,7 @@
 
 package com.einzig.ipst2.activities;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -32,7 +33,23 @@ import com.einzig.ipst2.util.ThemeHelper;
 
 import butterknife.ButterKnife;
 
-public class PSImportActivity extends AppCompatActivity {
+public class PSEditActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        ThemeHelper.setSettingsTheme(this);
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_psedit);
+        ButterKnife.bind(this);
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+        ActionBar supportActionBar = getSupportActionBar();
+        if (supportActionBar != null) {
+            supportActionBar.setDisplayHomeAsUpEnabled(true);
+            supportActionBar.setTitle(R.string.pseditactivity_title);
+        }
+        ThemeHelper.initActionBar(getSupportActionBar());
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -41,20 +58,5 @@ public class PSImportActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        ThemeHelper.setSettingsTheme(this);
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_psimport);
-        ButterKnife.bind(this);
-        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
-        ActionBar supportActionBar = getSupportActionBar();
-        if (supportActionBar != null) {
-            supportActionBar.setDisplayHomeAsUpEnabled(true);
-            supportActionBar.setTitle(R.string.psimportactivity_title);
-        }
-        ThemeHelper.initActionBar(getSupportActionBar());
     }
 }

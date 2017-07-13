@@ -94,7 +94,7 @@ public class PSListActivity extends AppCompatActivity {
         dialog = new ProgressDialog(this);
         dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         dialog.setIndeterminate(true);
-        dialog.setTitle("Getting Results...");
+        dialog.setTitle(getString(R.string.getting_results));
         dialog.setCanceledOnTouchOutside(false);
         dialog.show();
 
@@ -194,7 +194,7 @@ public class PSListActivity extends AppCompatActivity {
      */
     public void sortMenuOptionSelected() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Set Sort Criteria")
+        builder.setTitle(R.string.set_sort_criteria)
                 .setItems(R.array.sortTypesEntries, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         String[] some_array =

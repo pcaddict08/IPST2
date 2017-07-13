@@ -74,7 +74,7 @@ public class PSExportActivity extends AppCompatActivity {
         ActionBar supportActionBar = getSupportActionBar();
         if (supportActionBar != null) {
             supportActionBar.setDisplayHomeAsUpEnabled(true);
-            supportActionBar.setTitle("IPST - Export Portals");
+            supportActionBar.setTitle(R.string.psexportactivity_title);
         }
         ThemeHelper.initActionBar(getSupportActionBar());
     }

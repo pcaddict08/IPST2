@@ -3,7 +3,6 @@
 <resources>
     <string name="app_name">&appname;</string>
 
-    <string name="accepted">Accepted</string>
     <string name="allmail">All Mail</string>
     <string name="allmailmissing">&#160;Either it\'s been deleted, or your GMail is not in English.</string>
     <string name="accountnotfoundtitle">Account Not Found</string>
@@ -16,27 +15,21 @@
     <string name="gmaillogin">GMail Login</string>
     <string name="loading">Loading…</string>
     <string name="month">&month;</string>
-    <string name="na">N/A</string>
     <string name="noaccountsmessage">You have no Google accounts on your device</string>
     <string name="noaccountstitle">No Accounts</string>
     <string name="ok">OK</string>
-    <string name="pending">Pending</string>
-    <string name="rejected">Rejected</string>
     <string name="setcustomfolder">Set Custom Folder</string>
     <string name="title_settingsactivity">Settings</string>
     <string name="today">&today;</string>
-    <string name="viewlist">&viewlist;</string>
     <string name="viewlistall">&viewlist;&separator;&all;</string>
     <string name="viewlistmonth">&viewlist;&separator;&month;</string>
     <string name="viewlisttoday">&viewlist;&separator;&today;</string>
     <string name="viewlistweek">&viewlist;&separator;&week;</string>
     <string name="week">&week;</string>
     <string name="title_activity_settings">Settings</string>
-    <string name="gmailloginbutton">Gmail Login</string>
     <string name="pendingbuttondescrip">Pending</string>
     <string name="acceptedbuttondescrip">Accepted</string>
     <string name="rejectedbuttondescrip">Rejected</string>
-    <string name="stockloadingtext">Loading…</string>
     <string name="notavailable">N/A</string>
     <string name="noportalwarning">"No Portal Submissions"</string>
     <string name="noportalmessage">No Portal Submissions were found in the local database.  Try refreshing.</string>
@@ -60,7 +53,6 @@
     <string name="action_search">Search</string>
     <string name="action_sortlist">Sort List</string>
     <string name="refresh_menumainactivity">Refresh</string>
-    <string name="title_activity_settings2">Settings</string>
     <string name="listsorttypes_preftitle">Sort Type</string>
     <string name="listsorttypes_prefmessage">This sets the way the lists are sorted.</string>
     <string name="datetype_preftitle">Date Format</string>
@@ -85,9 +77,7 @@
     <string name="exportlogs_title">Export Logs</string>
     <string name="importdb_prefsummary">Import portal submissions from a CSV you exported from IPST2.  *WARNING* Importing from an IPST(original) CSV is not supported.</string>
     <string name="importdb_preftitle">Import</string>
-    <string name="softResetTitle">Soft Reset</string>
-    <string name="softResetSummary">Clear portal data and re-parse emails without resetting
-        preferences</string>
+
 
     <string name="manualrefresh_preftitle">Manual Refresh</string>
     <string name="manualrefresh_prefmessage">If checked, IPST will only refresh when the
@@ -122,9 +112,7 @@
     <string name="viewipststats_preftitle">Go to IPST Stats</string>
     <string name="gototg_prefmessage">Open telegram and join the IPST Announcements Channel.</string>
     <string name="gototg_preftitle">Announcements Channel</string>
-    <string name="clear_dbsoft_pref">cleardb_pref</string>
     <string name="resetkey_prefs">reset-23</string>
-    <string name="delux_prefheader">Deluxe Settings</string>
     <string name="theme_key">dark-theme</string>
     <string name="searching_email">Searching Email</string>
     <string name="status_icon">Status Icon</string>
@@ -133,4 +121,18 @@
     <string name="seer_preftitle">Seer Stats Only</string>
     <string name="export_portal_data">Export All Portal Data</string>
     <string name="export_accepted_portal_data">Export Accepted Portal Data</string>
+    <string name="edit">Edit</string>
+    <string name="psexportactivity_title">IPST - Export Portals</string>
+    <string name="pseditactivity_title">Edit Submission</string>
+    <string name="psimportactivity_title">IPST - Import CSV</string>
+    <string name="getting_results">Getting Results...</string>
+    <string name="set_sort_criteria">Set Sort Criteria</string>
+    <string name="parsing_email">Parsing email</string>
+    <string name="set_custom_folder">Set Custom Folder To Parse</string>
+    <string name="toast_seer_only">Showing ONLY Seer Portals...</string>
+    <string name="error_creating_media">Error creating media file, check storage permissions:</string>
+    <string name="image_save_failed">Image Save Failed</string>
+    <string name="image_saved">Image Saved -</string>
+    <string name="recently_sent_data_error">Recently Sent Portal Data, Please wait and try again.</string>
+    <string name="building_portal_data">Building portal data...</string>
 </resources>

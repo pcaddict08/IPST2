@@ -86,7 +86,7 @@ public class FolderGetter {
             public void run() {
                 String[] items = getItems(folderList);
                 AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                builder.setTitle("Set Custom Folder To Parse");
+                builder.setTitle(R.string.set_custom_folder);
                 builder.setItems(items, getListener());
                 builder.show();
             }

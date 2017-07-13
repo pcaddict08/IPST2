@@ -45,6 +45,8 @@
         </activity>
         <activity android:name=".activities.PSImportActivity">
         </activity>
+        <activity android:name=".activities.PSEditActivity">
+        </activity>
     </application>
 
 </manifest>

@@ -179,15 +179,14 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                                 long timeNow = System.currentTimeMillis();
                                 long timeSent = preferences.getLong("last-portal-data", 0);
                                 if (timeSent == 0 || (timeNow - timeSent) >= (1000 * 60 * 15)) {
-                                    Toast.makeText(getActivity(), "Building portal data...", Toast
+                                    Toast.makeText(getActivity(), R.string.building_portal_data, Toast
                                             .LENGTH_SHORT).show();
                                     preferences.edit()
                                             .putLong("last-portal-data", System.currentTimeMillis())
                                             .apply();
                                     new SendPortalData(getActivity()).execute();
                                 } else {
-                                    Toast.makeText(getActivity(), "Recently Sent Portal Data, " +
-                                            "Please wait and try again.", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getActivity(), R.string.recently_sent_data_error, Toast.LENGTH_LONG).show();
                                 }
                                 return false;
                             }
