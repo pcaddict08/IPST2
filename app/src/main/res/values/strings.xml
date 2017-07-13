@@ -1,31 +1,31 @@
 <!DOCTYPE resources [<!ENTITY appname "IPST2"><!ENTITY viewlist "View List"><!ENTITY separator "&#160;-&#160;"><!ENTITY all "All"><!ENTITY month "Month"><!ENTITY today "Today"><!ENTITY week "Week">]>
 
 <resources>
-    <string name="app_name">&appname;</string>
+    <string name="app_name">&appname;IPST2</string>
 
     <string name="allmail">All Mail</string>
     <string name="allmailmissing">&#160;Either it\'s been deleted, or your GMail is not in English.</string>
     <string name="accountnotfoundtitle">Account Not Found</string>
     <string name="accountnotfoundmessage">The account you selected wasn\'t found on this device.</string>
-    <string name="all">&all;</string>
+    <string name="all" translatable="false">&all;</string>
     <string name="cantfindfolder">&appname; can\'t find the \'%1$s\' folder.</string>
     <string name="custommissing">&#160;Either it\'s been deleted, or is missing for some other reason. Would you like to set a new folder to parse, or reset to \'All Mail\'?</string>
     <string name="error">Error:&#160;</string>
     <string name="foldermissing">&#160;Folder Missing</string>
     <string name="gmaillogin">GMail Login</string>
     <string name="loading">Loading…</string>
-    <string name="month">&month;</string>
+    <string name="month" translatable="false">&month;</string>
     <string name="noaccountsmessage">You have no Google accounts on your device</string>
     <string name="noaccountstitle">No Accounts</string>
     <string name="ok">OK</string>
     <string name="setcustomfolder">Set Custom Folder</string>
     <string name="title_settingsactivity">Settings</string>
-    <string name="today">&today;</string>
-    <string name="viewlistall">&viewlist;&separator;&all;</string>
-    <string name="viewlistmonth">&viewlist;&separator;&month;</string>
-    <string name="viewlisttoday">&viewlist;&separator;&today;</string>
-    <string name="viewlistweek">&viewlist;&separator;&week;</string>
-    <string name="week">&week;</string>
+    <string name="today" translatable="false">&today;</string>
+    <string name="viewlistall" translatable="false">&viewlist;&separator;&all;</string>
+    <string name="viewlistmonth" translatable="false">&viewlist;&separator;&month;</string>
+    <string name="viewlisttoday" translatable="false">&viewlist;&separator;&today;</string>
+    <string name="viewlistweek" translatable="false">&viewlist;&separator;&week;</string>
+    <string name="week" translatable="false">&week;</string>
     <string name="title_activity_settings">Settings</string>
     <string name="pendingbuttondescrip">Pending</string>
     <string name="acceptedbuttondescrip">Accepted</string>
@@ -92,7 +92,7 @@
         Stats.  It will be anonymized.</string>
 
     <string name="versionnum_preftitle">Current Version</string>
-    <string name="versionnum_prefmessage">0.0.0</string>
+    <string name="versionnum_prefmessage" translatable="false">0.0.0</string>
 
     <string name="darktheme_preftitle">Dark Theme</string>
     <string name="darktheme_prefmessage">If checked, IPST use a dark theme next time a view is
@@ -104,7 +104,7 @@
 
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
-    <string name="folderdefault_pref">[Gmail]/All Mail</string>
+    <string name="folderdefault_pref" translatable="false">[Gmail]/All Mail</string>
     <string name="folderdefault_preftitle">Default Folder</string>
     <string name="folderdefault_prefmessage">*IF IPST2 FINDS EMAILS DON\'T CHANGE THIS* This
     preference allows you to manually set where IPST2 looks for emails.</string>
@@ -112,11 +112,11 @@
     <string name="viewipststats_preftitle">Go to IPST Stats</string>
     <string name="gototg_prefmessage">Open telegram and join the IPST Announcements Channel.</string>
     <string name="gototg_preftitle">Announcements Channel</string>
-    <string name="resetkey_prefs">reset-23</string>
-    <string name="theme_key">dark-theme</string>
+    <string name="resetkey_prefs" translatable="false">reset-23</string>
+    <string name="theme_key" translatable="false">dark-theme</string>
     <string name="searching_email">Searching Email</string>
     <string name="status_icon">Status Icon</string>
-    <string name="seer_key">seerKey</string>
+    <string name="seer_key" translatable="false">seerKey</string>
     <string name="seer_prefmessage">Only show portals in IPST for portals submitted before the seer badge stopped tracking.</string>
     <string name="seer_preftitle">Seer Stats Only</string>
     <string name="export_portal_data">Export All Portal Data</string>
@@ -135,4 +135,5 @@
     <string name="image_saved">Image Saved -</string>
     <string name="recently_sent_data_error">Recently Sent Portal Data, Please wait and try again.</string>
     <string name="building_portal_data">Building portal data...</string>
+    <string name="name">Name</string>
 </resources>

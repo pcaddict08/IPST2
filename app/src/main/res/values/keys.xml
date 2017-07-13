@@ -1,35 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="alphaNumDescSort">alphaDesc</string>
-    <string name="alphaNumSort">alpha</string>
-    <string name="contactKey">contact</string>
-    <string name="dateFormatKey">dateFormat</string>
-    <string name="defaultTabKey">defaultTab</string>
-    <string name="donateKey">donate</string>
-    <string name="dmyFormat">dd/MM/yyyy</string>
-    <string name="emailKey">email</string>
-    <string name="exportCSVKey">export</string>
-    <string name="exportLogsPref">exportLogs</string>
-    <string name="folderKey">folder</string>
-    <string name="frontPageKey">frontPage</string>
-    <string name="hardResetKey">hardReset</string>
-    <string name="logoutKey">logout</string>
-    <string name="nullKey">uninitialized</string>
-    <string name="mdyFormat">MM/dd/yyyy</string>
-    <string name="parseDateKey">parseDate</string>
-    <string name="portalKey">portal</string>
-    <string name="portalListKey">portalList</string>
-    <string name="portalRespondedKey">portalResponded</string>
-    <string name="portalSubmissionKey">portalSubmission</string>
-    <string name="privacyKey">privacy</string>
-    <string name="refreshKey">refresh</string>
+    <string name="alphaNumDescSort" translatable="false">alphaDesc</string>
+    <string name="alphaNumSort" translatable="false">alpha</string>
+    <string name="contactKey" translatable="false">contact</string>
+    <string name="dateFormatKey" translatable="false">dateFormat</string>
+    <string name="defaultTabKey" translatable="false">defaultTab</string>
+    <string name="donateKey" translatable="false">donate</string>
+    <string name="dmyFormat" translatable="false">dd/MM/yyyy</string>
+    <string name="emailKey" translatable="false">email</string>
+    <string name="exportCSVKey" translatable="false">export</string>
+    <string name="exportLogsPref" translatable="false">exportLogs</string>
+    <string name="folderKey" translatable="false">folder</string>
+    <string name="frontPageKey" translatable="false">frontPage</string>
+    <string name="hardResetKey" translatable="false">hardReset</string>
+    <string name="logoutKey" translatable="false">logout</string>
+    <string name="nullKey" translatable="false">uninitialized</string>
+    <string name="mdyFormat" translatable="false">MM/dd/yyyy</string>
+    <string name="parseDateKey" translatable="false">parseDate</string>
+    <string name="portalKey" translatable="false">portal</string>
+    <string name="portalListKey" translatable="false">portalList</string>
+    <string name="portalRespondedKey" translatable="false">portalResponded</string>
+    <string name="portalSubmissionKey" translatable="false">portalSubmission</string>
+    <string name="privacyKey" translatable="false">privacy</string>
+    <string name="refreshKey" translatable="false">refresh</string>
     <string name="responseDateDescSort">responseDateDesc</string>
     <string name="responseDateSort">responseDate</string>
-    <string name="softResetKey">softReset</string>
-    <string name="sortKey">sort</string>
-    <string name="submissionDateDescSort">subDateDesc</string>
-    <string name="submissionDateSort">subDate</string>
-    <string name="versionKey">version</string>
-    <string name="ydmFormat">yyyy-dd-MM</string>
-    <string name="ymdFormat">yyyy-MM-dd</string>
+    <string name="softResetKey" translatable="false">softReset</string>
+    <string name="sortKey" translatable="false">sort</string>
+    <string name="submissionDateDescSort" translatable="false">subDateDesc</string>
+    <string name="submissionDateSort" translatable="false">subDate</string>
+    <string name="versionKey" translatable="false">version</string>
+    <string name="ydmFormat" translatable="false">yyyy-dd-MM</string>
+    <string name="ymdFormat" translatable="false">yyyy-MM-dd</string>
 </resources>
