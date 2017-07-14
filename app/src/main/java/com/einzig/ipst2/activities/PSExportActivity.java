@@ -21,11 +21,10 @@
 
 package com.einzig.ipst2.activities;
 
+import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.app.AppCompatDelegate;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,8 +40,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static android.Manifest.permission.GET_ACCOUNTS;
-import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static com.einzig.ipst2.activities.MainActivity.REQUEST_CODE_ALL;
 
 public class PSExportActivity extends AppCompatActivity {

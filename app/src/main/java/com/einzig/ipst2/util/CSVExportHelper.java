@@ -49,7 +49,6 @@ import au.com.bytecode.opencsv.CSVWriter;
 /*
  * Created by Steven Foskett on 7/12/2017.
  */
-
 public class CSVExportHelper extends AsyncTask<String, String, String> {
     private Activity activity;
     private PreferencesHelper helper;

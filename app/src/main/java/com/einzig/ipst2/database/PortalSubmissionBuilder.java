@@ -23,6 +23,7 @@ package com.einzig.ipst2.database;
 
 import android.database.Cursor;
 
+import com.einzig.ipst2.portal.PortalRejected;
 import com.einzig.ipst2.portal.PortalSubmission;
 import com.einzig.ipst2.util.Logger;
 
@@ -62,6 +63,20 @@ public final class PortalSubmissionBuilder extends PortalBuilder<PortalSubmissio
         return new PortalSubmission(name, dateSubmitted, pictureURL);
     }
 
+    /**
+     * @inheritDoc
+     */
+    @Override
+    PortalSubmission build(String[] csvLine) {
+        String name = csvLine[0];
+        String subDateStr = csvLine[1];
+        String pictureURL = csvLine[7];
+        return new PortalSubmission(name, parseDate(subDateStr), pictureURL);
+    }
+
+    /**
+     * @inheritDoc
+     */
     @Override
     public PortalSubmission build(String name, LocalDate dateResponded, String message) {
         String pictureURL = parsePictureURL(message, name);
