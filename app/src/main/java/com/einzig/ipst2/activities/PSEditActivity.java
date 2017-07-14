@@ -27,13 +27,27 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatDelegate;
 import android.view.MenuItem;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.einzig.ipst2.R;
+import com.einzig.ipst2.portal.PortalSubmission;
 import com.einzig.ipst2.util.ThemeHelper;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.einzig.ipst2.activities.MainActivity.PORTAL_KEY;
+
 public class PSEditActivity extends AppCompatActivity {
+    @BindView(R.id.namebg_pseditactivity)
+    LinearLayout namebg_pseditactivity;
+    @BindView(R.id.namelabel_pseditactivity)
+    TextView namelabel_pseditactivity;
+    @BindView(R.id.name_pseditactivity)
+    EditText name_pseditactivity;
+    PortalSubmission portal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +62,12 @@ public class PSEditActivity extends AppCompatActivity {
             supportActionBar.setTitle(R.string.pseditactivity_title);
         }
         ThemeHelper.initActionBar(getSupportActionBar());
+        portal = getIntent().getExtras().getParcelable(PORTAL_KEY);
+        if (portal != null) {
+            name_pseditactivity.setText(portal.getName());
+        } else {
+            finish();
+        }
     }
 
     @Override
