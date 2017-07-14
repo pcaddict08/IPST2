@@ -80,6 +80,15 @@ public class DatabaseInterface extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
+    public <P extends PortalSubmission> void add(P portal) {
+        if (portal instanceof PortalAccepted)
+            addPortalAccepted((PortalAccepted) portal);
+        else if (portal instanceof PortalRejected)
+            addPortalRejected((PortalRejected) portal);
+        else
+            addPortalSubmission(portal);
+    }
+
     /**
      * Add some values to a table in the database.
      *

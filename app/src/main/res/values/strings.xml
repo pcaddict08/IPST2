@@ -9,10 +9,12 @@
     <string name="accountnotfoundmessage">The account you selected wasn\'t found on this device.</string>
     <string name="all" translatable="false">&all;</string>
     <string name="cantfindfolder">&appname; can\'t find the \'%1$s\' folder.</string>
+    <string name="chooseImport">Choose an import File</string>
     <string name="custommissing">&#160;Either it\'s been deleted, or is missing for some other reason. Would you like to set a new folder to parse, or reset to \'All Mail\'?</string>
     <string name="error">Error:&#160;</string>
     <string name="foldermissing">&#160;Folder Missing</string>
     <string name="gmaillogin">GMail Login</string>
+    <string name="importingCSV">Importing from CSV</string>
     <string name="loading">Loading…</string>
     <string name="month" translatable="false">&month;</string>
     <string name="noaccountsmessage">You have no Google accounts on your device</string>

@@ -77,6 +77,31 @@ public final class PortalAcceptedBuilder extends PortalBuilder<PortalAccepted> {
     }
 
     /**
+     * @inheritDoc
+     */
+    @Override
+    PortalAccepted build(String[] csvLine) {
+        /*
+         * 0: name
+         * 1: dateSubmitted
+         * 2: dateAccepted
+         * 3: dateRejected
+         * 5: liveAddress
+         * 6: intelLink
+         * 7: pictureURL
+         * 8: rejectionReason
+         */
+        String name = csvLine[0];
+        String subDateStr = csvLine[1];
+        String accDateStr = csvLine[2];
+        String address = csvLine[5];
+        String intelURL = csvLine[6];
+        String pictureURL = csvLine[7];
+        return new PortalAccepted(name, parseDate(subDateStr), pictureURL, parseDate(accDateStr),
+                address, intelURL);
+    }
+
+    /**
      * Parse the intel link for an accepted portal from the email.
      *
      * @param messageString The body of the email as a String for parsing.

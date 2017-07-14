@@ -53,6 +53,14 @@ public abstract class PortalBuilder<P extends PortalSubmission> {
     abstract P build(Cursor cursor);
 
     /**
+     * Build a portal from a CSV file
+     *
+     * @param csvLine Line of the CSV file portal is being built from
+     * @return portal from a CSV file
+     */
+    abstract P build(String[] csvLine);
+
+    /**
      * Create a new portal
      *
      * @param name          The portal name.
@@ -61,6 +69,16 @@ public abstract class PortalBuilder<P extends PortalSubmission> {
      */
     public abstract P build(String name, LocalDate dateResponded, String message);
 
+    static public PortalSubmission buildFromCSV(String[] csvLine) {
+        String status = csvLine[4];
+        if (status.equals("Accepted"))
+            return new PortalAcceptedBuilder().build(csvLine);
+        else if (status.equals("Rejected"))
+            return new PortalRejectedBuilder().build(csvLine);
+        else
+            return new PortalSubmissionBuilder().build(csvLine);
+    }
+
     LocalDate parseDate(String dateString) {
         try {
             return DATE_FORMATTER.parseLocalDate(dateString);
@@ -68,6 +86,7 @@ public abstract class PortalBuilder<P extends PortalSubmission> {
             return LocalDate.now();
         }
     }
+
     /**
      * Parse the URL of the portal picture from the email.
      *

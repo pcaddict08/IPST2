@@ -30,8 +30,6 @@ import android.view.WindowManager;
 import com.einzig.ipst2.R;
 import com.einzig.ipst2.activities.MainActivity;
 import com.einzig.ipst2.database.DatabaseInterface;
-import com.einzig.ipst2.database.PortalAcceptedBuilder;
-import com.einzig.ipst2.database.PortalRejectedBuilder;
 import com.einzig.ipst2.portal.PortalAccepted;
 import com.einzig.ipst2.portal.PortalRejected;
 import com.einzig.ipst2.portal.PortalSubmission;
@@ -46,10 +44,7 @@ import javax.activation.MailcapCommandMap;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 
-import static com.einzig.ipst2.database.AcceptedPortalContract.AcceptedPortalEntry.TABLE_ACCEPTED;
 import static com.einzig.ipst2.database.DatabaseInterface.DATE_FORMATTER;
-import static com.einzig.ipst2.database.PendingPortalContract.PendingPortalEntry.COLUMN_PICTURE_URL;
-import static com.einzig.ipst2.database.RejectedPortalContract.RejectedPortalEntry.TABLE_REJECTED;
 
 /**
  * Asynchronously parses the user's emails to update portal submission activity.

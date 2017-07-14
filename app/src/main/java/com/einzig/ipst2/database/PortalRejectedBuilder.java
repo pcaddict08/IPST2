@@ -63,6 +63,30 @@ public final class PortalRejectedBuilder extends PortalBuilder<PortalRejected> {
         return new PortalRejected(name, submitted, pictureURL, responded, reason);
     }
 
+    /**
+     * @inheritDoc
+     */
+    @Override
+    PortalRejected build(String[] csvLine) {
+        /*
+         * 0: name
+         * 1: dateSubmitted
+         * 2: dateAccepted
+         * 3: dateRejected
+         * 5: liveAddress
+         * 6: intelLink
+         * 7: pictureURL
+         * 8: rejectionReason
+         */
+        String name = csvLine[0];
+        String subDateStr = csvLine[1];
+        String respDateStr = csvLine[3];
+        String pictureURL = csvLine[7];
+        String reason = csvLine[8];
+        return new PortalRejected(name, parseDate(subDateStr), pictureURL, parseDate(respDateStr),
+                reason);
+    }
+
     @Override
     public PortalRejected build(String name, LocalDate dateResponded, String message) {
         String pictureURL = parsePictureURL(message, name);
