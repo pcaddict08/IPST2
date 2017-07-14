@@ -33,6 +33,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -266,7 +267,8 @@ public class PSDetailsActivity extends AppCompatActivity {
                             PSDetailsActivity.this.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Toast.makeText(context, R.string.image_save_failed, Toast.LENGTH_LONG)
+                                    Toast.makeText(context, R.string.image_save_failed,
+                                            Toast.LENGTH_LONG)
                                             .show();
                                 }
                             });
@@ -279,7 +281,8 @@ public class PSDetailsActivity extends AppCompatActivity {
                                     @Override
                                     public void run() {
                                         Toast.makeText(context,
-                                                getString(R.string.image_saved) + pictureFile.getPath(),
+                                                getString(R.string.image_saved) +
+                                                        pictureFile.getPath(),
                                                 Toast.LENGTH_LONG).show();
                                     }
                                 });
@@ -287,7 +290,8 @@ public class PSDetailsActivity extends AppCompatActivity {
                                 PSDetailsActivity.this.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        Toast.makeText(context, getString(R.string.image_save_failed),
+                                        Toast.makeText(context,
+                                                getString(R.string.image_save_failed),
                                                 Toast.LENGTH_LONG).show();
                                     }
                                 });
@@ -296,7 +300,8 @@ public class PSDetailsActivity extends AppCompatActivity {
                                 PSDetailsActivity.this.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        Toast.makeText(context, getString(R.string.image_save_failed),
+                                        Toast.makeText(context,
+                                                getString(R.string.image_save_failed),
                                                 Toast.LENGTH_LONG).show();
                                     }
                                 });
@@ -342,9 +347,10 @@ public class PSDetailsActivity extends AppCompatActivity {
         if (id == android.R.id.home) {
             finish();
             return true;
-        } else if(id == R.id.edit_psdetailsactivity)
-        {
-            startActivity(new Intent(this, PSEditActivity.class));
+        } else if (id == R.id.edit_psdetailsactivity) {
+            Intent intent = new Intent(this, PSEditActivity.class);
+            intent.putExtra(PORTAL_KEY, (Parcelable) portal);
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
