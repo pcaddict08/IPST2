@@ -24,6 +24,7 @@ package com.einzig.ipst2.database;
 import android.database.Cursor;
 
 import com.einzig.ipst2.portal.PortalSubmission;
+import com.einzig.ipst2.util.Logger;
 
 import org.joda.time.LocalDate;
 
@@ -71,9 +72,10 @@ public abstract class PortalBuilder<P extends PortalSubmission> {
 
     static public PortalSubmission buildFromCSV(String[] csvLine) {
         String status = csvLine[4];
-        if (status.equals("Accepted"))
+        Logger.d("Importing Status is: " + status);
+        if (status.equalsIgnoreCase("Accepted"))
             return new PortalAcceptedBuilder().build(csvLine);
-        else if (status.equals("Rejected"))
+        else if (status.equalsIgnoreCase("Rejected"))
             return new PortalRejectedBuilder().build(csvLine);
         else
             return new PortalSubmissionBuilder().build(csvLine);

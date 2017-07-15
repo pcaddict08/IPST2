@@ -74,6 +74,8 @@ public class PSExportActivity extends AppCompatActivity {
             supportActionBar.setTitle(R.string.psexportactivity_title);
         }
         ThemeHelper.initActionBar(getSupportActionBar());
+        ThemeHelper.styleButton(exportportaldata_psexportactivity, this);
+        ThemeHelper.styleButton(exportportaldataaccepted_psexportactivity, this);
     }
 
     @OnClick(R.id.exportportaldata_psexportactivity)

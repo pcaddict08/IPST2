@@ -1,7 +1,7 @@
 <!DOCTYPE resources [<!ENTITY appname "IPST2"><!ENTITY viewlist "View List"><!ENTITY separator "&#160;-&#160;"><!ENTITY all "All"><!ENTITY month "Month"><!ENTITY today "Today"><!ENTITY week "Week">]>
 
 <resources>
-    <string name="app_name">&appname;IPST2</string>
+    <string name="app_name">&appname;</string>
 
     <string name="allmail">All Mail</string>
     <string name="allmailmissing">&#160;Either it\'s been deleted, or your GMail is not in English.</string>
@@ -142,4 +142,5 @@
     <string name="recently_sent_data_error">Recently Sent Portal Data, Please wait and try again.</string>
     <string name="building_portal_data">Building portal data...</string>
     <string name="name">Name</string>
+    <string name="import_from_csv">Import From CSV</string>
 </resources>
