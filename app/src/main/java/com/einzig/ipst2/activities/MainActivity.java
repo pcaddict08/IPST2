@@ -249,7 +249,9 @@ public class MainActivity extends AppCompatActivity
             break;
         case R.id.alltab_mainactivity:
             viewDate = null;
-            formatUI(db.getAcceptedCount(helper.isSeerOnly()), db.getRejectedCount(helper.isSeerOnly()), db.getPendingCount(helper.isSeerOnly()));
+            formatUI(db.getAcceptedCount(helper.isSeerOnly()),
+                    db.getRejectedCount(helper.isSeerOnly()),
+                    db.getPendingCount(helper.isSeerOnly()));
             viewList.setText(R.string.viewlistall);
             break;
         }
@@ -321,7 +323,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
     private void initLoginButton() {
         gmail_login_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -346,8 +347,9 @@ public class MainActivity extends AppCompatActivity
             break;
         case SETTINGS_ACTIVITY_CODE:
             PreferencesHelper helper = new PreferencesHelper(getApplicationContext());
-            if (!helper.isInitialized(helper.emailKey()))
-                resetUI();
+            if (!helper.isInitialized(helper.emailKey()) || !helper.isInitialized(helper
+                    .parseDateKey()))
+                refreshEverything();
             break;
         }
     }
@@ -506,13 +508,21 @@ public class MainActivity extends AppCompatActivity
                     SETTINGS_ACTIVITY_CODE);
             break;
         case R.id.refresh_mainactivity:
-            finish();
-            Intent nextIntent = getIntent();
-            nextIntent.putExtra(REFRESH_KEY, true);
-            startActivity(getIntent());
+            refreshEverything();
             break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    /*
+     * Method to dismiss and refresh data
+     */
+    public void refreshEverything()
+    {
+        finish();
+        Intent nextIntent = getIntent();
+        nextIntent.putExtra(REFRESH_KEY, true);
+        startActivity(getIntent());
     }
 
     /**
@@ -579,6 +589,7 @@ public class MainActivity extends AppCompatActivity
             dialog.setIndeterminate(true);
             dialog.setTitle(getString(R.string.searching_email));
             dialog.setCanceledOnTouchOutside(false);
+            dialog.setCancelable(false);
             dialog.show();
             new Thread() {
                 public void run() {

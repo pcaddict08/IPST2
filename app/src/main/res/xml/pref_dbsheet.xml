@@ -30,10 +30,10 @@
         android:key="exportdb_pref"
         android:summary="@string/exportdb_prefsummary"
         android:title="@string/exportdb_preftitle" />
-
+<!--
     <Preference
         android:defaultValue="true"
         android:key="importdb_pref"
         android:summary="@string/importdb_prefsummary"
-        android:title="@string/importdb_preftitle" />
+        android:title="@string/importdb_preftitle" /> -->
 </PreferenceScreen>

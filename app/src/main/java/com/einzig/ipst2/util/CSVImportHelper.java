@@ -54,7 +54,10 @@ public class CSVImportHelper extends AsyncTask<Void, Integer, Void> {
             InputStreamReader stream = new InputStreamReader(new FileInputStream(importFile));
             BufferedReader reader = new BufferedReader(stream);
             DatabaseInterface db = new DatabaseInterface(activity);
+            PreferencesHelper helper = new PreferencesHelper(activity);
+            helper.set(helper.parseDateKey(), helper.nullKey());
             db.deleteAll();
+
             double lengthPerPercent = 100.0 / importFile.length();
             long readLength = 0;
 
@@ -62,8 +65,9 @@ public class CSVImportHelper extends AsyncTask<Void, Integer, Void> {
                 String[] tokens = line.split(",");
                 readLength += line.length();
                 db.add(PortalBuilder.buildFromCSV(tokens));
-                publishProgress();
-                //publishProgress((int) Math.round(lengthPerPercent * readLength), importFile.length());
+                Logger.d("Publishing Progress: " + lengthPerPercent + " - " + readLength + " -- "
+                        + (int) Math.round(lengthPerPercent * readLength));
+                publishProgress((int) Math.round(lengthPerPercent * readLength));
             }
             reader.close();
         } catch (IOException e) {
