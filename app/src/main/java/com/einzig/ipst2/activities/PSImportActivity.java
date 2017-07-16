@@ -21,6 +21,7 @@
 
 package com.einzig.ipst2.activities;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
@@ -31,6 +32,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatDelegate;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.einzig.ipst2.R;
 import com.einzig.ipst2.database.DatabaseInterface;
@@ -113,6 +115,9 @@ public class PSImportActivity extends AppCompatActivity {
     public void finishedParsing()
     {
         dialog.dismiss();
+        Toast.makeText(this, "Finished Importing. Refreshing now.", Toast.LENGTH_LONG).show();
+        setResult(Activity.RESULT_OK, getIntent());
+        finish();
     }
 
     @Override

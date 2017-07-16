@@ -193,7 +193,7 @@ public class PreferencesHelper {
     /**
      * @return default key when something is uninitialized
      */
-    private String nullKey() {
+    public String nullKey() {
         return context.getString(R.string.nullKey);
     }
 
