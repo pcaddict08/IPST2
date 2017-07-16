@@ -187,6 +187,7 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
         dialog = new ProgressDialog(activity, ThemeHelper.getDialogTheme(activity));
         dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         dialog.setTitle(activity.getString(R.string.parsing_email));
+        dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
         dialog.setMax(messages.length);
     }

@@ -22,11 +22,13 @@
 package com.einzig.ipst2.activities;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatDelegate;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -47,6 +49,14 @@ public class PSEditActivity extends AppCompatActivity {
     TextView namelabel_pseditactivity;
     @BindView(R.id.name_pseditactivity)
     EditText name_pseditactivity;
+    @BindView(R.id.datesubbg_pseditactivity)
+    LinearLayout datesubbg_pseditactivity;
+    @BindView(R.id.datesubbutton_pseditactivity)
+    Button datesubbutton_pseditactivity;
+    @BindView(R.id.saveportalbutton_pseditactivity)
+    Button saveportalbutton_pseditactivity;
+    @BindView(R.id.saveportalbuttonbg_pseditactivity)
+    LinearLayout saveportalbuttonbg_pseditactivity;
     PortalSubmission portal;
 
     @Override
@@ -65,9 +75,18 @@ public class PSEditActivity extends AppCompatActivity {
         portal = getIntent().getExtras().getParcelable(PORTAL_KEY);
         if (portal != null) {
             name_pseditactivity.setText(portal.getName());
+            buildUI();
         } else {
             finish();
         }
+    }
+
+    public void buildUI() {
+        ThemeHelper.styleView(namebg_pseditactivity, this);
+        ThemeHelper.styleView(datesubbg_pseditactivity, this);
+        ThemeHelper.styleView(saveportalbuttonbg_pseditactivity, this);
+        ThemeHelper.styleButton(datesubbutton_pseditactivity, this);
+        ThemeHelper.styleButton(saveportalbutton_pseditactivity, this);
     }
 
     @Override
