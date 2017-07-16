@@ -40,6 +40,9 @@
     <string name="saveportalimage_psdetailsactivity">Save Portal Image</string>
     <string name="submittedna_psdetailsactivity">Submitted: </string>
     <string name="namena_psdetailsactivity">Name: </string>
+    <string name="datesub_psdetailsactivity">Date Submitted: </string>
+    <string name="dateacc_psdetailsactivity">Date Accepted: </string>
+    <string name="daterej_psdetailsactivity">Date Rejected: </string>
     <string name="detailsimagedesc_psdetailsactivity">Portal Submission Image</string>
     <string name="daysinqueue_psdetailsactivity">Days in Queue</string>
     <string name="closebutton_imagedetails">Close</string>
@@ -139,4 +142,5 @@
     <string name="building_portal_data">Building portal data...</string>
     <string name="name">Name</string>
     <string name="import_from_csv">Import From CSV</string>
+    <string name="save_portal">SAVE PORTAL</string>
 </resources>

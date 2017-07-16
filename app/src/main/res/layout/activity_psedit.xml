@@ -26,6 +26,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="com.einzig.ipst2.activities.PSEditActivity">
     <LinearLayout
         android:layout_width="match_parent"
@@ -52,6 +53,52 @@
             android:hint="@string/name"
             android:text="@string/notavailable"
             android:textAppearance="?android:textAppearanceMedium" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_marginLeft="10dip"
+        android:layout_marginRight="10dip"
+        android:layout_marginBottom="10dip"
+        android:orientation="vertical"
+        android:id="@+id/datesubbg_pseditactivity"
+        android:background="@drawable/cell_shape"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/datesublabel_pseditactivity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dip"
+            android:text="@string/datesub_psdetailsactivity"
+            android:textAppearance="?android:textAppearanceLarge" />
+        <Button
+            android:id="@+id/datesubbutton_pseditactivity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dip"
+            android:layout_marginEnd="10dip"
+            android:layout_marginBottom="10dip"
+            android:hint="@string/name"
+            android:text="@string/notavailable"
+            android:textAppearance="?android:textAppearanceMedium" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
 
+        android:orientation="vertical"
+        android:id="@+id/portalrespondedlayout_pseditactivity"
+        android:background="@drawable/cell_shape"
+        android:layout_height="wrap_content">
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:id="@+id/saveportalbuttonbg_pseditactivity"
+        android:layout_margin="10dip"
+        android:layout_height="wrap_content">
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/saveportalbutton_pseditactivity"
+            android:text="@string/save_portal"
+            />
     </LinearLayout>
 </LinearLayout>
