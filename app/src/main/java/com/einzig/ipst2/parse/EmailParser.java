@@ -95,7 +95,12 @@ class EmailParser {
      * @return portal name from email subjec
      */
     private String getPortalName(String subject) {
-        return subject.substring(subject.indexOf(":") + 2);
+        try {
+            subject = subject.substring(subject.indexOf(":") + 2);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return subject;
     }
 
     /**
@@ -162,7 +167,8 @@ class EmailParser {
      * @param receivedDate Date the email was delivered
      * @return PortalSubmission or subclass if the email can be parsed, otherwise null
      */
-    private PortalSubmission parseNewFormat(String portalName, String message, LocalDate receivedDate) {
+    private PortalSubmission parseNewFormat(String portalName, String message,
+            LocalDate receivedDate) {
         Logger.d("Parsing NEW FORMAT: " + portalName);
         if (message != null) {
             if (message.contains("not to accept") || message.contains("duplicate")
