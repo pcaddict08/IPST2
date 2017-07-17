@@ -97,10 +97,14 @@ public class PSListActivity extends AppCompatActivity {
         dialog.setTitle(getString(R.string.getting_results));
         dialog.setCanceledOnTouchOutside(false);
         dialog.show();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
 
         RANGE = getIntent().getExtras().getString(PORTAL_LIST_KEY_RANGE);
         TYPE = getIntent().getExtras().getString(PORTAL_LIST_KEY_TYPE);
-
         new PortalGrabber(this, RANGE, TYPE, db).execute();
     }
 
@@ -113,7 +117,7 @@ public class PSListActivity extends AppCompatActivity {
                     Logger.d("PS LIST SIZE: " + psList.size());
                     SortHelper.sortList(psList, this);
                     listView.setAdapter(new ListItemAdapter_PS(psList, PSListActivity.this));
-                    if(ThemeHelper.isDarkTheme(this))
+                    if (ThemeHelper.isDarkTheme(this))
                         listView.setSelector(android.R.color.transparent);
                     listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override

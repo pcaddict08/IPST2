@@ -143,4 +143,11 @@
     <string name="name">Name</string>
     <string name="import_from_csv">Import From CSV</string>
     <string name="save_portal">SAVE PORTAL</string>
+    <string name="save_portal_dialog_message">Are you *SURE* you want to save this portal submission?</string>
+    <string name="save_portal_dialog_title">Save Portal Submission?</string>
+    <string name="delete">Delete</string>
+    <string name="delete_dialog_message">Are you sure you want to delete this portal from IPST?</string>
+    <string name="delete_dialog_title">**DELETE** Portal?</string>
+    <string name="emph_delete">*DELETE*</string>
+    <string name="save">Save</string>
 </resources>
