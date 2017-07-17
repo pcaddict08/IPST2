@@ -26,6 +26,7 @@ package com.einzig.ipst2.activities;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -34,6 +35,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -55,6 +57,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.einzig.ipst2.R;
+import com.einzig.ipst2.database.DatabaseInterface;
 import com.einzig.ipst2.portal.PortalAccepted;
 import com.einzig.ipst2.portal.PortalRejected;
 import com.einzig.ipst2.portal.PortalResponded;
@@ -351,8 +354,36 @@ public class PSDetailsActivity extends AppCompatActivity {
             Intent intent = new Intent(this, PSEditActivity.class);
             intent.putExtra(PORTAL_KEY, (Parcelable) portal);
             startActivity(intent);
+        } else if (id == R.id.delete_psdetailsactivity) {
+            new android.app.AlertDialog.Builder(this, R.style.dialogtheme)
+                    .setTitle(R.string.delete_dialog_title)
+                    .setMessage(R.string.delete_dialog_message)
+                    .setPositiveButton(R.string.emph_delete, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            deletePortal();
+                        }
+                    })
+                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                        }
+                    })
+                    .setIcon(R.drawable.ic_warning)
+                    .show();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void deletePortal() {
+        DatabaseInterface db = new DatabaseInterface(this);
+        if (portal != null)
+            if (portal instanceof PortalAccepted)
+                db.deleteAccepted((PortalAccepted) portal);
+            else if (portal instanceof PortalRejected)
+                db.deleteRejected((PortalRejected) portal);
+            else
+                db.deletePending(portal);
+        finish();
     }
 
     @Override

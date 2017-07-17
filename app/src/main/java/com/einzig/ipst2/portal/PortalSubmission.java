@@ -65,7 +65,7 @@ public class PortalSubmission implements Parcelable, Serializable {
      *
      * @serial
      */
-    private final String name;
+    private String name;
     /**
      * The URL that links to the submission picture.
      *
@@ -144,6 +144,10 @@ public class PortalSubmission implements Parcelable, Serializable {
      */
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**
