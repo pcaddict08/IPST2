@@ -120,7 +120,7 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
      *
      * @param portal Instance of PortalAccepted to add to the database
      */
-    private void addPortalAccepted(PortalAccepted portal) {
+    public void addPortalAccepted(PortalAccepted portal) {
         PortalSubmission pending = db.getPendingPortal(portal.getPictureURL(), portal.getName(),
                 helper.isSeerOnly());
         if (pending != null) {

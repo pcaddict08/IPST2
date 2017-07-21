@@ -30,11 +30,16 @@ import android.support.v4.widget.CompoundButtonCompat;
 import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
 
 import com.einzig.ipst2.R;
+
+import static android.R.style.Theme_Holo;
+import static android.R.style.Theme_Holo_Light;
+import static android.R.style.Theme_Holo_Light_Dialog;
 
 /*
  * Created by Steven Foskett on 7/8/2017.
@@ -107,5 +112,21 @@ public class ThemeHelper {
             return R.style.AboutDialog_dark;
         else
             return R.style.AboutDialog;
+    }
+
+    public static int getDateDialogTheme(Context context) {
+        PreferencesHelper preferencesHelper = new PreferencesHelper(context);
+        if(preferencesHelper.getBool(preferencesHelper.themeKey()))
+            return Theme_Holo;
+        else
+            return Theme_Holo;
+    }
+
+    public static ArrayAdapter<String> styleSpinner(String[] adapterArray, Context context)
+    {
+        ArrayAdapter<String> portalTypeAdapter = new ArrayAdapter<>(context, android.R.layout
+                .simple_spinner_item, adapterArray);
+        portalTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        return portalTypeAdapter;
     }
 }

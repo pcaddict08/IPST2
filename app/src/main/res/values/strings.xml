@@ -44,11 +44,11 @@
     <string name="dateacc_psdetailsactivity">Date Accepted: </string>
     <string name="daterej_psdetailsactivity">Date Rejected: </string>
     <string name="detailsimagedesc_psdetailsactivity">Portal Submission Image</string>
-    <string name="daysinqueue_psdetailsactivity">Days in Queue</string>
+    <string name="daysinqueue_psdetailsactivity">Days in Queue:</string>
     <string name="closebutton_imagedetails">Close</string>
-    <string name="dateresponded_psdetailsactivity">Date Responded</string>
-    <string name="rejectionreason_psdetailsactivity">Rejection Reason</string>
-    <string name="liveaddress_psdetailsactivity">Live Address</string>
+    <string name="dateresponded_psdetailsactivity">Date Responded:</string>
+    <string name="rejectionreason_psdetailsactivity">Rejection Reason:</string>
+    <string name="liveaddress_psdetailsactivity">Live Address:</string>
     <string name="viewonintel_psdetailsactivity">View On Intel Map</string>
     <string name="invalidtokentitle_getmailtask">Invalid Token</string>
     <string name="invalidtokenmessage_getmailtask">Your auth token was invalid. Try again.</string>
@@ -150,4 +150,6 @@
     <string name="delete_dialog_title">**DELETE** Portal?</string>
     <string name="emph_delete">*DELETE*</string>
     <string name="save">Save</string>
+    <string name="portal_type">Portal Type:</string>
+    <string name="intel_link">Intel Link:</string>
 </resources>

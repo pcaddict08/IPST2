@@ -102,7 +102,6 @@ public class PSListActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
         RANGE = getIntent().getExtras().getString(PORTAL_LIST_KEY_RANGE);
         TYPE = getIntent().getExtras().getString(PORTAL_LIST_KEY_TYPE);
         new PortalGrabber(this, RANGE, TYPE, db).execute();
