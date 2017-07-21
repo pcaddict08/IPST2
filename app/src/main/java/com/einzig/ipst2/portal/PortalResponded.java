@@ -38,7 +38,7 @@ public abstract class PortalResponded extends PortalSubmission {
     /**
      * The date that Niantic approved or denied the portal.
      */
-    private final LocalDate dateResponded;
+    private LocalDate dateResponded;
 
     /**
      * Create a new PortalResponded.
@@ -71,6 +71,11 @@ public abstract class PortalResponded extends PortalSubmission {
      */
     public LocalDate getDateResponded() {
         return this.dateResponded;
+    }
+
+    public void setDateResponded(LocalDate dateResponded)
+    {
+        this.dateResponded = dateResponded;
     }
 
     /*

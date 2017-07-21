@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<?xml version="1.0" encoding="utf-8"?><!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   ~ Copyright 2017 Steven Foskett, Jimmy Ho, Ryan Porterfield                 ~
   ~ Permission is hereby granted, free of charge, to any person obtaining a   ~
   ~ copy of this software and associated documentation files (the "Software"),~
@@ -19,86 +18,124 @@
   ~ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER       ~
   ~ DEALINGS IN THE SOFTWARE.                                                 ~
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
-
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:background="@android:color/transparent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="com.einzig.ipst2.activities.PSEditActivity">
+    android:focusableInTouchMode="true">
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_margin="10dip"
+        android:layout_height="wrap_content"
+        android:focusableInTouchMode="true"
         android:orientation="vertical"
-        android:id="@+id/namebg_pseditactivity"
-        android:background="@drawable/cell_shape"
-        android:layout_height="wrap_content">
-        <TextView
-            android:id="@+id/namelabel_pseditactivity"
+        tools:context="com.einzig.ipst2.activities.PSEditActivity">
+
+        <LinearLayout
+            android:id="@+id/namebg_pseditactivity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dip"
-            android:text="@string/namena_psdetailsactivity"
-            android:textAppearance="?android:textAppearanceLarge" />
+            android:background="@drawable/cell_shape"
+            android:focusableInTouchMode="true"
+            android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/name_pseditactivity"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dip"
-            android:layout_marginEnd="10dip"
-            android:layout_marginBottom="10dip"
-            android:hint="@string/name"
-            android:text="@string/notavailable"
-            android:textAppearance="?android:textAppearanceMedium" />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_marginLeft="10dip"
-        android:layout_marginRight="10dip"
-        android:layout_marginBottom="10dip"
-        android:orientation="vertical"
-        android:id="@+id/datesubbg_pseditactivity"
-        android:background="@drawable/cell_shape"
-        android:layout_height="wrap_content">
-        <TextView
-            android:id="@+id/datesublabel_pseditactivity"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dip"
-            android:text="@string/datesub_psdetailsactivity"
-            android:textAppearance="?android:textAppearanceLarge" />
-        <Button
-            android:id="@+id/datesubbutton_pseditactivity"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dip"
-            android:layout_marginEnd="10dip"
-            android:layout_marginBottom="10dip"
-            android:hint="@string/name"
-            android:text="@string/notavailable"
-            android:textAppearance="?android:textAppearanceMedium" />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/namelabel_pseditactivity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dip"
+                android:text="@string/namena_psdetailsactivity"
+                android:textAppearance="?android:textAppearanceLarge" />
 
-        android:orientation="vertical"
-        android:id="@+id/portalrespondedlayout_pseditactivity"
-        android:background="@drawable/cell_shape"
-        android:layout_height="wrap_content">
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:id="@+id/saveportalbuttonbg_pseditactivity"
-        android:layout_margin="10dip"
-        android:layout_height="wrap_content">
-        <Button
+            <EditText
+                android:id="@+id/name_pseditactivity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dip"
+                android:layout_marginEnd="10dip"
+                android:layout_marginStart="10dip"
+                android:hint="@string/name"
+                android:text="@string/notavailable"
+                android:textAppearance="?android:textAppearanceMedium" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/datesubbg_pseditactivity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/saveportalbutton_pseditactivity"
-            android:text="@string/save_portal"
-            />
+            android:layout_marginBottom="10dip"
+            android:layout_marginLeft="10dip"
+            android:layout_marginRight="10dip"
+            android:background="@drawable/cell_shape"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/datesublabel_pseditactivity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dip"
+                android:text="@string/datesub_psdetailsactivity"
+                android:textAppearance="?android:textAppearanceLarge" />
+
+            <Button
+                android:id="@+id/datesubbutton_pseditactivity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dip"
+                android:layout_marginEnd="10dip"
+                android:layout_marginStart="10dip"
+                android:hint="@string/name"
+                android:text="@string/notavailable"
+                android:textAppearance="?android:textAppearanceMedium" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/typespinnerlayout_pseditactivity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dip"
+            android:layout_marginLeft="10dip"
+            android:layout_marginRight="10dip"
+            android:background="@drawable/cell_shape"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dip"
+                android:text="@string/portal_type"
+                android:textAppearance="?android:textAppearanceLarge" />
+
+            <Spinner
+                android:id="@+id/typespinner_pseditactivity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dip"
+                android:layout_marginEnd="10dip"
+                android:layout_marginStart="10dip" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/portalrespondedlayout_pseditactivity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:orientation="vertical"></LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/saveportalbuttonbg_pseditactivity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dip">
+
+            <Button
+                android:id="@+id/saveportalbutton_pseditactivity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/save_portal" />
+        </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+</ScrollView>

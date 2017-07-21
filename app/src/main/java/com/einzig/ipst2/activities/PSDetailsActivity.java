@@ -57,6 +57,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.einzig.ipst2.R;
+import com.einzig.ipst2.database.AcceptedPortalContract;
 import com.einzig.ipst2.database.DatabaseInterface;
 import com.einzig.ipst2.portal.PortalAccepted;
 import com.einzig.ipst2.portal.PortalRejected;
@@ -110,6 +111,8 @@ public class PSDetailsActivity extends AppCompatActivity {
     /** Date Formatter for displaying dates on the UI */
     DateTimeFormatter uiFormatter;
 
+    final static int EDIT_ACTIVITY_CODE = 10101;
+    DatabaseInterface db = new DatabaseInterface(this);
     /**
      *
      */
@@ -208,6 +211,7 @@ public class PSDetailsActivity extends AppCompatActivity {
                     .load(portal.getPictureURL())
                     .error(R.drawable.ic_warning_white)
                     .into(portalImage);
+        extraLayout.removeAllViews();
         buildExtraUI();
         setUpImageDownloadButton();
         setUpImageDetailsView();
@@ -338,6 +342,37 @@ public class PSDetailsActivity extends AppCompatActivity {
         ThemeHelper.initActionBar(getSupportActionBar());
         uiFormatter = new PreferencesHelper(getApplicationContext()).getUIFormatter();
         portal = getIntent().getExtras().getParcelable(PORTAL_KEY);
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Logger.d("onActivityResult(" + requestCode + ") -> " + resultCode);
+
+        switch (requestCode) {
+            case EDIT_ACTIVITY_CODE:
+                onResultEdit(resultCode, data);
+                break;
+        }
+    }
+
+    private void onResultEdit(int resultCode, Intent data) {
+        if (resultCode != RESULT_OK) {
+            finish();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(portal != null)
+            if(portal instanceof PortalAccepted)
+                portal = db.getAcceptedPortal(portal.getPictureURL(), portal.getName(), false);
+            else if(portal instanceof PortalRejected)
+                portal = db.getRejectedPortal(portal.getPictureURL(), portal.getName(), false);
+            else
+                portal = db.getPendingPortal(portal.getPictureURL(), portal.getName(), false);
         if (portal != null) {
             buildUI();
         } else
@@ -353,7 +388,7 @@ public class PSDetailsActivity extends AppCompatActivity {
         } else if (id == R.id.edit_psdetailsactivity) {
             Intent intent = new Intent(this, PSEditActivity.class);
             intent.putExtra(PORTAL_KEY, (Parcelable) portal);
-            startActivity(intent);
+            startActivityForResult(intent, EDIT_ACTIVITY_CODE);
         } else if (id == R.id.delete_psdetailsactivity) {
             new android.app.AlertDialog.Builder(this, R.style.dialogtheme)
                     .setTitle(R.string.delete_dialog_title)
