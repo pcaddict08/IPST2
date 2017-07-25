@@ -24,6 +24,7 @@
 
 package com.einzig.ipst2.activities;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
@@ -66,6 +67,7 @@ import butterknife.ButterKnife;
 import static com.einzig.ipst2.activities.MainActivity.PORTAL_KEY;
 import static com.einzig.ipst2.activities.MainActivity.PORTAL_LIST_KEY_RANGE;
 import static com.einzig.ipst2.activities.MainActivity.PORTAL_LIST_KEY_TYPE;
+import static com.einzig.ipst2.activities.PSDetailsActivity.EDIT_ACTIVITY_CODE;
 
 public class PSListActivity extends AppCompatActivity {
     @BindView(R.id.listview_pslistactivity)
@@ -130,7 +132,7 @@ public class PSListActivity extends AppCompatActivity {
                                 Intent intent = new Intent(PSListActivity.this,
                                         PSDetailsActivity.class);
                                 intent.putExtra(PORTAL_KEY, (Parcelable) portal);
-                                startActivity(intent);
+                                startActivityForResult(intent, EDIT_ACTIVITY_CODE);
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -144,6 +146,24 @@ public class PSListActivity extends AppCompatActivity {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Logger.d("onActivityResult(" + requestCode + ") -> " + resultCode);
+        switch (requestCode) {
+            case EDIT_ACTIVITY_CODE:
+                onResultEdit(resultCode);
+                break;
+        }
+    }
+
+    private void onResultEdit(int resultCode) {
+        if (resultCode == RESULT_OK) {
+            setResult(Activity.RESULT_OK, getIntent());
+            finish();
         }
     }
 

@@ -10,4 +10,5 @@
     <color name="colorPrimary_dark">#001C1B</color>
     <color name="colorPrimaryDark_dark">#001C1B</color>
     <color name="colorLighterPrimary_dark">#012928</color>
+    <color name="lightGray">#0f0f0f0f</color>
 </resources>
