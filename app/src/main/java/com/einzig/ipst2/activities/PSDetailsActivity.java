@@ -25,6 +25,7 @@
 package com.einzig.ipst2.activities;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -111,7 +112,7 @@ public class PSDetailsActivity extends AppCompatActivity {
     /** Date Formatter for displaying dates on the UI */
     DateTimeFormatter uiFormatter;
 
-    final static int EDIT_ACTIVITY_CODE = 10101;
+    public final static int EDIT_ACTIVITY_CODE = 10101;
     DatabaseInterface db = new DatabaseInterface(this);
     /**
      *
@@ -352,13 +353,14 @@ public class PSDetailsActivity extends AppCompatActivity {
 
         switch (requestCode) {
             case EDIT_ACTIVITY_CODE:
-                onResultEdit(resultCode, data);
+                onResultEdit(resultCode);
                 break;
         }
     }
 
-    private void onResultEdit(int resultCode, Intent data) {
-        if (resultCode != RESULT_OK) {
+    private void onResultEdit(int resultCode) {
+        if (resultCode == RESULT_OK) {
+            setResult(Activity.RESULT_OK, getIntent());
             finish();
         }
     }

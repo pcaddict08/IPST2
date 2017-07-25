@@ -29,7 +29,6 @@ import android.accounts.AccountManager;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Looper;
@@ -48,6 +47,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
@@ -66,7 +66,6 @@ import com.einzig.ipst2.util.PermissionsHelper;
 import com.einzig.ipst2.util.PreferencesHelper;
 import com.einzig.ipst2.util.ThemeHelper;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.singh.daman.proprogressviews.DoubleArcProgress;
 
 import org.joda.time.LocalDate;
 
@@ -78,6 +77,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.fabric.sdk.android.Fabric;
 
+import static com.einzig.ipst2.activities.PSDetailsActivity.EDIT_ACTIVITY_CODE;
+
 /**
  * Main activity class which launches the app.
  * Contains all startup and initialization code.
@@ -87,21 +88,35 @@ import io.fabric.sdk.android.Fabric;
  */
 public class MainActivity extends AppCompatActivity
         implements CompoundButton.OnCheckedChangeListener {
-    /** Preferences key for sending a portal through a bundle */
+    /**
+     * Preferences key for sending a portal through a bundle
+     */
     static public final String PORTAL_KEY = "portal";
-    /** Preferences key for sending a portal list through Bundle */
+    /**
+     * Preferences key for sending a portal list through Bundle
+     */
     static public final String PORTAL_LIST_KEY_RANGE = "portalList";
     static public final String PORTAL_LIST_KEY_TYPE = "portalListType";
-    /** Activity-for-result code to request write-to-external-storage permissions */
+    /**
+     * Activity-for-result code to request write-to-external-storage permissions
+     */
     static final public int REQUEST_CODE_WRITE_EXTERNAL = 1 << 1;
-    /** The key for saving version num */
+    /**
+     * The key for saving version num
+     */
     static final public String VERSION_KEY = "version";
     static final int REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR = 1002;
-    /** Used to get the result of LoginActivity */
+    /**
+     * Used to get the result of LoginActivity
+     */
     static private final int LOGIN_ACTIVITY_CODE = 0;
-    /** Seems to be redundant with PreferencesHelper#REFRESH_KEY */
+    /**
+     * Seems to be redundant with PreferencesHelper#REFRESH_KEY
+     */
     static final private String REFRESH_KEY = "refresh";
-    /** Activity-for-result code to request email permissions */
+    /**
+     * Activity-for-result code to request email permissions
+     */
     public static final int REQUEST_CODE_EMAIL = 1;
     /**  */
     public static final int REQUEST_CODE_ALL = REQUEST_CODE_EMAIL & REQUEST_CODE_WRITE_EXTERNAL;
@@ -142,9 +157,11 @@ public class MainActivity extends AppCompatActivity
     @BindView(R.id.weektab_mainactivity)
     RadioButton weektab;
     @BindView(R.id.arcprogress_mainactivity)
-    DoubleArcProgress arcprogress_mainactivity;
+    ProgressBar arcprogress_mainactivity;
 
-    /** Database Handle for getting portals and such */
+    /**
+     * Database Handle for getting portals and such
+     */
     private DatabaseInterface db;
     /**  */
     private LocalDate viewDate;
@@ -182,7 +199,7 @@ public class MainActivity extends AppCompatActivity
         if (ThemeHelper.isDarkTheme(this)) {
             baseui_mainactivity.setBackgroundColor(ContextCompat.getColor(this, R.color
                     .colorLighterPrimary_dark));
-            arcprogress_mainactivity.setBackgroundColor(Color.WHITE);
+            //arcprogress_mainactivity.setBackgroundColor(Color.WHITE);
         }
         selectRadioItem();
         if (helper.isSeerOnly()) {
@@ -235,25 +252,25 @@ public class MainActivity extends AppCompatActivity
         PreferencesHelper helper = new PreferencesHelper(this);
         Button viewList = (Button) findViewById(R.id.viewlist_mainactivity);
         switch (viewID) {
-        case R.id.todaytab_mainactivity:
-            viewDate = new LocalDate();
-            viewList.setText(R.string.viewlisttoday);
-            break;
-        case R.id.weektab_mainactivity:
-            viewDate = new LocalDate().minusDays(7);
-            viewList.setText(R.string.viewlistweek);
-            break;
-        case R.id.monthtab_mainactivity:
-            viewDate = new LocalDate().minusMonths(1);
-            viewList.setText(R.string.viewlistmonth);
-            break;
-        case R.id.alltab_mainactivity:
-            viewDate = null;
-            formatUI(db.getAcceptedCount(helper.isSeerOnly()),
-                    db.getRejectedCount(helper.isSeerOnly()),
-                    db.getPendingCount(helper.isSeerOnly()));
-            viewList.setText(R.string.viewlistall);
-            break;
+            case R.id.todaytab_mainactivity:
+                viewDate = new LocalDate();
+                viewList.setText(R.string.viewlisttoday);
+                break;
+            case R.id.weektab_mainactivity:
+                viewDate = new LocalDate().minusDays(7);
+                viewList.setText(R.string.viewlistweek);
+                break;
+            case R.id.monthtab_mainactivity:
+                viewDate = new LocalDate().minusMonths(1);
+                viewList.setText(R.string.viewlistmonth);
+                break;
+            case R.id.alltab_mainactivity:
+                viewDate = null;
+                formatUI(db.getAcceptedCount(helper.isSeerOnly()),
+                        db.getRejectedCount(helper.isSeerOnly()),
+                        db.getPendingCount(helper.isSeerOnly()));
+                viewList.setText(R.string.viewlistall);
+                break;
         }
         Logger.d("viewDate -> " + viewDate);
         if (viewDate == null)
@@ -342,15 +359,19 @@ public class MainActivity extends AppCompatActivity
         Logger.d("onActivityResult(" + requestCode + ") -> " + resultCode);
 
         switch (requestCode) {
-        case LOGIN_ACTIVITY_CODE:
-            onLoginResult(resultCode, data);
-            break;
-        case SETTINGS_ACTIVITY_CODE:
-            PreferencesHelper helper = new PreferencesHelper(getApplicationContext());
-            if (!helper.isInitialized(helper.emailKey()) || !helper.isInitialized(helper
-                    .parseDateKey()))
-                refreshEverything();
-            break;
+            case LOGIN_ACTIVITY_CODE:
+                onLoginResult(resultCode, data);
+                break;
+            case SETTINGS_ACTIVITY_CODE:
+                PreferencesHelper helper = new PreferencesHelper(getApplicationContext());
+                if (!helper.isInitialized(helper.emailKey()) || !helper.isInitialized(helper
+                        .parseDateKey()))
+                    refreshEverything();
+                break;
+            case EDIT_ACTIVITY_CODE:
+                if(resultCode == RESULT_OK)
+                    refreshEverything();
+                break;
         }
     }
 
@@ -503,13 +524,13 @@ public class MainActivity extends AppCompatActivity
         // Handle item selection
         switch (item.getItemId()) {
 
-        case R.id.settings_mainactivity:
-            startActivityForResult(new Intent(this, SettingsActivity.class),
-                    SETTINGS_ACTIVITY_CODE);
-            break;
-        case R.id.refresh_mainactivity:
-            refreshEverything();
-            break;
+            case R.id.settings_mainactivity:
+                startActivityForResult(new Intent(this, SettingsActivity.class),
+                        SETTINGS_ACTIVITY_CODE);
+                break;
+            case R.id.refresh_mainactivity:
+                refreshEverything();
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -517,8 +538,7 @@ public class MainActivity extends AppCompatActivity
     /*
      * Method to dismiss and refresh data
      */
-    public void refreshEverything()
-    {
+    public void refreshEverything() {
         finish();
         Intent nextIntent = getIntent();
         nextIntent.putExtra(REFRESH_KEY, true);
@@ -543,7 +563,7 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-            @NonNull int[] grantResults) {
+                                           @NonNull int[] grantResults) {
         if (requestCode == REQUEST_CODE_ALL) {
             onHavePermissions(false);
         }
@@ -566,7 +586,7 @@ public class MainActivity extends AppCompatActivity
                 stringForLog + "");
         intent.putExtra(PORTAL_LIST_KEY_TYPE, listType);
         intent.putExtra(PORTAL_LIST_KEY_RANGE, stringForLog);
-        startActivity(intent);
+        startActivityForResult(intent, EDIT_ACTIVITY_CODE);
     }
 
     /**
