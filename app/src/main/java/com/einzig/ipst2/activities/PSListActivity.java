@@ -99,14 +99,14 @@ public class PSListActivity extends AppCompatActivity {
         dialog.setTitle(getString(R.string.getting_results));
         dialog.setCanceledOnTouchOutside(false);
         dialog.show();
+        RANGE = getIntent().getExtras().getString(PORTAL_LIST_KEY_RANGE);
+        TYPE = getIntent().getExtras().getString(PORTAL_LIST_KEY_TYPE);
+        new PortalGrabber(this, RANGE, TYPE, db).execute();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        RANGE = getIntent().getExtras().getString(PORTAL_LIST_KEY_RANGE);
-        TYPE = getIntent().getExtras().getString(PORTAL_LIST_KEY_TYPE);
-        new PortalGrabber(this, RANGE, TYPE, db).execute();
     }
 
     public void AfterParse(Vector<? extends PortalSubmission> _psList) {
@@ -162,6 +162,9 @@ public class PSListActivity extends AppCompatActivity {
 
     private void onResultEdit(int resultCode) {
         if (resultCode == RESULT_OK) {
+            RANGE = getIntent().getExtras().getString(PORTAL_LIST_KEY_RANGE);
+            TYPE = getIntent().getExtras().getString(PORTAL_LIST_KEY_TYPE);
+            new PortalGrabber(this, RANGE, TYPE, db).execute();
             setResult(Activity.RESULT_OK, getIntent());
             finish();
         }

@@ -156,4 +156,21 @@
     <string name="save">Save</string>
     <string name="portal_type">Portal Type:</string>
     <string name="intel_link">Intel Link:</string>
+    <string name="purchases_changed">Play Store: purchases have changed!</string>
+    <string name="donation_icon">Donation Icon</string>
+    <string name="gotodonate_prefmessage">If you want to donate to the future development of IPST, you can here.</string>
+    <string name="gotodonate_preftitle">Donate to Developers</string>
+    <string name="donate">Donate</string>
+    <string name="loadingproducts">Loading Products…</string>
+    <string name="selectdonationtype">Select Donation Type</string>
+    <string name="monthly_subscription">Monthly Subscription</string>
+    <string name="one_time_payment">One Time Payment</string>
+
+
+    <string name="_1_buy">1. Buy</string>
+    <string name="_2_select">2. Select</string>
+    <string name="_3_change">3. Change</string>
+    <string name="buy">Buy</string>
+    <string name="change">Change</string>
+
 </resources>
