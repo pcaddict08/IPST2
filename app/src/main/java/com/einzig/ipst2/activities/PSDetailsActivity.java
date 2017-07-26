@@ -420,7 +420,7 @@ public class PSDetailsActivity extends AppCompatActivity {
                 db.deleteRejected((PortalRejected) portal);
             else
                 db.deletePending(portal);
-        finish();
+        onResultEdit(RESULT_OK);
     }
 
     @Override

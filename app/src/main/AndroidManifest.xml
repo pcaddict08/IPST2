@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.einzig.ipst2">
+    package="com.einzig.ipst2">
 
     <uses-permission android:name="com.android.vending.BILLING" />
-    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission
         android:name="android.permission.USE_CREDENTIALS"
-        android:maxSdkVersion="22"/>
+        android:maxSdkVersion="22" />
 
     <application
+        android:name=".CheckoutApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -19,35 +20,35 @@
         android:theme="@style/AppTheme">
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="71abaa2cb163e1ffb7de603f7a2f7496af03a935"/>
+            android:value="71abaa2cb163e1ffb7de603f7a2f7496af03a935" />
 
         <activity
             android:name=".activities.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".activities.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activities.PSListActivity"
             android:label="@string/pslisttitle_activity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activities.PSDetailsActivity"
             android:label="@string/psdetailstitle_activity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".activities.PSExportActivity">
-        </activity>
-        <activity android:name=".activities.PSImportActivity">
-        </activity>
-        <activity android:name=".activities.PSEditActivity">
-        </activity>
+            android:screenOrientation="portrait" />
+        <activity android:name=".activities.PSExportActivity"></activity>
+        <activity android:name=".activities.PSImportActivity"></activity>
+        <activity android:name=".activities.PSEditActivity"></activity>
+        <activity android:name=".billing.SkusActivity"></activity>
+        <activity android:name=".billing.SelectDonateTypeActivity"></activity>
+        <activity android:name=".billing.SubscriptionsActivity"></activity>
     </application>
 
 </manifest>

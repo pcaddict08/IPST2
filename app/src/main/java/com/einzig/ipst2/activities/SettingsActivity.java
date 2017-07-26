@@ -44,6 +44,8 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.einzig.ipst2.R;
+import com.einzig.ipst2.billing.SelectDonateTypeActivity;
+import com.einzig.ipst2.billing.SkusActivity;
 import com.einzig.ipst2.database.DatabaseInterface;
 import com.einzig.ipst2.util.Logger;
 import com.einzig.ipst2.util.PreferencesHelper;
@@ -151,6 +153,15 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             addPreferencesFromResource(R.xml.pref_aboutsheet);
             setHasOptionsMenu(true);
 
+            Preference donateFrag = findPreference("goto-donate");
+            if(donateFrag != null)
+                donateFrag.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                    @Override
+                    public boolean onPreferenceClick(Preference preference) {
+                        startActivity(new Intent(getActivity(), SelectDonateTypeActivity.class));
+                        return false;
+                    }
+                });
             Preference versionnum = findPreference("version-num");
             if (versionnum != null)
                 versionnum.setSummary(getVersionNum(getActivity()));

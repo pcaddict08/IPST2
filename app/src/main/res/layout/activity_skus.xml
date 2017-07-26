@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   ~ Copyright 2017 Steven Foskett, Jimmy Ho, Ryan Porterfield                 ~
   ~ Permission is hereby granted, free of charge, to any person obtaining a   ~
@@ -18,39 +19,9 @@
   ~ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER       ~
   ~ DEALINGS IN THE SOFTWARE.                                                 ~
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
-
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <Preference
-        android:key="contact-dev"
-        android:summary="@string/contactdev_prefmessage"
-        android:title="@string/contactdev_preftitle"
-        />
-
-    <Preference
-        android:key="goto-tg"
-        android:summary="@string/gototg_prefmessage"
-        android:title="@string/gototg_preftitle"
-        />
-    <Preference
-        android:key="goto-donate"
-        android:summary="@string/gotodonate_prefmessage"
-        android:title="@string/gotodonate_preftitle"
-        />
-    <Preference
-        android:key="version-num"
-        android:summary="@string/versionnum_prefmessage"
-        android:title="@string/versionnum_preftitle"
-        />
-
-    <Preference
-        android:key="upload-portals"
-        android:summary="@string/uploadportals_prefmessage"
-        android:title="@string/uploadportals_preftitle"
-        />
-    <Preference
-        android:key="view-ipststats"
-        android:summary="@string/viewipststats_prefmessage"
-        android:title="@string/viewipststats_preftitle"
-        />
-</PreferenceScreen>
+<android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/recycler"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:scrollbarStyle="insideOverlay"
+    android:scrollbars="vertical" />
