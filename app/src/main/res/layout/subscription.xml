@@ -19,18 +19,13 @@
   ~ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER       ~
   ~ DEALINGS IN THE SOFTWARE.                                                 ~
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
-<CheckBox
+<TextView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/subscription"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center_vertical"
     android:layout_weight="1"
-    android:background="?selectableItemBackground"
-    android:button="@null"
-    android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
-    android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
-    android:ellipsize="end"
     android:gravity="center_vertical"
     android:maxLines="1"
     android:minHeight="?listPreferredItemHeightSmall"
@@ -38,4 +33,4 @@
     android:paddingLeft="?listPreferredItemPaddingLeft"
     android:paddingRight="?listPreferredItemPaddingRight"
     android:paddingStart="?listPreferredItemPaddingLeft"
-    android:textAppearance="?textAppearanceListItem" />
+    />

@@ -37,7 +37,7 @@
             style="@style/Title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/_1_buy" />
+            android:text="@string/subscribe" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -60,7 +60,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:enabled="false"
-                android:text="@string/buy" />
+                android:text="@string/subscribe" />
         </LinearLayout>
 
         <TextView
@@ -68,47 +68,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="@string/_2_select" />
+            android:text="@string/subscriptions" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/purchased_skus"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp" />
-
         <TextView
-            style="@style/Title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="@string/_3_change" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:orientation="horizontal"
-            android:paddingBottom="@dimen/activity_vertical_margin"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:paddingRight="@dimen/activity_horizontal_margin"
-            android:paddingTop="@dimen/activity_vertical_margin">
-
-            <Spinner
-                android:id="@+id/target_skus"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="1"
-                android:enabled="false" />
-
-            <Button
-                android:id="@+id/change"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:enabled="false"
-                android:text="@string/change" />
-        </LinearLayout>
-
+            android:layout_margin="10dip"
+            android:textAppearance="?android:textAppearanceMedium"
+            android:text="@string/to_cancel_subscriptions_you_must_do_so_through_the_google_play_website_app"/>
     </LinearLayout>
 </ScrollView>
