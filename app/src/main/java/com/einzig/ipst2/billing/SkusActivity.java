@@ -80,7 +80,7 @@ public class SkusActivity extends AppCompatActivity {
     private ProgressDialog progressDialog;
     private static List<String> getInAppSkus() {
         final List<String> skus = new ArrayList<>();
-        skus.addAll(Arrays.asList("000001", "000003", "000005"));
+        skus.addAll(Arrays.asList("000001", "000003", "000005", "000007"));
         Logger.d("Skus: " + skus.toString());
         return skus;
     }
@@ -284,7 +284,7 @@ public class SkusActivity extends AppCompatActivity {
         public void onClick(Sku sku) {
             final Purchase purchase = mProduct.getPurchaseInState(sku, Purchase.State.PURCHASED);
             if (purchase != null) {
-                consume(purchase);
+                //consume(purchase);
             } else {
                 purchase(sku);
             }

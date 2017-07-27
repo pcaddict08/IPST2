@@ -55,6 +55,7 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.einzig.ipst2.CheckoutApplication;
 import com.einzig.ipst2.R;
@@ -76,7 +77,7 @@ import static org.solovyev.android.checkout.ProductTypes.SUBSCRIPTION;
 
 public class SubscriptionsActivity extends AppCompatActivity {
 
-    private static final List<String> SKUS = Arrays.asList("000002", "000004", "000006");
+    private static final List<String> SKUS = Arrays.asList("000002", "000004", "000006", "000008");
 
     private final List<Inventory.Callback> mInventoryCallbacks = new ArrayList<>();
 
@@ -86,10 +87,6 @@ public class SubscriptionsActivity extends AppCompatActivity {
     Spinner mAvailableSkus;
     @BindView(R.id.purchased_skus)
     RecyclerView mPurchasedSkus;
-    @BindView(R.id.change)
-    View mChange;
-    @BindView(R.id.target_skus)
-    Spinner mTargetSkus;
     private PurchasedSkusAdapter mPurchasedSkusAdapter;
     private TargetSkusAdapter mTargetSkusAdapter;
     private ActivityCheckout mCheckout;
@@ -159,27 +156,10 @@ public class SubscriptionsActivity extends AppCompatActivity {
 
     private void initTargetSkus() {
         mTargetSkusAdapter = new TargetSkusAdapter(this);
-        mTargetSkus.setAdapter(mTargetSkusAdapter);
         mTargetSkusAdapter.registerDataSetObserver(new DataSetObserver() {
             @Override
             public void onChanged() {
                 updateTargetSkusVisibility();
-            }
-        });
-        mChange.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final Set<Sku> checked = mPurchasedSkusAdapter.getChecked();
-                if (checked.isEmpty()) {
-                    return;
-                }
-                final int position = mTargetSkus.getSelectedItemPosition();
-                if (position >= 0 && position < mTargetSkusAdapter.getCount()) {
-                    final SkuItem item = mTargetSkusAdapter.getItem(position);
-                    if (item != null) {
-                        change(checked, item.mSku);
-                    }
-                }
             }
         });
         mInventoryCallbacks.add(mTargetSkusAdapter);
@@ -187,8 +167,6 @@ public class SubscriptionsActivity extends AppCompatActivity {
 
     private void updateTargetSkusVisibility() {
         final boolean enabled = mTargetSkusAdapter.getCount() > 0 && mPurchasedSkusAdapter.getChecked().size() > 0;
-        mChange.setEnabled(enabled);
-        mTargetSkus.setEnabled(enabled);
     }
 
     private void initPurchasedSkus() {
@@ -210,6 +188,8 @@ public class SubscriptionsActivity extends AppCompatActivity {
             @Override
             public void onChanged() {
                 mBuy.setEnabled(adapter.getCount() > 0);
+                if(adapter.getCount() <= 0)
+                    mBuy.setVisibility(View.INVISIBLE);
             }
         });
         mBuy.setOnClickListener(new View.OnClickListener() {
@@ -265,7 +245,7 @@ public class SubscriptionsActivity extends AppCompatActivity {
 
         @Override
         public String toString() {
-            return mSku.getDisplayTitle();
+            return mSku.getDisplayTitle() + " - " + mSku.price;
         }
     }
 
@@ -273,7 +253,7 @@ public class SubscriptionsActivity extends AppCompatActivity {
 
         private final PurchasedSkusAdapter mAdapter;
         @BindView(R.id.subscription)
-        CheckBox mSubscription;
+        TextView mSubscription;
         @Nullable
         private Sku mSku;
 
@@ -282,13 +262,11 @@ public class SubscriptionsActivity extends AppCompatActivity {
             mAdapter = adapter;
 
             ButterKnife.bind(this, view);
-            mSubscription.setOnCheckedChangeListener(this);
         }
 
         public void onBind(Sku sku) {
             mSku = sku;
-            mSubscription.setText(sku.getDisplayTitle());
-            mSubscription.setChecked(mAdapter.isChecked(sku));
+            mSubscription.setText(sku.getDisplayTitle() + " - " + mSku.price);
         }
 
         @Override
