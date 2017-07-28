@@ -31,9 +31,9 @@ import java.util.Collections;
 import java.util.Vector;
 
 /**
- * Created by Steven Foskett on 7/12/2017.
+ * @author Steven Foskett
+ * @since 2017-07-12
  */
-
 public class SortHelper {
     /* Method to sort the list based on settings the user has saved */
     public static void sortList(Vector<? extends PortalSubmission> psList, Context context) {

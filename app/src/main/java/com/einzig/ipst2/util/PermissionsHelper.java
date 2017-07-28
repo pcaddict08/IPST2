@@ -31,24 +31,20 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static com.einzig.ipst2.activities.MainActivity.REQUEST_CODE_ALL;
 import static com.einzig.ipst2.activities.MainActivity.REQUEST_CODE_EMAIL;
+import static com.einzig.ipst2.activities.MainActivity.REQUEST_CODE_WRITE_EXTERNAL;
 
 /**
- * Created by Steven Foskett on 7/13/2017.
+ * @author Steven Foskett
+ * @since 2017-07-13
  */
-
 public class PermissionsHelper {
-    /**
-     * TODO Save a user preference if they deny us WRITE_EXTERNAL_STORAGE so we don't ask for it
-     * Request permissions if we don't have them
-     *
-     * @return true if we have all permissions, otherwise false
-     */
-    public static boolean checkPermissions(Context context) {
-        boolean hasPermissions = hasAccountsPermission(context) && hasWritePermission(context);
-        String[] permissions = {GET_ACCOUNTS, WRITE_EXTERNAL_STORAGE};
-        if (!hasPermissions)
-            ActivityCompat.requestPermissions((Activity)context, permissions, REQUEST_CODE_ALL);
-        return hasPermissions;
+
+    public static boolean getAccountsPermission(Context context) {
+        boolean hasPermission = hasAccountsPermission(context);
+        if (!hasPermission)
+            ActivityCompat.requestPermissions((Activity) context, new String[]{GET_ACCOUNTS},
+                    REQUEST_CODE_EMAIL);
+        return hasPermission;
     }
 
     /**
@@ -66,12 +62,26 @@ public class PermissionsHelper {
                 PERMISSION_GRANTED;
     }
 
+    /**
+     * TODO Save a user preference if they deny us WRITE_EXTERNAL_STORAGE so we don't ask for it
+     * Request permissions if we don't have them
+     *
+     * @return true if we have all permissions, otherwise false
+     */
+    public static boolean requestPermissions(Context context) {
+        boolean hasPermissions = hasAccountsPermission(context) && hasWritePermission(context);
+        String[] permissions = {GET_ACCOUNTS, WRITE_EXTERNAL_STORAGE};
+        if (!hasPermissions)
+            ActivityCompat.requestPermissions((Activity) context, permissions, REQUEST_CODE_ALL);
+        return hasPermissions;
+    }
 
-    public static boolean getAccountsPermission(Context context) {
-        boolean hasPermission = hasAccountsPermission(context);
-        if (!hasPermission)
-            ActivityCompat.requestPermissions((Activity)context, new String[]{GET_ACCOUNTS},
-                    REQUEST_CODE_EMAIL);
-        return hasPermission;
+    public static boolean requestWritePermission(Context context) {
+        boolean hasPermissions = hasWritePermission(context);
+        String[] permissions = {WRITE_EXTERNAL_STORAGE};
+        if (!hasPermissions)
+            ActivityCompat.requestPermissions((Activity) context, permissions,
+                    REQUEST_CODE_WRITE_EXTERNAL);
+        return hasPermissions;
     }
 }

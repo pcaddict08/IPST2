@@ -8,11 +8,11 @@
     <string name="donateKey" translatable="false">donate</string>
     <string name="dmyFormat" translatable="false">dd/MM/yyyy</string>
     <string name="emailKey" translatable="false">email</string>
-    <string name="exportCSVKey" translatable="false">export</string>
-    <string name="exportLogsPref" translatable="false">exportLogs</string>
+    <string name="exportKey" translatable="false">export</string>
     <string name="folderKey" translatable="false">folder</string>
     <string name="frontPageKey" translatable="false">frontPage</string>
     <string name="hardResetKey" translatable="false">hardReset</string>
+    <string name="importKey" translatable="false">import</string>
     <string name="logoutKey" translatable="false">logout</string>
     <string name="nullKey" translatable="false">uninitialized</string>
     <string name="mdyFormat" translatable="false">MM/dd/yyyy</string>

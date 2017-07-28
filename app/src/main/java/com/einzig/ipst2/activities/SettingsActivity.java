@@ -58,7 +58,6 @@ import java.util.List;
  */
 public class SettingsActivity extends AppCompatPreferenceActivity {
     /**
-     *
      * @param context context of the application
      * @return returns a string of the version
      */
@@ -179,14 +178,16 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                                 long timeNow = System.currentTimeMillis();
                                 long timeSent = preferences.getLong("last-portal-data", 0);
                                 if (timeSent == 0 || (timeNow - timeSent) >= (1000 * 60 * 15)) {
-                                    Toast.makeText(getActivity(), R.string.building_portal_data, Toast
-                                            .LENGTH_SHORT).show();
+                                    Toast.makeText(getActivity(), R.string.building_portal_data,
+                                            Toast
+                                                    .LENGTH_SHORT).show();
                                     preferences.edit()
                                             .putLong("last-portal-data", System.currentTimeMillis())
                                             .apply();
                                     new SendPortalData(getActivity()).execute();
                                 } else {
-                                    Toast.makeText(getActivity(), R.string.recently_sent_data_error, Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getActivity(), R.string.recently_sent_data_error,
+                                            Toast.LENGTH_LONG).show();
                                 }
                                 return false;
                             }
@@ -276,7 +277,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 helper.set(helper.dateFormatKey(), helper.mdyFormat());
             if (!helper.isInitialized(helper.sortKey()))
                 helper.set(helper.sortKey(), helper.responseDateSort());
-            DBPreferenceFragment.this.findPreference(getResources()
+            findPreference(getResources()
                     .getString(R.string.hardResetKey))
                     .setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                         @Override
@@ -286,7 +287,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                         }
                     });
             // TODO remove hardcoded pref string
-            Preference exportDBPref = DBPreferenceFragment.this.findPreference("exportdb_pref");
+            Preference exportDBPref = findPreference("exportdb_pref");
             if (exportDBPref != null)
                 exportDBPref.setOnPreferenceClickListener(new Preference
                         .OnPreferenceClickListener() {
@@ -297,7 +298,18 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     }
                 });
 
-            Preference importDBPref = DBPreferenceFragment.this.findPreference("importdb_pref");
+            Preference exportPref = findPreference(getString(R.string.exportKey));
+            if (exportPref != null)
+                exportPref.setOnPreferenceClickListener(
+                        new Preference.OnPreferenceClickListener() {
+                            @Override
+                            public boolean onPreferenceClick(Preference preference) {
+                                startActivity(new Intent(getActivity(), ExportActivity.class));
+                                return false;
+                            }
+                        });
+
+            Preference importDBPref = findPreference(getString(R.string.importKey));
             if (importDBPref != null)
                 importDBPref.setOnPreferenceClickListener(
                         new Preference.OnPreferenceClickListener() {
@@ -379,7 +391,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             return super.onOptionsItemSelected(item);
         }
     }
-
 }
 
 

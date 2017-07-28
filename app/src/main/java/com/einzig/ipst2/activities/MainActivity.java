@@ -429,7 +429,7 @@ public class MainActivity extends AppCompatActivity
         initLoginButton();
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
         boolean shouldRefresh = getIntent().getBooleanExtra(REFRESH_KEY, false);
-        if (PermissionsHelper.checkPermissions(this))
+        if (PermissionsHelper.requestPermissions(this))
             onHavePermissions(shouldRefresh);
     }
 

@@ -44,11 +44,6 @@
         android:entryValues="@array/defaultTabsEntries"
         />
 
-    <Preference
-        android:key="@string/exportLogsPref"
-        android:summary="@string/exportlogs_summary"
-        android:title="@string/exportlogs_title" />
-
     <CheckBoxPreference
         android:defaultValue="false"
         android:key="@string/theme_key"
