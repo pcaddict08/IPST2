@@ -42,6 +42,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -49,13 +50,17 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.PurchaseEvent;
 import com.einzig.ipst2.CheckoutApplication;
 import com.einzig.ipst2.R;
 import com.einzig.ipst2.util.Logger;
 import com.einzig.ipst2.util.ThemeHelper;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Currency;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -78,6 +83,7 @@ public class SkusActivity extends AppCompatActivity {
     private ActivityCheckout mCheckout;
     private InventoryCallback mInventoryCallback;
     private ProgressDialog progressDialog;
+
     private static List<String> getInAppSkus() {
         final List<String> skus = new ArrayList<>();
         skus.addAll(Arrays.asList("000001", "000003", "000005", "000007"));
@@ -102,7 +108,7 @@ public class SkusActivity extends AppCompatActivity {
         setContentView(R.layout.activity_skus);
         ButterKnife.bind(this);
         ActionBar supportActionBar = getSupportActionBar();
-        if (supportActionBar != null){
+        if (supportActionBar != null) {
             supportActionBar.setTitle(R.string.donate);
             supportActionBar.setDisplayHomeAsUpEnabled(true);
         }
@@ -153,6 +159,15 @@ public class SkusActivity extends AppCompatActivity {
             @Override
             public void onSuccess(@Nonnull T result) {
                 reloadInventory();
+                if (result instanceof Purchase) {
+                    try {
+                        Purchase resultPurchase = (Purchase) result;
+                        Logger.d("RESULT DETAILS: " + resultPurchase.sku);
+                        sendFabricPurchase(resultPurchase.sku);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
             }
 
             @Override
@@ -160,6 +175,42 @@ public class SkusActivity extends AppCompatActivity {
                 reloadInventory();
             }
         };
+    }
+
+    private void sendFabricPurchase(String sku) {
+        try {
+            double price = 0;
+            String itemName = "";
+            switch (sku) {
+                case "000001":
+                    itemName = "Small Donation";
+                    price = 0.99;
+                    break;
+                case "000003":
+                    itemName = "Medium Donation";
+                    price = 4.99;
+                    break;
+                case "000005":
+                    itemName = "Large Donation";
+                    price = 9.99;
+                    break;
+                case "000007":
+                    itemName = "Huge Donation";
+                    price = 19.99;
+                    break;
+            }
+            if (price != 0) {
+                Answers.getInstance().logPurchase(new PurchaseEvent()
+                        .putItemPrice(BigDecimal.valueOf(price))
+                        .putCurrency(Currency.getInstance("USD"))
+                        .putItemName(itemName)
+                        .putItemType("Single Donate")
+                        .putItemId(sku)
+                        .putSuccess(true));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void consume(final Purchase purchase) {
@@ -284,6 +335,7 @@ public class SkusActivity extends AppCompatActivity {
         public void onClick(Sku sku) {
             final Purchase purchase = mProduct.getPurchaseInState(sku, Purchase.State.PURCHASED);
             if (purchase != null) {
+                //TODO COMMENT THIS OUT WHEN DONE
                 //consume(purchase);
             } else {
                 purchase(sku);
