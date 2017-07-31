@@ -166,4 +166,5 @@
     <string name="subscribe">Subcribe</string>
     <string name="subscriptions">Active Subscriptions</string>
     <string name="to_cancel_subscriptions_you_must_do_so_through_the_google_play_website_app">To cancel subscriptions, you must do so through the google play website/app.</string>
+    <string name="share">Share</string>
 </resources>

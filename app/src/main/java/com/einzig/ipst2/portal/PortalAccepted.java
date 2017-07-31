@@ -109,4 +109,24 @@ public class PortalAccepted extends PortalResponded {
         dest.writeString(intelLinkURL);
         dest.writeString(liveAddress);
     }
+
+    /*
+* Return Sharable Portal Details
+* */
+    @Override
+    public String getShareDetails() {
+        String returnString = "";
+        try {
+            returnString = getName() + "\n"
+                    + "Submitted: " + getDateSubmitted().toString() + "\n"
+                    + "Days In Queue: " + getResponseTime() + "\n"
+                    + "Status: Accepted\n"
+                    + "Live Address: " + getLiveAddress() + "\n"
+                    + "Intel Link: " + getIntelLinkURL() + "\n"
+                    + "Picture URL: " + getPictureURL();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return returnString;
+    }
 }

@@ -39,9 +39,13 @@ import java.text.SimpleDateFormat;
 import static com.einzig.ipst2.database.DatabaseInterface.DATE_FORMATTER;
 
 public class PortalSubmission implements Parcelable, Serializable {
-    /** Inflates a PortalSubmission from a Parcel */
+    /**
+     * Inflates a PortalSubmission from a Parcel
+     */
     public static final Creator<PortalSubmission> CREATOR;
-    /** Version descriptor for serialized PortalSubmissions */
+    /**
+     * Version descriptor for serialized PortalSubmissions
+     */
     private static final long serialVersionUID;
 
     static {
@@ -135,6 +139,24 @@ public class PortalSubmission implements Parcelable, Serializable {
     * */
     public int getDaysSinceResponse() {
         return Days.daysBetween(dateSubmitted, LocalDate.now()).getDays();
+    }
+
+
+    /*
+    * Return Sharable Portal Details
+    * */
+    public String getShareDetails() {
+        String returnString = "";
+        try {
+            returnString = getName() + "\n"
+                    + "Submitted: " + getDateSubmitted().toString() + "\n"
+                    + "Days In Queue: " + getDaysSinceResponse() + "\n"
+                    + "Status: Pending\n"
+                    + "Picture URL: " + getPictureURL();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return returnString;
     }
 
     /**

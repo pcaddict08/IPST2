@@ -37,7 +37,8 @@ import com.einzig.ipst2.billing.Encryption;
 import javax.annotation.Nonnull;
 
 public class CheckoutApplication extends Application {
-    final public static String Billing_KEY = "INSERT KEY HERE";
+    final public static String Billing_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAn0p1BlltVOCCp0mUKVxZ/nSwbB/SR8aeLN8Gy1KYgZVvQZNn+k4PXmk1Im2A7IfBO/KtqSh5gYP3fD04PLNb+E+T2zcycPVom0dAYKnGJNDUbtXtFiCb+ioLk0H0eGiMArHYI2K+u4bE3js/Dgzy0cSYxh1oDfBIwxe3NIK1Uh/7/nMgUq/HsbLNTvEZbMhWXklhyPRiYYVB7B/YP10SKU2alTHsKiCVaEohRjisRsKT63+ZUFaXrPmwka/uU7V4K+XGNNulW4NzDzT9aG0Vzh/+nz4owjiFmUKehh5cMS5BqbsnJX5f5BdKegvCQRhGYu+HRg6Fxf+Aj2BuNMJ/TQIDAQAB";
+
     @Nonnull
     private final Billing mBilling = new Billing(this, new Billing.DefaultConfiguration() {
         @Nonnull
