@@ -150,7 +150,7 @@ class EmailParser {
         subject = subject.toLowerCase();
         if (subject.contains("submitted") || subject.contains("submission"))
             return submissionBuilder.build(portalName, receivedDate, message);
-        else if (subject.contains(" live") ||
+        else if (subject.contains("portal live") ||
                 subject.contains(" *success!*"))
             return acceptedBuilder.build(portalName, receivedDate, message);
         else if (subject.contains("rejected") || subject.contains("duplicate"))
