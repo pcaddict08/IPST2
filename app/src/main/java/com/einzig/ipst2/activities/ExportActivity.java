@@ -32,6 +32,7 @@ import android.widget.Button;
 import com.einzig.ipst2.R;
 import com.einzig.ipst2.export.CSVExportHelper;
 import com.einzig.ipst2.export.JSONExporter;
+import com.einzig.ipst2.export.XMLExporter;
 import com.einzig.ipst2.util.PermissionsHelper;
 import com.einzig.ipst2.util.ThemeHelper;
 
@@ -54,12 +55,18 @@ public class ExportActivity extends AppCompatActivity {
     Button exportAllJSON;
     @BindView(R.id.exportAcceptedJSON)
     Button exportAcceptedJSON;
+    @BindView(R.id.exportAllXML)
+    Button exportAllXML;
+    @BindView(R.id.exportAcceptedXML)
+    Button exportAcceptedXML;
 
     private void disableButtons() {
         exportAcceptedCSV.setEnabled(false);
         exportAllCSV.setEnabled(false);
         exportAcceptedJSON.setEnabled(false);
         exportAllJSON.setEnabled(false);
+        exportAcceptedXML.setEnabled(false);
+        exportAllXML.setEnabled(false);
     }
 
     private void enableButtons() {
@@ -67,6 +74,8 @@ public class ExportActivity extends AppCompatActivity {
         exportAllCSV.setEnabled(true);
         exportAcceptedJSON.setEnabled(true);
         exportAllJSON.setEnabled(true);
+        exportAcceptedXML.setEnabled(true);
+        exportAllXML.setEnabled(true);
     }
 
     @OnClick(R.id.exportAcceptedCSV)
@@ -79,6 +88,11 @@ public class ExportActivity extends AppCompatActivity {
         new JSONExporter(this, true).execute();
     }
 
+    @OnClick(R.id.exportAcceptedXML)
+    public void exportAcceptedXML() {
+        new XMLExporter(this, true).execute();
+    }
+
     @OnClick(R.id.exportAllCSV)
     public void exportAllCSV() {
         new CSVExportHelper(this, "all").execute();
@@ -87,6 +101,11 @@ public class ExportActivity extends AppCompatActivity {
     @OnClick(R.id.exportAllJSON)
     public void exportAllJSON() {
         new JSONExporter(this, false).execute();
+    }
+
+    @OnClick(R.id.exportAllXML)
+    public void exportAllXML() {
+        new XMLExporter(this, false).execute();
     }
 
     @Override

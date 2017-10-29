@@ -6,7 +6,7 @@ repositories {
 }
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.0"
+    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "com.einzig.ipst2"
         minSdkVersion 19

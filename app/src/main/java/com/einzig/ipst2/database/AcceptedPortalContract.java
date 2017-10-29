@@ -29,31 +29,43 @@ import static com.einzig.ipst2.database.PendingPortalContract.PendingPortalEntry
  * @author Ryan Porterfield
  * @since 2017-06-24
  */
-
 public class AcceptedPortalContract {
-    static final String SQL_CREATE_ENTRIES =
-            "CREATE TABLE " + AcceptedPortalEntry.TABLE_ACCEPTED + " (" +
-                    PendingPortalEntry.COLUMN_NAME + " TEXT NOT NULL, " +
-                    PendingPortalEntry.COLUMN_DATE_SUBMITTED + " DATETIME NOT NULL, " +
-                    PendingPortalEntry.COLUMN_PICTURE_URL + " TEXT, " +
-                    PendingPortalEntry.COLUMN_DATE_RESPONDED + " DATETIME NOT NULL, " +
-                    AcceptedPortalEntry.COLUMN_LIVE_ADDRESS + " TEXT, " +
-                    AcceptedPortalEntry.COLUMN_INTEL_LINK_URL + " TEXT, PRIMARY KEY (" +
-                    PendingPortalEntry.COLUMN_PICTURE_URL + ", " + PendingPortalEntry.COLUMN_NAME
-                    + "))";
+    static final String SQL_CREATE_ENTRIES = String.format(
+            "CREATE TABLE %s (%s TEXT NOT NULL, %s TEXT, %s DATETIME NOT NULL, %s TEXT, %s TEXT, " +
+                    "FOREIGN KEY (%s, %s) REFERENCES %s(%s, %s), PRIMARY KEY (%s, %s))",
+            AcceptedPortalEntry.TABLE_ACCEPTED,
+            PendingPortalEntry.COLUMN_NAME,
+            PendingPortalEntry.COLUMN_PICTURE_URL,
+            PendingPortalEntry.COLUMN_DATE_RESPONDED,
+            AcceptedPortalEntry.COLUMN_LIVE_ADDRESS,
+            AcceptedPortalEntry.COLUMN_INTEL_LINK_URL,
+            // Foreign Key
+            PendingPortalEntry.COLUMN_PICTURE_URL,
+            PendingPortalEntry.COLUMN_NAME,
+            PendingPortalEntry.TABLE_PENDING,
+            PendingPortalEntry.COLUMN_PICTURE_URL,
+            PendingPortalEntry.COLUMN_NAME,
+            // Primary Key
+            PendingPortalEntry.COLUMN_PICTURE_URL,
+            PendingPortalEntry.COLUMN_NAME);
 
-    static final String SQL_DELETE_ENTRIES =
-            "DROP TABLE IF EXISTS " + AcceptedPortalEntry.TABLE_ACCEPTED;
+    static final String SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + AcceptedPortalEntry.TABLE_ACCEPTED;
 
     private AcceptedPortalContract() {
     }
 
-    public static class AcceptedPortalEntry implements BaseColumns {
-        /** Table key for the link to the portal on the intel map */
-        public static final String COLUMN_INTEL_LINK_URL = "intelLinkURL";
-        /** Table key for address of the portal */
+    static class AcceptedPortalEntry implements BaseColumns {
+        /**
+         * Table key for the link to the portal on the intel map
+         */
+        static final String COLUMN_INTEL_LINK_URL = "intelLinkURL";
+        /**
+         * Table key for address of the portal
+         */
         static final String COLUMN_LIVE_ADDRESS = "liveAddress";
-        /** The name of the table in containing accepted portal submissions */
-        public static final String TABLE_ACCEPTED = "acceptedSubmissions";
+        /**
+         * The name of the table in containing accepted portal submissions
+         */
+        static final String TABLE_ACCEPTED = "acceptedSubmissions";
     }
 }

@@ -22,13 +22,16 @@
 package com.einzig.ipst2.export;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Environment;
 
+import com.einzig.ipst2.R;
 import com.einzig.ipst2.database.DatabaseInterface;
 import com.einzig.ipst2.portal.PortalSubmission;
 import com.einzig.ipst2.sort.SortHelper;
 import com.einzig.ipst2.util.PreferencesHelper;
+import com.einzig.ipst2.util.ThemeHelper;
 
 import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormatter;
@@ -43,24 +46,30 @@ import java.util.Vector;
  * @author Ryan Porterfield
  * @since 2017-07-27
  */
-public abstract class Exporter<Params, Progress, Result> extends AsyncTask<Params, Progress, Result> {
+abstract class Exporter extends AsyncTask<Void, Integer, Void> {
     private final Activity activity;
     private final DatabaseInterface db;
     private final boolean acceptedOnly;
     private final PreferencesHelper helper;
+    /** Display parsing progress */
+    private final ProgressDialog dialog;
 
-    public Exporter(Activity activity) {
+    Exporter(Activity activity) {
         this.acceptedOnly = false;
         this.activity = activity;
         this.db = new DatabaseInterface(activity);
+        this.dialog = new ProgressDialog(activity, ThemeHelper.getDialogTheme(activity));
         this.helper = new PreferencesHelper(activity);
+        initProgressDialog();
     }
 
-    public Exporter(Activity activity, boolean acceptedOnly) {
+    Exporter(Activity activity, boolean acceptedOnly) {
         this.acceptedOnly = acceptedOnly;
         this.activity = activity;
         this.db = new DatabaseInterface(activity);
+        this.dialog = new ProgressDialog(activity, ThemeHelper.getDialogTheme(activity));
         this.helper = new PreferencesHelper(activity);
+        initProgressDialog();
     }
 
     Activity getActivity() {
@@ -90,7 +99,8 @@ public abstract class Exporter<Params, Progress, Result> extends AsyncTask<Param
     private File getOutputFile() {
         DateTimeFormatter fileFormatter = ISODateTimeFormat.basicDate();
         String date = fileFormatter.print(LocalDateTime.now());
-        String fileName = "/IPST2-backup-" + acceptedOnly + "-" + date + "." + getExportFileType();
+        String fileName = "/IPST2-backup-" + (acceptedOnly ? "Accepted" : "All");
+        fileName += "-" + date + "." + getExportFileType();
         File root = Environment.getExternalStorageDirectory();
         File dir = new File(root.getAbsolutePath() + "/Download");
         return new File(dir, fileName);
@@ -98,5 +108,24 @@ public abstract class Exporter<Params, Progress, Result> extends AsyncTask<Param
 
     public FileWriter getOutputWriter() throws IOException {
         return new FileWriter(getOutputFile());
+    }
+
+    /**
+     * Initialize the progress dialog
+     */
+    private void initProgressDialog() {
+        dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        dialog.setTitle(activity.getString(R.string.parsing_email));
+        dialog.setCancelable(false);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setMax((int) db.getDatabaseSize(helper.isSeerOnly()));
+    }
+
+    public void onPostExecute() {
+        dialog.dismiss();
+    }
+
+    public void onPreExecute() {
+        dialog.show();
     }
 }

@@ -37,7 +37,7 @@ import java.util.Vector;
  * @author Ryan Porterfield
  * @since 2017-07-27
  */
-public class JSONExporter extends Exporter<Void, Void, Void> {
+public class JSONExporter extends Exporter {
 
     public JSONExporter(Activity activity) {
         super(activity);

@@ -27,32 +27,41 @@ import android.provider.BaseColumns;
  * @author Ryan Porterfield
  * @since 2017-06-24
  */
+class PendingPortalContract {
+    static final String SQL_CREATE_ENTRIES = String.format(
+            "CREATE TABLE %s (%s TEXT NOT NULL, %s DATETIME NOT NULL, %s TEXT, PRIMARY KEY (%s,  %s))",
+            PendingPortalEntry.TABLE_PENDING,
+            PendingPortalEntry.COLUMN_NAME,
+            PendingPortalEntry.COLUMN_DATE_SUBMITTED,
+            PendingPortalEntry.COLUMN_PICTURE_URL,
+            PendingPortalEntry.COLUMN_PICTURE_URL,
+            PendingPortalEntry.COLUMN_NAME);
 
-public class PendingPortalContract {
-    static final String SQL_CREATE_ENTRIES =
-            "CREATE TABLE " + PendingPortalEntry.TABLE_PENDING + " (" +
-                    PendingPortalEntry.COLUMN_NAME + " TEXT NOT NULL, " +
-                    PendingPortalEntry.COLUMN_DATE_SUBMITTED + " DATETIME NOT NULL, " +
-                    PendingPortalEntry.COLUMN_PICTURE_URL + " TEXT, PRIMARY KEY (" +
-                    PendingPortalEntry.COLUMN_PICTURE_URL + ", " + PendingPortalEntry.COLUMN_NAME
-                    + "))";
-
-    static final String SQL_DELETE_ENTRIES =
-            "DROP TABLE IF EXISTS " + PendingPortalEntry.TABLE_PENDING;
+    static final String SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + PendingPortalEntry.TABLE_PENDING;
 
     private PendingPortalContract() {
     }
 
-    public static class PendingPortalEntry implements BaseColumns {
-        /** Table key for the date Niantic approved or denied the portal */
+    static class PendingPortalEntry implements BaseColumns {
+        /**
+         * Table key for the date Niantic approved or denied the portal
+         */
         static final String COLUMN_DATE_RESPONDED = "dateResponded";
-        /** Table key for the date the portal was submitted */
+        /**
+         * Table key for the date the portal was submitted
+         */
         static final String COLUMN_DATE_SUBMITTED = "dateSubmitted";
-        /** Table key for portal name */
+        /**
+         * Table key for portal name
+         */
         static final String COLUMN_NAME = "name";
-        /** Table key for the URL to the submission picture */
-        public static final String COLUMN_PICTURE_URL = "pictureURL";
-        /** The name of the table in containing pending portal submissions */
+        /**
+         * Table key for the URL to the submission picture
+         */
+        static final String COLUMN_PICTURE_URL = "pictureURL";
+        /**
+         * The name of the table in containing pending portal submissions
+         */
         static final String TABLE_PENDING = "pendingSubmissions";
     }
 }

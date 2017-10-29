@@ -26,16 +26,6 @@ package com.einzig.ipst2.billing;
  * Created by Steven Foskett on 7/26/2017.
  */
 
-import org.solovyev.android.checkout.ActivityCheckout;
-import org.solovyev.android.checkout.Billing;
-import org.solovyev.android.checkout.BillingRequests;
-import org.solovyev.android.checkout.Checkout;
-import org.solovyev.android.checkout.Inventory;
-import org.solovyev.android.checkout.Purchase;
-import org.solovyev.android.checkout.PurchaseFlow;
-import org.solovyev.android.checkout.RequestListener;
-import org.solovyev.android.checkout.Sku;
-
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -52,14 +42,21 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.einzig.ipst2.CheckoutApplication;
 import com.einzig.ipst2.R;
 import com.einzig.ipst2.util.ThemeHelper;
+
+import org.solovyev.android.checkout.ActivityCheckout;
+import org.solovyev.android.checkout.BillingRequests;
+import org.solovyev.android.checkout.Checkout;
+import org.solovyev.android.checkout.Inventory;
+import org.solovyev.android.checkout.Purchase;
+import org.solovyev.android.checkout.PurchaseFlow;
+import org.solovyev.android.checkout.RequestListener;
+import org.solovyev.android.checkout.Sku;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -121,9 +118,9 @@ public class SubscriptionsActivity extends AppCompatActivity {
         initPurchasedSkus();
         initTargetSkus();
 
-        final Billing billing = CheckoutApplication.get(this).getBilling();
-        mCheckout = Checkout.forActivity(this, billing);
-        mCheckout.start();
+//        final Billing billing = CheckoutApplication.get(this).getBilling();
+//        mCheckout = Checkout.forActivity(this, billing);
+//        mCheckout.start();
         reloadInventory();
     }
 

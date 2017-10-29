@@ -19,45 +19,31 @@
  * DEALINGS IN THE SOFTWARE.                                                  *
  ******************************************************************************/
 
-package com.einzig.ipst2.database;
+package com.einzig.ipst2.export;
 
-import android.provider.BaseColumns;
-
-import static com.einzig.ipst2.database.PendingPortalContract.PendingPortalEntry;
+import android.app.Activity;
 
 /**
  * @author Ryan Porterfield
- * @since 2017-06-24
+ * @since 2017-07-28
  */
+public class XMLExporter extends Exporter {
 
-public class RejectedPortalContract {
-    static final String SQL_CREATE_ENTRIES = String.format(
-            "CREATE TABLE %s (%s TEXT NOT NULL, %s TEXT, %s DATETIME NOT NULL, %s TEXT, " +
-                    "FOREIGN KEY (%s, %s) REFERENCES %s(%s, %s), PRIMARY KEY (%s, %s))",
-            RejectedPortalEntry.TABLE_REJECTED,
-            PendingPortalEntry.COLUMN_NAME,
-            PendingPortalEntry.COLUMN_PICTURE_URL,
-            PendingPortalEntry.COLUMN_DATE_RESPONDED,
-            RejectedPortalEntry.COLUMN_REJECTION_REASON,
-            // Foreign Key
-            PendingPortalEntry.COLUMN_PICTURE_URL,
-            PendingPortalEntry.COLUMN_NAME,
-            PendingPortalEntry.TABLE_PENDING,
-            PendingPortalEntry.COLUMN_PICTURE_URL,
-            PendingPortalEntry.COLUMN_NAME,
-            // Primary Key
-            PendingPortalEntry.COLUMN_PICTURE_URL,
-            PendingPortalEntry.COLUMN_NAME);
-
-    static final String SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + RejectedPortalEntry.TABLE_REJECTED;
-
-    private RejectedPortalContract() {
+    public XMLExporter(Activity activity) {
+        super(activity);
     }
 
-    static class RejectedPortalEntry implements BaseColumns {
-        /** Table key for the reason the portal was rejected */
-        static final String COLUMN_REJECTION_REASON = "rejectionReason";
-        /** The name of the table in containing rejected portal submissions */
-        static final String TABLE_REJECTED = "rejectedSubmissions";
+    public XMLExporter(Activity activity, boolean acceptedOnly) {
+        super(activity, acceptedOnly);
+    }
+
+    @Override
+    protected Void doInBackground(Void... params) {
+        return null;
+    }
+
+    @Override
+    String getExportFileType() {
+        return "xml";
     }
 }
