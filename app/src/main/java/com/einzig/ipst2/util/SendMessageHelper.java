@@ -23,7 +23,17 @@ package com.einzig.ipst2.util;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.provider.MediaStore;
+import android.view.View;
+
+import com.einzig.ipst2.portal.PortalSubmission;
+
+import java.io.ByteArrayOutputStream;
 
 /**
  * @author Steven Foskett
@@ -31,12 +41,46 @@ import android.net.Uri;
  */
 public class SendMessageHelper {
     public static void sendMessage(Context context, String subject, String body, String toAddress,
-                            String messagePrompt)
-    {
+                                   String messagePrompt) {
         Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
-                "mailto",toAddress, null));
+                "mailto", toAddress, null));
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
         emailIntent.putExtra(Intent.EXTRA_TEXT, body);
         context.startActivity(Intent.createChooser(emailIntent, messagePrompt));
     }
+
+    public static void sharePortal(PortalSubmission portalSubmission, View view, Context context) {
+        try {
+            final Intent intent = new Intent(android.content.Intent.ACTION_SEND);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            //intent.putExtra(Intent.EXTRA_STREAM, getImageUri(context, getBitmapFromView(view)));
+            intent.setType("*/*");
+            intent.putExtra(Intent.EXTRA_TEXT, "IPST2 Portal: " + portalSubmission.getShareDetails());
+            context.startActivity(Intent.createChooser(intent, "Share IPST2 Portal"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
+    }
+
+    private static Bitmap getBitmapFromView(View view) {
+        Bitmap returnedBitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(returnedBitmap);
+        Drawable bgDrawable = view.getBackground();
+        if (bgDrawable != null)
+            bgDrawable.draw(canvas);
+        else
+            canvas.drawColor(Color.WHITE);
+        view.draw(canvas);
+        return returnedBitmap;
+    }
+
+
 }

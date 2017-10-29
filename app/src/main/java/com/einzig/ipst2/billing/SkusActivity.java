@@ -22,6 +22,16 @@
 
 package com.einzig.ipst2.billing;
 
+import org.solovyev.android.checkout.ActivityCheckout;
+import org.solovyev.android.checkout.Billing;
+import org.solovyev.android.checkout.BillingRequests;
+import org.solovyev.android.checkout.Checkout;
+import org.solovyev.android.checkout.Inventory;
+import org.solovyev.android.checkout.ProductTypes;
+import org.solovyev.android.checkout.Purchase;
+import org.solovyev.android.checkout.RequestListener;
+import org.solovyev.android.checkout.Sku;
+
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Paint;
@@ -32,6 +42,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,18 +52,10 @@ import android.widget.TextView;
 
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.PurchaseEvent;
+import com.einzig.ipst2.CheckoutApplication;
 import com.einzig.ipst2.R;
 import com.einzig.ipst2.util.Logger;
 import com.einzig.ipst2.util.ThemeHelper;
-
-import org.solovyev.android.checkout.ActivityCheckout;
-import org.solovyev.android.checkout.BillingRequests;
-import org.solovyev.android.checkout.Checkout;
-import org.solovyev.android.checkout.Inventory;
-import org.solovyev.android.checkout.ProductTypes;
-import org.solovyev.android.checkout.Purchase;
-import org.solovyev.android.checkout.RequestListener;
-import org.solovyev.android.checkout.Sku;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -118,9 +121,9 @@ public class SkusActivity extends AppCompatActivity {
         mRecycler.setLayoutManager(new LinearLayoutManager(this));
         mRecycler.setAdapter(adapter);
 
-//        final Billing billing = CheckoutApplication.get(this).getBilling();
-//        mCheckout = Checkout.forActivity(this, billing);
-//        mCheckout.start();
+        final Billing billing = CheckoutApplication.get(this).getBilling();
+        mCheckout = Checkout.forActivity(this, billing);
+        mCheckout.start();
         reloadInventory();
     }
 

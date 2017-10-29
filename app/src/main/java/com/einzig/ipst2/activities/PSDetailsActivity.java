@@ -65,6 +65,7 @@ import com.einzig.ipst2.portal.PortalSubmission;
 import com.einzig.ipst2.util.DialogHelper;
 import com.einzig.ipst2.util.Logger;
 import com.einzig.ipst2.util.PreferencesHelper;
+import com.einzig.ipst2.util.SendMessageHelper;
 import com.einzig.ipst2.util.ThemeHelper;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -93,7 +94,9 @@ public class PSDetailsActivity extends AppCompatActivity {
     LinearLayout extraLayout;
     @BindView(R.id.name_psdetailsactivity)
     TextView namelabel;
-    /** Portal */
+    /**
+     * Portal
+     */
     PortalSubmission portal;
     @BindView(R.id.psimage_psdetailsactivity)
     ImageView portalImage;
@@ -107,7 +110,11 @@ public class PSDetailsActivity extends AppCompatActivity {
     LinearLayout toppanel_psdetailsactivity;
     @BindView(R.id.dayslayout_psdetailsactivity)
     LinearLayout dayslayout_psdetailsactivity;
-    /** Date Formatter for displaying dates on the UI */
+    @BindView(R.id.psimageholder_psdetailsactivity)
+    RelativeLayout psimageholder_psdetailsactivity;
+    /**
+     * Date Formatter for displaying dates on the UI
+     */
     DateTimeFormatter uiFormatter;
 
     public final static int EDIT_ACTIVITY_CODE = 10101;
@@ -386,6 +393,8 @@ public class PSDetailsActivity extends AppCompatActivity {
         if (id == android.R.id.home) {
             finish();
             return true;
+        } else if (id == R.id.share_psdetailsactivity) {
+            SendMessageHelper.sharePortal(portal, psimageholder_psdetailsactivity, this);
         } else if (id == R.id.edit_psdetailsactivity) {
             Intent intent = new Intent(this, PSEditActivity.class);
             intent.putExtra(PORTAL_KEY, (Parcelable) portal);
@@ -431,7 +440,7 @@ public class PSDetailsActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-            @NonNull int[] grantResults) {
+                                           @NonNull int[] grantResults) {
         if (requestCode == REQUEST_CODE_WRITE_EXTERNAL && grantResults.length > 0) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 imageDownload(PSDetailsActivity.this, portal.getPictureURL());

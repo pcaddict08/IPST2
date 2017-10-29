@@ -98,4 +98,23 @@ public class PortalRejected extends PortalResponded {
         super.writeToParcel(dest, flags);
         dest.writeString(rejectionReason);
     }
+
+    /*
+    * Return Sharable Portal Details
+    * */
+    @Override
+    public String getShareDetails() {
+        String returnString = "";
+        try {
+            returnString = getName() + "\n"
+                    + "Submitted: " + getDateSubmitted().toString() + "\n"
+                    + "Days In Queue: " + getResponseTime() + "\n"
+                    + "Status: Rejected\n"
+                    + "Rejection Reason: " + getRejectionReason() + "\n"
+                    + "Picture URL: " + getPictureURL();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return returnString;
+    }
 }

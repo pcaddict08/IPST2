@@ -33,6 +33,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -43,6 +44,8 @@ import android.widget.Toast;
 
 import com.einzig.ipst2.R;
 import com.einzig.ipst2.database.DatabaseHelper;
+import com.einzig.ipst2.database.AcceptedPortalContract;
+import com.einzig.ipst2.database.RejectedPortalContract;
 import com.einzig.ipst2.portal.PortalAccepted;
 import com.einzig.ipst2.portal.PortalRejected;
 import com.einzig.ipst2.portal.PortalResponded;

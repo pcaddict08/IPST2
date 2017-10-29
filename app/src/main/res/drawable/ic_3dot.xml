@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   ~ Copyright 2017 Steven Foskett, Jimmy Ho, Ryan Porterfield                 ~
   ~ Permission is hereby granted, free of charge, to any person obtaining a   ~
   ~ copy of this software and associated documentation files (the "Software"),~
@@ -19,28 +19,12 @@
   ~ DEALINGS IN THE SOFTWARE.                                                 ~
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item
-        android:id="@+id/menu_overflow"
-        android:icon="@drawable/ic_3dot"
-        android:orderInCategory="11111"
-        android:title="Submission Management"
-        app:showAsAction="never">
-        <menu>
-            <item
-                android:id="@+id/edit_psdetailsactivity"
-                android:title="@string/edit"
-                app:showAsAction="always" />
-            <item
-                android:id="@+id/delete_psdetailsactivity"
-                android:title="@string/delete"
-                app:showAsAction="always" />
-        </menu>
-    </item>
-    <item
-        android:id="@+id/share_psdetailsactivity"
-        android:icon="@drawable/ic_share"
-        android:title="@string/share"
-        app:showAsAction="always" />
-</menu>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+        android:width="24dp"
+        android:height="24dp"
+        android:viewportWidth="24.0"
+        android:viewportHeight="24.0">
+    <path
+        android:fillColor="#ffffff"
+        android:pathData="M12,8c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM12,10c-1.1,0 -2,0.9 -2,2s0.9,2 2,2 2,-0.9 2,-2 -0.9,-2 -2,-2zM12,16c-1.1,0 -2,0.9 -2,2s0.9,2 2,2 2,-0.9 2,-2 -0.9,-2 -2,-2z"/>
+</vector>
