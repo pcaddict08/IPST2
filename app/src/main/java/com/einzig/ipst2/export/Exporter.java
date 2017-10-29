@@ -27,7 +27,7 @@ import android.os.AsyncTask;
 import android.os.Environment;
 
 import com.einzig.ipst2.R;
-import com.einzig.ipst2.database.DatabaseInterface;
+import com.einzig.ipst2.database.DatabaseHelper;
 import com.einzig.ipst2.portal.PortalSubmission;
 import com.einzig.ipst2.sort.SortHelper;
 import com.einzig.ipst2.util.PreferencesHelper;
@@ -40,7 +40,7 @@ import org.joda.time.format.ISODateTimeFormat;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Vector;
+import java.util.List;
 
 /**
  * @author Ryan Porterfield
@@ -48,7 +48,7 @@ import java.util.Vector;
  */
 abstract class Exporter extends AsyncTask<Void, Integer, Void> {
     private final Activity activity;
-    private final DatabaseInterface db;
+    private final DatabaseHelper db;
     private final boolean acceptedOnly;
     private final PreferencesHelper helper;
     /** Display parsing progress */
@@ -57,7 +57,7 @@ abstract class Exporter extends AsyncTask<Void, Integer, Void> {
     Exporter(Activity activity) {
         this.acceptedOnly = false;
         this.activity = activity;
-        this.db = new DatabaseInterface(activity);
+        this.db = new DatabaseHelper(activity);
         this.dialog = new ProgressDialog(activity, ThemeHelper.getDialogTheme(activity));
         this.helper = new PreferencesHelper(activity);
         initProgressDialog();
@@ -66,7 +66,7 @@ abstract class Exporter extends AsyncTask<Void, Integer, Void> {
     Exporter(Activity activity, boolean acceptedOnly) {
         this.acceptedOnly = acceptedOnly;
         this.activity = activity;
-        this.db = new DatabaseInterface(activity);
+        this.db = new DatabaseHelper(activity);
         this.dialog = new ProgressDialog(activity, ThemeHelper.getDialogTheme(activity));
         this.helper = new PreferencesHelper(activity);
         initProgressDialog();
@@ -76,7 +76,7 @@ abstract class Exporter extends AsyncTask<Void, Integer, Void> {
         return activity;
     }
 
-    DatabaseInterface getDb() {
+    DatabaseHelper getDb() {
         return db;
     }
 
@@ -90,8 +90,8 @@ abstract class Exporter extends AsyncTask<Void, Integer, Void> {
         return helper;
     }
 
-    Vector<? extends PortalSubmission> getSortedList() {
-        Vector<? extends PortalSubmission> subList = db.getAllPortals(helper.isSeerOnly());
+    List<? extends PortalSubmission> getSortedList() {
+        List<? extends PortalSubmission> subList = db.getAllPortals();
         SortHelper.sortList(subList, activity);
         return subList;
     }
@@ -118,7 +118,7 @@ abstract class Exporter extends AsyncTask<Void, Integer, Void> {
         dialog.setTitle(activity.getString(R.string.parsing_email));
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
-        dialog.setMax((int) db.getDatabaseSize(helper.isSeerOnly()));
+        dialog.setMax((int) db.getTotalPortalCount());
     }
 
     public void onPostExecute() {

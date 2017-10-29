@@ -38,16 +38,13 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.einzig.ipst2.R;
 import com.einzig.ipst2.billing.SelectDonateTypeActivity;
-import com.einzig.ipst2.billing.SkusActivity;
-import com.einzig.ipst2.database.DatabaseInterface;
-import com.einzig.ipst2.util.Logger;
+import com.einzig.ipst2.database.DatabaseHelper;
 import com.einzig.ipst2.util.PreferencesHelper;
 import com.einzig.ipst2.util.SendMessageHelper;
 import com.einzig.ipst2.util.SendPortalData;
@@ -238,7 +235,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class DBPreferenceFragment extends PreferenceFragment {
         public void clearAllData() {
-            DatabaseInterface db = new DatabaseInterface(getActivity());
+            DatabaseHelper db = new DatabaseHelper(getActivity());
             db.deleteAll();
             PreferencesHelper helper = new PreferencesHelper(getActivity());
             helper.clearAll();

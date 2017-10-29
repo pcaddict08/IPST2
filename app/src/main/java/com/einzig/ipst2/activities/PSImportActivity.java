@@ -35,8 +35,6 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.einzig.ipst2.R;
-import com.einzig.ipst2.database.DatabaseInterface;
-import com.einzig.ipst2.database.PortalBuilder;
 import com.einzig.ipst2.util.CSVImportHelper;
 import com.einzig.ipst2.util.Logger;
 import com.einzig.ipst2.util.ThemeHelper;
@@ -44,10 +42,8 @@ import com.einzig.ipst2.util.ThemeHelper;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.URISyntaxException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

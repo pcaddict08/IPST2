@@ -36,7 +36,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -58,8 +57,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.einzig.ipst2.R;
-import com.einzig.ipst2.database.AcceptedPortalContract;
-import com.einzig.ipst2.database.DatabaseInterface;
+import com.einzig.ipst2.database.DatabaseHelper;
 import com.einzig.ipst2.portal.PortalAccepted;
 import com.einzig.ipst2.portal.PortalRejected;
 import com.einzig.ipst2.portal.PortalResponded;
@@ -113,7 +111,7 @@ public class PSDetailsActivity extends AppCompatActivity {
     DateTimeFormatter uiFormatter;
 
     public final static int EDIT_ACTIVITY_CODE = 10101;
-    DatabaseInterface db = new DatabaseInterface(this);
+    DatabaseHelper db = new DatabaseHelper(this);
     /**
      *
      */
@@ -368,13 +366,14 @@ public class PSDetailsActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        // TODO Understand this
         if(portal != null)
             if(portal instanceof PortalAccepted)
-                portal = db.getAcceptedPortal(portal.getPictureURL(), portal.getName(), false);
+                portal = db.getAcceptedPortal(portal.getPictureURL(), portal.getName());
             else if(portal instanceof PortalRejected)
-                portal = db.getRejectedPortal(portal.getPictureURL(), portal.getName(), false);
+                portal = db.getRejectedPortal(portal.getPictureURL(), portal.getName());
             else
-                portal = db.getPendingPortal(portal.getPictureURL(), portal.getName(), false);
+                portal = db.getPendingPortal(portal.getPictureURL(), portal.getName());
         if (portal != null) {
             buildUI();
         } else
@@ -412,7 +411,7 @@ public class PSDetailsActivity extends AppCompatActivity {
     }
 
     public void deletePortal() {
-        DatabaseInterface db = new DatabaseInterface(this);
+        DatabaseHelper db = new DatabaseHelper(this);
         if (portal != null)
             if (portal instanceof PortalAccepted)
                 db.deleteAccepted((PortalAccepted) portal);

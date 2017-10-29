@@ -28,7 +28,7 @@ import com.einzig.ipst2.portal.PortalSubmission;
 import com.einzig.ipst2.util.PreferencesHelper;
 
 import java.util.Collections;
-import java.util.Vector;
+import java.util.List;
 
 /**
  * @author Steven Foskett
@@ -36,7 +36,7 @@ import java.util.Vector;
  */
 public class SortHelper {
     /* Method to sort the list based on settings the user has saved */
-    public static void sortList(Vector<? extends PortalSubmission> psList, Context context) {
+    public static void sortList(List<? extends PortalSubmission> psList, Context context) {
         PreferencesHelper helper = new PreferencesHelper(context);
         String sortOptionValue = helper.get(helper.sortKey());
         if (sortOptionValue.equals(helper.responseDateDescSort())) {

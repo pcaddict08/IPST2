@@ -52,7 +52,7 @@ import javax.mail.search.ReceivedDateTerm;
 import javax.mail.search.SearchTerm;
 import javax.mail.search.SubjectTerm;
 
-import static com.einzig.ipst2.database.DatabaseInterface.DATE_FORMATTER;
+import static com.einzig.ipst2.database.DatabaseHelper.DATE_FORMATTER;
 
 /**
  * @author Ryan Porterfield

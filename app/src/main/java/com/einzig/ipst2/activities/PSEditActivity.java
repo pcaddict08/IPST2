@@ -33,7 +33,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -43,23 +42,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.einzig.ipst2.R;
-import com.einzig.ipst2.database.AcceptedPortalContract;
-import com.einzig.ipst2.database.DatabaseInterface;
-import com.einzig.ipst2.database.RejectedPortalContract;
+import com.einzig.ipst2.database.DatabaseHelper;
 import com.einzig.ipst2.portal.PortalAccepted;
 import com.einzig.ipst2.portal.PortalRejected;
 import com.einzig.ipst2.portal.PortalResponded;
 import com.einzig.ipst2.portal.PortalSubmission;
-import com.einzig.ipst2.util.Logger;
 import com.einzig.ipst2.util.PreferencesHelper;
 import com.einzig.ipst2.util.ThemeHelper;
 
-import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import java.util.Calendar;
 import java.util.Locale;
-import java.util.zip.Inflater;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -90,7 +84,7 @@ public class PSEditActivity extends AppCompatActivity {
     LinearLayout portalrespondedlayout_pseditactivity;
     PortalSubmission portal;
     PortalSubmission oldPortal;
-    DatabaseInterface db;
+    DatabaseHelper db;
     PreferencesHelper helper;
 
     @Override
@@ -106,7 +100,7 @@ public class PSEditActivity extends AppCompatActivity {
             supportActionBar.setTitle(R.string.pseditactivity_title);
         }
         ThemeHelper.initActionBar(getSupportActionBar());
-        db = new DatabaseInterface(this);
+        db = new DatabaseHelper(this);
         helper = new PreferencesHelper(this);
         portal = getIntent().getExtras().getParcelable(PORTAL_KEY);
         oldPortal = getIntent().getExtras().getParcelable(PORTAL_KEY);
@@ -144,9 +138,9 @@ public class PSEditActivity extends AppCompatActivity {
      */
     public void addPortalAccepted(PortalAccepted portal, PortalSubmission oldPortal) {
         PortalSubmission pending =
-                db.getPendingPortal(oldPortal.getPictureURL(), oldPortal.getName(), helper.isSeerOnly());
+                db.getPendingPortal(oldPortal.getPictureURL(), oldPortal.getName());
         PortalRejected rejected =
-                db.getRejectedPortal(oldPortal.getPictureURL(), oldPortal.getName(), helper.isSeerOnly());
+                db.getRejectedPortal(oldPortal.getPictureURL(), oldPortal.getName());
         if (pending != null) {
             portal.setDateSubmitted(pending.getDateSubmitted());
             db.deletePending(pending);
@@ -178,9 +172,9 @@ public class PSEditActivity extends AppCompatActivity {
      */
     public void addPortalRejected(PortalRejected portal, PortalSubmission oldPortal) {
         PortalSubmission pending =
-                db.getPendingPortal(oldPortal.getPictureURL(), oldPortal.getName(), helper.isSeerOnly());
+                db.getPendingPortal(oldPortal.getPictureURL(), oldPortal.getName());
         PortalAccepted accepted =
-                db.getAcceptedPortal(oldPortal.getPictureURL(), oldPortal.getName(), helper.isSeerOnly());
+                db.getAcceptedPortal(oldPortal.getPictureURL(), oldPortal.getName());
         if (pending != null) {
             portal.setDateSubmitted(pending.getDateSubmitted());
             db.deletePending(pending);

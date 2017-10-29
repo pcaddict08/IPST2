@@ -46,20 +46,19 @@ import org.joda.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Vector;
 
 // Custom list item class for menu items
 public class ListItemAdapter_PS extends BaseAdapter implements Filterable {
     /**  */
-    public ArrayList<? extends PortalSubmission> shownItems;
+    public List<? extends PortalSubmission> shownItems;
     /** Application context */
     private Context context;
     /**  */
-    private Vector<? extends PortalSubmission> originalItems;
+    private List<? extends PortalSubmission> originalItems;
     /**  */
     private SubmissionFilter submissionFilter;
 
-    public ListItemAdapter_PS(final Vector<? extends PortalSubmission> items, Context context) {
+    public ListItemAdapter_PS(final List<? extends PortalSubmission> items, Context context) {
         this.context = context;
         this.originalItems = items;
         this.shownItems = new ArrayList<>(items);

@@ -56,7 +56,7 @@ import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.einzig.ipst2.R;
-import com.einzig.ipst2.database.DatabaseInterface;
+import com.einzig.ipst2.database.DatabaseHelper;
 import com.einzig.ipst2.parse.AuthenticatorTask;
 import com.einzig.ipst2.parse.EmailParseTask;
 import com.einzig.ipst2.parse.GetMailTask;
@@ -162,7 +162,7 @@ public class MainActivity extends AppCompatActivity
     /**
      * Database Handle for getting portals and such
      */
-    private DatabaseInterface db;
+    private DatabaseHelper db;
     /**  */
     private LocalDate viewDate;
 
@@ -170,7 +170,7 @@ public class MainActivity extends AppCompatActivity
      * MainActivity constructor, initialize variables.
      */
     public MainActivity() {
-        db = new DatabaseInterface(this);
+        db = new DatabaseHelper(this);
         viewDate = null;
     }
 
@@ -178,11 +178,11 @@ public class MainActivity extends AppCompatActivity
      * Build and showing the UI once emails are parsed.
      */
     public void buildUIAfterParsing() {
-        DatabaseInterface db = new DatabaseInterface(this);
+        DatabaseHelper db = new DatabaseHelper(this);
         PreferencesHelper helper = new PreferencesHelper(this);
-        long accepted = db.getAcceptedCount(helper.isSeerOnly());
-        long pending = db.getPendingCount(helper.isSeerOnly());
-        long rejected = db.getRejectedCount(helper.isSeerOnly());
+        long accepted = db.getAcceptedCount();
+        long pending = db.getPendingCount();
+        long rejected = db.getRejectedCount();
         progress_view_mainactivity.setVisibility(View.INVISIBLE);
         mainui_mainactivity.setVisibility(View.VISIBLE);
         tabs_mainactivity.setVisibility(View.VISIBLE);
@@ -266,21 +266,21 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.alltab_mainactivity:
                 viewDate = null;
-                formatUI(db.getAcceptedCount(helper.isSeerOnly()),
-                        db.getRejectedCount(helper.isSeerOnly()),
-                        db.getPendingCount(helper.isSeerOnly()));
+                formatUI(db.getAcceptedCount(),
+                        db.getRejectedCount(),
+                        db.getPendingCount());
                 viewList.setText(R.string.viewlistall);
                 break;
         }
         Logger.d("viewDate -> " + viewDate);
         if (viewDate == null)
-            formatUI(db.getAcceptedCount(helper.isSeerOnly()),
-                    db.getRejectedCount(helper.isSeerOnly()),
-                    db.getPendingCount(helper.isSeerOnly()));
+            formatUI(db.getAcceptedCount(),
+                    db.getRejectedCount(),
+                    db.getPendingCount());
         else
-            formatUI(db.getAcceptedCountByResponseDate(viewDate, helper.isSeerOnly()),
-                    db.getRejectedCountByResponseDate(viewDate, helper.isSeerOnly()),
-                    db.getPendingCountByDate(viewDate, helper.isSeerOnly()));
+            formatUI(db.getAcceptedCount(viewDate, LocalDate.now()),
+                    db.getRejectedCount(viewDate, LocalDate.now()),
+                    db.getPendingCount(viewDate, LocalDate.now()));
     }
 
     /**

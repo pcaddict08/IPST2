@@ -31,7 +31,7 @@ import com.einzig.ipst2.util.Logger;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Vector;
+import java.util.List;
 
 /**
  * @author Ryan Porterfield
@@ -68,7 +68,7 @@ public class JSONExporter extends Exporter {
 
     private void exportAccepted(FileWriter writer) throws IOException {
         writer.write("\"acceptedPortals\": [\n");
-        Vector<PortalAccepted> portals = getDb().getAllAccepted(getHelper().isSeerOnly());
+        List<PortalAccepted> portals = getDb().getAllAccepted();
         for (int i = 0; i < portals.size(); ++i) {
             if (i > 0)
                 writer.write(",\n");
@@ -79,7 +79,7 @@ public class JSONExporter extends Exporter {
 
     private void exportPending(FileWriter writer) throws IOException {
         writer.write("\"pendingPortals\": [\n");
-        Vector<PortalSubmission> portals = getDb().getAllPending(getHelper().isSeerOnly());
+        List<PortalSubmission> portals = getDb().getAllPending();
         for (int i = 0; i < portals.size(); ++i) {
             if (i > 0)
                 writer.write(",\n");
@@ -90,7 +90,7 @@ public class JSONExporter extends Exporter {
 
     private void exportRejected(FileWriter writer) throws IOException {
         writer.write("\"rejectedPortals\": [\n");
-        Vector<PortalRejected> portals = getDb().getAllRejected(getHelper().isSeerOnly());
+        List<PortalRejected> portals = getDb().getAllRejected();
         for (int i = 0; i < portals.size(); ++i) {
             if (i > 0)
                 writer.write(",\n");

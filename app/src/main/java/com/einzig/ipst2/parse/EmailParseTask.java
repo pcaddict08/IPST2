@@ -29,7 +29,7 @@ import android.view.WindowManager;
 
 import com.einzig.ipst2.R;
 import com.einzig.ipst2.activities.MainActivity;
-import com.einzig.ipst2.database.DatabaseInterface;
+import com.einzig.ipst2.database.DatabaseHelper;
 import com.einzig.ipst2.portal.PortalAccepted;
 import com.einzig.ipst2.portal.PortalRejected;
 import com.einzig.ipst2.portal.PortalSubmission;
@@ -44,7 +44,7 @@ import javax.activation.MailcapCommandMap;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 
-import static com.einzig.ipst2.database.DatabaseInterface.DATE_FORMATTER;
+import static com.einzig.ipst2.database.DatabaseHelper.DATE_FORMATTER;
 
 /**
  * Asynchronously parses the user's emails to update portal submission activity.
@@ -58,7 +58,7 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
     /** Wrapper class for IMAPStore, Folder, and Message[] resources */
     final private MailBundle bundle;
     /** Database for adding portals */
-    final private DatabaseInterface db;
+    final private DatabaseHelper db;
     /** Array of messages that match the search terms */
     final private Message[] messages;
     /** Does the actual parsing of emails */
@@ -76,7 +76,7 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
     public EmailParseTask(MainActivity activity, MailBundle bundle) {
         this.activity = activity;
         this.bundle = bundle;
-        this.db = new DatabaseInterface(activity);
+        this.db = new DatabaseHelper(activity);
         this.messages = bundle.getMessages();
         this.parser = new EmailParser();
         this.helper = new PreferencesHelper(activity);
@@ -121,8 +121,7 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
      * @param portal Instance of PortalAccepted to add to the database
      */
     public void addPortalAccepted(PortalAccepted portal) {
-        PortalSubmission pending = db.getPendingPortal(portal.getPictureURL(), portal.getName(),
-                helper.isSeerOnly());
+        PortalSubmission pending = db.getPendingPortal(portal.getPictureURL(), portal.getName());
         if (pending != null) {
             portal.setDateSubmitted(pending.getDateSubmitted());
             db.deletePending(pending);
@@ -138,8 +137,7 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
      * @param portal Instance of PortalRejected to add to the database
      */
     private void addPortalRejected(PortalRejected portal) {
-        PortalSubmission pending = db.getPendingPortal(portal.getPictureURL(), portal.getName(),
-                helper.isSeerOnly());
+        PortalSubmission pending = db.getPendingPortal(portal.getPictureURL(), portal.getName());
         if (pending != null) {
             portal.setDateSubmitted(pending.getDateSubmitted());
             db.deletePending(pending);
@@ -208,9 +206,9 @@ public class EmailParseTask extends AsyncTask<Void, Integer, Void> {
      */
     @Override
     protected void onPostExecute(Void voids) {
-        Logger.d("Accepted portals: " + db.getAcceptedCount(helper.isSeerOnly()));
-        Logger.d("Pending portals: " + db.getPendingCount(helper.isSeerOnly()));
-        Logger.d("Rejected portals: " + db.getRejectedCount(helper.isSeerOnly()));
+        Logger.d("Accepted portals: " + db.getAcceptedCount());
+        Logger.d("Pending portals: " + db.getPendingCount());
+        Logger.d("Rejected portals: " + db.getRejectedCount());
         activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         dialog.dismiss();
         activity.buildUIAfterParsing();

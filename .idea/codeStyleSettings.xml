@@ -89,7 +89,6 @@
           <option name="TERNARY_OPERATION_WRAP" value="1" />
           <option name="FOR_STATEMENT_WRAP" value="1" />
           <option name="ARRAY_INITIALIZER_WRAP" value="1" />
-          <option name="ASSIGNMENT_WRAP" value="1" />
           <option name="ASSERT_STATEMENT_WRAP" value="1" />
           <option name="PARAMETER_ANNOTATION_WRAP" value="1" />
           <option name="VARIABLE_ANNOTATION_WRAP" value="1" />

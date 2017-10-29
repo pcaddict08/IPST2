@@ -26,7 +26,7 @@ import android.app.ProgressDialog;
 import android.os.AsyncTask;
 
 import com.einzig.ipst2.activities.PSImportActivity;
-import com.einzig.ipst2.database.DatabaseInterface;
+import com.einzig.ipst2.database.DatabaseHelper;
 import com.einzig.ipst2.database.PortalBuilder;
 
 import java.io.BufferedReader;
@@ -53,7 +53,7 @@ public class CSVImportHelper extends AsyncTask<Void, Integer, Void> {
         try {
             InputStreamReader stream = new InputStreamReader(new FileInputStream(importFile));
             BufferedReader reader = new BufferedReader(stream);
-            DatabaseInterface db = new DatabaseInterface(activity);
+            DatabaseHelper db = new DatabaseHelper(activity);
             PreferencesHelper helper = new PreferencesHelper(activity);
             helper.set(helper.parseDateKey(), helper.nullKey());
             db.deleteAll();

@@ -31,7 +31,7 @@ import org.joda.time.LocalDate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.einzig.ipst2.database.DatabaseInterface.DATE_FORMATTER;
+import static com.einzig.ipst2.database.DatabaseHelper.DATE_FORMATTER;
 
 /**
  * @author Ryan Porterfield

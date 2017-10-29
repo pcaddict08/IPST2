@@ -26,17 +26,10 @@ package com.einzig.ipst2.portal;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
-import org.joda.time.Period;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
-
-import static com.einzig.ipst2.database.DatabaseInterface.DATE_FORMATTER;
 
 public class PortalSubmission implements Parcelable, Serializable {
     /** Inflates a PortalSubmission from a Parcel */

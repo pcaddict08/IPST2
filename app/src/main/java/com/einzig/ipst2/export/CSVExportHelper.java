@@ -27,7 +27,7 @@ import android.os.Environment;
 import android.widget.Toast;
 
 import com.einzig.ipst2.activities.PSExportActivity;
-import com.einzig.ipst2.database.DatabaseInterface;
+import com.einzig.ipst2.database.DatabaseHelper;
 import com.einzig.ipst2.portal.PortalAccepted;
 import com.einzig.ipst2.portal.PortalRejected;
 import com.einzig.ipst2.portal.PortalResponded;
@@ -42,17 +42,19 @@ import org.joda.time.format.ISODateTimeFormat;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.util.List;
 import java.util.Vector;
 
 import au.com.bytecode.opencsv.CSVWriter;
 
 /*
- * Created by Steven Foskett on 7/12/2017.
+ * @author Steven Foskett
+ * @since 2017-07-12
  */
 public class CSVExportHelper extends AsyncTask<String, String, String> {
     private Activity activity;
     private PreferencesHelper helper;
-    private DatabaseInterface db;
+    private DatabaseHelper db;
     private String errorThatHappened = "";
     private boolean errorHappened;
     private String exportType;
@@ -62,7 +64,7 @@ public class CSVExportHelper extends AsyncTask<String, String, String> {
         this.activity = activity;
         this.exportType = exportType;
         this.helper = new PreferencesHelper(this.activity);
-        this.db = new DatabaseInterface(this.activity);
+        this.db = new DatabaseHelper(this.activity);
     }
 
     protected String doInBackground(String... urls) {
@@ -80,8 +82,7 @@ public class CSVExportHelper extends AsyncTask<String, String, String> {
             try {
                 Logger.d(file.getAbsolutePath());
                 CSVWriter mWriter = new CSVWriter(new FileWriter(file));
-                Vector<? extends PortalSubmission> subList =
-                        db.getAllPortals(helper.isSeerOnly());
+                List<? extends PortalSubmission> subList = db.getAllPortals();
                 SortHelper.sortList(subList, activity);
 
                 String[] mExportChartHeaders = {
@@ -191,7 +192,6 @@ public class CSVExportHelper extends AsyncTask<String, String, String> {
                 errorThatHappened = e.toString();
                 errorHappened = true;
             }
-            db.close();
         }
 
         return "";

@@ -27,7 +27,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.einzig.ipst2.database.DatabaseInterface;
+import com.einzig.ipst2.database.DatabaseHelper;
 import com.einzig.ipst2.portal.PortalAccepted;
 import com.einzig.ipst2.portal.PortalRejected;
 import com.einzig.ipst2.portal.PortalSubmission;
@@ -45,8 +45,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.Locale;
-import java.util.Vector;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -66,9 +66,9 @@ public class SendPortalData extends AsyncTask<Void, Void, Void> {
     protected Void doInBackground(Void... voids) {
         JSONArray objsToSend = new JSONArray();
         JSONObject finalObj = new JSONObject();
-        DatabaseInterface db = new DatabaseInterface(context);
+        DatabaseHelper db = new DatabaseHelper(context);
         PreferencesHelper helper = new PreferencesHelper(context);
-        Vector<PortalSubmission> portalList = db.getAllPortals(helper.isSeerOnly());
+        List<PortalSubmission> portalList = db.getAllPortals();
         SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy", Locale.getDefault());
         for (PortalSubmission ps : portalList) {
             JSONObject newJSON = new JSONObject();

@@ -30,10 +30,8 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -49,7 +47,7 @@ import android.widget.SearchView;
 
 import com.einzig.ipst2.R;
 import com.einzig.ipst2.adapters.ListItemAdapter_PS;
-import com.einzig.ipst2.database.DatabaseInterface;
+import com.einzig.ipst2.database.DatabaseHelper;
 import com.einzig.ipst2.database.PortalGrabber;
 import com.einzig.ipst2.portal.PortalSubmission;
 import com.einzig.ipst2.sort.SortHelper;
@@ -58,8 +56,8 @@ import com.einzig.ipst2.util.Logger;
 import com.einzig.ipst2.util.PreferencesHelper;
 import com.einzig.ipst2.util.ThemeHelper;
 
-import java.util.Collections;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -75,11 +73,11 @@ public class PSListActivity extends AppCompatActivity {
     String RANGE;
     String TYPE;
     ProgressDialog dialog;
-    Vector<? extends PortalSubmission> psList = new Vector<>();
-    private DatabaseInterface db;
+    List<? extends PortalSubmission> psList = new ArrayList<>();
+    private DatabaseHelper db;
 
     public PSListActivity() {
-        db = new DatabaseInterface(this);
+        db = new DatabaseHelper(this);
     }
 
     @Override
@@ -109,7 +107,7 @@ public class PSListActivity extends AppCompatActivity {
         super.onResume();
     }
 
-    public void AfterParse(Vector<? extends PortalSubmission> _psList) {
+    public void afterParse(List<? extends PortalSubmission> _psList) {
         try {
             dialog.dismiss();
             this.psList = _psList;
