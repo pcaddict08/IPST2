@@ -107,15 +107,15 @@ public class PSListActivity extends AppCompatActivity {
         super.onResume();
     }
 
-    public void afterParse(List<? extends PortalSubmission> _psList) {
+    public void afterParse(List<? extends PortalSubmission> psList) {
         try {
             dialog.dismiss();
-            this.psList = _psList;
-            if (psList != null) {
-                if (psList.size() > 0) {
-                    Logger.d("PS LIST SIZE: " + psList.size());
-                    SortHelper.sortList(psList, this);
-                    listView.setAdapter(new ListItemAdapter_PS(psList, PSListActivity.this));
+            this.psList = psList;
+            if (this.psList != null) {
+                if (this.psList.size() > 0) {
+                    Logger.d("PS LIST SIZE: " + this.psList.size());
+                    SortHelper.sortList(this.psList, this);
+                    listView.setAdapter(new ListItemAdapter_PS(this.psList, PSListActivity.this));
                     if (ThemeHelper.isDarkTheme(this))
                         listView.setSelector(android.R.color.transparent);
                     listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
