@@ -45,7 +45,7 @@ import javax.mail.Part;
  * @author Ryan Porterfield
  * @since 2017-05-17
  */
-class EmailParser {
+public class EmailParser {
     final private PortalBuilder acceptedBuilder;
     final private PortalBuilder rejectedBuilder;
     final private PortalBuilder submissionBuilder;
@@ -53,7 +53,7 @@ class EmailParser {
     /**
      * Create a new EmailParser
      */
-    EmailParser() {
+    public EmailParser() {
         acceptedBuilder = new PortalAcceptedBuilder();
         rejectedBuilder = new PortalRejectedBuilder();
         submissionBuilder = new PortalSubmissionBuilder();

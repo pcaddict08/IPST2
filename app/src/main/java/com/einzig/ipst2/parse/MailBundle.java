@@ -34,7 +34,6 @@ import javax.mail.MessagingException;
  * @author Ryan Porterfield
  * @since 2017-05-28
  */
-
 public class MailBundle {
     private final Folder folder;
     private final Message[] messages;
@@ -55,7 +54,7 @@ public class MailBundle {
         }
     }
 
-    Message[] getMessages() {
+    public Message[] getMessages() {
         return messages;
     }
 }

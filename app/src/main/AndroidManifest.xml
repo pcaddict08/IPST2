@@ -50,6 +50,7 @@
         <activity android:name=".billing.SkusActivity"/>
         <activity android:name=".billing.SelectDonateTypeActivity"/>
         <activity android:name=".billing.SubscriptionsActivity"/>
+        <activity android:name=".activities.EmailParseActivity" />
     </application>
 
 </manifest>
